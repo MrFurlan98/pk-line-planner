@@ -7,9 +7,11 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.0";
+const VERSION = "1.1";
 const CHANGELOG = `
-1.0: We're live! Make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
+Day 1 patch: Fixed some trainer data.
+
+We're live! Make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n");
 
 // update version
