@@ -165,6 +165,7 @@ const FLAGS_PK = {
             // Sunyshore Gym
             "Leader Volkner": {},
             // Route 221
+            "Sis and Bro Dora & Diego": {},
             "Fisherman Greg": {},
             // Galactic Warehouse
             "Galactic Squad Juliet": {},
@@ -419,6 +420,9 @@ const FLAGS_PK = {
         "Jogger Raul",
         // Route 210
         "Jogger Wyatt",
+        // Cafe
+        "Waitress Kati",
+        "Gambler John Keating",
         // Route 215
         "Jogger Scott",
         // Veilstone City
@@ -615,6 +619,7 @@ const FLAGS_PK = {
             "Swimmer Wang [C]",
             "Swimmer Wang [D]",
             // Route 221
+            "Sis and Bro Dora & Diego",
             "Fisherman Greg",
             "Swimmer Ledecky",
             // Galactic Warehouse
