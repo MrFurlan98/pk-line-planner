@@ -1,0 +1,49 @@
+.map-container {
+    width: 800px;
+    height: 800px;
+    float: none;
+    margin: auto;
+    padding: 0;
+
+    .location-name {
+        width: 768px;
+        height: 100px;
+        position: absolute;
+        margin: 48px 16px 0px;
+        font-size: 32pt;
+        text-align: center;
+    }
+
+    .map {
+        width: 768px;
+        height: 768px;
+        margin: 16px;
+        border-radius: 10px;
+        background-image: url("/img/map/map.png");
+
+        .cursor {
+            position: relative;
+            top: 0px;
+            left: 0px;
+        }
+        .target-tile {
+            cursor: pointer;
+        }
+    }
+    .dupe-overlay {
+        width: 768px;
+        height: 768px;
+        margin: 16px;
+        border-radius: 10px;
+        position: relative;
+        top: -784px;
+        pointer-events: none;
+        opacity: .25;
+
+        .dupe-marker {
+            position: relative;
+            top: 0px;
+            left: 0px;
+        }
+    }
+}

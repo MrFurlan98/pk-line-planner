@@ -1,0 +1,800 @@
+.search {
+    width: 310px;
+    height: 800px;
+    float: left;
+    text-align: center;
+
+    .dex-searchbar {
+        width: 290px;
+        height: 30px;
+        border: 1px solid #AAAAAA;
+        border-radius: 5px;
+        padding-left: 10px;
+        margin-top: 5px;
+    }
+
+    .results {
+        overflow-y: scroll;
+        height: 712px;
+        margin-top: 0px;
+        padding: 3px;
+        list-style: none;
+        user-select: none;
+
+        li {
+            display: flex;
+            height: 30px;
+            border: 1px solid #929292;
+            border-radius: 5px;
+            margin-top: 2px;
+            margin-bottom: 2px;
+            color: var(--text);
+            text-align: left;
+        }
+        .hover {
+            background-color: var(--button-hover);
+            outline: 1px solid #929292;
+        }
+        .selected {
+            background-color: var(--button-selected);
+        }
+        .species {
+            .icon {
+                width: 32px;
+                padding-left: 5px;
+
+                img {
+                    transform: translate(0px, -4px);
+                }
+            }
+            .name {
+                width: 125px;
+                padding-top: 6px;
+                padding-left: 5px;
+            }
+            .types {
+                width: 64px;
+
+                img {
+                    transform: translate(0px, 6px);
+                }
+            }
+        }
+        .move {
+            .name {
+                width: 115px;
+                padding-top: 6px;
+                padding-left: 5px;
+            }
+            .type, .category {
+                width: 32px;
+
+                img {
+                    transform: translate(0px, 6px);
+                }
+            }
+            .basePower {
+                width: 22px;
+                padding-top: 8px;
+                padding-left: 4px;
+                font-size: 8pt;
+                text-align: center;
+            }
+            .accuracy {
+                width: 34px;
+                padding-top: 8px;
+                padding-left: 4px;
+                font-size: 8pt;
+                text-align: center;
+            }
+            .powerPoints {
+                width: 22px;
+                padding-top: 2px;
+                padding-left: 4px;
+                font-size: 8pt;
+                text-align: center;
+            }
+        }
+        .item {
+            .icon {
+                width: 32px;
+                padding-left: 5px;
+
+                img {
+                    transform: translate(0px, 3px);
+                }
+            }
+            .name {
+                padding-top: 6px;
+            }
+        }
+        .ability, .location {
+            .name {
+                padding-top: 6px;
+                padding-left: 5px;
+            }
+        }
+        .location.dupe {
+            background-color: rgba(255, 0, 0, 0.144);
+        }
+        .nature {
+            .name {
+                width: 120px;
+                padding-top: 6px;
+                padding-left: 5px;
+            }
+            .desc {
+                padding-top: 8px;
+                font-size: 8pt;
+            }
+        }
+    }
+}
+
+.dex-info {
+    width: 880px;
+    height: 792px;
+    float: right;
+    margin-top: 8px;
+    display: flex;
+
+    .info {
+        width: 480px;
+
+        .name {
+            display: block;
+            margin: 16px 12px;
+            font-weight: bold;
+            font-size: 18pt;
+        }
+        .note {
+            display: block;
+            margin: 12px;
+            padding: 8px;
+            font-size: 12pt;
+            border: 3px solid #FF8383;
+            border-radius: 3px;;
+            background-color: rgba(255, 158, 158, 0.5);
+            color: black;
+        }
+    }
+    .list {
+        width: 400px;
+        margin-top: 8px;
+        user-select: none;
+
+        .list-nav {
+            height: 27px;
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            padding-left: 0px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+
+            li {
+                width: 100px;
+                border: 1px solid #AAAAAA;
+                border-bottom: 1px solid #AAAAAA;
+                border-radius: 5px 5px 0px 0px;
+                margin: 0px 8px -1px 8px;
+                padding: 5px 10px;
+                text-align: center;
+            }
+
+            li.current {
+                border-bottom: 1px solid var(--fieldset-color);
+                font-weight: bold;
+            }
+        }
+        .results {
+            overflow-y: scroll;
+            height: 741px;
+            margin-top: 0px;
+            padding: 5px;
+            border: 1px solid #AAAAAA;
+            border-radius: 5px;
+            list-style: none;
+
+            > legend.result-header {
+                margin-top: 10px;
+            }
+            > li {
+                display: flex;
+                height: 30px;
+                border: 1px solid #929292;
+                border-radius: 5px;
+                margin-top: 2px;
+                margin-bottom: 2px;
+                color: var(--text);
+            }
+            > li:hover {
+                background-color: var(--button-hover);
+                outline: 1px solid #929292;
+            }
+        }
+    }
+}
+
+.dex-info.species {
+    .info {
+        .sprite {
+            float: right;
+            width: 150px;
+        }
+        .types {
+            display: block;
+            height: 28px;
+            margin-left: 12px;
+            margin-bottom: 32px;
+            
+            img {
+                width: 64px;
+            }
+        }
+        .abilities, .genderRatio, .catchRate, .weight, .heldItems, .evos, .stats {
+            display: block;
+            margin-top: 16px;
+            margin-left: 12px;
+            font-size: 12pt;
+    
+            .catchRate-hint, .evo-method {
+                font-size: 10pt;
+            }
+            .heldItem {
+                display: block;
+                font-size: 11pt;
+            }
+            .evos-table {
+                margin-left: -2px;
+                user-select: none;
+
+                span {
+                    display: block;
+                    height: 32px;
+                    margin-right: 4px;
+                }
+                img {
+                    transform: translate(0px, -8px);
+                    width: 32px;
+                    height: 32px;
+                }
+                td.arrow {
+                    transform: translate(0px, -6px);
+                }
+                span.arrow {
+                    transform: translate(0px, 2px);
+                }
+            }
+            .stat-table {
+                font-size: 11pt;
+                border-collapse: collapse;
+
+                tr {
+                    height: 22px;
+                }
+                th {
+                    font-size: 11pt;
+                    text-align: right;
+                }
+                td {
+                    text-align: right;
+                    width: 40px;
+                    
+                    .bar {
+                        display: block;
+                        width: 255px;
+                        height: 10px;
+                        border-radius: 3px;
+                    }
+                }
+                .number {
+                    padding-right: 6px;
+                }
+                tfoot {
+                    > tr {
+                        > * {
+                            border-top: 1px solid #AAAAAA;
+                            font-weight: normal;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .list {
+        .results {
+            .species-learnset {
+                .data {
+                    width: 60px;
+                    padding-top: 6px;
+                    text-align: center;
+                    
+                    img {
+                        transform: translate(0px, -3px);
+                        width: 24px;
+                    }
+                }
+                .name {
+                    width: 140px;
+                    padding-top: 6px;
+                    padding-left: 5px;
+                    border-left: 1px solid #929292;
+                }
+                .type, .category {
+                    width: 32px;
+
+                    img {
+                        transform: translate(0px, 6px);
+                    }
+                }
+                .basePower {
+                    width: 22px;
+                    padding-top: 8px;
+                    padding-left: 4px;
+                    font-size: 8pt;
+                    text-align: center;
+                }
+                .accuracy {
+                    width: 34px;
+                    padding-top: 8px;
+                    padding-left: 4px;
+                    font-size: 8pt;
+                    text-align: center;
+                }
+                .powerPoints {
+                    width: 22px;
+                    padding-top: 2px;
+                    padding-left: 4px;
+                    font-size: 8pt;
+                    text-align: center;
+                }
+            }
+            .species-location {
+                .data {
+                    width: 50px;
+                    min-width: 50px;
+                    padding-top: 6px;
+                    text-align: center;
+                    
+                    img {
+                        transform: translate(0px, -3px);
+                    }
+                }
+                .name {
+                    width: 185px;
+                    min-width: 185px;
+                    padding-top: 6px;
+                    padding-left: 5px;
+                    border-left: 1px solid #929292;
+                }
+                .level {
+                    width: 85px;
+                    min-width: 85px;
+                    padding-top: 6px;
+                    text-align: center;
+                    border-left: 1px solid #929292;
+                }
+                .method {
+                    width: -webkit-fill-available;
+                    justify-content: center;
+                    display: grid;
+                    padding-top: 7px;
+                    border-left: 1px solid #929292;
+
+                    img {
+                        width: 16px;
+                    }
+                }
+            }
+            .species-location.dupe {
+                background-color: rgba(255, 0, 0, 0.144);
+            }
+        }
+    }
+}
+
+.dex-info.move {
+    .info {
+        .type-category {
+            display: block;
+            height: 28px;
+            margin-left: 12px;
+            margin-bottom: 32px;
+            
+            img {
+                width: 64px;
+            }
+        }
+        .basePower, .accuracy, .powerPoints, .priority, .description, .machine, .tutor {
+            display: block;
+            margin-top: 16px;
+            margin-left: 12px;
+            padding-right: 5px;
+            font-size: 12pt;
+        }
+        .flags {
+            display: block;
+            margin-top: 16px;
+            margin-left: 12px;
+            font-size: 8pt;
+
+            .contact, .punch, .sound {
+                display: block;
+            }
+        }
+    }
+    .list {
+        .results {
+            .move-learnset {
+                .data {
+                    width: 60px;
+                    padding-top: 6px;
+                    text-align: center;
+                    
+                    img {
+                        transform: translate(0px, -3px);
+                    }
+                }
+                .icon {
+                    width: 32px;
+                    padding-left: 3px;
+                    border-left: 1px solid #929292;
+
+                    img {
+                        transform: translate(0px, -4px);
+                    }
+                }
+                .name {
+                    width: 135px;
+                    padding-top: 6px;
+                    padding-left: 5px;
+                }
+                .method {
+                    padding-top: 6px;
+                    padding-left: 5px;
+                    border-left: 1px solid #929292;
+                }
+            }
+        }
+    }
+}
+
+.dex-info.location {
+    .info {
+        .description {
+            display: block;
+            margin-top: 16px;
+            margin-left: 12px;
+            padding-right: 5px;
+            font-size: 12pt;
+        }
+        .sublocations {
+            list-style: none;
+
+            li {
+                
+            }
+        }
+    }
+    .list {
+        .results {
+            .encounter-time-nav {
+                display: flex;
+                list-style: none;
+                justify-content: center;
+                padding: 0;
+
+                li {
+                    border: 1px solid #929292;
+                    padding: 5px;
+                    margin: 0px 5px;
+                    border-radius: 2px;
+                }
+                li.current-time {
+                    border-color: white ;
+                    border-width: 2px;
+                    font-weight: bold;
+                    padding: 4px;
+                }
+            }
+            .location-species {
+                .data {
+                    width: 50px;
+                    min-width: 50px;
+                    padding-top: 6px;
+                    text-align: center;
+                    
+                    img {
+                        transform: translate(0px, -3px);
+                    }
+                }
+                .icon {
+                    width: 32px;
+                    min-width: 32px;
+                    padding-left: 3px;
+                    border-left: 1px solid #929292;
+
+                    img {
+                        transform: translate(0px, -4px);
+                    }
+                }
+                .name {
+                    width: 135px;
+                    min-width: 135px;
+                    padding-top: 6px;
+                    padding-left: 5px;
+                }
+                .level {
+                    width: 100px;
+                    min-width: 100px;
+                    padding-top: 6px;
+                    text-align: center;
+                    border-left: 1px solid #929292;
+                }
+                .method {
+                    width: -webkit-fill-available;
+                    justify-content: center;
+                    display: grid;
+                    padding-top: 7px;
+                    border-left: 1px solid #929292;
+
+                    img {
+                        width: 16px;
+                    }
+                }
+            }
+            .location-species.dupe {
+                background-color: rgba(255, 0, 0, 0.144);
+            }
+        }
+    }
+}
+
+.dex-info.item {
+    .info {
+        .sprite {
+            float: right;
+            width: 150px;
+        }
+        .description {
+            display: block;
+            width: 318px;
+            margin-top: 16px;
+            margin-left: 12px;
+            font-size: 12pt;
+        }
+        .move {
+            display: block;
+            margin-top: 16px;
+            margin-left: 12px;
+            font-size: 12pt;
+        }
+    }
+    .list {
+        .results {
+            .item-heldby {
+                .data {
+                    width: 50px;
+                    padding-top: 6px;
+                    text-align: center;
+                }
+                .icon {
+                    width: 32px;
+                    padding-left: 3px;
+                    border-left: 1px solid #929292;
+
+                    img {
+                        transform: translate(0px, -4px);
+                    }
+                }
+                .name {
+                    width: 125px;
+                    padding-top: 6px;
+                    padding-left: 5px;
+                }
+                .types {
+                    width: 64px;
+                    
+                    img {
+                        transform: translate(0px, 6px);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.dex-info.ability {
+    .info {
+        .battle-desc, .overworld-desc {
+            display: block;
+            margin-top: 16px;
+            margin-left: 12px;
+            padding-right: 5px;
+            font-size: 12pt;
+        }
+    }
+    .list {
+        .results {
+            .ability-pokemon {
+                .data {
+                    width: 30px;
+                    padding-top: 6px;
+                    text-align: center;
+                }
+                .icon {
+                    width: 32px;
+                    padding-left: 3px;
+                    border-left: 1px solid #929292;
+
+                    img {
+                        transform: translate(0px, -4px);
+                    }
+                }
+                .name {
+                    width: 150px;
+                    padding-top: 6px;
+                    padding-left: 5px;
+                }
+                .types {
+                    width: 64px;
+                    
+                    img {
+                        transform: translate(0px, 6px);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.dex-info.type {
+    .info {
+        .type-icon {
+            display: block;
+            margin: 16px 12px;
+            height: 32px;
+        }
+        .weak, .resist, .immune {
+            display: block;
+            margin-top: 16px;
+            margin-left: 12px;
+            font-size: 12pt;
+        }
+    }
+    .list {
+        .results {
+            .type-pokemon {
+                .data {
+                    width: 30px;
+                    padding-top: 6px;
+                    text-align: center;
+                }
+                .icon {
+                    width: 32px;
+                    padding-left: 3px;
+                    border-left: 1px solid #929292;
+
+                    img {
+                        transform: translate(0px, -4px);
+                    }
+                }
+                .name {
+                    width: 125px;
+                    padding-top: 6px;
+                    padding-left: 5px;
+                }
+                .types {
+                    width: 64px;
+                    
+                    img {
+                        transform: translate(0px, 6px);
+                    }
+                }
+            }
+            .type-move {
+                .name {
+                    width: 150px;
+                    padding-top: 6px;
+                    padding-left: 5px;
+                }
+                .type, .category {
+                    width: 32px;
+                    img {
+                        transform: translate(0px, 6px);
+                    }
+                }
+                .basePower {
+                    width: 22px;
+                    padding-top: 8px;
+                    padding-left: 15px;
+                    font-size: 8pt;
+                    text-align: center;
+                }
+                .accuracy {
+                    width: 34px;
+                    padding-top: 8px;
+                    padding-left: 15px;
+                    font-size: 8pt;
+                    text-align: center;
+                }
+                .powerPoints {
+                    width: 22px;
+                    padding-top: 2px;
+                    padding-left: 15px;
+                    font-size: 8pt;
+                    text-align: center;
+                }
+            }
+        }
+    }
+}
+
+.dex-info.category {
+    .info {
+        .category-icon {
+            display: block;
+            margin: 16px 12px;
+            height: 32px;
+        }
+    }
+    .list {
+        .results {
+            .category-move {
+                .name {
+                    width: 150px;
+                    padding-top: 6px;
+                    padding-left: 5px;
+                }
+                .type, .category {
+                    width: 32px;
+                    img {
+                        transform: translate(0px, 6px);
+                    }
+                }
+                .basePower {
+                    width: 22px;
+                    padding-top: 8px;
+                    padding-left: 15px;
+                    font-size: 8pt;
+                    text-align: center;
+                }
+                .accuracy {
+                    width: 34px;
+                    padding-top: 8px;
+                    padding-left: 15px;
+                    font-size: 8pt;
+                    text-align: center;
+                }
+                .powerPoints {
+                    width: 22px;
+                    padding-top: 2px;
+                    padding-left: 15px;
+                    font-size: 8pt;
+                    text-align: center;
+                }
+            }
+        }
+    }
+}
+
+.dex-info.nature {
+    .info {
+        .description {
+            display: block;
+            margin-top: 16px;
+            margin-left: 12px;
+            padding-right: 5px;
+            font-size: 12pt;
+        }
+    }
+    .list {
+        display: none;
+    }
+}
+
+[data-target]:hover {
+    cursor: pointer;
+    color: cornflowerblue;
+}

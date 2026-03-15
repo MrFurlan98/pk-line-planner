@@ -1,0 +1,22 @@
+.settings-container {
+    width: 500px;
+    float: none;
+    margin: auto;
+
+    text-align: center;
+
+    .btn {
+        margin-top: 5px;
+    }
+    .label {
+        margin: 0px;
+        font-weight: bold;
+    }
+
+    #dupes {
+        min-width: 324px;
+        min-height: 120px;
+        resize: vertical;
+        margin-top: 5px;
+    }
+}
