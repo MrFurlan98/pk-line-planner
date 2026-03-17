@@ -7,11 +7,16 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.2";
+const VERSION = "1.2.1";
 const CHANGELOG = `
+- Added .dsv save file import support.
+- Updated some old data.
+- Fixed some issues that can cause save files to fail to import.
+- Fixed an issue with the calc not recognizing the "Link Trade" met location.
+
 NOTICE: We have identified some unexpected in-game issues caused by the Lua Script. Please do not use it until further notice.
 
-We're live! Make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
+If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n");
 
 // update version
