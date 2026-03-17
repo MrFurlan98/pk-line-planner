@@ -128,7 +128,15 @@ function placeBsBtn() {
 		var largeBlock1 = data.slice(0x0CF2C, 0x1F110);
 		var largeBlock2 = data.slice(0x4CF2C, 0x5F110);
 
-		var smallBlock = readUInt32(smallBlock2, -16) > readUInt32(smallBlock1, -16) ? smallBlock2 : smallBlock1;
+		var smallBlock;
+
+		if (readUInt32(smallBlock1, -8) !== 0x20060623 && readUInt32(smallBlock2, -8) !== 0x20060623) {
+			alert("The selected save file was not initialized. Make sure to save in-game, export your save file again, and upload the new save file instead.");
+			return;
+		}
+		if (readUInt32(smallBlock1, -8) !== 0x20060623) smallBlock = smallBlock2;
+		else smallBlock = readUInt32(smallBlock2, -16) > readUInt32(smallBlock1, -16) ? smallBlock2 : smallBlock1;
+
 		var largeBlock = readUInt32(smallBlock, -20) == readUInt32(largeBlock1, -20) ? largeBlock1 : largeBlock2;
 
 		var paste = "";
