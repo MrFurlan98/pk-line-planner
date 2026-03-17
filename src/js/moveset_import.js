@@ -3,7 +3,7 @@ function placeBsBtn() {
 	$("#import-1_wrapper").append(importBtn);
 	var syncBtn = "<button id='sync' class='bs-btn bs-btn-default'>Sync</button>";
 	// $("#import-1_wrapper").append(syncBtn);
-	var uploadBtn = "<input type='file' name='saveFile' id='saveFile' accept='.sav' hidden /><button id='upload' class='bs-btn bs-btn-default'>Upload Save</button>";
+	var uploadBtn = "<input type='file' name='saveFile' id='saveFile' accept='.sav, .dsv' hidden /><button id='upload' class='bs-btn bs-btn-default'>Upload Save</button>";
 	$("#import-1_wrapper").append(uploadBtn);
 
 	$("#import.bs-btn").click(function () {
