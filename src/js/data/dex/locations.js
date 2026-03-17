@@ -3110,8 +3110,9 @@ const LOCATIONS = {
             {'species': 'wurmple', 'chance': 16, 'minLevel': 10, 'maxLevel': 10, 'method': 'honey'},
             {'species': 'weedle', 'chance': 16, 'minLevel': 10, 'maxLevel': 10, 'method': 'honey'},
             {'species': 'combee', 'chance': 16, 'minLevel': 10, 'maxLevel': 10, 'method': 'honey'},
-            {'species': 'wormadam', 'chance': 50, 'minLevel': 15, 'maxLevel': 15, 'method': 'honeylocal'},
-            {'species': 'mothim', 'chance': 50, 'minLevel': 15, 'maxLevel': 15, 'method': 'honeylocal'}
+            {'species': 'burmy', 'chance': 33, 'minLevel': 15, 'maxLevel': 15, 'method': 'honeylocal'},
+            {'species': 'wormadam', 'chance': 33, 'minLevel': 16, 'maxLevel': 16, 'method': 'honeylocal'},
+            {'species': 'mothim', 'chance': 33, 'minLevel': 15, 'maxLevel': 15, 'method': 'honeylocal'}
         ],
         metLocationId: 58,
         search: true,
