@@ -998,6 +998,15 @@ const LOCATIONS = {
         metLocationId: 6,
         search: true,
     },
+    poketchco: {
+        id: "poketchco",
+        name: "Pokétch Co.",
+        coords: [],
+        sublocations: [],
+        encounters: [],
+        metLocationId: 91,
+        search: true,
+    },
     route204north: {
         id: "route204north",
         name: "Route 204 (North)",
