@@ -183,6 +183,7 @@ th {
     font-size: 1.5em;
     margin: 0.5em 1em 0.5em 2em;
     color: red;
+    cursor: pointer;
 }
 .big-text {
     text-align: left;
