@@ -399,6 +399,12 @@ export function calculateBasePowerDPP(
       desc.moveBP = basePower;
     }
     break;
+  case 'Smelling Salts':
+    if (defender.hasStatus('par')) {
+      basePower *= 2;
+      desc.moveBP = basePower;
+    }
+    break;
   case 'Nature Power':
     move.category = 'Special';
     move.secondaries = true;
@@ -412,13 +418,22 @@ export function calculateBasePowerDPP(
     break; */
   case 'Triple Kick':
   case 'Psywave':
-  case 'Fury Cutter':
+  // case 'Fury Cutter':
     basePower = hit * 10;
     desc.moveBP = move.hits === 2 ? 30 : move.hits === 3 ? 60 : 10;
     break;
   case 'Weather Ball':
     basePower = move.bp * (field.weather ? 2 : 1);
     desc.moveBP = basePower;
+    break;
+    // 30 -> 50 -> 70
+  case 'Fury Cutter':
+    basePower = 10 + hit * 20;
+    desc.moveBP = move.hits === 2 ? 80 : move.hits === 3 ? 150 : 30;
+    break;
+  case 'Triple Axel':
+    basePower = 20 + hit * 20;
+    desc.moveBP = move.hits === 2 ? 100 : move.hits === 3 ? 180 : 40;
     break;
   default:
     basePower = move.bp;
