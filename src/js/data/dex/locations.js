@@ -7437,4 +7437,13 @@ const LOCATIONS = {
         metLocationId: 15,
         search: true,
     },
+    linktrade: {
+        id: "linktrade",
+        name: "Link Trade",
+        coords: [],
+        sublocations: [],
+        encounters: [],
+        metLocationId: -1,
+        search: false,
+    },
 };
