@@ -671,6 +671,7 @@
                     <div class="tag-partner hide">
                         <legend align="center">Tag Partner</legend>
                         <div id="tag-partner" class="mon-container"></div>
+                        <div id="ai-flags-partner" class="ai-flags-box hide"></div>
                     </div>
                     <hr />
                     <input class="teambox-searchbar" type="text" placeholder="Search...">
@@ -1410,9 +1411,11 @@
                     <legend align="center">Enemy</legend>
                     <legend align="center">Team</legend>
                     <div id="enemy" class="mon-container"></div>
+                    <div id="ai-flags-team" class="ai-flags-box hide"></div>
                     <div class="enemy-tag hide">
                         <legend align="center">Tag Partner</legend>
                         <div id="enemy-tag" class="mon-container"></div>
+                        <div id="ai-flags-tag" class="ai-flags-box hide"></div>
                     </div>
                     <hr />
                     <button id="previous-trainer" disabled>Previous Trainer</button>
@@ -1420,7 +1423,7 @@
                     <button id="reset-trainer">Reset</button>
                     <div class="switch-ai hide">
                         <hr />
-                        <legend align="center">Experience Dropped</legend>
+                        <legend align="center">Switch-In Guide</legend>
                         <div class="switch-ai-container"></div>
                     </div>
                 </fieldset>
@@ -1445,6 +1448,7 @@
         <script type="text/javascript" src="./calc/data/species.js?"></script>
         <script type="text/javascript" src="./js/data/flags.js?"></script>
         <script type="text/javascript" src="./js/data/party_order.js?"></script>
+        <script type="text/javascript" src="./js/data/trainer_flags.js"></script>
         <script type="text/javascript" src="./js/data/sets.js?"></script>
         <script type="text/javascript" src="./calc/data/types.js?"></script>
         <script type="text/javascript" src="./calc/data/natures.js?"></script>
@@ -1570,6 +1574,11 @@
                 <div hidden id="selectDupeTrackerInstruction">Enable the duplicate tracker?</div>
                 <input class="visually-hidden" type="checkbox" id="dupeTracker" checked="checked" />
                 <label class="btn btn-xxxwide" for="dupeTracker">Dupe Tracker</label>
+            </span>
+            <span aria-labelledby="selectAIFlagsInstruction" role="checkbox" title="Show AI flags below trainer parties?">
+                <div hidden id="selectAIFlagsInstruction">Show AI flags below enemy trainer parties?</div>
+                <input class="visually-hidden" type="checkbox" id="showAIFlags" checked="checked" />
+                <label class="btn btn-xxxwide" for="showAIFlags">AI Flags</label>
             </span>
             <hr />
             <p class="label" align="center">Additional Dupes</p>

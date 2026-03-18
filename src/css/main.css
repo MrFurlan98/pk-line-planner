@@ -602,13 +602,11 @@ table.field {
             display: inline-block;
             width: 60%;
             margin-left: 4px;
-            display: none; /* Temp, until switch AI is in */
         }
         .xp {
             display: inline-block;
             width: 20%;
             text-align: right;
-            text-align: left; /* Temp, until switch AI is in */
         }
     }
     .switching-from.dead {
@@ -699,6 +697,39 @@ table.field {
 .extraSetItems,
 .extraSetMoves {
     width: 100%;
+}
+.ai-flags-box {
+    margin: 4px 0 2px 0;
+    padding: 4px 7px;
+    border: 1px solid #888;
+    border-radius: 3px;
+    font-size: 0.8em;
+    line-height: 1.6;
+}
+.ai-flags-box .ai-flags-label {
+    font-weight: bold;
+    margin-bottom: 2px;
+    font-size: 0.95em;
+    opacity: 0.75;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.ai-flags-box .ai-flag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px 6px;
+}
+.ai-flag-item {
+    padding: 1px 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+}
+.ai-flag-item.flag-on {
+    background: #2a6496;
+    color: #fff;
+}
+.ai-flag-item.flag-off {
+    opacity: 0.35;
 }
 
 .flex-parent {

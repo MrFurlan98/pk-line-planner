@@ -2,6 +2,7 @@ SETTINGS = {
     gender: "Male",
     starter: "Turtwig",
     dupeTracker: true,
+    showAIFlags: true,
     dupes: []
 };
 
@@ -22,6 +23,7 @@ $(document).ready(function() {
     $(`#${SETTINGS.starter.toLowerCase()}:radio[name='starter']`).prop("checked", true).change();
     $(`#${prefersDarkTheme ? "dark" : "light"}:radio[name='theme']`).prop("checked", true).change();
     $(`#dupeTracker`).prop("checked", SETTINGS.dupeTracker).change();
+    $(`#showAIFlags`).prop("checked", SETTINGS.showAIFlags).change();
     $("#dupes").val(SETTINGS.dupes.join("\n")).change().prop("disabled", !SETTINGS.dupeTracker);
 
     $("input:radio[name='gender']").change(function () {
@@ -40,6 +42,16 @@ $(document).ready(function() {
     $("input#dupeTracker").change(function () {
     	SETTINGS.dupeTracker = $(this).prop("checked");
     	$("#dupes").prop("disabled", !SETTINGS.dupeTracker);
+        saveSettings();
+    });
+    $("input#showAIFlags").change(function () {
+        SETTINGS.showAIFlags = $(this).prop("checked");
+        // Show or hide all existing flag boxes immediately
+        if (SETTINGS.showAIFlags) {
+            $(".ai-flags-box[data-has-flags='true']").removeClass("hide");
+        } else {
+            $(".ai-flags-box").addClass("hide");
+        }
         saveSettings();
     });
     $("textarea#dupes").change(function () {
