@@ -232,7 +232,7 @@
                 width: 64px;
             }
         }
-        .abilities, .genderRatio, .catchRate, .weight, .heldItems, .evos, .stats {
+        .abilities, .genderRatio, .catchRate, .weight, .heldItems, .evos, .stats, .formes {
             display: block;
             margin-top: 16px;
             margin-left: 12px;
@@ -299,6 +299,17 @@
                         }
                     }
                 }
+            }
+            .forme {
+                display: block;
+                margin-top: 5px;
+                
+                img {
+                    transform: translate(0px, -8px);
+                }
+            }
+            .forme:nth-child(1) {
+                margin-top: 10px;
             }
         }
     }

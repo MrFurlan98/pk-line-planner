@@ -146,6 +146,11 @@ function loadDexEntry(entryID) {
             }
             statTable += `<tfoot><tr><th>BST</th><td class="number">${total}</td><td></td></tr></tfoot>`;
             statTable += `</table>`;
+            var formes = "";
+            var baseSpecies = species.baseSpecies ? SPECIES[species.baseSpecies] : species;
+            if (baseSpecies.formes.length) {
+                formes = baseSpecies.formes.map(x => `<span class="forme" data-target="species/${x}"><img src="/img/dex/icon/species/${x}.png">${x == species.id ? `<b>${SPECIES[x].name}</b>` : SPECIES[x].name}</span>`).join("");
+            }
             var html = `
             <div class="info">
                 <img src="img/dex/large/species/${species.id}.png" class="sprite">
@@ -158,6 +163,7 @@ function loadDexEntry(entryID) {
                 ${Object.keys(species.heldItems).length ? `<span class="heldItems">Held Items: ${heldItems.map(x => `<span class="heldItem"><span class="itemName" data-target="item/${x.item.id}"><img src="/img/dex/icon/items/${x.item.id}.png">${x.item.name}</span><span class="itemChance"> (${x.chance}%)</span></span>`).join("")}</span>` : ``}
                 <span class="evos"><table class="evos-table"><tbody><tr>${evos}</tr></tbody></table><span class="evo-method">${evoMethod}</span></span>
                 <span class="stats">Base stats: ${statTable}</span>
+                ${formes ? `<span class="formes">Formes:${formes}</span>` : ""}
             </div>
             <div class="list">
                 <ul class="list-nav">
