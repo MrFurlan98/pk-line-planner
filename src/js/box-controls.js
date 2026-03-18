@@ -74,7 +74,7 @@ function reloadEncounters() {
                         <span class="stats">${!Object.values(evs).every(x => x == 0) ? "EVs: " + statsEV : ""}</span>
                         <span class="item">${item ? `@ <span data-target="item/${item.id}"><img src="/img/dex/icon/items/${item.id}.png"> ${item.name}</span>` : ``}</span>
                         <span class="ability">Ability: <span data-target="ability/${ability.id}">${ability.name}</span></span>
-                        <span class="location">${location ? `Met location: <span${location.id !== "linktrade" ? ' data-target="location/${location.id}"' : ""}>${location.name}</span>` : ""}</span>
+                        <span class="location">${location ? `Met location: <span${location.id !== "linktrade" ? ` data-target="location/${location.id}"` : ""}>${location.name}</span>` : ""}</span>
                     </span>
                     <span class="moves">
                         <table>
