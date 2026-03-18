@@ -118,6 +118,7 @@ function performCalculations() {
 	$("#resultHeaderL").text(p1.name + "'s Moves (select one to show detailed results)");
 	$("#resultHeaderR").text(p2.name + "'s Moves (select one to show detailed results)");
 	applyIconColors();
+	calcExpDropped();
 }
 
 $(".result-move").change(function () {
