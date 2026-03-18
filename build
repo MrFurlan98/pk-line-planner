@@ -7,9 +7,10 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.2.5";
+const VERSION = "1.3";
 const CHANGELOG = `
-Bug fixes.
+- The calc now shows the amount of experience dropped from trainer Pokémon.
+- The dex now shows the alternate formes of Pokémon that have them.
 
 NOTICE: We have identified some unexpected in-game issues caused by the Lua Script. Please do not use it until further notice.
 
