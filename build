@@ -7,12 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.2.4";
+const VERSION = "1.2.5";
 const CHANGELOG = `
-- Added .dsv save file import support.
-- Updated some old data.
-- Fixed some issues that can cause save files to fail to import.
-- Fixed an issue with the calc not recognizing the "Link Trade" and "Pokétch Co." met locations.
+Bug fixes.
 
 NOTICE: We have identified some unexpected in-game issues caused by the Lua Script. Please do not use it until further notice.
 
