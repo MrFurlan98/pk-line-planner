@@ -698,6 +698,9 @@ $(".set-selector").change(function () {
 			});
 			$(".switch-ai .pokemon-icon").on({
 				click: function() {
+					// if ($(this).closest(".switching-from").hasClass("dead")) $(this).closest(".switching-from").removeClass("dead");
+					// else $(this).closest(".switching-from").addClass("dead");
+					// Temp, until switch AI is in
 					if ($(this).closest(".switching-from").hasClass("dead")) $(this).closest(".switching-from").removeClass("dead");
 					else $(this).closest(".switching-from").addClass("dead");
 				},
@@ -1793,6 +1796,35 @@ const TYPE_MATCHUPS = {
     "Normal-Ghost": 0.0,
     "Fighting-Ghost": 0.0
 };
+function calcExpDropped() {
+		$(".switch-ai").hide();
+		var party = getTrainerPokemon(CURRENT_TRAINER, true);
+		if (!party) {
+			return;
+		}
+		var setNames = getTrainerPokemon(CURRENT_TRAINER);
+	
+		var partyMons = [];
+		for (var i in party) {
+			partyMons.push(setdex[party[i].split(" (")[0]][setNames[i].substring(setNames[i].indexOf("(") + 1, setNames[i].lastIndexOf(")"))]);
+			try {
+				partyMons[i].species = party[i].split(" (")[0];
+				partyMons[i].setName = setNames[i];
+				partyMons[i].name = party[i];
+			} catch (ex) {
+				$(".trainer-poke-switch-list").html("An error has occured.");
+				return;
+			}
+		}
+	
+		if (partyMons.length) $(".switch-ai").show();
+	
+		for (var i in partyMons) {
+			var mon = partyMons[i];
+			var xp = Math.floor(Math.floor(pokedex[mon.species].expYield * mon.level / 7) * 1.5);
+			$(`.switching-from[data-set='${mon.setName}'] .xp`).html(`+${xp}`).attr("title", "The amount of experience this Pokémon will drop.");
+		}
+	}
 
 function applyIconColors() {
 	$(".team-box .pokemon-icon").removeClass("speed-faster speed-slower speed-tie damage-ol damage-ol-pr damage-ol-or damage-pl damage-pl-pr damage-pl-or damage-or damage-pr");
@@ -2038,7 +2070,7 @@ $(document).ready(function () {
 
 	var version = localStorage.version;
 	if (version != VERSION) {
-		alert("Changelog:\n\n" + CHANGELOG);
+		alert("Changelog:\n" + CHANGELOG);
 		localStorage.version = VERSION;
 	}
 
