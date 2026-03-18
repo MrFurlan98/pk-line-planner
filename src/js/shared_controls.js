@@ -1990,7 +1990,7 @@ $(document).ready(function () {
 
 	var version = localStorage.version;
 	if (version != VERSION) {
-		alert("Changelog:\n\n" + CHANGELOG);
+		alert("Changelog:\n" + CHANGELOG);
 		localStorage.version = VERSION;
 	}
 
