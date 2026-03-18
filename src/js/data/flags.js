@@ -159,6 +159,8 @@ const FLAGS_PK = {
             "Galactic Themisto": {},
             "Galactic Io #3": {},
             "Commander Jupiter #2": {},
+            // Celestic Town
+            "Galactic Mercury #3": {},
             // Route 222
             "Belle & Pa Scout & Atticus": {},
             "Interviewers Barbara & Walter": {},
