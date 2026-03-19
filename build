@@ -7,7 +7,7 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.4";
+const VERSION = "1.4.1";
 const CHANGELOG = `
 - Added trainer AI flags (thanks, Tennis!)
 
