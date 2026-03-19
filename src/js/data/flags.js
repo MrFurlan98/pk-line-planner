@@ -246,8 +246,8 @@ const FLAGS_PK = {
                 partner: "Pokémon Trainer Riley @ Iron Island"
             },
             {
-                enemy1: "Galactic Naid",
-                enemy2: "Galactic Nereid",
+                enemy1: "Galactic Sao",
+                enemy2: "Galactic Neso #1",
                 partner: "Pokémon Trainer Riley @ Iron Island"
             },
             {
@@ -256,13 +256,13 @@ const FLAGS_PK = {
                 partner: "Pokémon Trainer Riley @ Iron Island"
             },
             {
-                enemy1: "Galactic Sao",
-                enemy2: "Galactic Neso #1",
+                enemy1: "Galactic Naid",
+                enemy2: "Galactic Nereid",
                 partner: "Pokémon Trainer Riley @ Iron Island"
             },
             {
                 enemy1: "Galactic Larissa #1",
-                enemy2: "Galactic Laomedia #1",
+                enemy2: "Galactic Laomedeia #1",
                 partner: "Pokémon Trainer Riley @ Iron Island"
             },
             {
@@ -483,7 +483,7 @@ const FLAGS_PK = {
         // Coronet Highlands
         "Pokémon Trainer Cheryl @ Coronet Highlands",
         "Galactic Squad Perdita #2",
-        "Galactic Laomedia #2",
+        "Galactic Laomedeia #2",
         "Pokémon Trainer Riley @ Coronet Highlands",
         "Pokémon Trainer Marley @ Coronet Highlands",
         "Pokémon Trainer Mira @ Spear Pillar",
@@ -667,7 +667,7 @@ const FLAGS_PK = {
             "Galactic Hippocamp #1",
             "Galactic Psamanthe",
             "Galactic Larissa #1",
-            "Galactic Laomedia #1",
+            "Galactic Laomedeia #1",
             // Canalave Gym
             "Idol Skylar",
             // Lake Verity
@@ -806,7 +806,7 @@ const FLAGS_PK = {
             "Guitarist Preston",
             // Coronet Highlands
             "Galactic Proteus #2",
-            "Galactic Laomedia #2",
+            "Galactic Laomedeia #2",
             "Galactic Larissa #2",
             "Galactic Terra #5",
             "Galactic Luna #5"
