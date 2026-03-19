@@ -1978,9 +1978,7 @@ function renderFlagsBox(box, trainerName, label) {
 		return;
 	}
 
-	var flagOrder = ["Basic", "Expert", "EvaluateAttack", "DamagePriority",
-	                 "CheckHP", "Setup", "BatonPass", "Weather",
-	                 "Harassment", "TagStrategy", "Risky"];
+	var flagOrder = ["Basic", "EvaluateAttack", "Expert", "Setup", "Risky", "DamagePriority", "BatonPass", "TagStrategy", "CheckHP", "Weather", "Harassment"];
 
 	var items = "";
 	for (var i = 0; i < flagOrder.length; i++) {
