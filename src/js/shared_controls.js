@@ -681,6 +681,7 @@ $(".set-selector").change(function () {
 			enemyContainer.html(enemyHtml);
 			enemyTagContainer.html(enemyTagHtml);
 			tagContainer.html(tagHtml);
+			updateAIFlags(CURRENT_TRAINER, tagBattle, doubleBattle);
 			var currentTrainerParty = getTrainerPokemon(CURRENT_TRAINER);
 			for (var i in currentTrainerParty) {
 				var mon = currentTrainerParty[i].substring(0, currentTrainerParty[i].indexOf(" ("));
@@ -700,6 +701,8 @@ $(".set-selector").change(function () {
 					// if ($(this).closest(".switching-from").hasClass("dead")) $(this).closest(".switching-from").removeClass("dead");
 					// else $(this).closest(".switching-from").addClass("dead");
 					// Temp, until switch AI is in
+					if ($(this).closest(".switching-from").hasClass("dead")) $(this).closest(".switching-from").removeClass("dead");
+					else $(this).closest(".switching-from").addClass("dead");
 				},
 				dragstart: function(e) {
 					e.preventDefault();
@@ -1239,6 +1242,7 @@ $(".gen").change(function () {
 	setdex = SETDEX[gen];
 	partyOrder = PARTY_ORDER_PK;
 	flags = FLAGS_PK;
+	aiFlags = TRAINER_AI_FLAGS_PK;
 	typeChart = calc.TYPE_CHART[gen];
 	moves = calc.MOVES[gen];
 	items = calc.ITEMS[gen];
@@ -1793,34 +1797,34 @@ const TYPE_MATCHUPS = {
     "Fighting-Ghost": 0.0
 };
 function calcExpDropped() {
-	$(".switch-ai").hide();
-	var party = getTrainerPokemon(CURRENT_TRAINER, true);
-	if (!party) {
-		return;
-	}
-	var setNames = getTrainerPokemon(CURRENT_TRAINER);
-
-	var partyMons = [];
-	for (var i in party) {
-		partyMons.push(setdex[party[i].split(" (")[0]][setNames[i].substring(setNames[i].indexOf("(") + 1, setNames[i].lastIndexOf(")"))]);
-		try {
-			partyMons[i].species = party[i].split(" (")[0];
-			partyMons[i].setName = setNames[i];
-			partyMons[i].name = party[i];
-		} catch (ex) {
-			$(".trainer-poke-switch-list").html("An error has occured.");
+		$(".switch-ai").hide();
+		var party = getTrainerPokemon(CURRENT_TRAINER, true);
+		if (!party) {
 			return;
 		}
+		var setNames = getTrainerPokemon(CURRENT_TRAINER);
+	
+		var partyMons = [];
+		for (var i in party) {
+			partyMons.push(setdex[party[i].split(" (")[0]][setNames[i].substring(setNames[i].indexOf("(") + 1, setNames[i].lastIndexOf(")"))]);
+			try {
+				partyMons[i].species = party[i].split(" (")[0];
+				partyMons[i].setName = setNames[i];
+				partyMons[i].name = party[i];
+			} catch (ex) {
+				$(".trainer-poke-switch-list").html("An error has occured.");
+				return;
+			}
+		}
+	
+		if (partyMons.length) $(".switch-ai").show();
+	
+		for (var i in partyMons) {
+			var mon = partyMons[i];
+			var xp = Math.floor(Math.floor(pokedex[mon.species].expYield * mon.level / 7) * 1.5);
+			$(`.switching-from[data-set='${mon.setName}'] .xp`).html(`+${xp}`).attr("title", "The amount of experience this Pokémon will drop.");
+		}
 	}
-
-	if (partyMons.length) $(".switch-ai").show();
-
-	for (var i in partyMons) {
-		var mon = partyMons[i];
-		var xp = Math.floor(Math.floor(pokedex[mon.species].expYield * mon.level / 7) * 1.5);
-		$(`.switching-from[data-set='${mon.setName}'] .xp`).html(`+${xp}`).attr("title", "The amount of experience this Pokémon will drop.");
-	}
-}
 
 function applyIconColors() {
 	$(".team-box .pokemon-icon").removeClass("speed-faster speed-slower speed-tie damage-ol damage-ol-pr damage-ol-or damage-pl damage-pl-pr damage-pl-or damage-or damage-pr");
@@ -1922,6 +1926,82 @@ function checkForUpdate() {
 	}).catch(() => {
 		clearInterval(updateChecker);
 	});
+}
+
+function updateAIFlags(trainer, tagBattle, doubleBattle) {
+	var teamBox    = $("#ai-flags-team");
+	var tagBox     = $("#ai-flags-tag");
+	var partnerBox = $("#ai-flags-partner");
+
+	// Determine which trainer names map to Team, enemy Tag Partner, and player Partner
+	var teamName    = trainer;
+	var tagName     = null;
+	var partnerName = null;
+
+	if (tagBattle) {
+		teamName    = tagBattle.enemy1;
+		tagName     = tagBattle.enemy2;
+		partnerName = tagBattle.partner;
+	} else if (doubleBattle) {
+		teamName = doubleBattle.enemy1;
+		tagName  = doubleBattle.enemy2;
+	}
+
+	teamName = sanitizeTrainerName(teamName);
+	if (tagName)     tagName     = sanitizeTrainerName(tagName);
+	if (partnerName) partnerName = sanitizeTrainerName(partnerName);
+
+	renderFlagsBox(teamBox, teamName, "Team AI Flags");
+
+	// Render enemy Tag Partner flags only when there is one
+	if (tagName) {
+		renderFlagsBox(tagBox, tagName, "Tag Partner AI Flags");
+		tagBox.removeClass("hide");
+	} else {
+		tagBox.addClass("hide").empty();
+	}
+
+	// Render player's Tag Partner flags only for tag battles
+	if (partnerName) {
+		renderFlagsBox(partnerBox, partnerName, "Partner AI Flags");
+	} else {
+		partnerBox.addClass("hide").empty();
+	}
+}
+
+function renderFlagsBox(box, trainerName, label) {
+	var flags = (typeof aiFlags !== "undefined") && aiFlags && aiFlags[trainerName];
+
+	if (!flags) {
+		// No data — hide the box rather than show an empty/broken state
+		box.addClass("hide").removeAttr("data-has-flags").empty();
+		return;
+	}
+
+	var flagOrder = ["Basic", "Expert", "EvaluateAttack", "DamagePriority",
+	                 "CheckHP", "Setup", "BatonPass", "Weather",
+	                 "Harassment", "TagStrategy", "Risky"];
+
+	var items = "";
+	for (var i = 0; i < flagOrder.length; i++) {
+		var key = flagOrder[i];
+		var on  = flags[key] === 1;
+		items += '<span class="ai-flag-item ' + (on ? "flag-on" : "flag-off") + '" title="' + key + '">' + key + '</span>';
+	}
+
+	box.html(
+		'<div class="ai-flags-label">' + label + '</div>' +
+		'<div class="ai-flag-list">' + items + '</div>'
+	);
+	// Mark as populated so the settings toggle knows this box has real content
+	box.attr("data-has-flags", "true");
+	// Only show if the setting is enabled (default true if SETTINGS not yet loaded)
+	var showFlags = (typeof SETTINGS === "undefined") || SETTINGS.showAIFlags !== false;
+	if (showFlags) {
+		box.removeClass("hide");
+	} else {
+		box.addClass("hide");
+	}
 }
 
 $(document).ready(function () {
