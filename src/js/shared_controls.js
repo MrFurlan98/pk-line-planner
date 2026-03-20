@@ -754,12 +754,10 @@ $(".set-selector").change(function () {
 			var abilityFallback = (typeof pokemon.abilities !== "undefined") ? pokemon.abilities[0] : "";
 			setSelectValueIfValid(abilityObj, set.ability, abilityFallback);
 			setSelectValueIfValid(itemObj, set.item, "");
-			var setMoves = set.moves;
-			var moves = selectMovesFromRandomOptions(setMoves);
 			for (i = 0; i < 4; i++) {
 				moveObj = pokeObj.find(".move" + (i + 1) + " select.move-selector");
 				moveObj.attr('data-prev', moveObj.val());
-				setSelectValueIfValid(moveObj, moves[i], "(No Move)");
+				setSelectValueIfValid(moveObj, set.moves[i], "(No Move)");
 				moveObj.change();
 			}
 		} else {
