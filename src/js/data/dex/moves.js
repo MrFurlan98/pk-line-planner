@@ -9495,7 +9495,7 @@ const MOVES = {
         secondaryChance: 0,
         priority: 0,
         target: "normal",
-        effect: "Decreases the target's Evasion by 1 stage, and clears screens and hazards from both sides.",
+        effect: "Decreases the target's Evasion by 1 stage, and clears screens and hazards from the target's side.",
         hits: 1,
         flags: [],
         machine: -5,
