@@ -645,7 +645,7 @@ export function calculateDefenseDPP(
     desc.weather = field.weather;
   }
 
-  if (move.named('Explosion') || move.named('Self-Destruct') || move.named('Memento')) {
+  if (move.named('Explosion') || move.named('Self-Destruct')) {
     defense = Math.floor(defense * 0.5);
   }
 
