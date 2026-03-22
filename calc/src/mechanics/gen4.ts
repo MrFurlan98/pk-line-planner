@@ -294,7 +294,7 @@ export function calculateDPP(
     for (let times = 1; times < numAttacks; times++) {
       usedItems = checkMultihitBoost(gen, attacker, defender, move,
         field, desc, usedItems[0], usedItems[1]);
-      let newBasePower = calculateBasePowerDPP(gen, attacker, defender, move, field, desc);
+      let newBasePower = calculateBasePowerDPP(gen, attacker, defender, move, field, desc, times + 1);
       newBasePower = calculateBPModsDPP(attacker, defender, move, field, desc, newBasePower);
       const newAtk = calculateAttackDPP(gen, attacker, defender, move, field, desc, isCritical);
       let baseDamage = Math.floor(
@@ -416,7 +416,6 @@ export function calculateBasePowerDPP(
     basePower = Math.floor((defender.curHP() * 120) / defender.maxHP()) + 1;
     desc.moveBP = basePower;
     break; */
-  case 'Triple Kick':
   case 'Psywave':
   // case 'Fury Cutter':
     basePower = hit * 10;
@@ -427,12 +426,14 @@ export function calculateBasePowerDPP(
     desc.moveBP = basePower;
     break;
     // 30 -> 40 -> 50
+  case 'Triple Kick':
   case 'Fury Cutter':
     basePower = 20 + hit * 10;
     desc.moveBP = move.hits === 2 ? 70 : move.hits === 3 ? 120 : 30;
     break;
     // 40 -> 50 -> 60
   case 'Triple Axel':
+  case 'Rock Wrecker':
     basePower = 30 + hit * 10;
     desc.moveBP = move.hits === 2 ? 90 : move.hits === 3 ? 150 : 40;
     break;
