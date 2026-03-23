@@ -3,6 +3,7 @@ const SPECIES = {
         num: 0,
         id: "none",
         name: "-----",
+        abilities: [],
         learnset: [],
         available: true
     },
