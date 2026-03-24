@@ -40,7 +40,10 @@ const LOCATIONS = {
             {'species': 'buneary', 'chance': 4, 'minLevel': 4, 'maxLevel': 4, 'method': 'grass', 'time': 'night'},
             {'species': 'whismur', 'chance': 4, 'minLevel': 4, 'maxLevel': 4, 'method': 'grass', 'time': 'night'},
             {'species': 'mankey', 'chance': 1, 'minLevel': 4, 'maxLevel': 4, 'method': 'grass', 'time': 'night'},
-            {'species': 'bidoof', 'chance': 1, 'minLevel': 4, 'maxLevel': 4, 'method': 'grass', 'time': 'night'}
+            {'species': 'bidoof', 'chance': 1, 'minLevel': 4, 'maxLevel': 4, 'method': 'grass', 'time': 'night'},
+            {'species': 'turtwig', 'chance': 0, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'},
+            {'species': 'chimchar', 'chance': 0, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'},
+            {'species': 'piplup', 'chance': 0, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'}
         ],
         metLocationId: 16,
         search: true,
@@ -1003,7 +1006,11 @@ const LOCATIONS = {
         name: "Pokétch Co.",
         coords: [],
         sublocations: [],
-        encounters: [],
+        encounters: [
+            {'species': 'skitty', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'},
+            {'species': 'glameow', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'},
+            {'species': 'meowth', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'}
+        ],
         metLocationId: 91,
         search: true,
     },
@@ -1813,7 +1820,9 @@ const LOCATIONS = {
         name: "Hearthome City",
         coords: [[15, 17], [16, 17], [15, 18], [16, 18]],
         sublocations: [],
-        encounters: [],
+        encounters: [
+            {'species': 'eevee', 'chance': 100, 'minLevel': 20, 'maxLevel': 20, 'method': 'gift'}
+        ],
         metLocationId: 10,
         search: true,
     },
@@ -3458,6 +3467,18 @@ const LOCATIONS = {
         metLocationId: 7,
         search: true,
     },
+    canalavelibrary: {
+        id: "canalavelibrary",
+        name: "Canalave Library",
+        coords: [],
+        sublocations: [],
+        encounters: [
+            {'species': 'lunatone', 'chance': 50, 'minLevel': 40, 'maxLevel': 40, 'method': 'gift'},
+            {'species': 'solrock', 'chance': 50, 'minLevel': 40, 'maxLevel': 40, 'method': 'gift'}
+        ],
+        metLocationId: 103,
+        search: true,
+    },
     ironisland: {
         id: "ironisland",
         name: "Iron Island",
@@ -4621,7 +4642,8 @@ const LOCATIONS = {
             {'species': 'magikarp', 'chance': 4, 'minLevel': 2, 'maxLevel': 2, 'method': 'grass', 'time': 'night'},
             {'species': 'magikarp', 'chance': 4, 'minLevel': 70, 'maxLevel': 70, 'method': 'grass', 'time': 'night'},
             {'species': 'magikarp', 'chance': 1, 'minLevel': 1, 'maxLevel': 1, 'method': 'grass', 'time': 'night'},
-            {'species': 'magikarp', 'chance': 1, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'night'}
+            {'species': 'magikarp', 'chance': 1, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'night'},
+            {'species': 'magikarp', 'chance': 100, 'minLevel': 25, 'maxLevel': 25, 'method': 'gift'}
         ],
         metLocationId: -1,
         search: true,
@@ -6148,7 +6170,13 @@ const LOCATIONS = {
         name: "Galactic HQ",
         coords: [],
         sublocations: [],
-        encounters: [],
+        encounters: [
+            {'species': 'cacnea', 'chance': 20, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'gulpin', 'chance': 20, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'zigzagoon', 'chance': 20, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'drowzee', 'chance': 20, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'poochyena', 'chance': 20, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'}
+        ],
         metLocationId: 71,
         search: true,
     },

@@ -470,6 +470,10 @@ function loadDexEntry(entryID) {
                             }
                             dangerStyle += "); color: black;";
                         }
+                        if (["gift", "egg"].includes(encounter.method)) {
+                            danger = [];
+                            dangerStyle = "";
+                        }
                         var target = species.id !== "none" ? `species/${species.id}` : `location/${id}`;
                         $(".dex-info .results").append(`
                             <li class="location-species${dupe ? " dupe" : ""}" data-target="${target}"${encounter.time ? ` data-encounter-time="${encounter.time}"` : ``}>

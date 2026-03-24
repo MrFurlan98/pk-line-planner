@@ -35,6 +35,10 @@ const ENCOUNTER_METHODS = {
         id: "honeylocal",
         name: "Honey Tree (Local Table)"
     },
+    trade: {
+        id: "trade",
+        name: "Trade"
+    },
     gift: {
         id: "gift",
         name: "Gift"
