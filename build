@@ -7,10 +7,10 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.4.7";
+const VERSION = "1.4.8";
 const CHANGELOG = `
-- Fixed recoil moves.
-- Fixed an issue related to abilities in the Pokédex.
+- Added egg and gift encounters.
+- Fixed Fury Cutter and similar moves (current in-game behavior is incorrect and will be fixed soon, but this update matches it for accuracy).
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
