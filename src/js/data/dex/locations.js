@@ -1502,7 +1502,8 @@ const LOCATIONS = {
             {'species': 'spinarak', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
             {'species': 'aron', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
             {'species': 'bonsly', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
-            {'species': 'ledyba', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'}
+            {'species': 'ledyba', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
+            {'species': 'heracross', 'chance': 100, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'}
         ],
         metLocationId: 9,
         search: true,
@@ -2019,7 +2020,14 @@ const LOCATIONS = {
             {'species': 'ponyta', 'chance': 4, 'minLevel': 38, 'maxLevel': 38, 'method': 'grass', 'time': 'night'},
             {'species': 'zangoose', 'chance': 4, 'minLevel': 38, 'maxLevel': 38, 'method': 'grass', 'time': 'night'},
             {'species': 'miltank', 'chance': 1, 'minLevel': 38, 'maxLevel': 38, 'method': 'grass', 'time': 'night'},
-            {'species': 'miltank', 'chance': 1, 'minLevel': 38, 'maxLevel': 38, 'method': 'grass', 'time': 'night'}
+            {'species': 'miltank', 'chance': 1, 'minLevel': 38, 'maxLevel': 38, 'method': 'grass', 'time': 'night'},
+            {'species': 'growlithe', 'chance': 14, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'girafarig', 'chance': 14, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'mareep', 'chance': 14, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'miltank', 'chance': 14, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'spoink', 'chance': 14, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'ponyta', 'chance': 14, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'mankey', 'chance': 14, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'}
         ],
         metLocationId: 4,
         search: true,
@@ -2448,7 +2456,13 @@ const LOCATIONS = {
             {'species': 'rattata', 'chance': 4, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'night'},
             {'species': 'rattata', 'chance': 4, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'night'},
             {'species': 'rattata', 'chance': 1, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'night'},
-            {'species': 'raticate', 'chance': 1, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'night'}
+            {'species': 'raticate', 'chance': 1, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'night'},
+            {'species': 'krabby', 'chance': 16, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'corphish', 'chance': 16, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'cherubi', 'chance': 16, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'exeggcute', 'chance': 16, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'shuckle', 'chance': 16, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'feebas', 'chance': 16, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'}
         ],
         metLocationId: 110,
         search: true,
@@ -3586,7 +3600,8 @@ const LOCATIONS = {
             {'species': 'ditto', 'chance': 4, 'minLevel': 56, 'maxLevel': 56, 'method': 'grass', 'time': 'night'},
             {'species': 'sableye', 'chance': 4, 'minLevel': 56, 'maxLevel': 56, 'method': 'grass', 'time': 'night'},
             {'species': 'magneton', 'chance': 1, 'minLevel': 56, 'maxLevel': 56, 'method': 'grass', 'time': 'night'},
-            {'species': 'beldum', 'chance': 1, 'minLevel': 56, 'maxLevel': 56, 'method': 'grass', 'time': 'night'}
+            {'species': 'beldum', 'chance': 1, 'minLevel': 56, 'maxLevel': 56, 'method': 'grass', 'time': 'night'},
+            {'species': 'riolu', 'chance': 100, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'}
         ],
         metLocationId: -1,
         search: true,
@@ -6126,6 +6141,15 @@ const LOCATIONS = {
             {'species': 'lapras', 'chance': 1, 'minLevel': 45, 'maxLevel': 65, 'method': 'surf'}
         ],
         metLocationId: 78,
+        search: true,
+    },
+    galactichq: {
+        id: "galactichq",
+        name: "Galactic HQ",
+        coords: [],
+        sublocations: [],
+        encounters: [],
+        metLocationId: 71,
         search: true,
     },
     mtcoronet2f: {
