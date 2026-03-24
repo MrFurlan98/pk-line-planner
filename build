@@ -7,10 +7,11 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.4.8";
+const VERSION = "1.4.9";
 const CHANGELOG = `
 - Added egg and gift encounters.
 - Fixed Fury Cutter and similar moves (current in-game behavior is incorrect and will be fixed soon, but this update matches it for accuracy).
+- Fixed an issue where Nidoran would import as genderless.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
