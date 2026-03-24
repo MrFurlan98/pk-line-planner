@@ -425,17 +425,17 @@ export function calculateBasePowerDPP(
     basePower = move.bp * (field.weather ? 2 : 1);
     desc.moveBP = basePower;
     break;
-    // 30 -> 40 -> 50
+    // 30 -> 60 -> 90
   case 'Triple Kick':
   case 'Fury Cutter':
-    basePower = 20 + hit * 10;
-    desc.moveBP = move.hits === 2 ? 70 : move.hits === 3 ? 120 : 30;
+    basePower = hit * 30;
+    desc.moveBP = move.hits === 2 ? 90 : move.hits === 3 ? 180 : 30;
     break;
-    // 40 -> 50 -> 60
+    // 40 -> 80 -> 120
   case 'Triple Axel':
   case 'Rock Wrecker':
-    basePower = 30 + hit * 10;
-    desc.moveBP = move.hits === 2 ? 90 : move.hits === 3 ? 150 : 40;
+    basePower = hit * 40;
+    desc.moveBP = move.hits === 2 ? 120 : move.hits === 3 ? 240 : 40;
     break;
   default:
     basePower = move.bp;
