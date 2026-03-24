@@ -387,6 +387,8 @@ function addToDex(poke) {
 	}
 	dexObject.level = poke.level;
 	dexObject.gender = poke.gender;
+	if (poke.name == "Nidoran-F") dexObject.gender = "Female";
+	else if (poke.name == "Nidoran-M") dexObject.gender = "Male";
 	dexObject.evs = poke.evs;
 	dexObject.ivs = poke.ivs;
 	dexObject.moves = poke.moves;
