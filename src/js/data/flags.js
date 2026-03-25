@@ -793,17 +793,6 @@ const FLAGS_PK = {
             "Commander Jupiter #2",
             // Celestic Town
             "Galactic Boss Cyrus #1",
-            // Sunyshore Gym
-            "Pokéfan Liz",
-            "Pokéfan RJ",
-            "Clown Forrest",
-            "Poké Kid Maggie",
-            "Cowgirl Meghan",
-            "Worker Hugh",
-            "Waiter Reynolds",
-            "Psychic Destiny",
-            "Gambler Ace",
-            "Guitarist Preston",
             // Coronet Highlands
             "Galactic Proteus #2",
             "Galactic Laomedeia #2",
