@@ -59,13 +59,13 @@ function placeBsBtn() {
 
 			var pokemon = "";
 			var pid = readUInt32(array);
-			if (!pid) return "";
 			var shuffleKey = ((pid & 0x3E000) >> 0xD) % 24;
 			var blockA = array.slice(shuffle[shuffleKey][0]);
 			var blockB = array.slice(shuffle[shuffleKey][1]);
 			var blockC = array.slice(shuffle[shuffleKey][2]);
 			var blockD = array.slice(shuffle[shuffleKey][3]);
 			var speciesId = readUInt16(blockA);
+			if (!speciesId) return "";
 			var genderForme = blockB[0x18];
 			var species = Object.values(SPECIES).find(x => x.num == speciesId);
 			var forme = genderForme >> 3;
