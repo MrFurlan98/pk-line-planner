@@ -351,11 +351,11 @@ export function calculateBasePowerDPP(
       desc.moveBP = basePower;
     }
     break;
-  /* case 'Eruption':
+  // case 'Eruption':
   case 'Water Spout':
     basePower = Math.max(1, Math.floor((basePower * attacker.curHP()) / attacker.maxHP()));
     desc.moveBP = basePower;
-    break; */
+    break; 
   case 'Facade':
     if (attacker.hasStatus('par', 'psn', 'tox', 'brn')) {
       basePower = move.bp * 2;
