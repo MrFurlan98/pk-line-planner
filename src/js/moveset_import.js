@@ -319,7 +319,7 @@ function getStats(currentPoke, rows, offset) {
 		
 		currentLocation = rows[x] ? rows[x].trim().split(":") : '';
 		if (!currentPoke.location && currentLocation[0] == "Location") {
-			currentPoke.location = currentLocation[1].trim();
+			currentPoke.location = currentLocation[1].trim().replace(" (NPC)", "");
 		}
 
 		currentTeraType = rows[x] ? rows[x].trim().split(":") : '';
