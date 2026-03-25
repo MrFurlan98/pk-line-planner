@@ -645,7 +645,7 @@ const ABILITIES = {
         name: "Overgrow",
         calcName: "Overgrow",
         desc: {
-            battle: "Increases the power of <span data-target=\"type/grass\">Grass</span> type moves when the user's HP is equal to or lower than 30% of its maximum HP.",
+            battle: "Increases the power of <span data-target=\"type/grass\">Grass</span> type moves when the user's HP is equal to or lower than 33% of its maximum HP.",
             overworld: ""
         }
     },
@@ -655,7 +655,7 @@ const ABILITIES = {
         name: "Blaze",
         calcName: "Blaze",
         desc: {
-            battle: "Increases the power of <span data-target=\"type/fire\">Fire</span> type moves when the user's HP is equal to or lower than 30% of its maximum HP.",
+            battle: "Increases the power of <span data-target=\"type/fire\">Fire</span> type moves when the user's HP is equal to or lower than 33% of its maximum HP.",
             overworld: ""
         }
     },
@@ -665,7 +665,7 @@ const ABILITIES = {
         name: "Torrent",
         calcName: "Torrent",
         desc: {
-            battle: "Increases the power of <span data-target=\"type/water\">Water</span> type moves when the user's HP is equal to or lower than 30% of its maximum HP.",
+            battle: "Increases the power of <span data-target=\"type/water\">Water</span> type moves when the user's HP is equal to or lower than 33% of its maximum HP.",
             overworld: ""
         }
     },
@@ -675,7 +675,7 @@ const ABILITIES = {
         name: "Swarm",
         calcName: "Swarm",
         desc: {
-            battle: "Increases the power of <span data-target=\"type/bug\">Bug</span> type moves when the user's HP is equal to or lower than 30% of its maximum HP.",
+            battle: "Increases the power of <span data-target=\"type/bug\">Bug</span> type moves when the user's HP is equal to or lower than 33% of its maximum HP.",
             overworld: ""
         }
     },

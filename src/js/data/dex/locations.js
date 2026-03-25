@@ -1510,7 +1510,7 @@ const LOCATIONS = {
             {'species': 'aron', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
             {'species': 'bonsly', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
             {'species': 'ledyba', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
-            {'species': 'heracross', 'chance': 100, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'}
+            {'species': 'happiny', 'chance': 100, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'}
         ],
         metLocationId: 9,
         search: true,
