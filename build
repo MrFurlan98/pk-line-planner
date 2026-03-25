@@ -7,7 +7,7 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.4.10";
+const VERSION = "1.4.11";
 const CHANGELOG = `
 - Fixed an issue that prevented certain Pokémon from importing correctly.
 - Updated some incorrect data.
