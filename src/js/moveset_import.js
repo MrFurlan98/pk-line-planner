@@ -12,8 +12,17 @@ function placeBsBtn() {
 		addSets(pokes, name);
 	});
 	$("#sync.bs-btn").click(function () {
-		fetch("http://localhost:31125/update").then(x => x.text()).then(function (x) {
-			addSets(x, "Custom Set");
+		var luaVersion = "";
+		fetch("http://localhost:31125/version").then(x => x.text()).then(function (x) {
+			luaVersion = x.split(" ").at(-1);
+		}).then(function () {
+			if (parseFloat(luaVersion) < 1.2) {
+				alert("You are using an unsupported version of the Lua script. Please update to the latest version.");
+				return;
+			}
+			fetch("http://localhost:31125/update").then(x => x.text()).then(function (x) {
+				addSets(x, "Custom Set");
+			}).catch(() => alert("Please make sure both parts of the Lua script are running. A link to the script can be found at the bottom of the page."));
 		}).catch(() => alert("Please make sure both parts of the Lua script are running. A link to the script can be found at the bottom of the page."));
 	});
 	$("#upload.bs-btn").click(function () {
