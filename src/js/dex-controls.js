@@ -146,6 +146,10 @@ function loadDexEntry(entryID) {
             }
             statTable += `<tfoot><tr><th>BST</th><td class="number">${total}</td><td></td></tr></tfoot>`;
             statTable += `</table>`;
+            var stat_changes = [];
+            for (var field in species.changes) {
+                if (field in dex_STATS) stat_changes.push(`${species.changes[field] > 0 ? "+" + species.changes[field] : species.changes[field]} ${dex_STATS[field].abbr}`);
+            }
             var formes = "";
             var baseSpecies = species.baseSpecies ? SPECIES[species.baseSpecies] : species;
             if (baseSpecies.formes.length) {
@@ -162,7 +166,10 @@ function loadDexEntry(entryID) {
                 <span class="weight">Weight: ${species.weight.toFixed(1)} lbs</span>
                 ${Object.keys(species.heldItems).length ? `<span class="heldItems">Held Items: ${heldItems.map(x => `<span class="heldItem"><span class="itemName" data-target="item/${x.item.id}"><img src="/img/dex/icon/items/${x.item.id}.png">${x.item.name}</span><span class="itemChance"> (${x.chance}%)</span></span>`).join("")}</span>` : ``}
                 <span class="evos"><table class="evos-table"><tbody><tr>${evos}</tr></tbody></table><span class="evo-method">${evoMethod}</span></span>
-                <span class="stats">Base stats: ${statTable}</span>
+                <span class="stats">
+                    Base stats: ${statTable}
+                    ${stat_changes.length ? `<span class="stat-changes">Changes: ${stat_changes.join(", ")}</span>` : ""}
+                </span>
                 ${formes ? `<span class="formes">Formes:${formes}</span>` : ""}
             </div>
             <div class="list">

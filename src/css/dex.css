@@ -300,6 +300,10 @@
                     }
                 }
             }
+            .stat-changes {
+                display: block;
+                font-size: 11pt;
+            }
             .forme {
                 display: block;
                 margin-top: 5px;

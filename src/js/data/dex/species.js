@@ -27,6 +27,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 15.2,
+        changes: {},
         available: true
     },
     ivysaur: {
@@ -49,6 +50,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 28.7,
+        changes: {},
         available: true
     },
     venusaur: {
@@ -71,6 +73,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 220.5,
+        changes: {atk: 10},
         available: true
     },
     charmander: {
@@ -93,6 +96,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 18.7,
+        changes: {},
         available: true
     },
     charmeleon: {
@@ -115,6 +119,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 41.9,
+        changes: {},
         available: true
     },
     charizard: {
@@ -137,6 +142,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 199.5,
+        changes: {spa: 1},
         available: true
     },
     squirtle: {
@@ -159,6 +165,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 19.8,
+        changes: {},
         available: true
     },
     wartortle: {
@@ -181,6 +188,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 49.6,
+        changes: {},
         available: true
     },
     blastoise: {
@@ -203,6 +211,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 188.5,
+        changes: {atk: -2, spa: 25, spe: -18},
         available: true
     },
     caterpie: {
@@ -225,6 +234,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 6.4,
+        changes: {},
         available: true
     },
     metapod: {
@@ -247,6 +257,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 21.8,
+        changes: {spd: 30},
         available: true
     },
     butterfree: {
@@ -269,6 +280,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 70.5,
+        changes: {spa: 10},
         available: true
     },
     weedle: {
@@ -291,6 +303,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 7.1,
+        changes: {},
         available: true
     },
     kakuna: {
@@ -313,6 +326,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 22.0,
+        changes: {spd: 30},
         available: true
     },
     beedrill: {
@@ -335,6 +349,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 65.0,
+        changes: {atk: 10},
         available: true
     },
     pidgey: {
@@ -357,6 +372,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 4.0,
+        changes: {},
         available: true
     },
     pidgeotto: {
@@ -379,6 +395,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 66.1,
+        changes: {},
         available: true
     },
     pidgeot: {
@@ -401,6 +418,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 87.1,
+        changes: {atk: 20, spa: 30, spe: 10},
         available: true
     },
     rattata: {
@@ -423,6 +441,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 7.7,
+        changes: {},
         available: true
     },
     raticate: {
@@ -445,6 +464,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 40.8,
+        changes: {},
         available: true
     },
     spearow: {
@@ -467,6 +487,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 4.4,
+        changes: {},
         available: true
     },
     fearow: {
@@ -489,6 +510,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 83.8,
+        changes: {atk: 20, def: 10},
         available: true
     },
     ekans: {
@@ -511,6 +533,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 15.2,
+        changes: {},
         available: true
     },
     arbok: {
@@ -533,6 +556,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 143.3,
+        changes: {atk: 10},
         available: true
     },
     pikachu: {
@@ -555,6 +579,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 13.2,
+        changes: {},
         available: true
     },
     raichu: {
@@ -577,6 +602,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 66.1,
+        changes: {def: 5, spd: 5, spe: 10},
         available: true
     },
     sandshrew: {
@@ -599,6 +625,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 26.5,
+        changes: {def: 5, spa: -10, spd: 5},
         available: true
     },
     sandslash: {
@@ -621,6 +648,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 65.0,
+        changes: {def: 10, spa: -20, spd: 10},
         available: true
     },
     nidoranf: {
@@ -643,6 +671,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 15.4,
+        changes: {},
         available: true
     },
     nidorina: {
@@ -665,6 +694,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 44.1,
+        changes: {},
         available: true
     },
     nidoqueen: {
@@ -687,6 +717,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 132.3,
+        changes: {atk: 10, def: 10, spa: 10, spd: 10},
         available: true
     },
     nidoranm: {
@@ -709,6 +740,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 19.8,
+        changes: {},
         available: true
     },
     nidorino: {
@@ -731,6 +763,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 43.0,
+        changes: {},
         available: true
     },
     nidoking: {
@@ -753,6 +786,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 136.7,
+        changes: {atk: 10, def: 10, spa: 10, spd: 10},
         available: true
     },
     clefairy: {
@@ -775,6 +809,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 16.5,
+        changes: {},
         available: true
     },
     clefable: {
@@ -797,6 +832,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 88.2,
+        changes: {spa: 10, spe: 5},
         available: true
     },
     vulpix: {
@@ -819,6 +855,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 21.8,
+        changes: {spa: 15},
         available: true
     },
     ninetales: {
@@ -841,6 +878,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 43.9,
+        changes: {hp: 6, atk: 13, def: 4, spa: 28, spd: -1},
         available: true
     },
     jigglypuff: {
@@ -863,6 +901,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 12.1,
+        changes: {def: 18, spa: 15, spd: 30},
         available: true
     },
     wigglytuff: {
@@ -885,6 +924,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 26.5,
+        changes: {atk: 10, def: 30, spa: 10, spd: 20},
         available: true
     },
     zubat: {
@@ -907,6 +947,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 16.5,
+        changes: {},
         available: true
     },
     golbat: {
@@ -929,6 +970,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 121.3,
+        changes: {},
         available: true
     },
     oddish: {
@@ -951,6 +993,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 11.9,
+        changes: {},
         available: true
     },
     gloom: {
@@ -973,6 +1016,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 19.0,
+        changes: {},
         available: true
     },
     vileplume: {
@@ -995,6 +1039,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 41.0,
+        changes: {spa: 10},
         available: true
     },
     paras: {
@@ -1017,6 +1062,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 11.9,
+        changes: {},
         available: true
     },
     parasect: {
@@ -1039,6 +1085,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 65.0,
+        changes: {},
         available: true
     },
     venonat: {
@@ -1061,6 +1108,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 66.1,
+        changes: {},
         available: true
     },
     venomoth: {
@@ -1083,6 +1131,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 27.6,
+        changes: {},
         available: true
     },
     diglett: {
@@ -1105,6 +1154,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 1.8,
+        changes: {},
         available: true
     },
     dugtrio: {
@@ -1127,6 +1177,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 73.4,
+        changes: {atk: 20},
         available: true
     },
     meowth: {
@@ -1149,6 +1200,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 9.3,
+        changes: {},
         available: true
     },
     persian: {
@@ -1171,6 +1223,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 70.5,
+        changes: {atk: 22},
         available: true
     },
     psyduck: {
@@ -1193,6 +1246,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 43.2,
+        changes: {},
         available: true
     },
     golduck: {
@@ -1215,6 +1269,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 168.9,
+        changes: {},
         available: true
     },
     mankey: {
@@ -1237,6 +1292,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 61.7,
+        changes: {},
         available: true
     },
     primeape: {
@@ -1259,6 +1315,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 70.5,
+        changes: {hp: 10, atk: 10, def: 20, spa: -10, spd: 20},
         available: true
     },
     growlithe: {
@@ -1281,6 +1338,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 41.9,
+        changes: {},
         available: true
     },
     arcanine: {
@@ -1303,6 +1361,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 341.7,
+        changes: {},
         available: true
     },
     poliwag: {
@@ -1325,6 +1384,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 27.3,
+        changes: {},
         available: true
     },
     poliwhirl: {
@@ -1347,6 +1407,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 44.1,
+        changes: {},
         available: true
     },
     poliwrath: {
@@ -1369,6 +1430,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 119.0,
+        changes: {atk: 10, spe: 20},
         available: true
     },
     abra: {
@@ -1391,6 +1453,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 43.0,
+        changes: {},
         available: true
     },
     kadabra: {
@@ -1413,6 +1476,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 124.6,
+        changes: {hp: 15, def: 15, spd: 15, spe: 15},
         available: true
     },
     alakazam: {
@@ -1435,6 +1499,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 105.8,
+        changes: {},
         available: true
     },
     machop: {
@@ -1457,6 +1522,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 43.0,
+        changes: {atk: -5},
         available: true
     },
     machoke: {
@@ -1479,6 +1545,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 155.4,
+        changes: {atk: -45, spd: 10},
         available: true
     },
     machamp: {
@@ -1501,6 +1568,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 286.6,
+        changes: {atk: 10},
         available: true
     },
     bellsprout: {
@@ -1523,6 +1591,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 8.8,
+        changes: {},
         available: true
     },
     weepinbell: {
@@ -1545,6 +1614,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 14.1,
+        changes: {},
         available: true
     },
     victreebel: {
@@ -1567,6 +1637,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 34.2,
+        changes: {spa: 5, spd: 25},
         available: true
     },
     tentacool: {
@@ -1589,6 +1660,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 100.3,
+        changes: {},
         available: true
     },
     tentacruel: {
@@ -1611,6 +1683,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 121.3,
+        changes: {atk: 10, spa: 10},
         available: true
     },
     geodude: {
@@ -1633,6 +1706,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 44.1,
+        changes: {hp: 15, def: 10},
         available: true
     },
     graveler: {
@@ -1655,6 +1729,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 231.5,
+        changes: {hp: 20, atk: 15, def: 15, spd: 20, spe: 10},
         available: true
     },
     golem: {
@@ -1677,6 +1752,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 661.4,
+        changes: {hp: 5, atk: 20, def: 10},
         available: true
     },
     ponyta: {
@@ -1699,6 +1775,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 66.1,
+        changes: {},
         available: true
     },
     rapidash: {
@@ -1721,6 +1798,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 209.4,
+        changes: {hp: 5, atk: 5, def: 5, spa: 5, spd: 5, spe: 5},
         available: true
     },
     slowpoke: {
@@ -1743,6 +1821,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 79.4,
+        changes: {},
         available: true
     },
     slowbro: {
@@ -1765,6 +1844,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 173.1,
+        changes: {},
         available: true
     },
     magnemite: {
@@ -1787,6 +1867,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 13.2,
+        changes: {},
         available: true
     },
     magneton: {
@@ -1809,6 +1890,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 132.3,
+        changes: {},
         available: true
     },
     farfetchd: {
@@ -1831,6 +1913,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 33.1,
+        changes: {atk: 30, def: 30, spd: 20, spe: 5},
         available: true
     },
     doduo: {
@@ -1853,6 +1936,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 86.4,
+        changes: {},
         available: true
     },
     dodrio: {
@@ -1875,6 +1959,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 187.8,
+        changes: {hp: 10, atk: 10, spe: 10},
         available: true
     },
     seel: {
@@ -1897,6 +1982,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 198.4,
+        changes: {},
         available: true
     },
     dewgong: {
@@ -1919,6 +2005,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 264.6,
+        changes: {},
         available: true
     },
     grimer: {
@@ -1941,6 +2028,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 66.1,
+        changes: {spd: 25},
         available: true
     },
     muk: {
@@ -1963,6 +2051,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 66.1,
+        changes: {},
         available: true
     },
     shellder: {
@@ -1985,6 +2074,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 8.8,
+        changes: {spd: 20},
         available: true
     },
     cloyster: {
@@ -2007,6 +2097,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 292.1,
+        changes: {spd: 30},
         available: true
     },
     gastly: {
@@ -2029,6 +2120,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 0.2,
+        changes: {},
         available: true
     },
     haunter: {
@@ -2051,6 +2143,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 0.2,
+        changes: {hp: 15, def: 15, spd: 20, spe: 15},
         available: true
     },
     gengar: {
@@ -2073,6 +2166,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 89.3,
+        changes: {},
         available: true
     },
     onix: {
@@ -2095,6 +2189,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 463.0,
+        changes: {hp: 20, atk: 35, spa: -20, spd: 10},
         available: true
     },
     drowzee: {
@@ -2117,6 +2212,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 71.4,
+        changes: {},
         available: true
     },
     hypno: {
@@ -2139,6 +2235,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 166.7,
+        changes: {atk: 20, spa: 20},
         available: true
     },
     krabby: {
@@ -2161,6 +2258,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 14.3,
+        changes: {},
         available: true
     },
     kingler: {
@@ -2183,6 +2281,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 132.3,
+        changes: {},
         available: true
     },
     voltorb: {
@@ -2205,6 +2304,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 22.9,
+        changes: {},
         available: true
     },
     electrode: {
@@ -2227,6 +2327,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 146.8,
+        changes: {},
         available: true
     },
     exeggcute: {
@@ -2249,6 +2350,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 5.5,
+        changes: {},
         available: true
     },
     exeggutor: {
@@ -2271,6 +2373,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 264.6,
+        changes: {spd: 20},
         available: true
     },
     cubone: {
@@ -2293,6 +2396,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 14.3,
+        changes: {},
         available: true
     },
     marowak: {
@@ -2315,6 +2419,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 99.2,
+        changes: {},
         available: true
     },
     hitmonlee: {
@@ -2337,6 +2442,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 109.8,
+        changes: {},
         available: true
     },
     hitmonchan: {
@@ -2359,6 +2465,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 110.7,
+        changes: {},
         available: true
     },
     lickitung: {
@@ -2381,6 +2488,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 144.4,
+        changes: {atk: 5},
         available: true
     },
     koffing: {
@@ -2403,6 +2511,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 2.2,
+        changes: {},
         available: true
     },
     weezing: {
@@ -2425,6 +2534,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 20.9,
+        changes: {spa: 5, spd: 15},
         available: true
     },
     rhyhorn: {
@@ -2447,6 +2557,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 253.5,
+        changes: {},
         available: true
     },
     rhydon: {
@@ -2469,6 +2580,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 264.6,
+        changes: {},
         available: true
     },
     chansey: {
@@ -2491,6 +2603,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 76.3,
+        changes: {def: 20},
         available: true
     },
     tangela: {
@@ -2513,6 +2626,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 77.2,
+        changes: {spd: 10},
         available: true
     },
     kangaskhan: {
@@ -2535,6 +2649,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 176.4,
+        changes: {},
         available: true
     },
     horsea: {
@@ -2557,6 +2672,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 17.6,
+        changes: {},
         available: true
     },
     seadra: {
@@ -2579,6 +2695,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 55.1,
+        changes: {},
         available: true
     },
     goldeen: {
@@ -2601,6 +2718,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 33.1,
+        changes: {},
         available: true
     },
     seaking: {
@@ -2623,6 +2741,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 86.0,
+        changes: {},
         available: true
     },
     staryu: {
@@ -2645,6 +2764,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 76.1,
+        changes: {},
         available: true
     },
     starmie: {
@@ -2667,6 +2787,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 176.4,
+        changes: {atk: 5, spd: 15},
         available: true
     },
     mrmime: {
@@ -2689,6 +2810,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 120.1,
+        changes: {hp: 25, atk: -20, def: 30},
         available: true
     },
     scyther: {
@@ -2711,6 +2833,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 123.5,
+        changes: {},
         available: true
     },
     jynx: {
@@ -2733,6 +2856,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 89.5,
+        changes: {def: 22, spd: 18},
         available: true
     },
     electabuzz: {
@@ -2755,6 +2879,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 66.1,
+        changes: {atk: 4},
         available: true
     },
     magmar: {
@@ -2777,6 +2902,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 98.1,
+        changes: {},
         available: true
     },
     pinsir: {
@@ -2799,6 +2925,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 121.3,
+        changes: {},
         available: true
     },
     tauros: {
@@ -2821,6 +2948,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 194.9,
+        changes: {hp: 10, atk: 10, def: 10},
         available: true
     },
     magikarp: {
@@ -2843,6 +2971,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 22.0,
+        changes: {},
         available: true
     },
     gyarados: {
@@ -2865,6 +2994,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 518.1,
+        changes: {spa: 15},
         available: true
     },
     lapras: {
@@ -2887,6 +3017,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 485.0,
+        changes: {atk: 10, spa: 10},
         available: true
     },
     ditto: {
@@ -2909,6 +3040,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 8.8,
+        changes: {hp: 52, atk: 52, def: 52, spa: 52, spd: 52, spe: 52},
         available: true
     },
     eevee: {
@@ -2931,6 +3063,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 14.3,
+        changes: {},
         available: true
     },
     vaporeon: {
@@ -2953,6 +3086,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 63.9,
+        changes: {},
         available: true
     },
     jolteon: {
@@ -2975,6 +3109,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 54.0,
+        changes: {},
         available: true
     },
     flareon: {
@@ -2997,6 +3132,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 55.1,
+        changes: {},
         available: true
     },
     porygon: {
@@ -3019,6 +3155,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 80.5,
+        changes: {},
         available: true
     },
     omanyte: {
@@ -3041,6 +3178,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 16.5,
+        changes: {},
         available: true
     },
     omastar: {
@@ -3063,6 +3201,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 77.2,
+        changes: {},
         available: true
     },
     kabuto: {
@@ -3085,6 +3224,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 25.4,
+        changes: {},
         available: true
     },
     kabutops: {
@@ -3107,6 +3247,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 89.3,
+        changes: {},
         available: true
     },
     aerodactyl: {
@@ -3129,6 +3270,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 130.1,
+        changes: {},
         available: true
     },
     snorlax: {
@@ -3151,6 +3293,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 1014.1,
+        changes: {hp: 5, def: 10},
         available: true
     },
     articuno: {
@@ -3173,6 +3316,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 122.1,
+        changes: {spa: 30, spd: -10},
         available: true
     },
     zapdos: {
@@ -3195,6 +3339,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 116.0,
+        changes: {spd: 20},
         available: true
     },
     moltres: {
@@ -3217,6 +3362,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 132.3,
+        changes: {spd: 20},
         available: true
     },
     dratini: {
@@ -3239,6 +3385,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 7.3,
+        changes: {},
         available: true
     },
     dragonair: {
@@ -3261,6 +3408,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 36.4,
+        changes: {},
         available: true
     },
     dragonite: {
@@ -3283,6 +3431,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 463.0,
+        changes: {spe: 5},
         available: true
     },
     mewtwo: {
@@ -3305,6 +3454,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 269.0,
+        changes: {},
         available: true
     },
     mew: {
@@ -3327,6 +3477,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 8.8,
+        changes: {},
         available: true
     },
     chikorita: {
@@ -3349,6 +3500,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 14.1,
+        changes: {},
         available: true
     },
     bayleef: {
@@ -3371,6 +3523,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 34.8,
+        changes: {},
         available: true
     },
     meganium: {
@@ -3393,6 +3546,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 221.6,
+        changes: {hp: 11, atk: 7, def: -10, spa: 17, spd: -10},
         available: true
     },
     cyndaquil: {
@@ -3415,6 +3569,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 17.4,
+        changes: {},
         available: true
     },
     quilava: {
@@ -3437,6 +3592,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 41.9,
+        changes: {},
         available: true
     },
     typhlosion: {
@@ -3459,6 +3615,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 175.3,
+        changes: {spa: 1},
         available: true
     },
     totodile: {
@@ -3481,6 +3638,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 20.9,
+        changes: {},
         available: true
     },
     croconaw: {
@@ -3503,6 +3661,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 55.1,
+        changes: {},
         available: true
     },
     feraligatr: {
@@ -3525,6 +3684,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 195.8,
+        changes: {atk: 20, spa: -15, spd: 2, spe: 3},
         available: true
     },
     sentret: {
@@ -3547,6 +3707,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 13.2,
+        changes: {},
         available: true
     },
     furret: {
@@ -3569,6 +3730,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 71.6,
+        changes: {atk: 10},
         available: true
     },
     hoothoot: {
@@ -3591,6 +3753,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 46.7,
+        changes: {atk: 6},
         available: true
     },
     noctowl: {
@@ -3613,6 +3776,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 89.9,
+        changes: {atk: 36, spa: 10},
         available: true
     },
     ledyba: {
@@ -3635,6 +3799,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 23.8,
+        changes: {atk: 30},
         available: true
     },
     ledian: {
@@ -3657,6 +3822,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 78.5,
+        changes: {atk: 50},
         available: true
     },
     spinarak: {
@@ -3679,6 +3845,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 18.7,
+        changes: {spe: 20},
         available: true
     },
     ariados: {
@@ -3701,6 +3868,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 73.9,
+        changes: {atk: 5, def: 10, spd: 20, spe: 30},
         available: true
     },
     crobat: {
@@ -3723,6 +3891,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 165.3,
+        changes: {},
         available: true
     },
     chinchou: {
@@ -3745,6 +3914,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 26.5,
+        changes: {},
         available: true
     },
     lanturn: {
@@ -3767,6 +3937,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 49.6,
+        changes: {},
         available: true
     },
     pichu: {
@@ -3789,6 +3960,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 4.4,
+        changes: {},
         available: true
     },
     cleffa: {
@@ -3811,6 +3983,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 6.6,
+        changes: {},
         available: true
     },
     igglybuff: {
@@ -3833,6 +4006,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 2.2,
+        changes: {atk: 15, def: 5, spa: 5, spd: 5, spe: 5},
         available: true
     },
     togepi: {
@@ -3855,6 +4029,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 3.3,
+        changes: {},
         available: true
     },
     togetic: {
@@ -3877,6 +4052,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 7.1,
+        changes: {},
         available: true
     },
     natu: {
@@ -3899,6 +4075,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 4.4,
+        changes: {},
         available: true
     },
     xatu: {
@@ -3921,6 +4098,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 33.1,
+        changes: {atk: 20},
         available: true
     },
     mareep: {
@@ -3943,6 +4121,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 17.2,
+        changes: {},
         available: true
     },
     flaaffy: {
@@ -3965,6 +4144,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 29.3,
+        changes: {},
         available: true
     },
     ampharos: {
@@ -3987,6 +4167,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 135.6,
+        changes: {spa: 10},
         available: true
     },
     bellossom: {
@@ -4009,6 +4190,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 12.8,
+        changes: {spa: 10},
         available: true
     },
     marill: {
@@ -4031,6 +4213,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 18.7,
+        changes: {atk: 20},
         available: true
     },
     azumarill: {
@@ -4053,6 +4236,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 62.8,
+        changes: {atk: 10},
         available: true
     },
     sudowoodo: {
@@ -4075,6 +4259,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 83.8,
+        changes: {},
         available: true
     },
     politoed: {
@@ -4097,6 +4282,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 74.7,
+        changes: {atk: 10, spe: 20},
         available: true
     },
     hoppip: {
@@ -4119,6 +4305,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 1.1,
+        changes: {},
         available: true
     },
     skiploom: {
@@ -4141,6 +4328,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 2.2,
+        changes: {},
         available: true
     },
     jumpluff: {
@@ -4163,6 +4351,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 6.6,
+        changes: {},
         available: true
     },
     aipom: {
@@ -4185,6 +4374,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 25.4,
+        changes: {},
         available: true
     },
     sunkern: {
@@ -4207,6 +4397,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 4.0,
+        changes: {},
         available: true
     },
     sunflora: {
@@ -4229,6 +4420,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 18.7,
+        changes: {},
         available: true
     },
     yanma: {
@@ -4251,6 +4443,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 83.8,
+        changes: {},
         available: true
     },
     wooper: {
@@ -4273,6 +4466,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 18.7,
+        changes: {},
         available: true
     },
     quagsire: {
@@ -4295,6 +4489,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 165.3,
+        changes: {},
         available: true
     },
     espeon: {
@@ -4317,6 +4512,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 58.4,
+        changes: {},
         available: true
     },
     umbreon: {
@@ -4339,6 +4535,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 59.5,
+        changes: {},
         available: true
     },
     murkrow: {
@@ -4361,6 +4558,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 4.6,
+        changes: {},
         available: true
     },
     slowking: {
@@ -4383,6 +4581,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 175.3,
+        changes: {},
         available: true
     },
     misdreavus: {
@@ -4405,6 +4604,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 2.2,
+        changes: {},
         available: true
     },
     unown: {
@@ -4427,6 +4627,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 11.0,
+        changes: {atk: 30, spa: 30},
         available: true
     },
     wobbuffet: {
@@ -4449,6 +4650,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 62.8,
+        changes: {},
         available: true
     },
     girafarig: {
@@ -4471,6 +4673,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 91.5,
+        changes: {hp: 15, atk: 20, def: 5, spa: 20, spd: 5},
         available: true
     },
     pineco: {
@@ -4493,6 +4696,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 15.9,
+        changes: {},
         available: true
     },
     forretress: {
@@ -4515,6 +4719,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 277.3,
+        changes: {spd: 30},
         available: true
     },
     dunsparce: {
@@ -4537,6 +4742,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 30.9,
+        changes: {atk: 20, def: 10, spa: 20, spd: 15, spe: 10},
         available: true
     },
     gligar: {
@@ -4559,6 +4765,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 142.9,
+        changes: {},
         available: true
     },
     steelix: {
@@ -4581,6 +4788,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 881.8,
+        changes: {hp: 25, atk: 30, spa: -20, spd: 10},
         available: true
     },
     snubbull: {
@@ -4603,6 +4811,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 17.2,
+        changes: {},
         available: true
     },
     granbull: {
@@ -4625,6 +4834,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 107.4,
+        changes: {},
         available: true
     },
     qwilfish: {
@@ -4647,6 +4857,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 8.6,
+        changes: {hp: 10, atk: 20, def: 20, spa: 10, spd: 10},
         available: true
     },
     scizor: {
@@ -4669,6 +4880,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 260.1,
+        changes: {},
         available: true
     },
     shuckle: {
@@ -4691,6 +4903,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 45.2,
+        changes: {hp: 30},
         available: true
     },
     heracross: {
@@ -4713,6 +4926,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 119.0,
+        changes: {},
         available: true
     },
     sneasel: {
@@ -4735,6 +4949,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 61.7,
+        changes: {},
         available: true
     },
     teddiursa: {
@@ -4757,6 +4972,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 19.4,
+        changes: {},
         available: true
     },
     ursaring: {
@@ -4779,6 +4995,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 277.3,
+        changes: {hp: 10, atk: 10, def: 30, spa: -20, spd: 5},
         available: true
     },
     slugma: {
@@ -4801,6 +5018,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 77.2,
+        changes: {hp: 30, atk: 10, def: 40, spa: 20, spd: 40},
         available: true
     },
     magcargo: {
@@ -4823,6 +5041,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 121.3,
+        changes: {hp: 20, atk: 30, spa: 29, spd: 20},
         available: true
     },
     swinub: {
@@ -4845,6 +5064,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 14.3,
+        changes: {},
         available: true
     },
     piloswine: {
@@ -4867,6 +5087,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 123.0,
+        changes: {atk: 10, spe: 30},
         available: true
     },
     corsola: {
@@ -4889,6 +5110,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 11.0,
+        changes: {hp: 10, atk: 40, def: 20, spd: 20},
         available: true
     },
     remoraid: {
@@ -4911,6 +5133,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 26.5,
+        changes: {},
         available: true
     },
     octillery: {
@@ -4933,6 +5156,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 62.8,
+        changes: {hp: 9, atk: 3, def: 13, spa: 3, spd: 13, spe: 3},
         available: true
     },
     delibird: {
@@ -4955,6 +5179,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 35.3,
+        changes: {atk: 30, spa: 20, spe: 10},
         available: true
     },
     mantine: {
@@ -4977,6 +5202,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 485.0,
+        changes: {hp: 20, def: 10},
         available: true
     },
     skarmory: {
@@ -4999,6 +5225,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 111.3,
+        changes: {hp: 20, atk: 5, spd: 10},
         available: true
     },
     houndour: {
@@ -5021,6 +5248,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 23.8,
+        changes: {},
         available: true
     },
     houndoom: {
@@ -5043,6 +5271,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 77.2,
+        changes: {spa: 10, spe: 10},
         available: true
     },
     kingdra: {
@@ -5065,6 +5294,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 335.1,
+        changes: {},
         available: true
     },
     phanpy: {
@@ -5087,6 +5317,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 73.9,
+        changes: {},
         available: true
     },
     donphan: {
@@ -5109,6 +5340,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 264.6,
+        changes: {hp: 5, def: 10, spa: -5},
         available: true
     },
     porygon2: {
@@ -5131,6 +5363,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 71.6,
+        changes: {},
         available: true
     },
     stantler: {
@@ -5153,6 +5386,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 157.0,
+        changes: {atk: 10, def: 10, spa: 20, spd: 10},
         available: true
     },
     smeargle: {
@@ -5175,6 +5409,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 127.9,
+        changes: {hp: 5, atk: 50, def: 40, spa: 50, spd: 40, spe: 20},
         available: true
     },
     tyrogue: {
@@ -5197,6 +5432,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 46.3,
+        changes: {},
         available: true
     },
     hitmontop: {
@@ -5219,6 +5455,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 105.8,
+        changes: {},
         available: true
     },
     smoochum: {
@@ -5241,6 +5478,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 13.2,
+        changes: {},
         available: true
     },
     elekid: {
@@ -5263,6 +5501,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 51.8,
+        changes: {},
         available: true
     },
     magby: {
@@ -5285,6 +5524,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 47.2,
+        changes: {},
         available: true
     },
     miltank: {
@@ -5307,6 +5547,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 166.4,
+        changes: {atk: 10},
         available: true
     },
     blissey: {
@@ -5329,6 +5570,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 103.2,
+        changes: {atk: -5, def: 20},
         available: true
     },
     raikou: {
@@ -5351,6 +5593,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 392.4,
+        changes: {spa: 20},
         available: true
     },
     entei: {
@@ -5373,6 +5616,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 436.5,
+        changes: {atk: 20},
         available: true
     },
     suicune: {
@@ -5395,6 +5639,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 412.3,
+        changes: {hp: 20},
         available: true
     },
     larvitar: {
@@ -5417,6 +5662,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 158.7,
+        changes: {},
         available: true
     },
     pupitar: {
@@ -5439,6 +5685,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 335.1,
+        changes: {},
         available: true
     },
     tyranitar: {
@@ -5461,6 +5708,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 445.3,
+        changes: {spa: 5},
         available: true
     },
     lugia: {
@@ -5483,6 +5731,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 476.2,
+        changes: {},
         available: true
     },
     hooh: {
@@ -5505,6 +5754,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 438.7,
+        changes: {},
         available: true
     },
     celebi: {
@@ -5527,6 +5777,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 11.0,
+        changes: {},
         available: true
     },
     treecko: {
@@ -5549,6 +5800,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 11.0,
+        changes: {},
         available: true
     },
     grovyle: {
@@ -5571,6 +5823,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 47.6,
+        changes: {},
         available: true
     },
     sceptile: {
@@ -5593,6 +5846,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 115.1,
+        changes: {atk: 15, spa: -5, spd: -5},
         available: true
     },
     torchic: {
@@ -5615,6 +5869,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 5.5,
+        changes: {},
         available: true
     },
     combusken: {
@@ -5637,6 +5892,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 43.0,
+        changes: {},
         available: true
     },
     blaziken: {
@@ -5659,6 +5915,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 114.6,
+        changes: {spa: 5},
         available: true
     },
     mudkip: {
@@ -5681,6 +5938,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 16.8,
+        changes: {atk: -15},
         available: true
     },
     marshtomp: {
@@ -5703,6 +5961,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 61.7,
+        changes: {},
         available: true
     },
     swampert: {
@@ -5725,6 +5984,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 180.6,
+        changes: {},
         available: true
     },
     poochyena: {
@@ -5747,6 +6007,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 30.0,
+        changes: {},
         available: true
     },
     mightyena: {
@@ -5769,6 +6030,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 81.6,
+        changes: {atk: 10, spd: 10},
         available: true
     },
     zigzagoon: {
@@ -5791,6 +6053,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 38.6,
+        changes: {},
         available: true
     },
     linoone: {
@@ -5813,6 +6076,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 71.6,
+        changes: {},
         available: true
     },
     wurmple: {
@@ -5835,6 +6099,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 7.9,
+        changes: {},
         available: true
     },
     silcoon: {
@@ -5857,6 +6122,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 22.0,
+        changes: {},
         available: true
     },
     beautifly: {
@@ -5879,6 +6145,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 62.6,
+        changes: {spa: 10},
         available: true
     },
     cascoon: {
@@ -5901,6 +6168,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 25.4,
+        changes: {spd: 30},
         available: true
     },
     dustox: {
@@ -5923,6 +6191,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 69.7,
+        changes: {spa: 20},
         available: true
     },
     lotad: {
@@ -5945,6 +6214,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 5.7,
+        changes: {},
         available: true
     },
     lombre: {
@@ -5967,6 +6237,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 71.6,
+        changes: {},
         available: true
     },
     ludicolo: {
@@ -5989,6 +6260,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 121.3,
+        changes: {},
         available: true
     },
     seedot: {
@@ -6011,6 +6283,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 8.8,
+        changes: {},
         available: true
     },
     nuzleaf: {
@@ -6033,6 +6306,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 61.7,
+        changes: {},
         available: true
     },
     shiftry: {
@@ -6055,6 +6329,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 131.4,
+        changes: {},
         available: true
     },
     taillow: {
@@ -6077,6 +6352,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 5.1,
+        changes: {},
         available: true
     },
     swellow: {
@@ -6099,6 +6375,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 43.7,
+        changes: {},
         available: true
     },
     wingull: {
@@ -6121,6 +6398,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 20.9,
+        changes: {},
         available: true
     },
     pelipper: {
@@ -6143,6 +6421,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 61.7,
+        changes: {atk: 30, spa: 10},
         available: true
     },
     ralts: {
@@ -6165,6 +6444,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 14.6,
+        changes: {},
         available: true
     },
     kirlia: {
@@ -6187,6 +6467,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 44.5,
+        changes: {},
         available: true
     },
     gardevoir: {
@@ -6209,6 +6490,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 106.7,
+        changes: {spa: 10},
         available: true
     },
     surskit: {
@@ -6231,6 +6513,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 3.7,
+        changes: {hp: 30, def: 30, spa: 50, spd: 30},
         available: true
     },
     masquerain: {
@@ -6253,6 +6536,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 7.9,
+        changes: {atk: 20, spa: 20},
         available: true
     },
     shroomish: {
@@ -6275,6 +6559,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 9.9,
+        changes: {},
         available: true
     },
     breloom: {
@@ -6297,6 +6582,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 86.4,
+        changes: {},
         available: true
     },
     slakoth: {
@@ -6319,6 +6605,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 52.9,
+        changes: {},
         available: true
     },
     vigoroth: {
@@ -6341,6 +6628,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 102.5,
+        changes: {spd: 10},
         available: true
     },
     slaking: {
@@ -6363,6 +6651,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 287.7,
+        changes: {atk: 10},
         available: true
     },
     nincada: {
@@ -6385,6 +6674,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 12.1,
+        changes: {},
         available: true
     },
     ninjask: {
@@ -6407,6 +6697,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 26.5,
+        changes: {atk: 10},
         available: true
     },
     shedinja: {
@@ -6429,6 +6720,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 2.6,
+        changes: {atk: 10, def: -40, spa: 70, spd: -20, spe: 40},
         available: true
     },
     whismur: {
@@ -6451,6 +6743,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 35.9,
+        changes: {},
         available: true
     },
     loudred: {
@@ -6473,6 +6766,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 89.3,
+        changes: {},
         available: true
     },
     exploud: {
@@ -6495,6 +6789,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 185.2,
+        changes: {atk: 10, def: 10, spa: 10, spd: 10, spe: 10},
         available: true
     },
     makuhita: {
@@ -6517,6 +6812,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 190.5,
+        changes: {},
         available: true
     },
     hariyama: {
@@ -6539,6 +6835,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 559.5,
+        changes: {},
         available: true
     },
     azurill: {
@@ -6561,6 +6858,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 4.4,
+        changes: {atk: 10},
         available: true
     },
     nosepass: {
@@ -6583,6 +6881,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 213.8,
+        changes: {},
         available: true
     },
     skitty: {
@@ -6605,6 +6904,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 24.3,
+        changes: {},
         available: true
     },
     delcatty: {
@@ -6627,6 +6927,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 71.9,
+        changes: {atk: 15, def: 10, spa: 25, spd: 20, spe: 42},
         available: true
     },
     sableye: {
@@ -6649,6 +6950,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 24.3,
+        changes: {hp: 10, atk: 30, def: 30, spd: 30},
         available: true
     },
     mawile: {
@@ -6671,6 +6973,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 25.4,
+        changes: {atk: 20},
         available: true
     },
     aron: {
@@ -6693,6 +6996,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 132.3,
+        changes: {def: 20},
         available: true
     },
     lairon: {
@@ -6715,6 +7019,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 264.6,
+        changes: {},
         available: true
     },
     aggron: {
@@ -6737,6 +7042,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 793.7,
+        changes: {},
         available: true
     },
     meditite: {
@@ -6759,6 +7065,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 24.7,
+        changes: {atk: 5},
         available: true
     },
     medicham: {
@@ -6781,6 +7088,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 69.4,
+        changes: {atk: 15},
         available: true
     },
     electrike: {
@@ -6803,6 +7111,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 33.5,
+        changes: {},
         available: true
     },
     manectric: {
@@ -6825,6 +7134,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 88.6,
+        changes: {},
         available: true
     },
     plusle: {
@@ -6847,6 +7157,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 9.3,
+        changes: {},
         available: true
     },
     minun: {
@@ -6869,6 +7180,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 9.3,
+        changes: {},
         available: true
     },
     volbeat: {
@@ -6891,6 +7203,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 39.0,
+        changes: {spa: 30},
         available: true
     },
     illumise: {
@@ -6913,6 +7226,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 39.0,
+        changes: {atk: 30},
         available: true
     },
     roselia: {
@@ -6935,6 +7249,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 4.4,
+        changes: {},
         available: true
     },
     gulpin: {
@@ -6957,6 +7272,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 22.7,
+        changes: {},
         available: true
     },
     swalot: {
@@ -6979,6 +7295,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 176.4,
+        changes: {},
         available: true
     },
     carvanha: {
@@ -7001,6 +7318,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 45.9,
+        changes: {},
         available: true
     },
     sharpedo: {
@@ -7023,6 +7341,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 195.8,
+        changes: {},
         available: true
     },
     wailmer: {
@@ -7045,6 +7364,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 286.6,
+        changes: {hp: 10, def: 10, spd: 10},
         available: true
     },
     wailord: {
@@ -7067,6 +7387,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 877.4,
+        changes: {hp: -5, atk: 20, def: 20, spa: 20, spd: 55, spe: -55},
         available: true
     },
     numel: {
@@ -7089,6 +7410,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 52.9,
+        changes: {},
         available: true
     },
     camerupt: {
@@ -7111,6 +7433,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 485.0,
+        changes: {hp: 20, def: 10, spd: 10},
         available: true
     },
     torkoal: {
@@ -7133,6 +7456,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 177.2,
+        changes: {spd: 35},
         available: true
     },
     spoink: {
@@ -7155,6 +7479,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 67.5,
+        changes: {atk: 30},
         available: true
     },
     grumpig: {
@@ -7177,6 +7502,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 157.6,
+        changes: {atk: 30},
         available: true
     },
     spinda: {
@@ -7199,6 +7525,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 11.0,
+        changes: {hp: 20, atk: 20, def: 20, spa: 20, spd: 20, spe: 20},
         available: true
     },
     trapinch: {
@@ -7221,6 +7548,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 33.1,
+        changes: {},
         available: true
     },
     vibrava: {
@@ -7243,6 +7571,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 33.7,
+        changes: {atk: 10, def: 20, spa: 50, spd: 20, spe: 30},
         available: true
     },
     flygon: {
@@ -7265,6 +7594,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 180.8,
+        changes: {spa: 30},
         available: true
     },
     cacnea: {
@@ -7287,6 +7617,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 113.1,
+        changes: {def: 20, spd: 20},
         available: true
     },
     cacturne: {
@@ -7309,6 +7640,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 170.6,
+        changes: {def: 25, spd: 25},
         available: true
     },
     swablu: {
@@ -7331,6 +7663,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 2.6,
+        changes: {},
         available: true
     },
     altaria: {
@@ -7353,6 +7686,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 45.4,
+        changes: {atk: 10, spa: 10},
         available: true
     },
     zangoose: {
@@ -7375,6 +7709,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 88.8,
+        changes: {},
         available: true
     },
     seviper: {
@@ -7397,6 +7732,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 115.7,
+        changes: {atk: 5, spa: -40, spe: 35},
         available: true
     },
     lunatone: {
@@ -7419,6 +7755,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 370.4,
+        changes: {hp: 20, def: 10},
         available: true
     },
     solrock: {
@@ -7441,6 +7778,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 339.5,
+        changes: {hp: 20, spd: 10},
         available: true
     },
     barboach: {
@@ -7463,6 +7801,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 4.2,
+        changes: {},
         available: true
     },
     whiscash: {
@@ -7485,6 +7824,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 52.0,
+        changes: {},
         available: true
     },
     corphish: {
@@ -7507,6 +7847,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 25.4,
+        changes: {},
         available: true
     },
     crawdaunt: {
@@ -7529,6 +7870,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 72.3,
+        changes: {},
         available: true
     },
     baltoy: {
@@ -7551,6 +7893,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 47.4,
+        changes: {},
         available: true
     },
     claydol: {
@@ -7573,6 +7916,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 238.1,
+        changes: {hp: 20, atk: 10, spa: 10, spe: 5},
         available: true
     },
     lileep: {
@@ -7595,6 +7939,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 52.5,
+        changes: {},
         available: true
     },
     cradily: {
@@ -7617,6 +7962,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 133.2,
+        changes: {},
         available: true
     },
     anorith: {
@@ -7639,6 +7985,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 27.6,
+        changes: {},
         available: true
     },
     armaldo: {
@@ -7661,6 +8008,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 150.4,
+        changes: {},
         available: true
     },
     feebas: {
@@ -7683,6 +8031,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 16.3,
+        changes: {},
         available: true
     },
     milotic: {
@@ -7705,6 +8054,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 357.1,
+        changes: {},
         available: true
     },
     castform: {
@@ -7727,6 +8077,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 1.8,
+        changes: {def: 5, spa: 40, spd: 5, spe: 30},
         available: true
     },
     kecleon: {
@@ -7749,6 +8100,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 48.5,
+        changes: {hp: 5, def: 65, spd: 15},
         available: true
     },
     shuppet: {
@@ -7771,6 +8123,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 5.1,
+        changes: {atk: 10, spa: 20},
         available: true
     },
     banette: {
@@ -7793,6 +8146,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 27.6,
+        changes: {atk: 10, spe: 20},
         available: true
     },
     duskull: {
@@ -7815,6 +8169,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 33.1,
+        changes: {hp: 20, spa: 10},
         available: true
     },
     dusclops: {
@@ -7837,6 +8192,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 67.5,
+        changes: {hp: 35, atk: 20, spa: -20},
         available: true
     },
     tropius: {
@@ -7859,6 +8215,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 220.5,
+        changes: {hp: 6, atk: 24, def: 22, spa: 20, spd: 18},
         available: true
     },
     chimecho: {
@@ -7881,6 +8238,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 2.2,
+        changes: {spa: 10, spd: 5, spe: 10},
         available: true
     },
     absol: {
@@ -7903,6 +8261,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 103.6,
+        changes: {hp: 5, spa: 40, spe: 20},
         available: true
     },
     wynaut: {
@@ -7925,6 +8284,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 30.9,
+        changes: {},
         available: true
     },
     snorunt: {
@@ -7947,6 +8307,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 37.0,
+        changes: {spa: 20},
         available: true
     },
     glalie: {
@@ -7969,6 +8330,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 565.5,
+        changes: {spa: 20, spe: 20},
         available: true
     },
     spheal: {
@@ -7991,6 +8353,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 87.1,
+        changes: {},
         available: true
     },
     sealeo: {
@@ -8013,6 +8376,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 193.1,
+        changes: {def: 20, spd: 20},
         available: true
     },
     walrein: {
@@ -8035,6 +8399,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 332.0,
+        changes: {atk: 15},
         available: true
     },
     clamperl: {
@@ -8057,6 +8422,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 115.7,
+        changes: {},
         available: true
     },
     huntail: {
@@ -8079,6 +8445,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 59.5,
+        changes: {atk: 10, spa: -10},
         available: true
     },
     gorebyss: {
@@ -8101,6 +8468,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 49.8,
+        changes: {},
         available: true
     },
     relicanth: {
@@ -8123,6 +8491,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 51.6,
+        changes: {},
         available: true
     },
     luvdisc: {
@@ -8145,6 +8514,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 19.2,
+        changes: {},
         available: true
     },
     bagon: {
@@ -8167,6 +8537,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 92.8,
+        changes: {},
         available: true
     },
     shelgon: {
@@ -8189,6 +8560,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 243.6,
+        changes: {spd: 30},
         available: true
     },
     salamence: {
@@ -8211,6 +8583,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 226.2,
+        changes: {spd: 5},
         available: true
     },
     beldum: {
@@ -8233,6 +8606,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 209.9,
+        changes: {},
         available: true
     },
     metang: {
@@ -8255,6 +8629,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 446.4,
+        changes: {atk: 10},
         available: true
     },
     metagross: {
@@ -8277,6 +8652,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 1212.5,
+        changes: {spa: 5},
         available: true
     },
     regirock: {
@@ -8299,6 +8675,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 507.1,
+        changes: {atk: 20},
         available: true
     },
     regice: {
@@ -8321,6 +8698,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 385.8,
+        changes: {spa: 20},
         available: true
     },
     registeel: {
@@ -8343,6 +8721,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 451.9,
+        changes: {atk: 5, def: 50, spa: -40, spd: 50, spe: -45},
         available: true
     },
     latias: {
@@ -8365,6 +8744,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 88.2,
+        changes: {},
         available: true
     },
     latios: {
@@ -8387,6 +8767,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 132.3,
+        changes: {},
         available: true
     },
     kyogre: {
@@ -8409,6 +8790,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 776.0,
+        changes: {},
         available: true
     },
     groudon: {
@@ -8431,6 +8813,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 2094.4,
+        changes: {},
         available: true
     },
     rayquaza: {
@@ -8453,6 +8836,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 455.2,
+        changes: {},
         available: true
     },
     jirachi: {
@@ -8475,6 +8859,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 2.4,
+        changes: {},
         available: true
     },
     deoxys: {
@@ -8497,6 +8882,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: ["deoxys", "deoxysattack", "deoxysdefense", "deoxysspeed"],
         weight: 134.0,
+        changes: {hp: 40, def: 20, spd: 20},
         available: true
     },
     turtwig: {
@@ -8519,6 +8905,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 22.5,
+        changes: {},
         available: true
     },
     grotle: {
@@ -8541,6 +8928,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 213.8,
+        changes: {},
         available: true
     },
     torterra: {
@@ -8563,6 +8951,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 683.4,
+        changes: {atk: 2, spa: -12, spd: 20},
         available: true
     },
     chimchar: {
@@ -8585,6 +8974,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 13.7,
+        changes: {},
         available: true
     },
     monferno: {
@@ -8607,6 +8997,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 48.5,
+        changes: {},
         available: true
     },
     infernape: {
@@ -8629,6 +9020,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 121.3,
+        changes: {hp: 1},
         available: true
     },
     piplup: {
@@ -8651,6 +9043,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 11.5,
+        changes: {atk: 10, spa: -10},
         available: true
     },
     prinplup: {
@@ -8673,6 +9066,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 50.7,
+        changes: {atk: 15, spa: -15},
         available: true
     },
     empoleon: {
@@ -8695,6 +9089,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 186.3,
+        changes: {atk: 25, def: 5, spa: -25},
         available: true
     },
     starly: {
@@ -8717,6 +9112,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 4.4,
+        changes: {},
         available: true
     },
     staravia: {
@@ -8739,6 +9135,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 34.2,
+        changes: {},
         available: true
     },
     staraptor: {
@@ -8761,6 +9158,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 54.9,
+        changes: {spe: 5},
         available: true
     },
     bidoof: {
@@ -8783,6 +9181,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 44.1,
+        changes: {},
         available: true
     },
     bibarel: {
@@ -8805,6 +9204,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 69.4,
+        changes: {},
         available: true
     },
     kricketot: {
@@ -8827,6 +9227,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 4.9,
+        changes: {},
         available: true
     },
     kricketune: {
@@ -8849,6 +9250,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 56.2,
+        changes: {},
         available: true
     },
     shinx: {
@@ -8871,6 +9273,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 20.9,
+        changes: {},
         available: true
     },
     luxio: {
@@ -8893,6 +9296,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 67.2,
+        changes: {},
         available: true
     },
     luxray: {
@@ -8915,6 +9319,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 92.6,
+        changes: {spa: -25, spe: 25},
         available: true
     },
     budew: {
@@ -8937,6 +9342,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 2.6,
+        changes: {},
         available: true
     },
     roserade: {
@@ -8959,6 +9365,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 32.0,
+        changes: {},
         available: true
     },
     cranidos: {
@@ -8981,6 +9388,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 69.4,
+        changes: {def: 10, spa: -20, spd: 10},
         available: true
     },
     rampardos: {
@@ -9003,6 +9411,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 226.0,
+        changes: {atk: 15, def: 20, spa: -50, spd: 20},
         available: true
     },
     shieldon: {
@@ -9025,6 +9434,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 125.7,
+        changes: {hp: 30, atk: 40, spa: -40},
         available: true
     },
     bastiodon: {
@@ -9047,6 +9457,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 329.6,
+        changes: {hp: 20, atk: 40, spa: -40},
         available: true
     },
     burmy: {
@@ -9069,6 +9480,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 7.5,
+        changes: {},
         available: true
     },
     wormadam: {
@@ -9091,6 +9503,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: ["wormadam", "wormadamsandy", "wormadamtrash"],
         weight: 14.3,
+        changes: {atk: 20},
         available: true
     },
     mothim: {
@@ -9113,6 +9526,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 51.4,
+        changes: {},
         available: true
     },
     combee: {
@@ -9135,6 +9549,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 12.1,
+        changes: {atk: 20, spa: 20},
         available: true
     },
     vespiquen: {
@@ -9157,6 +9572,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 84.9,
+        changes: {hp: 10, atk: 22, spa: 22, spe: 30},
         available: true
     },
     pachirisu: {
@@ -9179,6 +9595,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 8.6,
+        changes: {atk: 20, spa: 20},
         available: true
     },
     buizel: {
@@ -9201,6 +9618,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 65.0,
+        changes: {},
         available: true
     },
     floatzel: {
@@ -9223,6 +9641,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 73.9,
+        changes: {},
         available: true
     },
     cherubi: {
@@ -9245,6 +9664,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 7.3,
+        changes: {},
         available: true
     },
     cherrim: {
@@ -9267,6 +9687,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 20.5,
+        changes: {atk: 27, def: 20, spd: 20},
         available: true
     },
     shellos: {
@@ -9289,6 +9710,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 13.9,
+        changes: {},
         available: true
     },
     gastrodon: {
@@ -9311,6 +9733,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 65.9,
+        changes: {},
         available: true
     },
     ambipom: {
@@ -9333,6 +9756,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 44.8,
+        changes: {},
         available: true
     },
     drifloon: {
@@ -9355,6 +9779,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 2.6,
+        changes: {},
         available: true
     },
     drifblim: {
@@ -9377,6 +9802,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 33.1,
+        changes: {},
         available: true
     },
     buneary: {
@@ -9399,6 +9825,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 12.1,
+        changes: {},
         available: true
     },
     lopunny: {
@@ -9421,6 +9848,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 73.4,
+        changes: {atk: 10, spd: 20},
         available: true
     },
     mismagius: {
@@ -9443,6 +9871,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 9.7,
+        changes: {spa: 10},
         available: true
     },
     honchkrow: {
@@ -9465,6 +9894,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 60.2,
+        changes: {def: 10, spa: -5, spd: 10, spe: 20},
         available: true
     },
     glameow: {
@@ -9487,6 +9917,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 8.6,
+        changes: {},
         available: true
     },
     purugly: {
@@ -9509,6 +9940,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 96.6,
+        changes: {hp: 20, def: 10, spd: 10},
         available: true
     },
     chingling: {
@@ -9531,6 +9963,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 1.3,
+        changes: {},
         available: true
     },
     stunky: {
@@ -9553,6 +9986,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 42.3,
+        changes: {spa: 20},
         available: true
     },
     skuntank: {
@@ -9575,6 +10009,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 83.8,
+        changes: {spa: 20},
         available: true
     },
     bronzor: {
@@ -9597,6 +10032,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 133.4,
+        changes: {hp: 20, atk: 75, def: 30, spa: 65, spd: 30, spe: 10},
         available: true
     },
     bronzong: {
@@ -9619,6 +10055,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 412.3,
+        changes: {hp: 10, atk: 10, spa: 10},
         available: true
     },
     bonsly: {
@@ -9641,6 +10078,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 33.1,
+        changes: {},
         available: true
     },
     mimejr: {
@@ -9663,6 +10101,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 28.7,
+        changes: {},
         available: true
     },
     happiny: {
@@ -9685,6 +10124,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 53.8,
+        changes: {},
         available: true
     },
     chatot: {
@@ -9707,6 +10147,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 4.2,
+        changes: {atk: 26, spa: 10, spe: 19},
         available: true
     },
     spiritomb: {
@@ -9729,6 +10170,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 238.1,
+        changes: {hp: 23, atk: 16, spa: 16},
         available: true
     },
     gible: {
@@ -9751,6 +10193,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 45.2,
+        changes: {},
         available: true
     },
     gabite: {
@@ -9773,6 +10216,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 123.5,
+        changes: {},
         available: true
     },
     garchomp: {
@@ -9795,6 +10239,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 209.4,
+        changes: {spa: 5},
         available: true
     },
     munchlax: {
@@ -9817,6 +10262,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 231.5,
+        changes: {},
         available: true
     },
     riolu: {
@@ -9839,6 +10285,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 44.5,
+        changes: {},
         available: true
     },
     lucario: {
@@ -9861,6 +10308,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 119.0,
+        changes: {},
         available: true
     },
     hippopotas: {
@@ -9883,6 +10331,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 109.1,
+        changes: {},
         available: true
     },
     hippowdon: {
@@ -9905,6 +10354,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 661.4,
+        changes: {},
         available: true
     },
     skorupi: {
@@ -9927,6 +10377,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 26.5,
+        changes: {},
         available: true
     },
     drapion: {
@@ -9949,6 +10400,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 135.6,
+        changes: {},
         available: true
     },
     croagunk: {
@@ -9971,6 +10423,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 50.7,
+        changes: {},
         available: true
     },
     toxicroak: {
@@ -9993,6 +10446,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 97.9,
+        changes: {},
         available: true
     },
     carnivine: {
@@ -10015,6 +10469,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 59.5,
+        changes: {atk: 5, spa: 10, spe: 24},
         available: true
     },
     finneon: {
@@ -10037,6 +10492,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 15.4,
+        changes: {},
         available: true
     },
     lumineon: {
@@ -10059,6 +10515,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 52.9,
+        changes: {atk: 16, spa: 6},
         available: true
     },
     mantyke: {
@@ -10081,6 +10538,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 143.3,
+        changes: {},
         available: true
     },
     snover: {
@@ -10103,6 +10561,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 111.3,
+        changes: {},
         available: true
     },
     abomasnow: {
@@ -10125,6 +10584,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 298.7,
+        changes: {},
         available: true
     },
     weavile: {
@@ -10147,6 +10607,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 75.0,
+        changes: {},
         available: true
     },
     magnezone: {
@@ -10169,6 +10630,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 396.8,
+        changes: {},
         available: true
     },
     lickilicky: {
@@ -10191,6 +10653,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 308.6,
+        changes: {},
         available: true
     },
     rhyperior: {
@@ -10213,6 +10676,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 623.5,
+        changes: {},
         available: true
     },
     tangrowth: {
@@ -10235,6 +10699,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 283.5,
+        changes: {spd: 40, spe: -40},
         available: true
     },
     electivire: {
@@ -10257,6 +10722,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 305.6,
+        changes: {spe: 10},
         available: true
     },
     magmortar: {
@@ -10279,6 +10745,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 149.9,
+        changes: {spe: 10},
         available: true
     },
     togekiss: {
@@ -10301,6 +10768,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 83.8,
+        changes: {},
         available: true
     },
     yanmega: {
@@ -10323,6 +10791,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 113.5,
+        changes: {},
         available: true
     },
     leafeon: {
@@ -10345,6 +10814,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 56.2,
+        changes: {},
         available: true
     },
     glaceon: {
@@ -10367,6 +10837,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 57.1,
+        changes: {},
         available: true
     },
     gliscor: {
@@ -10389,6 +10860,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 93.7,
+        changes: {},
         available: true
     },
     mamoswine: {
@@ -10411,6 +10883,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 641.5,
+        changes: {atk: 5, spd: 20},
         available: true
     },
     porygonz: {
@@ -10433,6 +10906,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 75.0,
+        changes: {},
         available: true
     },
     gallade: {
@@ -10455,6 +10929,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 114.6,
+        changes: {},
         available: true
     },
     probopass: {
@@ -10477,6 +10952,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 749.6,
+        changes: {hp: 10, atk: 20},
         available: true
     },
     dusknoir: {
@@ -10499,6 +10975,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 235.0,
+        changes: {hp: 60, spa: -30},
         available: true
     },
     froslass: {
@@ -10521,6 +10998,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 58.6,
+        changes: {hp: 10, spa: 30},
         available: true
     },
     rotom: {
@@ -10543,6 +11021,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: ["rotom", "rotomheat", "rotomwash", "rotomfrost", "rotomfan", "rotommow"],
         weight: 0.7,
+        changes: {atk: 15, def: 30, spa: 10, spd: 30},
         available: true
     },
     uxie: {
@@ -10565,6 +11044,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 0.7,
+        changes: {hp: 20},
         available: true
     },
     mesprit: {
@@ -10587,6 +11067,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 0.7,
+        changes: {atk: 5, def: 5, spa: 5, spd: 5},
         available: true
     },
     azelf: {
@@ -10609,6 +11090,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 0.7,
+        changes: {atk: 10, spa: 10},
         available: true
     },
     dialga: {
@@ -10631,6 +11113,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 1505.8,
+        changes: {},
         available: true
     },
     palkia: {
@@ -10653,6 +11136,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 740.8,
+        changes: {},
         available: true
     },
     heatran: {
@@ -10675,6 +11159,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 948.0,
+        changes: {},
         available: true
     },
     regigigas: {
@@ -10697,6 +11182,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 925.9,
+        changes: {},
         available: true
     },
     giratina: {
@@ -10719,6 +11205,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: ["giratina", "giratinaorigin"],
         weight: 1653.5,
+        changes: {},
         available: true
     },
     cresselia: {
@@ -10741,6 +11228,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 188.7,
+        changes: {},
         available: true
     },
     phione: {
@@ -10763,6 +11251,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 6.8,
+        changes: {atk: 10, def: 10, spa: 10, spd: 10},
         available: true
     },
     manaphy: {
@@ -10785,6 +11274,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 3.1,
+        changes: {},
         available: true
     },
     darkrai: {
@@ -10807,6 +11297,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 111.3,
+        changes: {},
         available: true
     },
     shaymin: {
@@ -10829,6 +11320,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: ["shaymin", "shayminsky"],
         weight: 4.6,
+        changes: {},
         available: true
     },
     arceus: {
@@ -10851,6 +11343,7 @@ const SPECIES = {
         baseSpecies: "",
         formes: [],
         weight: 705.5,
+        changes: {},
         available: true
     },
     deoxysattack: {
@@ -10873,6 +11366,7 @@ const SPECIES = {
         baseSpecies: "deoxys",
         formes: [],
         weight: 134.0,
+        changes: {hp: 40, atk: 20, spa: 20},
         available: true
     },
     deoxysdefense: {
@@ -10895,6 +11389,7 @@ const SPECIES = {
         baseSpecies: "deoxys",
         formes: [],
         weight: 134.0,
+        changes: {hp: 40, atk: 30, def: -10, spa: 30, spd: -10},
         available: true
     },
     deoxysspeed: {
@@ -10917,6 +11412,7 @@ const SPECIES = {
         baseSpecies: "deoxys",
         formes: [],
         weight: 134.0,
+        changes: {hp: 40, atk: 5, def: 10, spa: 5, spd: 10, spe: 10},
         available: true
     },
     wormadamsandy: {
@@ -10939,6 +11435,7 @@ const SPECIES = {
         baseSpecies: "wormadam",
         formes: [],
         weight: 14.3,
+        changes: {},
         available: true
     },
     wormadamtrash: {
@@ -10961,6 +11458,7 @@ const SPECIES = {
         baseSpecies: "wormadam",
         formes: [],
         weight: 14.3,
+        changes: {},
         available: true
     },
     giratinaorigin: {
@@ -10983,6 +11481,7 @@ const SPECIES = {
         baseSpecies: "giratina",
         formes: [],
         weight: 1433.0,
+        changes: {},
         available: true
     },
     shayminsky: {
@@ -11005,6 +11504,7 @@ const SPECIES = {
         baseSpecies: "shaymin",
         formes: [],
         weight: 4.6,
+        changes: {},
         available: true
     },
     rotomheat: {
@@ -11027,6 +11527,7 @@ const SPECIES = {
         baseSpecies: "rotom",
         formes: [],
         weight: 0.7,
+        changes: {spe: 5},
         available: true
     },
     rotomwash: {
@@ -11049,6 +11550,7 @@ const SPECIES = {
         baseSpecies: "rotom",
         formes: [],
         weight: 0.7,
+        changes: {spe: 5},
         available: true
     },
     rotomfrost: {
@@ -11071,6 +11573,7 @@ const SPECIES = {
         baseSpecies: "rotom",
         formes: [],
         weight: 0.7,
+        changes: {spe: 5},
         available: true
     },
     rotomfan: {
@@ -11093,6 +11596,7 @@ const SPECIES = {
         baseSpecies: "rotom",
         formes: [],
         weight: 0.7,
+        changes: {spe: 5},
         available: true
     },
     rotommow: {
@@ -11115,6 +11619,7 @@ const SPECIES = {
         baseSpecies: "rotom",
         formes: [],
         weight: 0.7,
+        changes: {spe: 5},
         available: true
     },
 };
