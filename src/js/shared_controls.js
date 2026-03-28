@@ -504,10 +504,10 @@ $(".move-selector").change(function () {
 		moveGroupObj.children(".magnitude-bp, .transform").hide();
 		moveGroupObj.children(".present-bp").show().val(40).change();
 		moveGroupObj.children(".move-bp").prop("disabled", true);
-	} else if (moveName == "Transform") {
-		moveGroupObj.children(".magnitude-bp, .present-bp").hide();
-		moveGroupObj.children(".transform").show();
-		moveGroupObj.children(".move-bp").prop("disabled", false);
+	// } else if (moveName == "Transform") {
+	// 	moveGroupObj.children(".magnitude-bp, .present-bp").hide();
+	// 	moveGroupObj.children(".transform").show();
+	// 	moveGroupObj.children(".move-bp").prop("disabled", false);
 	} else {
 		moveGroupObj.children(".magnitude-bp, .present-bp, .transform").hide();
 		moveGroupObj.children(".move-bp").prop("disabled", false);
