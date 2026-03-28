@@ -14,9 +14,9 @@ function placeBsBtn() {
 	$("#sync.bs-btn").click(function () {
 		var luaVersion = "";
 		fetch("http://localhost:31125/version").then(x => x.text()).then(function (x) {
-			luaVersion = x.split(" ").at(-1);
+			luaVersion = x.split(" ").at(-1).split("-")[0];
 		}).then(function () {
-			if (parseFloat(luaVersion) < 1.2) {
+			if (parseFloat(luaVersion) < parseFloat(LUA_VERSION)) {
 				alert("You are using an unsupported version of the Lua script. Please update to the latest version.");
 				return;
 			}
