@@ -556,16 +556,16 @@ const ITEMS = {
         id: "berserkgene",
         name: "Berserk Gene",
         calcName: "Berserk Gene",
-        desc: "This item is unobtainable.",
-        search: false
+        desc: "A consumable held item that increases the Attack stat of the Pokémon immediately.",
+        search: true
     },
     ragecandybar: {
         num: 71,
         id: "ragecandybar",
         name: "RageCandyBar",
         calcName: "RageCandyBar",
-        desc: "This item is unobtainable.",
-        search: false
+        desc: "A consumable held item that restores 100 HP if the Pokémon's HP falls below 50%.",
+        search: true
     },
     redshard: {
         num: 72,
@@ -1436,7 +1436,7 @@ const ITEMS = {
         id: "ganlonberry",
         name: "Ganlon Berry",
         calcName: "Ganlon Berry",
-        desc: "A consumable held item that increases the Defense stat of the Pokémon by 1 stage if its HP falls below 25%.",
+        desc: "A consumable held item that increases the Defense stat of the Pokémon by 1 stage immediately.",
         search: true
     },
     salacberry: {
@@ -1460,7 +1460,7 @@ const ITEMS = {
         id: "apicotberry",
         name: "Apicot Berry",
         calcName: "Apicot Berry",
-        desc: "A consumable held item that increases the Special Defense stat of the Pokémon by 1 stage if its HP falls below 25%.",
+        desc: "A consumable held item that increases the Special Defense stat of the Pokémon immediately.",
         search: true
     },
     lansatberry: {
@@ -2076,7 +2076,7 @@ const ITEMS = {
         id: "icyrock",
         name: "Icy Rock",
         calcName: "Icy Rock",
-        desc: "A held item that increases the duration of hail to 8 turns.",
+        desc: "A held item that increases the duration of hail to 12 turns.",
         search: true
     },
     smoothrock: {
@@ -2084,7 +2084,7 @@ const ITEMS = {
         id: "smoothrock",
         name: "Smooth Rock",
         calcName: "Smooth Rock",
-        desc: "A held item that increases the duration of sandstorm to 8 turns.",
+        desc: "A held item that increases the duration of sandstorm to 12 turns.",
         search: true
     },
     heatrock: {
@@ -2092,7 +2092,7 @@ const ITEMS = {
         id: "heatrock",
         name: "Heat Rock",
         calcName: "Heat Rock",
-        desc: "A held item that increases the duration of sun to 8 turns.",
+        desc: "A held item that increases the duration of sun to 12 turns.",
         search: true
     },
     damprock: {
@@ -2100,7 +2100,7 @@ const ITEMS = {
         id: "damprock",
         name: "Damp Rock",
         calcName: "Damp Rock",
-        desc: "A held item that increases the duration of rain to 8 turns.",
+        desc: "A held item that increases the duration of rain to 12 turns.",
         search: true
     },
     gripclaw: {
