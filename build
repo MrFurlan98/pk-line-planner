@@ -7,11 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.5.2";
+const VERSION = "1.5.3";
 const CHANGELOG = `
-- Updated to the fifth patch.
-- Fixed Triple Axel and similar moves not calculating damage properly.
-- Added base stat changes to the dex.
+- Fixed Grass Knot and Low Kick not calculating damage properly.
 - Updated some outdated item descriptions.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
