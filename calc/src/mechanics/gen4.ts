@@ -376,7 +376,7 @@ export function calculateBasePowerDPP(
   case 'Grass Knot':
   case 'Low Kick':
     const w = defender.weightkg;
-    basePower = w >= 200 ? 120 : w >= 100 ? 100 : w >= 50 ? 80 : w >= 25 ? 60 : w >= 10 ? 40 : 20;
+    basePower = w > 200 ? 120 : w > 100 ? 100 : w > 50 ? 80 : w > 25 ? 60 : w > 10 ? 40 : 20;
     desc.moveBP = basePower;
     break;
   case 'Gyro Ball':
