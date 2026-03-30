@@ -332,7 +332,7 @@ const ITEMS = {
         id: "lavacookie",
         name: "Lava Cookie",
         calcName: "Lava Cookie",
-        desc: "Cures a Pokémon's status condition.",
+        desc: "A consumable held item that cures the Pokémon's status condition.",
         search: false
     },
     berryjuice: {
@@ -428,7 +428,7 @@ const ITEMS = {
         id: "oldgateau",
         name: "Old Gateau",
         calcName: "Old Gateau",
-        desc: "Cures a Pokémon's status condition.",
+        desc: "A consumable held item that cures the Pokémon's status condition.",
         search: false
     },
     guardspec: {
@@ -1508,7 +1508,7 @@ const ITEMS = {
         id: "jabocaberry",
         name: "Jaboca Berry",
         calcName: "Jaboca Berry",
-        desc: "A consumable held item that damages Pokémon that attack the holder with a <span data-target=\"category/physical\">Physical</span> move by 1/8 of their total HP.",
+        desc: "A consumable held item that damages Pokémon that attack the holder with a <span data-target=\"category/physical\">Physical</span> move by 1/6 of their total HP.",
         search: true
     },
     rowapberry: {
@@ -1516,7 +1516,7 @@ const ITEMS = {
         id: "rowapberry",
         name: "Rowap Berry",
         calcName: "Rowap Berry",
-        desc: "A consumable held item that damages Pokémon that attack the holder with a <span data-target=\"category/special\">Special</span> move by 1/8 of their total HP.",
+        desc: "A consumable held item that damages Pokémon that attack the holder with a <span data-target=\"category/special\">Special</span> move by 1/6 of their total HP.",
         search: true
     },
     brightpowder: {
@@ -1524,7 +1524,7 @@ const ITEMS = {
         id: "brightpowder",
         name: "BrightPowder",
         calcName: "Bright Powder",
-        desc: "A held item that decreases the accuracy of moves targeting the holder by 10%.",
+        desc: "A held item that decreases the accuracy of moves targeting the holder by 11%.",
         search: true
     },
     whiteherb: {
@@ -1860,7 +1860,7 @@ const ITEMS = {
         id: "laxincense",
         name: "Lax Incense",
         calcName: "Lax Incense",
-        desc: "A held item that decreases the accuracy of moves targeting the holder by 10%.",
+        desc: "A held item that decreases the accuracy of moves targeting the holder by 11%.",
         search: true
     },
     luckypunch: {
