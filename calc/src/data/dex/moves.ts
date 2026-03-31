@@ -62,7 +62,6 @@ export const PK_PATCH: {[name: string]: DeepPartial<MoveData>} = {
   "Giga Drain": {bp: 75},
   "Giga Impact": {bp: 180, recoil: [1, 2]},
   Glare: {type: 'Dark'},
-  "Head Smash": {recoil: [1, 2]},
   "Heart Swap": {bp: 95, type: 'Water', category: 'Special'},
   "High Jump Kick": {bp: 150},
   "Hydro Cannon": {recoil: [1, 2]},

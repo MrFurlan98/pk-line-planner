@@ -367,7 +367,7 @@ const PARTY_ORDER_PK = {
     "Hiker Lorenzo": ["Mr. Mime", "Spinda", "Lucario"],
     "Castle Valet Darach": ["Gallade", "Empoleon", "Entei"],
     "Lady Caitlin": ["Gardevoir", "Alakazam", "Metagross"],
-    "Scientist Caliban": ["Swampert", "Bastiodon", "Exploud", "Swalot", "Sableye"],
+    "Scientist Caliban": ["Swampert", "Bastiodon", "Exploud", "Swalot", "Sableye", "Gyarados"],
     "Galactic Portia": ["Ariados", "Metagross", "Octillery"],
     "Galactic Cressida #1": ["Dragonair", "Lapras", "Porygon2"],
     "Galactic Trinculo #2": ["Donphan", "Lickilicky", "Hypno", "Azumarill", "Hitmontop"],
