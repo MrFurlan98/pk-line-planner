@@ -2048,7 +2048,7 @@ const LOCATIONS = {
         sublocations: [],
         encounters: [],
         metLocationId: 100,
-        search: true,
+        search: false,
     },
     solaceonruins: {
         id: "solaceonruins",
