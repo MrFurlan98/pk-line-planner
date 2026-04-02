@@ -7,13 +7,10 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.5.4";
+const VERSION = "1.5.5";
 const CHANGELOG = `
-- Updated to the fifth patch hotfix.
-- Fixed Grass Knot and Low Kick not calculating damage properly.
-- Updated some outdated item descriptions.
-
-(If you're using the Lua script, an update just dropped that supports the fifth patch hotfix!)
+- Fixed outdated descriptions for weather-setting moves.
+- Fixed encounters hatching in the Day Care not importing properly.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
