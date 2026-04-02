@@ -2041,6 +2041,15 @@ const LOCATIONS = {
         metLocationId: 4,
         search: true,
     },
+    pokemondaycare: {
+        id: "pokemondaycare",
+        name: "Pokémon Day Care",
+        coords: [],
+        sublocations: [],
+        encounters: [],
+        metLocationId: 100,
+        search: true,
+    },
     solaceonruins: {
         id: "solaceonruins",
         name: "Solaceon Ruins",
