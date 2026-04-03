@@ -785,7 +785,7 @@ const ABILITIES = {
         name: "Rivalry",
         calcName: "Rivalry",
         desc: {
-            battle: "Increases the damage of moves targeting the user by 25% if the attacker is of the same gender, and reduces it by 25% if they are of opposite genders.",
+            battle: "Increases the damage the of user's moves by 25% if the target is of the same gender, and reduces it by 25% if they are of opposite genders.",
             overworld: ""
         }
     },
