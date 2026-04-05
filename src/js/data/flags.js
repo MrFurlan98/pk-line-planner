@@ -669,7 +669,7 @@ const FLAGS_PK = {
             "Galactic Larissa #1",
             "Galactic Laomedeia #1",
             // Canalave Gym
-            "Idol Skylar",
+            // "Idol Skylar", (Wrong ability currently, so no Sandstorm)
             // Lake Verity
             "Galactic Squad Deimos #2",
             "Galactic Squad Phobos #2",
