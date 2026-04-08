@@ -465,7 +465,7 @@ const ABILITIES = {
         name: "Thick Fat",
         calcName: "Thick Fat",
         desc: {
-            battle: "Halves the damage of <span data-target=\"type/fire\">Fire</span> or <span data-target=\"type/ice\">Ice<>/span type moves targeting the user.",
+            battle: "Halves the damage of <span data-target=\"type/fire\">Fire</span> or <span data-target=\"type/ice\">Ice</span> type moves targeting the user.",
             overworld: ""
         }
     },
