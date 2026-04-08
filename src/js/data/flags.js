@@ -157,12 +157,14 @@ const FLAGS_PK = {
             // Clamberclaw Cliffs
             "Galactic Leda": {},
             "Galactic Themisto": {},
+            "Galactic Squad Himalia": {},
             "Galactic Io #3": {},
             "Commander Jupiter #2": {},
             // Celestic Town
             "Galactic Mercury #3": {},
             // Route 222
             "Belle & Pa Scout & Atticus": {},
+            "Pokéfan Sheen": {},
             "Interviewers Barbara & Walter": {},
             // Sunyshore Gym
             "Leader Volkner": {},
@@ -784,7 +786,7 @@ const FLAGS_PK = {
             "Galactic Themisto",
             "Galactic Dia",
             "Galactic Thebe",
-            "Galactic Himalia",
+            "Galactic Squad Himalia",
             "Galactic Callisto #2",
             "Galactic Europa #2",
             "Galactic Pluto #2",
