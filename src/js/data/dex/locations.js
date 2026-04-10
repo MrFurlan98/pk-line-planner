@@ -2237,6 +2237,15 @@ const LOCATIONS = {
         metLocationId: 12,
         search: true,
     },
+    veilstonestore: {
+        id: "veilstonestore",
+        name: "Veilstone Store",
+        coords: [],
+        sublocations: [],
+        encounters: [],
+        metLocationId: 101,
+        search: false,
+    },
     route214: {
         id: "route214",
         name: "Route 214",
