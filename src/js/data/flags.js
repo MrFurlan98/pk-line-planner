@@ -362,7 +362,7 @@ const FLAGS_PK = {
             },
             {
                 enemy1: "Castle Valet Darach",
-                enemy2: "Pokémon Trainer Caitlin",
+                enemy2: "Lady Caitlin",
                 partner: "Pokémon Trainer Mira @ Wayward Cave"
             },
             // Coronet Highlands
