@@ -7,10 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.5.10";
+const VERSION = "1.5.11";
 const CHANGELOG = `
-- Updated some trainer flags.
-- Changed some "No additional effect" move effects to "Increased priority" to explain AI behavior.
+- Added experience groups to Pokémon Dex entries.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
