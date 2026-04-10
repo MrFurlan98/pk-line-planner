@@ -162,6 +162,7 @@ function loadDexEntry(entryID) {
                 <span class="types">${species.types.map(x => `<img src="img/dex/large/types/${x}.png" data-target="type/${x}">`).join("")}</span>
                 <span class="abilities">Abilities: ${abilities.map(x => `<span data-target="ability/${x.id}">${x.name}</span>`).join(", ")}</span>
                 <span class="genderRatio">Gender: ${species.genderRatio}</span>
+                <span class="growthRate">Experience Group: ${species.growthRate}</span>
                 <span class="catchRate">Catch Rate: ${species.catchRate}<!--<br /><span class="catchRate-hint">(${Math.round(species.catchRate / 3 * 10) / 10}% with a <span data-target="item/pokeball">Poké Ball</span> at full HP)</span>--></span>
                 <span class="weight">Weight: ${species.weight.toFixed(1)} lbs</span>
                 ${Object.keys(species.heldItems).length ? `<span class="heldItems">Held Items: ${heldItems.map(x => `<span class="heldItem"><span class="itemName" data-target="item/${x.item.id}"><img src="/img/dex/icon/items/${x.item.id}.png">${x.item.name}</span><span class="itemChance"> (${x.chance}%)</span></span>`).join("")}</span>` : ``}
