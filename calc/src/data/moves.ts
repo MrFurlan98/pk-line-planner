@@ -1187,6 +1187,7 @@ delete PK['Psywave'];
 delete PK['Splash'];
 delete PK['Conversion'];
 delete PK['Nightmare'];
+delete PK['Rollout'];
 delete PK['Spark'];
 delete PK['Magnitude'];
 delete PK['Rapid Spin'];
