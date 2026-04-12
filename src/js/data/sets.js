@@ -292,6 +292,9 @@ const SETDEX_PK = {
         "Camper Zackary": {"ability": "Swift Swim", "gender": "Male", "item": "Mystic Water", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 23, "moves": ["Aqua Jet", "Aqua Tail", "Ice Fang", "Secret Power"], "nature": "Rash"},
         "Tuber Holly": {"ability": "Swift Swim", "gender": "Female", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Me First", "Pursuit", "Double Team", "Whirlpool"], "nature": "Brave"}
     },
+    "Bulbasaur": {
+        "Maid Yoki": {"ability": "Overgrow", "gender": "Female", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 67, "moves": ["Vine Whip", "Wake-Up Slap"], "nature": "Lonely"}
+    },
     "Buneary": {
         "Battle Girl Kelsey": {"ability": "Scrappy", "gender": "Female", "item": "Muscle Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 22, "moves": ["Dizzy Punch", "Quick Attack", "Jump Kick", "Bounce"], "nature": "Quiet"},
         "Idol Zoe": {"ability": "Scrappy", "gender": "Female", "item": "Pink Scarf", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 99, "moves": ["Tackle", "Fake Out", "Bounce", "Teeter Dance"], "nature": "Modest"},
@@ -528,7 +531,8 @@ const SETDEX_PK = {
         "Hiker Nicholas": {"ability": "Lightning Rod", "gender": "Male", "item": "Thick Club", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 22, "moves": ["Bone Club", "Rock Slide", "Aerial Ace", "Protect"], "nature": "Brave"}
     },
     "Darkrai": {
-        "Champion Cynthia": {"ability": "Bad Dreams", "gender": "Male", "item": "Custap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Dark Void", "Dark Pulse", "Psychic", "Aura Sphere"], "nature": "Timid"}
+        "Champion Cynthia": {"ability": "Bad Dreams", "gender": "Male", "item": "Custap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Dark Void", "Dark Pulse", "Psychic", "Aura Sphere"], "nature": "Timid"},
+        "Lady Emi": {"ability": "Bad Dreams", "gender": "Male", "item": "Lax Incense", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Dark Void", "Confuse Ray", "Disable", "Double Team"], "nature": "Brave"}
     },
     "Delcatty": {
         "Beauty Chelle": {"ability": "Cute Charm", "gender": "Female", "item": "Silk Scarf", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 58, "moves": ["Fake Out", "Assist"], "nature": "Sassy"}
@@ -1046,7 +1050,8 @@ const SETDEX_PK = {
         "Scientist Galileo": {"ability": "Rock Head", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 30, "moves": ["Rock Climb", "Earthquake", "Self-Destruct", "Sleep Talk"], "nature": "Serious"}
     },
     "Grimer": {
-        "Galactic Miranda #1": {"ability": "Aftermath", "gender": "Female", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 22, "moves": ["Explosion", "Gunk Shot", "Fire Punch", "Giga Drain"], "nature": "Gentle"}
+        "Galactic Miranda #1": {"ability": "Aftermath", "gender": "Female", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 22, "moves": ["Explosion", "Gunk Shot", "Fire Punch", "Giga Drain"], "nature": "Gentle"},
+        "Maid Yoki": {"ability": "Aftermath", "gender": "Female", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 67, "moves": ["Wake-Up Slap"], "nature": "Gentle"}
     },
     "Grotle": {
         "Artist William": {"ability": "Leaf Guard", "gender": "Male", "item": "Shell Bell", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 35, "moves": ["Double-Edge", "Stone Edge", "Wood Hammer", "Superpower"], "nature": "Lax"},
@@ -1236,6 +1241,7 @@ const SETDEX_PK = {
     },
     "Jigglypuff": {
         "Galactic Bianca #1": {"ability": "Aftermath", "gender": "Female", "item": "Silk Scarf", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 22, "moves": ["Sing", "Self-Destruct", "Hyper Voice", "Submission"], "nature": "Hardy"},
+        "Maid Yoki": {"ability": "Aftermath", "gender": "Female", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 67, "moves": ["Wake-Up Slap"], "nature": "Gentle"},
         "Pokémon Breeder Johnny": {"ability": "Aftermath", "gender": "Female", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Perish Song", "Block", "Soft-Boiled", "Protect"], "nature": "Gentle"}
     },
     "Jirachi": {
@@ -1328,7 +1334,8 @@ const SETDEX_PK = {
         "Gambler John Keating": {"ability": "Swift Swim", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Crabhammer", "Giga Impact", "Fury Cutter", "Vise Grip"], "nature": "Naive"}
     },
     "Kirlia": {
-        "Galactic Amalthia #1": {"ability": "Trace", "gender": "Female", "item": "Custap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 31, "moves": ["Memento", "Hypnosis", "Psychic", "Thunderbolt"], "nature": "Serious"}
+        "Galactic Amalthia #1": {"ability": "Trace", "gender": "Female", "item": "Custap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 31, "moves": ["Memento", "Hypnosis", "Psychic", "Thunderbolt"], "nature": "Serious"},
+        "Maid Yoki": {"ability": "Trace", "gender": "Female", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 67, "moves": ["Wake-Up Slap"], "nature": "Lax"}
     },
     "Koffing": {
         "Cyclist Karen": {"ability": "Levitate", "gender": "Female", "item": "Custap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 33, "moves": ["Toxic Spikes", "Explosion", "Memento", "Destiny Bond"], "nature": "Bold"},
@@ -1733,6 +1740,7 @@ const SETDEX_PK = {
         "Idol Catherine #1": {"ability": "Levitate", "gender": "Female", "item": "Jaboca Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 33, "moves": ["Ominous Wind", "Mean Look", "Aura Sphere", "Confuse Ray"], "nature": "Brave"},
         "Idol Catherine #2": {"ability": "Levitate", "gender": "Female", "item": "Jaboca Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 34, "moves": ["Hyper Voice", "Ominous Wind", "Aura Sphere", "Mean Look"], "nature": "Brave"},
         "Idol Zoe": {"ability": "Levitate", "gender": "Female", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 96, "moves": ["Destiny Bond", "Pain Split", "Spite", "Memento"], "nature": "Sassy"},
+        "Lady Emi": {"ability": "Levitate", "gender": "Female", "item": "RageCandyBar", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Destiny Bond", "Lunar Dance", "Spite", "Confuse Ray"], "nature": "Hardy"},
         "Pokémon Trainer Cheryl @ Eterna Forest": {"ability": "Levitate", "gender": "Female", "item": "Miracle Seed", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 21, "moves": ["Shadow Ball", "Will-O-Wisp", "Magical Leaf", "Thunderbolt"], "nature": "Modest"},
         "Psychic Tony": {"ability": "Levitate", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 32, "moves": ["Mean Look", "Perish Song", "Substitute", "Protect"], "nature": "Quirky"}
     },
@@ -1784,6 +1792,7 @@ const SETDEX_PK = {
         "Galactic Miranda #1": {"ability": "Guts", "gender": "Male", "item": "Flame Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 20, "moves": ["Self-Destruct", "Facade", "Fire Punch", "Seed Bomb"], "nature": "Mild"},
         "Hiker Jonathan": {"ability": "Guts", "gender": "Male", "item": "Flame Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 34, "moves": ["Facade", "Earthquake", "Crunch", "Protect"], "nature": "Modest"},
         "Hiker Nicholas": {"ability": "Guts", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 22, "moves": ["Curse", "Slack Off", "Sleep Talk", "Facade"], "nature": "Hardy"},
+        "Maid Yoki": {"ability": "Guts", "gender": "Male", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 67, "moves": ["Wake-Up Slap"], "nature": "Hardy"},
         "Pokémon Trainer Dawn @ Jubilife City [Grotle]": {"ability": "Guts", "gender": "Male", "ivs": {"at": 24, "df": 24, "hp": 24, "sa": 24, "sd": 24, "sp": 24}, "level": 15, "moves": ["Return", "Rock Smash", "Slack Off", "Curse"], "nature": "Careful"},
         "Pokémon Trainer Dawn @ Jubilife City [Monferno]": {"ability": "Guts", "gender": "Male", "ivs": {"at": 24, "df": 24, "hp": 24, "sa": 24, "sd": 24, "sp": 24}, "level": 15, "moves": ["Return", "Rock Smash", "Slack Off", "Curse"], "nature": "Naughty"},
         "Pokémon Trainer Dawn @ Jubilife City [Prinplup]": {"ability": "Guts", "gender": "Male", "ivs": {"at": 24, "df": 24, "hp": 24, "sa": 24, "sd": 24, "sp": 24}, "level": 15, "moves": ["Return", "Rock Smash", "Slack Off", "Curse"], "nature": "Timid"},
@@ -2990,7 +2999,8 @@ const SETDEX_PK = {
         "Swimmer Paige": {"ability": "Technician", "gender": "Female", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Fake Out", "Triple Axel", "Surf", "Poison Jab"], "nature": "Mild"}
     },
     "Weedle": {
-        "Bug Catcher Logan": {"ability": "Shield Dust", "gender": "Male", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 6, "moves": ["Bug Bite", "Poison Sting", "String Shot"], "nature": "Bashful"}
+        "Bug Catcher Logan": {"ability": "Shield Dust", "gender": "Male", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 6, "moves": ["Bug Bite", "Poison Sting", "String Shot"], "nature": "Bashful"},
+        "Maid Yoki": {"ability": "Shield Dust", "gender": "Female", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 67, "moves": ["Screech", "Sing", "Poison Sting"], "nature": "Mild"}
     },
     "Weepinbell": {
         "Aroma Lady Jenna": {"ability": "Chlorophyll", "gender": "Female", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 23, "moves": ["Sleep Powder", "Weather Ball Fire", "Power Whip", "Sucker Punch"], "nature": "Relaxed"}

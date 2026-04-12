@@ -40,6 +40,8 @@ const PARTY_ORDER_PK = {
     "Twins Liv & Liz": ["Shroomish", "Pachirisu", "Poliwag", "Croagunk"],
     "Bug Catcher Brandon": ["Spinarak", "Ledyba", "Nincada", "Venonat", "Corphish"],
     "Aroma Lady Taylor": ["Budew", "Cherubi", "Oddish", "Hoppip", "Bellsprout"],
+    "Maid Yoki": ["Jigglypuff", "Munchlax", "Bulbasaur", "Kirlia", "Grimer", "Weedle"],
+    "Lady Emi": ["Misdreavus", "Darkrai"],
     "Galactic Mercury #1": ["Glameow", "Wynaut", "Skorupi", "Staryu"],
     "Galactic Terra #1": ["Trapinch", "Tentacool", "Drowzee", "Paras"],
     "Galactic Pluto #1": ["Drifloon", "Snover", "Porygon", "Sneasel", "Abra"],

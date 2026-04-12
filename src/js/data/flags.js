@@ -413,6 +413,9 @@ const FLAGS_PK = {
         "Pokémon Trainer {RIVAL2_NAME} @ Jubilife City [{RIVAL2_STARTER_2}]",
         // Eterna Forest
         "Pokémon Trainer Cheryl @ Eterna Forest",
+        // Floaroma Town
+        "Maid Yoki",
+        "Lady Emi",
         // Route 206
         "Cyclist James",
         "Cyclist Rachel",
@@ -671,7 +674,7 @@ const FLAGS_PK = {
             "Galactic Larissa #1",
             "Galactic Laomedeia #1",
             // Canalave Gym
-            // "Idol Skylar", (Wrong ability currently, so no Sandstorm)
+            "Idol Skylar",
             // Lake Verity
             "Galactic Squad Deimos #2",
             "Galactic Squad Phobos #2",
