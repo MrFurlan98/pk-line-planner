@@ -37,7 +37,6 @@ const TRAINER_AI_FLAGS_PK = {
     "Twins Liv & Liz": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 1, CheckHP: 0, Weather: 0, Harassment: 0 },
     "Bug Catcher Brandon": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 0, Weather: 0, Harassment: 0 },
     "Aroma Lady Taylor": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 1, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 0, Weather: 1, Harassment: 0 },
-    "Maid Yoki": { Basic: 1, EvaluateAttack: 0, Expert: 0, Setup: 0, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 0, Weather: 0, Harassment: 0 },
     "Lady Emi": { Basic: 0, EvaluateAttack: 0, Expert: 0, Setup: 1, Risky: 1, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 0, Weather: 0, Harassment: 0 },
     "Galactic Mercury #1": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 0, Weather: 0, Harassment: 0 },
     "Galactic Terra #1": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 1, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 0, Weather: 0, Harassment: 0 },
