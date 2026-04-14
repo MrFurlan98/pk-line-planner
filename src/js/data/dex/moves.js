@@ -3071,7 +3071,7 @@ const MOVES = {
         secondaryChance: 100,
         priority: 0,
         target: "normal",
-        effect: "Has a 100% chance to confuse the target. Ignores the accuracy check in rain.",
+        effect: "Has a 100% chance to paralyze the target. Ignores the accuracy check in rain.",
         hits: 1,
         flags: [],
         machine: 0,
