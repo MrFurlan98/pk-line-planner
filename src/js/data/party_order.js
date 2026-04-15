@@ -435,7 +435,7 @@ const PARTY_ORDER_PK = {
     "Galactic Oberon #2": ["Slaking", "Tyranitar", "Walrein", "Breloom", "Lucario", "Raichu"],
     "Galactic Titania": ["Togekiss", "Altaria", "Xatu", "Jumpluff", "Celebi", "Yanmega"],
     "Galactic Proteus #2": ["Ditto", "Persian", "Infernape", "Hypno", "Weavile", "Smeargle"],
-    "Galactic Laomedeia #2": ["Lapras", "Rapidash", "Dragonite"],
+    "Galactic Laomedeia #2": ["Lapras", "Rapidash", "Dragonite", "Dugtrio"],
     "Galactic Larissa #2": ["Skuntank", "Bronzor", "Spiritomb", "Porygon2", "Weezing"],
     "Pokémon Trainer Riley @ Coronet Highlands": ["Absol", "Ursaring", "Heracross", "Salamence", "Lucario", "Machamp"],
     "Galactic Terra #5": ["Blastoise", "Dunsparce", "Blaziken", "Torterra", "Luxray", "Metagross"],

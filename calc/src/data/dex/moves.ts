@@ -106,7 +106,7 @@ export const PK_PATCH: {[name: string]: DeepPartial<MoveData>} = {
   Rage: {bp: 70, type: 'Fighting'},
   "Razor Leaf": {bp: 60},
   Return: {bp: 121},
-  "Roar of Time": {target: 'allAdjacentFoes'},
+  "Roar of Time": {target: 'allAdjacentFoes', recoil: [1, 3]},
   "Rock Climb": {type: 'Rock'},
   "Rock Tomb": {bp: 70},
   "Rock Wrecker": {bp: 30, multihit: [1, 3]},
@@ -176,3 +176,4 @@ export const PK_PATCH: {[name: string]: DeepPartial<MoveData>} = {
   "Aqua Cutter": {bp: 70, type: 'Water', category: 'Physical', makesContact: true},
   "Hidden Power Flying": {bp: 70, type: 'Flying', category: 'Special'},
 };
+s

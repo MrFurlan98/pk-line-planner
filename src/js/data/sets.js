@@ -19,11 +19,11 @@ const SETDEX_PK = {
         "Psychic Cheyenne": {"ability": "Super Luck", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 31, "moves": ["Swords Dance", "Aerial Ace", "Feint Attack", "Aura Sphere"], "nature": "Relaxed"}
     },
     "Aerodactyl": {
-        "Bug Catcher Ford": {"ability": "Rock Head", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Earthquake", "Sky Attack", "Pursuit", "Stone Edge"], "nature": "Quirky"},
-        "Commander Mars #3": {"ability": "Rock Head", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Sky Attack", "Rock Slide", "Tailwind", "Earthquake"], "nature": "Impish"},
-        "Elite Four Bertha": {"ability": "Rock Head", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Sky Attack", "Head Smash", "Sand Tomb", "Ice Fang"], "nature": "Timid"},
+        "Bug Catcher Ford": {"ability": "Rock Head", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Earthquake", "Sky Attack", "Pursuit", "Stone Edge"], "nature": "Gentle"},
+        "Commander Mars #3": {"ability": "Rock Head", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Sky Attack", "Rock Slide", "Tailwind", "Earthquake"], "nature": "Sassy"},
+        "Elite Four Bertha": {"ability": "Rock Head", "gender": "Male", "item": "Life Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Sky Attack", "Head Smash", "Sand Tomb", "Ice Fang"], "nature": "Lonely"},
         "Galactic Laomedeia #1": {"ability": "Rock Head", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Rock Slide", "Pursuit", "Earthquake", "Sky Attack"], "nature": "Rash"},
-        "Hiker J.J Ahern": {"ability": "Rock Head", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Stone Edge", "Iron Head", "Giga Impact", "Rock Slide"], "nature": "Modest"},
+        "Hiker J.J Ahern": {"ability": "Rock Head", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Stone Edge", "Iron Head", "Giga Impact", "Rock Slide"], "nature": "Lonely"},
         "Scientist Bill": {"ability": "Rock Head", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 58, "moves": ["Rock Slide", "Iron Head", "Fire Fang", "Sky Attack"], "nature": "Timid"}
     },
     "Aggron": {
@@ -32,7 +32,7 @@ const SETDEX_PK = {
         "Gambler Ace": {"ability": "Rock Head", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 77, "moves": ["Thunder Wave", "Iron Head", "Head Smash", "Superpower"], "nature": "Jolly"},
         "Idol Skylar": {"ability": "Rock Head", "gender": "Female", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 61, "moves": ["Head Smash", "Giga Impact", "Superpower", "Avalanche"], "nature": "Relaxed"},
         "Policeman Danny": {"ability": "Rock Head", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Fissure", "Iron Head", "Giga Impact", "Submission"], "nature": "Impish"},
-        "Worker Dillan": {"ability": "Rock Head", "gender": "Male", "item": "Chople Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Head Smash", "Earthquake", "Aqua Tail", "Rock Polish"], "nature": "Quirky"}
+        "Worker Dillan": {"ability": "Rock Head", "gender": "Male", "item": "Chople Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 96, "moves": ["Head Smash", "Earthquake", "Aqua Tail", "Rock Polish"], "nature": "Adamant"}
     },
     "Aipom": {
         "Pokémon Trainer Barry #2 [Chimchar]": {"ability": "Technician", "gender": "Male", "item": "Silk Scarf", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 9, "moves": ["Fake Out", "U-turn"], "nature": "Naive"},
@@ -53,7 +53,7 @@ const SETDEX_PK = {
         "Dragon Tamer Drax": {"ability": "Serene Grace", "gender": "Male", "item": "Apicot Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 34, "moves": ["Dragon Breath", "Air Slash", "Roost", "Earthquake"], "nature": "Impish"},
         "Dragon Tamer Elton": {"ability": "Serene Grace", "gender": "Male", "item": "Chesto Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 50, "moves": ["Sing", "Safeguard", "Dragon Rush", "Sleep Talk"], "nature": "Quirky"},
         "Galactic Squad Mab": {"ability": "Serene Grace", "gender": "Female", "item": "Toxic Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Sing", "Sky Attack", "Dragon Rush", "Earthquake"], "nature": "Docile"},
-        "Galactic Titania": {"ability": "Serene Grace", "gender": "Female", "item": "Yache Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Gastro Acid", "Pursuit", "Dragon Rush", "Tailwind"], "nature": "Lax"},
+        "Galactic Titania": {"ability": "Serene Grace", "gender": "Female", "item": "Yache Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Gastro Acid", "Pursuit", "Dragon Rush", "Tailwind"], "nature": "Modest"},
         "Pokémon Breeder Frank": {"ability": "Serene Grace", "gender": "Male", "item": "Ganlon Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Rage", "Outrage", "Earthquake", "Roost"], "nature": "Quiet"},
         "Pokémon Trainer Dawn @ Lake Verity": {"ability": "Serene Grace", "gender": "Female", "item": "Sitrus Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 67, "moves": ["Sky Attack", "Cotton Spore", "Dragon Breath", "Heat Wave"], "nature": "Jolly"},
         "Pokémon Trainer Dawn @ Veilstone City [Empoleon]": {"ability": "Serene Grace", "gender": "Female", "ivs": {"at": 17, "df": 17, "hp": 17, "sa": 17, "sd": 17, "sp": 17}, "level": 40, "moves": ["Dragon Pulse", "Aerial Ace", "Flamethrower", "Roost"], "nature": "Docile"},
@@ -114,7 +114,7 @@ const SETDEX_PK = {
         "Galactic Margaret": {"ability": "Intimidate", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Curse", "Flare Blitz", "Extreme Speed", "Close Combat"], "nature": "Adamant"},
         "Galactic Squad Amalthia": {"ability": "Intimidate", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Heat Wave", "Extreme Speed", "Close Combat", "Solar-Beam"], "nature": "Careful"},
         "Jogger Wyatt": {"ability": "Intimidate", "gender": "Male", "item": "Rowap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 76, "moves": ["Will-O-Wisp", "Morning Sun", "Solar Beam", "Toxic"], "nature": "Hasty"},
-        "Pokémon Ranger Jeffrey": {"ability": "Intimidate", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Outrage", "Flare Blitz", "Bulldoze", "Superpower"], "nature": "Relaxed"},
+        "Pokémon Ranger Jeffrey": {"ability": "Intimidate", "gender": "Female", "item": "Quick Claw", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Outrage", "Flare Blitz", "Earthquake", "Superpower"], "nature": "Naughty"},
         "Pokémon Trainer Marley @ Coronet Highlands": {"ability": "Intimidate", "gender": "Female", "item": "Muscle Band", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Extreme Speed", "Flare Blitz", "Head Smash", "Outrage"], "nature": "Lonely"},
         "Pokémon Trainer Marley @ Lake Valor": {"ability": "Intimidate", "gender": "Male", "item": "Wiki Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 67, "moves": ["Extreme Speed", "Fire Fang", "Head Smash", "Outrage"], "nature": "Brave"},
         "Policeman Caleb": {"ability": "Intimidate", "gender": "Male", "item": "Choice Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 53, "moves": ["Flare Blitz", "Extreme Speed", "Close Combat", "Wild Charge"], "nature": "Jolly"},
@@ -125,7 +125,7 @@ const SETDEX_PK = {
         "Worker Holden": {"ability": "Intimidate", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Extreme Speed", "Flare Blitz", "Ice Fang", "Iron Head"], "nature": "Quirky"}
     },
     "Arceus": {
-        "Champion Cynthia": {"ability": "Multitype", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Swords Dance", "Earthquake", "Extreme Speed", "Sucker Punch"], "nature": "Careful"}
+        "Champion Cynthia": {"ability": "Multitype", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Swords Dance", "Earthquake", "Extreme Speed", "Sucker Punch"], "nature": "Naughty"}
     },
     "Ariados": {
         "Galactic Io #1": {"ability": "Intimidate", "gender": "Female", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 32, "moves": ["Toxic Spikes", "Megahorn", "Poison Fang", "Dig"], "nature": "Hardy"},
@@ -142,7 +142,7 @@ const SETDEX_PK = {
         "Scientist Jonathon": {"ability": "Rock Head", "gender": "Male", "item": "Sitrus Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 12, "moves": ["Spikes", "Sleep Talk"], "nature": "Modest"}
     },
     "Articuno": {
-        "Galactic Uranus #3": {"ability": "Snow Warning", "gender": "", "item": "Macho Brace", "ivs": {"at": 29, "df": 29, "hp": 29, "sa": 29, "sd": 29, "sp": 29}, "level": 86, "moves": ["Sheer Cold", "Air Slash", "Hidden Power Grass", "Ancient Power"], "nature": "Mild"},
+        "Galactic Uranus #3": {"ability": "Snow Cloak", "gender": "", "item": "Macho Brace", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Sheer Cold", "Air Slash", "Hidden Power Grass", "Ancient Power"], "nature": "Rash"},
         "Leader Candice": {"ability": "Snow Cloak", "gender": "", "item": "Charti Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 74, "moves": ["Sheer Cold", "Hurricane", "Ancient Power", "Hidden Power Ground"], "nature": "Hasty"}
     },
     "Azelf": {
@@ -223,16 +223,16 @@ const SETDEX_PK = {
     "Blastoise": {
         "Fisherman Greg": {"ability": "Shell Armor", "gender": "Female", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 96, "moves": ["Follow Me", "Yawn", "Muddy Water", "Icy Wind"], "nature": "Brave"},
         "Galactic Greip": {"ability": "Torrent", "gender": "Male", "item": "Power Bracer", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Surf", "Aura Sphere", "Ice Beam", "Zen Headbutt"], "nature": "Mild"},
-        "Galactic Terra #5": {"ability": "Torrent", "gender": "Male", "item": "Wacan Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 85, "moves": ["Follow Me", "Water Spout", "Icy Wind", "Aura Sphere"], "nature": "Quiet"},
-        "Hiker J.J Ahern": {"ability": "Torrent", "gender": "Male", "item": "Expert Belt", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Hydro Pump", "Blizzard", "Flash Cannon", "Toxic"], "nature": "Serious"},
+        "Galactic Terra #5": {"ability": "Torrent", "gender": "Male", "item": "Wacan Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Follow Me", "Water Spout", "Icy Wind", "Aura Sphere"], "nature": "Brave"},
+        "Hiker J.J Ahern": {"ability": "Torrent", "gender": "Male", "item": "Expert Belt", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Hydro Pump", "Blizzard", "Flash Cannon", "Toxic"], "nature": "Brave"},
         "Pokémon Ranger Erick": {"ability": "Torrent", "gender": "Male", "item": "Mystic Water", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 47, "moves": ["Water Spout", "Ice Beam", "Hyper Beam", "Aqua Jet"], "nature": "Naughty"},
         "Pokémon Trainer Riley @ Iron Island": {"ability": "Torrent", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 60, "moves": ["Aura Sphere", "Dark Pulse", "Ice Beam", "Water Pulse"], "nature": "Bashful"},
-        "Worker Conrad": {"ability": "Torrent", "gender": "Male", "item": "Custap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Surf", "Follow Me", "Weather Ball", "Avalanche"], "nature": "Lax"}
+        "Worker Conrad": {"ability": "Torrent", "gender": "Male", "item": "Custap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 96, "moves": ["Surf", "Follow Me", "Weather Ball", "Avalanche"], "nature": "Serious"}
     },
     "Blaziken": {
         "Bird Keeper Kahlil": {"ability": "Blaze", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 42, "moves": ["Vacuum Wave", "Blaze Kick", "Thunder Punch", "Knock Off"], "nature": "Hasty"},
         "Galactic Prometheus #2": {"ability": "Blaze", "gender": "Male", "item": "Power Anklet", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Blast Burn", "Solar-Beam", "Close Combat", "Rock Slide"], "nature": "Brave"},
-        "Galactic Terra #5": {"ability": "Blaze", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 84, "moves": ["Bulldoze", "Heat Wave", "Aura Sphere", "Rock Slide"], "nature": "Bold"},
+        "Galactic Terra #5": {"ability": "Blaze", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Bulldoze", "Heat Wave", "Aura Sphere", "Rock Slide"], "nature": "Lonely"},
         "Pokémon Trainer Barry #4 [Torterra]": {"ability": "Blaze", "gender": "Male", "item": "Muscle Band", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 47, "moves": ["Fire Blast", "Jump Kick", "Thunder Punch", "Night Slash"], "nature": "Lonely"},
         "Pokémon Trainer Barry #5 [Torterra]": {"ability": "Blaze", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 56, "moves": ["Agility", "Fire Spin", "Superpower", "Hidden Power Ice"], "nature": "Bold"},
         "Pokémon Trainer Barry #6 [Torterra]": {"ability": "Blaze", "gender": "Male", "item": "White Herb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Agility", "Blaze Kick", "Thunder Punch", "High Jump Kick"], "nature": "Adamant"},
@@ -258,7 +258,7 @@ const SETDEX_PK = {
         "Artist Angel": {"ability": "Technician", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 23, "moves": ["Spore", "Mach Punch", "Bullet Seed", "Rock Slide"], "nature": "Calm"},
         "Black Belt Derek": {"ability": "Technician", "gender": "Male", "item": "Coba Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 41, "moves": ["Spore", "Mach Punch", "Seed Bomb", "Swords Dance"], "nature": "Serious"},
         "Galactic Angrboda": {"ability": "Technician", "gender": "Female", "item": "Black Belt", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Spore", "Close Combat", "Seed Bomb", "Rock Slide"], "nature": "Naive"},
-        "Galactic Oberon #2": {"ability": "Technician", "gender": "Male", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Spore", "Bulldoze", "Seed Bomb", "Low Kick"], "nature": "Lonely"},
+        "Galactic Oberon #2": {"ability": "Technician", "gender": "Male", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Spore", "Bulldoze", "Seed Bomb", "Low Kick"], "nature": "Naughty"},
         "Galactic Thebe": {"ability": "Technician", "gender": "Male", "item": "Coba Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 52, "moves": ["Spore", "Substitute", "Bullet Seed", "Drain Punch"], "nature": "Quiet"}
     },
     "Bronzong": {
@@ -330,7 +330,7 @@ const SETDEX_PK = {
         "Galactic Margaret": {"ability": "Drought", "gender": "Female", "item": "Persim Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Flare Blitz", "Stomp", "Rock Slide", "Accelerock"], "nature": "Calm"},
         "Galactic Neso #1": {"ability": "Drought", "gender": "Male", "item": "Passho Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Stealth Rock", "Earthquake", "Lava Plume", "Ancient Power"], "nature": "Rash"},
         "Galactic Venus #4": {"ability": "Drought", "gender": "Female", "item": "Shuca Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 65, "moves": ["Stealth Rock", "Solar-Beam", "Earth Power", "Lava Plume"], "nature": "Brave"},
-        "Worker Dillan": {"ability": "Solid Rock", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Overheat", "Explosion", "Flash Cannon", "Earthquake"], "nature": "Quiet"}
+        "Worker Dillan": {"ability": "Solid Rock", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 97, "moves": ["Overheat", "Explosion", "Flash Cannon", "Earthquake"], "nature": "Quirky"}
     },
     "Carnivine": {
         "Aroma Lady Carolina": {"ability": "Chlorophyll", "gender": "Female", "item": "Occa Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 77, "moves": ["Sleep Powder", "Power Whip", "Hyper Beam", "Gastro Acid"], "nature": "Naughty"},
@@ -362,7 +362,7 @@ const SETDEX_PK = {
         "Bug Catcher Logan": {"ability": "Tinted Lens", "gender": "Male", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 6, "moves": ["Bug Bite", "Tackle", "String Shot"], "nature": "Serious"}
     },
     "Celebi": {
-        "Galactic Titania": {"ability": "Natural Cure", "gender": "", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Nature Power", "Leaf Storm", "Earth Power", "Ancient Power"], "nature": "Naive"}
+        "Galactic Titania": {"ability": "Natural Cure", "gender": "", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Nature Power", "Leaf Storm", "Earth Power", "Ancient Power"], "nature": "Modest"}
     },
     "Chansey": {
         "Gambler Carlos": {"ability": "Natural Cure", "gender": "Female", "item": "Lucky Punch", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 44, "moves": ["Curse", "Soft-Boiled", "Counter", "Metronome"], "nature": "Naughty"},
@@ -373,11 +373,11 @@ const SETDEX_PK = {
         "Elite Four Flint": {"ability": "Solar Power", "gender": "Male", "item": "Charti Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Fire Blast", "Drain Punch", "Extreme Speed", "Sky Attack"], "nature": "Adamant"},
         "Galactic Callisto #2": {"ability": "Solar Power", "gender": "Male", "item": "Salac Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 53, "moves": ["Belly Drum", "Fire Fang", "Earthquake", "Aerial Ace"], "nature": "Relaxed"},
         "Galactic Hyperion #1": {"ability": "Solar Power", "gender": "Male", "item": "Charti Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 65, "moves": ["Heat Wave", "Air Slash", "Focus Blast", "Solar Beam"], "nature": "Hasty"},
-        "Galactic Prospero #2": {"ability": "Solar Power", "gender": "Male", "item": "Macho Brace", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Fire Spin", "Dragon Pulse", "Solar-Beam", "Air Slash"], "nature": "Modest"},
-        "Hiker J.J Ahern": {"ability": "Solar Power", "gender": "Male", "item": "Charcoal", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Heat Wave", "Earthquake", "Hyper Beam", "Dragon Pulse"], "nature": "Hasty"},
+        "Galactic Prospero #2": {"ability": "Solar Power", "gender": "Male", "item": "Macho Brace", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 88, "moves": ["Fire Spin", "Dragon Pulse", "Solar-Beam", "Air Slash"], "nature": "Brave"},
+        "Hiker J.J Ahern": {"ability": "Solar Power", "gender": "Male", "item": "Charcoal", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Heat Wave", "Earthquake", "Hyper Beam", "Dragon Pulse"], "nature": "Relaxed"},
         "Pokémon Ranger Erick": {"ability": "Solar Power", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 49, "moves": ["Hurricane", "Dragon Pulse", "Focus Blast", "Weather Ball Water"], "nature": "Hasty"},
         "Rich Boy Trey": {"ability": "Solar Power", "gender": "Male", "item": "Big Nugget", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 71, "moves": ["Heat Wave", "Air Slash", "Fling", "Solar-Beam"], "nature": "Bashful"},
-        "Worker Dillan": {"ability": "Solar Power", "gender": "Male", "item": "Charti Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Rage", "Dragon Dance", "Blast Burn", "Iron Tail"], "nature": "Timid"}
+        "Worker Dillan": {"ability": "Solar Power", "gender": "Male", "item": "Charti Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Rage", "Dragon Dance", "Blast Burn", "Iron Tail"], "nature": "Lax"}
     },
     "Charmander": {
         "Youngster Dallas": {"ability": "Blaze", "gender": "Male", "item": "Charcoal", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 9, "moves": ["Charm", "Ember", "Metal Claw", "Bite"], "nature": "Modest"}
@@ -472,7 +472,7 @@ const SETDEX_PK = {
         "Galactic Iapetus #1": {"ability": "Filter", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 61, "moves": ["Explosion", "Clamp", "Icicle Spear"], "nature": "Careful"},
         "Galactic Setebos #2": {"ability": "Filter", "gender": "Male", "item": "Power Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Explosion", "Clamp", "Avalanche", "Hidden Power Grass"], "nature": "Sassy"},
         "Galactic Uranus #2": {"ability": "Filter", "gender": "Female", "item": "Custap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 36, "moves": ["Clamp", "Blizzard", "Explosion", "Ice Shard"], "nature": "Rash"},
-        "Galactic Uranus #3": {"ability": "Filter", "gender": "Female", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Explosion", "Ice Ball", "Clamp", "Drill Run"], "nature": "Bashful"},
+        "Galactic Uranus #3": {"ability": "Filter", "gender": "Female", "item": "White Herb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 94, "moves": ["Explosion", "Ice Ball", "Clamp", "Drill Run"], "nature": "Adamant"},
         "Swimmer Paige": {"ability": "Filter", "gender": "Female", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Clamp", "Icicle Spear", "Rock Blast", "Gyro Ball"], "nature": "Hasty"}
     },
     "Combee": {
@@ -510,14 +510,14 @@ const SETDEX_PK = {
     },
     "Cresselia": {
         "Commander Saturn #1": {"ability": "Levitate", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 63, "moves": ["Calm Mind", "Lunar Dance", "Thunder", "Icy Wind"], "nature": "Calm"},
-        "Commander Saturn #2": {"ability": "Levitate", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Calm Mind", "Lunar Dance", "Thunder", "Ice Beam"], "nature": "Timid"},
-        "Elite Four Lucian": {"ability": "Levitate", "gender": "Female", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Lunar Dance", "Cosmic Power", "Psychic", "Ice Beam"], "nature": "Naughty"}
+        "Commander Saturn #2": {"ability": "Levitate", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Calm Mind", "Lunar Dance", "Thunder", "Ice Beam"], "nature": "Rash"},
+        "Elite Four Lucian": {"ability": "Levitate", "gender": "Female", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Lunar Dance", "Cosmic Power", "Psychic", "Ice Beam"], "nature": "Calm"}
     },
     "Croagunk": {
         "Twins Liv & Liz": {"ability": "Dry Skin", "gender": "Female", "item": "Payapa Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 18, "moves": ["Focus Punch", "Vacuum Wave", "Poison Sting", "Fake Out"], "nature": "Lax"}
     },
     "Crobat": {
-        "Galactic Luna #5": {"ability": "Inner Focus", "gender": "Male", "item": "Wide Lens", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 85, "moves": ["Supersonic", "Sky Attack", "Heat Wave", "Mud-Slap"], "nature": "Quiet"},
+        "Galactic Luna #5": {"ability": "Inner Focus", "gender": "Male", "item": "Wide Lens", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Supersonic", "Sky Attack", "Heat Wave", "Mud-Slap"], "nature": "Naive"},
         "Galactic Mercury #3": {"ability": "Inner Focus", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 53, "moves": ["Sludge Bomb", "Ominous Wind", "Heat Wave", "Nasty Plot"], "nature": "Brave"},
         "Galactic Pandora #1": {"ability": "Inner Focus", "gender": "Male", "item": "Black Sludge", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 65, "moves": ["Hurricane", "Supersonic", "Poison Fang", "Hypnosis"], "nature": "Rash"}
     },
@@ -539,10 +539,10 @@ const SETDEX_PK = {
         "Skier Shawn": {"ability": "Adaptability", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 74, "moves": ["Spikes", "Fake Out", "Ice Ball", "Tailwind"], "nature": "Timid"}
     },
     "Deoxys-Attack": {
-        "Galactic Boss Cyrus #3": {"ability": "Magic Guard", "gender": "", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Psycho Boost", "Superpower", "Pursuit", "Extreme Speed"], "nature": "Lonely"}
+        "Galactic Boss Cyrus #3": {"ability": "Magic Guard", "gender": "", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Psycho Boost", "Superpower", "Pursuit", "Extreme Speed"], "nature": "Quirky"}
     },
     "Deoxys-Defense": {
-        "Galactic Boss Cyrus #2": {"ability": "Magic Guard", "gender": "", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 92, "moves": ["Spikes", "Future Sight", "Recover", "Psycho Boost"], "nature": "Relaxed"}
+        "Galactic Boss Cyrus #2": {"ability": "Magic Guard", "gender": "", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Spikes", "Low Kick", "Recover", "Psycho Boost"], "nature": "Quiet"}
     },
     "Deoxys-Speed": {
         "Galactic Boss Cyrus #1": {"ability": "Magic Guard", "gender": "", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 56, "moves": ["Spikes", "Psycho Boost", "Stealth Rock", "Extreme Speed"], "nature": "Mild"}
@@ -557,7 +557,7 @@ const SETDEX_PK = {
         "Swimmer Wang [D]": {"ability": "Swift Swim", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Perish Song", "Substitute", "Surf", "Protect"], "nature": "Hardy"}
     },
     "Dialga": {
-        "Galactic Boss Cyrus #3": {"ability": "Pressure", "gender": "", "item": "Adamant Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 96, "moves": ["Roar of Time", "Flash Cannon", "Fire Blast", "Dark Pulse"], "nature": "Rash"}
+        "Galactic Boss Cyrus #3": {"ability": "Pressure", "gender": "", "item": "Adamant Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 97, "moves": ["Roar of Time", "Flash Cannon", "Fire Blast", "Dark Pulse"], "nature": "Rash"}
     },
     "Diglett": {
         "Hiker Daniel": {"ability": "Arena Trap", "gender": "Male", "item": "Hard Stone", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 21, "moves": ["Earthquake", "Aerial Ace", "Rock Slide", "Pursuit"], "nature": "Quiet"}
@@ -602,13 +602,13 @@ const SETDEX_PK = {
     "Dragonite": {
         "Ace Trainer Alicia": {"ability": "Thick Fat", "gender": "Male", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 69, "moves": ["Blizzard", "Twister", "Extreme Speed", "Fire Spin"], "nature": "Hasty"},
         "Collector Tobias": {"ability": "Thick Fat", "gender": "Male", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Draco Meteor", "Stone Edge", "Extreme Speed", "Earthquake"], "nature": "Jolly"},
-        "Dragon Tamer Clinton": {"ability": "Thick Fat", "gender": "Male", "item": "Apicot Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Dragon Breath", "Aqua Jet", "Extreme Speed", "Hyper Beam"], "nature": "Impish"},
+        "Dragon Tamer Clinton": {"ability": "Thick Fat", "gender": "Male", "item": "Apicot Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Dragon Breath", "Aqua Jet", "Extreme Speed", "Hyper Beam"], "nature": "Bold"},
         "Fisherman Greg": {"ability": "Thick Fat", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Dragon Rush", "Hydro Pump", "Twister", "Tail Whip"], "nature": "Quiet"},
         "Galactic Laomedeia #2": {"ability": "Thick Fat", "gender": "Female", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Horn Drill", "Aerial Ace", "Roost", "Double Team"], "nature": "Careful"},
         "Galactic Margaret": {"ability": "Thick Fat", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 85, "moves": ["Curse", "Extreme Speed", "Dragon Rush", "Fire Punch"], "nature": "Hasty"},
         "Galactic Mercury #5": {"ability": "Thick Fat", "gender": "Male", "item": "Sitrus Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Outrage", "Dragon Dance", "Fire Punch", "Extreme Speed"], "nature": "Hasty"},
         "Galactic Titan #2": {"ability": "Thick Fat", "gender": "Male", "item": "Power Bracer", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 84, "moves": ["Curse", "Extreme Speed", "Rage", "Dragon Rush"], "nature": "Relaxed"},
-        "Galactic Triton #3": {"ability": "Thick Fat", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 85, "moves": ["Hydro Pump", "Thunder", "Draco Meteor", "Hurricane"], "nature": "Impish"},
+        "Galactic Triton #3": {"ability": "Thick Fat", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Hydro Pump", "Thunder", "Draco Meteor", "Hurricane"], "nature": "Gentle"},
         "Gentleman Butler": {"ability": "Thick Fat", "gender": "Male", "item": "Choice Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 58, "moves": ["Outrage", "Extreme Speed", "Superpower", "Sky Attack"], "nature": "Quiet"},
         "Leader Byron": {"ability": "Thick Fat", "gender": "Male", "item": "Sitrus Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 62, "moves": ["Iron Tail", "Fire Spin", "Draco Meteor", "Extreme Speed"], "nature": "Naughty"}
     },
@@ -626,7 +626,7 @@ const SETDEX_PK = {
     "Drifblim": {
         "Clown Bob": {"ability": "Unburden", "gender": "Male", "item": "Chople Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 85, "moves": ["Recycle", "Substitute", "Baton Pass", "Curse"], "nature": "Careful"},
         "Galactic Loge": {"ability": "Unburden", "gender": "Male", "item": "Lansat Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Weather Ball Fire", "Explosion", "Shadow Ball", "Air Slash"], "nature": "Lonely"},
-        "Galactic Luna #5": {"ability": "Unburden", "gender": "Male", "item": "Berserk Gene", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 84, "moves": ["Ominous Wind", "Baton Pass", "Double Team", "Aerial Ace"], "nature": "Timid"},
+        "Galactic Luna #5": {"ability": "Unburden", "gender": "Male", "item": "Berserk Gene", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Ominous Wind", "Baton Pass", "Double Team", "Aerial Ace"], "nature": "Relaxed"},
         "Galactic Phoebe #1": {"ability": "Unburden", "gender": "Female", "item": "Petaya Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 64, "moves": ["Hurricane", "Ominous Wind", "Thunder", "Tailwind"], "nature": "Lonely"},
         "Galactic Phoebe #2": {"ability": "Unburden", "gender": "Female", "item": "Ganlon Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Shadow Ball", "Explosion", "Hidden Power Ground", "Will-O-Wisp"], "nature": "Brave"},
         "Galactic Terra #3": {"ability": "Unburden", "gender": "Female", "item": "Jaboca Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 52, "moves": ["Calm Mind", "Ominous Wind", "Air Slash", "Aura Sphere"], "nature": "Hasty"},
@@ -648,9 +648,10 @@ const SETDEX_PK = {
         "Galactic Terra #1": {"ability": "Bad Dreams", "gender": "Female", "item": "Berry Juice", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 18, "moves": ["Hypnosis", "Confusion", "Knock Off", "Low Kick"], "nature": "Lax"}
     },
     "Dugtrio": {
-        "Bug Catcher Ford": {"ability": "Arena Trap", "gender": "Male", "item": "Scope Lens", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Earthquake", "Night Slash", "Sucker Punch", "Rock Slide"], "nature": "Careful"},
+        "Bug Catcher Ford": {"ability": "Arena Trap", "gender": "Male", "item": "Scope Lens", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Earthquake", "Night Slash", "Sucker Punch", "Rock Slide"], "nature": "Careful"},
         "Clown Justin": {"ability": "Arena Trap", "gender": "Male", "item": "Lax Incense", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 32, "moves": ["Aerial Ace", "Feint Attack", "Earthquake", "Rock Slide"], "nature": "Gentle"},
         "Galactic Ganymede #1": {"ability": "Arena Trap", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 31, "moves": ["Dig", "Rock Slide", "Aerial Ace", "Sucker Punch"], "nature": "Bold"},
+        "Galactic Laomedeia #2": {"ability": "Arena Trap", "gender": "Female", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Fissure", "Double Team", "Stone Edge", "Rage"], "nature": "Rash"},
         "Galactic Squad Deimos #3": {"ability": "Arena Trap", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 24, "df": 24, "hp": 24, "sa": 24, "sd": 24, "sp": 24}, "level": 89, "moves": ["Sand Tomb", "Shadow Claw", "Thrash", "Rock Slide"], "nature": "Gentle"},
         "Galactic Thebe": {"ability": "Arena Trap", "gender": "Male", "item": "Liechi Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 53, "moves": ["Earthquake", "Rock Slide", "Substitute", "Double Team"], "nature": "Sassy"},
         "Interviewers Barbara & Walter": {"ability": "Arena Trap", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 76, "moves": ["Dig", "Earthquake", "Rock Slide", "Pursuit"], "nature": "Bold"},
@@ -660,7 +661,7 @@ const SETDEX_PK = {
     "Dunsparce": {
         "Black Belt Daniel": {"ability": "Serene Grace", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 43, "moves": ["Glare", "Drill Run", "Headbutt", "Rock Slide"], "nature": "Gentle"},
         "Galactic Prospero #3": {"ability": "Serene Grace", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Secret Power", "Pursuit", "Drill Run", "Agility"], "nature": "Quiet"},
-        "Galactic Terra #5": {"ability": "Serene Grace", "gender": "Female", "item": "Wide Lens", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 85, "moves": ["Bulldoze", "Headbutt", "Ancient Power", "Glare"], "nature": "Bold"},
+        "Galactic Terra #5": {"ability": "Serene Grace", "gender": "Female", "item": "Wide Lens", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Bulldoze", "Headbutt", "Ancient Power", "Glare"], "nature": "Calm"},
         "Gambler Ace": {"ability": "Serene Grace", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 80, "moves": ["Thunder Wave", "Headbutt", "Rage", "Bite"], "nature": "Quiet"},
         "Hiker David": {"ability": "Serene Grace", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 61, "moves": ["Glare", "Iron Head", "Bite", "Headbutt"], "nature": "Calm"},
         "Skier Shawn": {"ability": "Serene Grace", "gender": "Male", "item": "Apicot Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 72, "moves": ["Secret Power", "Dragon Rush", "Roost", "Poison Tail"], "nature": "Mild"},
@@ -675,10 +676,10 @@ const SETDEX_PK = {
     },
     "Dusknoir": {
         "Collector Tobias": {"ability": "Levitate", "gender": "Male", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Shadow Punch", "Earthquake", "Hammer Arm", "Shadow Sneak"], "nature": "Hardy"},
-        "Galactic Boss Cyrus #2": {"ability": "Levitate", "gender": "Male", "item": "Berserk Gene", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 95, "moves": ["Pursuit", "Shadow Punch", "Fire Punch", "Brick Break"], "nature": "Jolly"},
+        "Galactic Boss Cyrus #2": {"ability": "Levitate", "gender": "Male", "item": "Berserk Gene", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 96, "moves": ["Pursuit", "Shadow Punch", "Fire Punch", "Brick Break"], "nature": "Lonely"},
         "Galactic Cordelia": {"ability": "Levitate", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Gravity", "Dynamic Punch", "Shadow Sneak", "Pursuit"], "nature": "Modest"},
         "Galactic Halimede #1": {"ability": "Levitate", "gender": "Male", "item": "Colbur Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 53, "moves": ["Trick Room", "Shadow Punch", "Brick Break", "Thunder Punch"], "nature": "Calm"},
-        "Galactic Prospero #2": {"ability": "Levitate", "gender": "Male", "item": "White Herb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 85, "moves": ["Shadow Punch", "Fire Punch", "Earthquake", "Destiny Bond"], "nature": "Brave"}
+        "Galactic Prospero #2": {"ability": "Levitate", "gender": "Male", "item": "White Herb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 88, "moves": ["Shadow Punch", "Fire Punch", "Earthquake", "Destiny Bond"], "nature": "Brave"}
     },
     "Duskull": {
         "Galactic Phoebe #2": {"ability": "Levitate", "gender": "Female", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Helping Hand", "Mean Look", "Pain Split", "Disable"], "nature": "Jolly"},
@@ -746,7 +747,7 @@ const SETDEX_PK = {
         "Castle Valet Darach": {"ability": "Swift Swim", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Aqua Jet", "Avalanche", "Drill Peck", "Rock Slide"], "nature": "Gentle"},
         "Clown Julia": {"ability": "Swift Swim", "gender": "Male", "item": "Chople Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Waterfall", "Triple Axel", "Iron Head", "Feather Dance"], "nature": "Quiet"},
         "Galactic Francisco #2": {"ability": "Swift Swim", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Swords Dance", "Aqua Jet", "Drill Peck", "Brick Break"], "nature": "Calm"},
-        "Galactic Neptune #3": {"ability": "Swift Swim", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Earthquake", "Waterfall", "Drill Peck", "Avalanche"], "nature": "Lax"},
+        "Galactic Neptune #3": {"ability": "Swift Swim", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Earthquake", "Waterfall", "Drill Peck", "Avalanche"], "nature": "Adamant"},
         "Galactic Triton #2": {"ability": "Swift Swim", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 57, "moves": ["Brick Break", "Drill Peck", "Avalanche", "Aqua Cutter"], "nature": "Jolly"},
         "Galactic Valetudo #2": {"ability": "Swift Swim", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Earthquake", "Aqua Cutter", "Ice Ball", "Drill Peck"], "nature": "Hardy"},
         "Pokémon Trainer Barry #3 [Empoleon]": {"ability": "Swift Swim", "gender": "Male", "item": "Sitrus Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 40, "moves": ["Aqua Jet", "Drill Peck", "Earthquake", "Steel Wing"], "nature": "Naughty"},
@@ -766,7 +767,7 @@ const SETDEX_PK = {
     },
     "Espeon": {
         "Collector Ripper": {"ability": "Synchronize", "gender": "Male", "item": "Apicot Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 49, "moves": ["Calm Mind", "Baton Pass", "Psychic", "Signal Beam"], "nature": "Rash"},
-        "Dragon Tamer Clinton": {"ability": "Synchronize", "gender": "Male", "item": "Kasib Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Future Sight", "Mimic", "Shadow Ball", "Hyper Beam"], "nature": "Careful"},
+        "Dragon Tamer Clinton": {"ability": "Synchronize", "gender": "Male", "item": "Kasib Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Future Sight", "Mimic", "Shadow Ball", "Hyper Beam"], "nature": "Calm"},
         "Galactic Ariel #2": {"ability": "Synchronize", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Sing", "Weather Ball Ice", "Psychic", "Aura Sphere"], "nature": "Jolly"},
         "Galactic Dia": {"ability": "Synchronize", "gender": "Male", "item": "Salac Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 54, "moves": ["Substitute", "Calm Mind", "Psychic", "Baton Pass"], "nature": "Relaxed"},
         "Pokémon Trainer Mira @ Spear Pillar": {"ability": "Synchronize", "gender": "Male", "item": "Leppa Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Trump Card", "Recycle", "Psycho Boost", "Ice Beam"], "nature": "Docile"},
@@ -783,7 +784,7 @@ const SETDEX_PK = {
     },
     "Exeggutor": {
         "Ace Trainer Dalton": {"ability": "Chlorophyll", "gender": "Male", "item": "Tanga Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 68, "moves": ["Nature Power", "Psychic", "Leaf Storm", "Ancient Power"], "nature": "Hasty"},
-        "Elite Four Flint": {"ability": "Chlorophyll", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Explosion", "Solar-Beam", "Ancient Power", "Morning Sun"], "nature": "Careful"},
+        "Elite Four Flint": {"ability": "Chlorophyll", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Explosion", "Solar-Beam", "Ancient Power", "Morning Sun"], "nature": "Modest"},
         "Galactic Atlas #1": {"ability": "Chlorophyll", "gender": "Male", "item": "Tanga Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 66, "moves": ["Explosion", "Solar Beam", "Psychic", "Sleep Powder"], "nature": "Sassy"},
         "Galactic Cordelia": {"ability": "Chlorophyll", "gender": "Female", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Earthquake", "Leaf Storm", "Nature Power", "Explosion"], "nature": "Relaxed"},
         "Galactic Io #2": {"ability": "Chlorophyll", "gender": "Female", "item": "Cheri Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 50, "moves": ["Explosion", "Sleep Powder", "Solar Beam", "Psychic"], "nature": "Quirky"},
@@ -820,7 +821,7 @@ const SETDEX_PK = {
     "Feraligatr": {
         "Black Belt Roku": {"ability": "Intimidate", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Dragon Dance", "Aqua Tail", "Earthquake", "Ice Ball"], "nature": "Calm"},
         "Galactic Erripaus": {"ability": "Intimidate", "gender": "Male", "item": "Splash Plate", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Curse", "Aqua Tail", "Avalanche", "Dig"], "nature": "Lonely"},
-        "Galactic Neptune #3": {"ability": "Intimidate", "gender": "Male", "item": "Berserk Gene", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Earthquake", "Aqua Tail", "Bulldoze", "Avalanche"], "nature": "Hasty"},
+        "Galactic Neptune #3": {"ability": "Intimidate", "gender": "Male", "item": "Berserk Gene", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Earthquake", "Aqua Tail", "Bulldoze", "Avalanche"], "nature": "Hasty"},
         "Roughneck Walter": {"ability": "Intimidate", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 46, "moves": ["Dragon Dance", "Aqua Jet", "Ice Fang", "Earthquake"], "nature": "Bashful"}
     },
     "Finneon": {
@@ -840,7 +841,7 @@ const SETDEX_PK = {
         "Swimmer Wesley": {"ability": "Swift Swim", "gender": "Male", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Crunch", "Ice Punch", "Giga Impact", "Dive"], "nature": "Gentle"}
     },
     "Flygon": {
-        "Elite Four Aaron": {"ability": "Levitate", "gender": "Male", "item": "Yache Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Fury Cutter", "Outrage", "Earth Power", "Superpower"], "nature": "Sassy"},
+        "Elite Four Aaron": {"ability": "Levitate", "gender": "Male", "item": "Yache Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Fury Cutter", "Outrage", "Earth Power", "Superpower"], "nature": "Lonely"},
         "Galactic Laomedeia #1": {"ability": "Sand Stream", "gender": "Female", "item": "Yache Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Bulldoze", "Fire Spin", "Twister", "Bug Buzz"], "nature": "Hasty"},
         "Galactic Squad Phobos #2": {"ability": "Sand Stream", "gender": "Female", "item": "Lax Incense", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 57, "moves": ["Hyper Voice", "Heat Wave", "Earth Power", "Dragon Pulse"], "nature": "Docile"},
         "Galactic Squad Phobos #3": {"ability": "Sand Stream", "gender": "Female", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Earthquake", "Earth Power", "Draco Meteor", "Heat Wave"], "nature": "Lonely"},
@@ -883,15 +884,15 @@ const SETDEX_PK = {
         "Galactic Alborix": {"ability": "Hyper Cutter", "gender": "Male", "item": "Micle Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Destiny Bond", "Focus Punch", "Substitute", "Stone Edge"], "nature": "Mild"},
         "Galactic Ariel #1": {"ability": "Steadfast", "gender": "Male", "item": "Power Bracer", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 87, "moves": ["Sing", "Focus Blast", "Zen Headbutt", "Stone Edge"], "nature": "Lonely"},
         "Galactic Despina #1": {"ability": "Hyper Cutter", "gender": "Male", "item": "Razor Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Psycho Cut", "Night Slash", "Cross Chop", "Stone Edge"], "nature": "Hardy"},
-        "Galactic Prospero #2": {"ability": "Hyper Cutter", "gender": "Male", "item": "Power Anklet", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 88, "moves": ["Fire Punch", "Zen Headbutt", "Close Combat", "Will-O-Wisp"], "nature": "Brave"},
+        "Galactic Prospero #2": {"ability": "Hyper Cutter", "gender": "Male", "item": "Power Anklet", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 90, "moves": ["Fire Punch", "Zen Headbutt", "Close Combat", "Will-O-Wisp"], "nature": "Brave"},
         "Galactic Valetudo #2": {"ability": "Hyper Cutter", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Dynamic Punch", "Stone Edge", "Hypnosis", "Zen Headbutt"], "nature": "Rash"},
         "Psychic Destiny": {"ability": "Steadfast", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 78, "moves": ["Thunder Wave", "Zen Headbutt", "Rock Slide", "Drain Punch"], "nature": "Naive"}
     },
     "Garchomp": {
         "Champion Cynthia": {"ability": "Rough Skin", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Stealth Rock", "Dragon Rush", "Fire Fang", "Earthquake"], "nature": "Gentle"},
         "Commander Mars #2": {"ability": "Sand Veil", "gender": "Male", "item": "Yache Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 64, "moves": ["Earthquake", "Outrage", "Fire Fang", "Rock Slide"], "nature": "Lonely"},
-        "Commander Mars #3": {"ability": "Rough Skin", "gender": "Male", "item": "Yache Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 90, "moves": ["Outrage", "Earthquake", "Scary Face", "Sand Tomb"], "nature": "Brave"},
-        "Elite Four Bertha": {"ability": "Sand Veil", "gender": "Male", "item": "Yache Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Sand Tomb", "Dragon Claw", "Fire Punch", "Swords Dance"], "nature": "Serious"},
+        "Commander Mars #3": {"ability": "Rough Skin", "gender": "Male", "item": "Yache Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 92, "moves": ["Outrage", "Earthquake", "Scary Face", "Sand Tomb"], "nature": "Mild"},
+        "Elite Four Bertha": {"ability": "Sand Veil", "gender": "Male", "item": "Yache Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Sand Tomb", "Dragon Claw", "Fire Punch", "Swords Dance"], "nature": "Adamant"},
         "Galactic Psamanthe": {"ability": "Sand Veil", "gender": "Male", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Draco Meteor", "Fire Blast", "Sand Tomb", "Whirlpool"], "nature": "Mild"}
     },
     "Gardevoir": {
@@ -904,7 +905,7 @@ const SETDEX_PK = {
         "Galactic Rosalind": {"ability": "Magic Guard", "gender": "Female", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Vacuum Wave", "Shadow Ball", "Psychic", "Energy Ball"], "nature": "Gentle"},
         "Galactic Squad Juliet": {"ability": "Magic Guard", "gender": "Female", "item": "Power Belt", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 92, "moves": ["Charge Beam", "Psychic", "Destiny Bond", "Sweet Kiss"], "nature": "Quiet"},
         "Galactic Uranus #2": {"ability": "Magic Guard", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 38, "moves": ["Psychic", "Toxic", "Destiny Bond", "Mystical Fire"], "nature": "Brave"},
-        "Galactic Uranus #3": {"ability": "Magic Guard", "gender": "Male", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 91, "moves": ["Calm Mind", "Will-O-Wisp", "Psychic", "Future Sight"], "nature": "Brave"},
+        "Galactic Uranus #3": {"ability": "Magic Guard", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Calm Mind", "Will-O-Wisp", "Psychic", "Future Sight"], "nature": "Mild"},
         "Idol Amber": {"ability": "Magic Guard", "gender": "Female", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 32, "moves": ["Destiny Bond", "Memento", "Metronome", "Sleep Talk"], "nature": "Sassy"},
         "Lady Caitlin": {"ability": "Magic Guard", "gender": "Male", "item": "Scope Lens", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Perish Song", "Aura Sphere", "Future Sight", "Destiny Bond"], "nature": "Serious"},
         "Pokémon Trainer Mira @ Spear Pillar": {"ability": "Magic Guard", "gender": "Female", "item": "Choice Specs", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Shadow Ball", "Extrasensory", "Mystical Fire", "Hyper Beam"], "nature": "Mild"}
@@ -925,7 +926,7 @@ const SETDEX_PK = {
     "Gengar": {
         "Clown Forrest": {"ability": "Shadow Tag", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 79, "moves": ["Thunder Wave", "Ominous Wind", "Focus Blast", "Energy Ball"], "nature": "Lax"},
         "Clown Justin": {"ability": "Shadow Tag", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 32, "moves": ["Metronome", "Toxic Spikes", "Sleep Talk"], "nature": "Adamant"},
-        "Elite Four Lucian": {"ability": "Shadow Tag", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Dark Pulse", "Ominous Wind", "Destiny Bond", "Mystical Fire"], "nature": "Careful"},
+        "Elite Four Lucian": {"ability": "Shadow Tag", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Dark Pulse", "Ominous Wind", "Destiny Bond", "Mystical Fire"], "nature": "Modest"},
         "Galactic Alborix": {"ability": "Shadow Tag", "gender": "Male", "item": "Lansat Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Destiny Bond", "Focus Punch", "Substitute", "Shadow Claw"], "nature": "Hasty"},
         "Galactic Ganymede #2": {"ability": "Shadow Tag", "gender": "Male", "item": "Black Sludge", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 53, "moves": ["Curse", "Substitute", "Pain Split", "Double Team"], "nature": "Brave"},
         "Galactic Io #2": {"ability": "Shadow Tag", "gender": "Female", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 51, "moves": ["Mystical Fire", "Shadow Ball", "Hidden Power Ice", "Explosion"], "nature": "Relaxed"},
@@ -935,7 +936,7 @@ const SETDEX_PK = {
         "Galactic Metis": {"ability": "Shadow Tag", "gender": "Male", "item": "Black Sludge", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 54, "moves": ["Substitute", "Curse", "Pain Split", "Double Team"], "nature": "Gentle"},
         "Galactic Phoebe #1": {"ability": "Shadow Tag", "gender": "Female", "item": "Colbur Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 64, "moves": ["Thunder", "Shadow Ball", "Icy Wind", "Sludge Bomb"], "nature": "Adamant"},
         "Galactic Puck #2": {"ability": "Shadow Tag", "gender": "Male", "item": "Leppa Berry", "ivs": {"at": 0, "df": 0, "hp": 0, "sa": 0, "sd": 0, "sp": 0}, "level": 1, "moves": ["Destiny Bond", "Perish Song"], "nature": "Naughty"},
-        "Hiker J.J Ahern": {"ability": "Shadow Tag", "gender": "Male", "item": "Wide Lens", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Night Shade", "Psychic", "Hypnosis", "Destiny Bond"], "nature": "Gentle"},
+        "Hiker J.J Ahern": {"ability": "Shadow Tag", "gender": "Male", "item": "Wide Lens", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Night Shade", "Psychic", "Hypnosis", "Destiny Bond"], "nature": "Hasty"},
         "Leader Fantina": {"ability": "Shadow Tag", "gender": "Female", "item": "Wide Lens", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 36, "moves": ["Shadow Ball", "Focus Blast", "Hypnosis", "Sludge Bomb"], "nature": "Lax"},
         "Ninja Boy Matthew": {"ability": "Shadow Tag", "gender": "Male", "item": "Black Sludge", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 66, "moves": ["Shadow Sneak", "Ominous Wind", "Destiny Bond", "Focus Blast"], "nature": "Hardy"},
         "Pokémon Trainer Mira @ Spear Pillar": {"ability": "Shadow Tag", "gender": "Female", "item": "Choice Scarf", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Night Shade", "Psychic", "Sludge Bomb", "Energy Ball"], "nature": "Bashful"},
@@ -953,13 +954,13 @@ const SETDEX_PK = {
         "Galactic Janus": {"ability": "Quick Feet", "gender": "Male", "item": "Power Anklet", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Curse", "Baton Pass", "Double Hit", "Zen Headbutt"], "nature": "Hardy"},
         "Galactic Sao": {"ability": "Quick Feet", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Fire Fang", "Stomp", "Extrasensory", "Hyper Voice"], "nature": "Impish"},
         "Guitarist Preston": {"ability": "Quick Feet", "gender": "Male", "item": "Toxic Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 78, "moves": ["Thunder Wave", "Zen Headbutt", "Headbutt", "Stomp"], "nature": "Jolly"},
-        "Idol Zoe": {"ability": "Quick Feet", "gender": "Female", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Baton Pass", "Calm Mind", "Psychic", "Shadow Ball"], "nature": "Sassy"},
+        "Idol Zoe": {"ability": "Quick Feet", "gender": "Female", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Baton Pass", "Calm Mind", "Psychic", "Shadow Ball"], "nature": "Adamant"},
         "Psychic Mitchell": {"ability": "Quick Feet", "gender": "Male", "item": "Sitrus Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 46, "moves": ["Hyper Voice", "Nasty Plot", "Energy Ball", "Future Sight"], "nature": "Docile"},
         "Skier Edward": {"ability": "Quick Feet", "gender": "Male", "item": "Toxic Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 70, "moves": ["Secret Power", "Extrasensory", "Endeavor", "Stomp"], "nature": "Modest"},
         "Twins Emma & Lil": {"ability": "Quick Feet", "gender": "Female", "item": "Razor Fang", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 37, "moves": ["Crunch", "Fire Fang", "Hyper Voice", "Psychic"], "nature": "Docile"}
     },
     "Giratina": {
-        "Champion Cynthia": {"ability": "Pressure", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Aura Sphere", "Dragon Rush", "Shadow Force", "Earthquake"], "nature": "Quirky"}
+        "Champion Cynthia": {"ability": "Pressure", "gender": "Male", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Aura Sphere", "Dragon Rush", "Shadow Force", "Earthquake"], "nature": "Naughty"}
     },
     "Giratina-Origin": {
         "Galactic Boss Cyrus #4": {"ability": "Pressure", "gender": "", "item": "Griseous Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Shadow Force", "Dragon Rush", "Aura Sphere", "Ancient Power"], "nature": "Hasty"}
@@ -972,7 +973,7 @@ const SETDEX_PK = {
         "Galactic Pluto #3": {"ability": "Snow Cloak", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 64, "moves": ["Blizzard", "Fake Tears", "Earth Power", "Hyper Voice"], "nature": "Timid"},
         "Galactic Squad Perdita #1": {"ability": "Snow Cloak", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 84, "moves": ["Sheer Cold", "Double Team", "Baton Pass", "Substitute"], "nature": "Serious"},
         "Galactic Squad Perdita #2": {"ability": "Snow Cloak", "gender": "Male", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Blizzard", "Calm Mind", "Earth Power", "Hyper Voice"], "nature": "Careful"},
-        "Galactic Uranus #3": {"ability": "Ice Body", "gender": "Male", "item": "Focus Band", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 85, "moves": ["Substitute", "Double Team", "Blizzard", "Earth Power"], "nature": "Quiet"},
+        "Galactic Uranus #3": {"ability": "Snow Cloak", "gender": "Male", "item": "Focus Band", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 93, "moves": ["Substitute", "Double Team", "Blizzard", "Earth Power"], "nature": "Quiet"},
         "Ninja Boy Ethan": {"ability": "Snow Cloak", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 66, "moves": ["Double Team", "Blizzard", "Earth Power", "Wish"], "nature": "Quirky"},
         "Skier Savannah": {"ability": "Ice Body", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 71, "moves": ["Toxic", "Blizzard", "Wish", "Earth Power"], "nature": "Relaxed"}
     },
@@ -1060,7 +1061,7 @@ const SETDEX_PK = {
         "Pokémon Trainer Lucas @ Veilstone City [Infernape]": {"ability": "Leaf Guard", "gender": "Male", "ivs": {"at": 17, "df": 17, "hp": 17, "sa": 17, "sd": 17, "sp": 17}, "level": 41, "moves": ["Wood Hammer", "Stomp", "Rock Slide", "Crunch"], "nature": "Sassy"}
     },
     "Groudon": {
-        "Elite Four Flint": {"ability": "Drought", "gender": "", "item": "Salac Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Bulk Up", "Fire Punch", "Earthquake", "Endure"], "nature": "Bold"}
+        "Elite Four Flint": {"ability": "Drought", "gender": "", "item": "Salac Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Bulk Up", "Fire Punch", "Earthquake", "Endure"], "nature": "Naughty"}
     },
     "Grovyle": {
         "Dragon Tamer Drax": {"ability": "Overgrow", "gender": "Male", "item": "Razor Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 35, "moves": ["Dragon Breath", "Frenzy Plant", "Hidden Power Rock", "Brick Break"], "nature": "Relaxed"},
@@ -1084,11 +1085,11 @@ const SETDEX_PK = {
     "Gyarados": {
         "Commander Jupiter #1": {"ability": "Intimidate", "gender": "Female", "item": "Wacan Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 32, "moves": ["Dragon Rage", "Earthquake", "Aerial Ace", "Waterfall"], "nature": "Adamant"},
         "Commander Jupiter #2": {"ability": "Intimidate", "gender": "Female", "item": "Wacan Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 55, "moves": ["Aerial Ace", "Aqua Tail", "Dragon Dance", "Rage"], "nature": "Careful"},
-        "Commander Jupiter #3": {"ability": "Intimidate", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Dragon Dance", "Aqua Tail", "Avalanche", "Rage"], "nature": "Naive"},
+        "Commander Jupiter #3": {"ability": "Intimidate", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Dragon Dance", "Aqua Tail", "Avalanche", "Rage"], "nature": "Gentle"},
         "Fisherman Greg": {"ability": "Intimidate", "gender": "Female", "item": "Wacan Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Aqua Tail", "Bounce", "Tail Whip", "Outrage"], "nature": "Gentle"},
         "Galactic Pandora #1": {"ability": "Intimidate", "gender": "Female", "item": "Life Orb", "ivs": {"at": 29, "df": 29, "hp": 29, "sa": 29, "sd": 29, "sp": 29}, "level": 66, "moves": ["Hurricane", "Thunder", "Muddy Water", "Hyper Beam"], "nature": "Relaxed"},
         "Galactic Titan #1": {"ability": "Intimidate", "gender": "Male", "item": "Wacan Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 65, "moves": ["Dragon Dance", "Ice Fang", "Waterfall", "Earthquake"], "nature": "Hasty"},
-        "Galactic Triton #3": {"ability": "Intimidate", "gender": "Male", "item": "Berserk Gene", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 84, "moves": ["Aqua Tail", "Rage", "Bounce", "Avalanche"], "nature": "Careful"},
+        "Galactic Triton #3": {"ability": "Intimidate", "gender": "Male", "item": "Berserk Gene", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Aqua Tail", "Rage", "Bounce", "Avalanche"], "nature": "Quiet"},
         "Pokéfan Liz": {"ability": "Intimidate", "gender": "Female", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 78, "moves": ["Thunder Wave", "Waterfall", "Avalanche", "Rage"], "nature": "Docile"},
         "Roughneck Robert": {"ability": "Intimidate", "gender": "Male", "item": "Expert Belt", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 31, "moves": ["Whirlpool", "Hurricane", "Thunderbolt", "Fire Blast"], "nature": "Relaxed"},
         "Roughneck Walter": {"ability": "Intimidate", "gender": "Male", "item": "Wacan Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 45, "moves": ["Hurricane", "Thunder", "Whirlpool", "Hyper Beam"], "nature": "Quiet"},
@@ -1118,8 +1119,8 @@ const SETDEX_PK = {
         "Psychic Cheyenne": {"ability": "Levitate", "gender": "Female", "item": "Lax Incense", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 32, "moves": ["Nasty Plot", "Shadow Ball", "Vital Throw", "Sludge Bomb"], "nature": "Sassy"}
     },
     "Heatran": {
-        "Galactic Boss Cyrus #2": {"ability": "Flash Fire", "gender": "Male", "item": "Sitrus Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 92, "moves": ["Magma Storm", "Flash Cannon", "Dragon Pulse", "Explosion"], "nature": "Bold"},
-        "Galactic Boss Cyrus #3": {"ability": "Flash Fire", "gender": "Male", "item": "Shuca Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Iron Head", "Ancient Power", "Magma Storm", "Earth Power"], "nature": "Rash"}
+        "Galactic Boss Cyrus #2": {"ability": "Flash Fire", "gender": "Male", "item": "Sitrus Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 94, "moves": ["Magma Storm", "Flash Cannon", "Dragon Pulse", "Explosion"], "nature": "Rash"},
+        "Galactic Boss Cyrus #3": {"ability": "Flash Fire", "gender": "Male", "item": "Shuca Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Iron Head", "Ancient Power", "Magma Storm", "Earth Power"], "nature": "Quiet"}
     },
     "Heracross": {
         "Battle Girl Carly": {"ability": "Guts", "gender": "Female", "item": "Salac Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 40, "moves": ["Megahorn", "Stone Edge", "Reversal", "Endure"], "nature": "Adamant"},
@@ -1138,7 +1139,7 @@ const SETDEX_PK = {
         "Galactic Hippocamp #1": {"ability": "Sand Stream", "gender": "Male", "item": "Soft Sand", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Stealth Rock", "Ice Fang", "Sand Tomb", "Rock Slide"], "nature": "Quiet"},
         "Galactic Hippocamp #2": {"ability": "Sand Stream", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Sand Tomb", "Stone Edge", "Yawn", "Stealth Rock"], "nature": "Rash"},
         "Galactic Kari": {"ability": "Sand Stream", "gender": "Female", "item": "Grip Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Sand Tomb", "Stealth Rock", "Rock Slide", "Ice Fang"], "nature": "Hardy"},
-        "Ruin Maniac Greg": {"ability": "Sand Stream", "gender": "Male", "item": "Rindo Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Roar", "Slack Off", "Toxic", "Stealth Rock"], "nature": "Bold"},
+        "Ruin Maniac Greg": {"ability": "Sand Stream", "gender": "Male", "item": "Rindo Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Roar", "Slack Off", "Toxic", "Stealth Rock"], "nature": "Quiet"},
         "Scientist Stephano": {"ability": "Sand Stream", "gender": "Male", "item": "Rowap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Earthquake", "Stealth Rock", "Ice Fang", "Thunder Fang"], "nature": "Hardy"}
     },
     "Hitmonchan": {
@@ -1160,7 +1161,7 @@ const SETDEX_PK = {
         "Gambler John Keating": {"ability": "Magic Guard", "gender": "", "item": "Ganlon Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Sacred Fire", "Future Sight", "Ominous Wind", "Earthquake"], "nature": "Rash"}
     },
     "Honchkrow": {
-        "Black Belt Roku": {"ability": "Super Luck", "gender": "Male", "item": "Black Belt", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Sky Attack", "Sucker Punch", "Superpower", "Heat Wave"], "nature": "Serious"},
+        "Black Belt Roku": {"ability": "Super Luck", "gender": "Male", "item": "Black Belt", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Sky Attack", "Sucker Punch", "Superpower", "Heat Wave"], "nature": "Relaxed"},
         "Galactic Mercury #3": {"ability": "Super Luck", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Aerial Ace", "Feint Attack", "Heat Wave", "Tailwind"], "nature": "Bold"},
         "Galactic Squad Phobos #2": {"ability": "Super Luck", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 58, "moves": ["Pursuit", "Ominous Wind", "Air Slash", "Heat Wave"], "nature": "Gentle"},
         "Galactic Squad Phobos #3": {"ability": "Super Luck", "gender": "Female", "item": "Lax Incense", "ivs": {"at": 29, "df": 29, "hp": 29, "sa": 29, "sd": 29, "sp": 29}, "level": 85, "moves": ["Heat Wave", "Dark Pulse", "Air Slash", "Nasty Plot"], "nature": "Sassy"},
@@ -1180,14 +1181,14 @@ const SETDEX_PK = {
     },
     "Houndoom": {
         "Black Belt Roku": {"ability": "Solar Power", "gender": "Male", "item": "Cheri Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Overheat", "Dark Pulse", "Hidden Power Grass", "Nasty Plot"], "nature": "Hardy"},
-        "Elite Four Flint": {"ability": "Solar Power", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Fire Blast", "Sucker Punch", "Solar Beam", "Dark Pulse"], "nature": "Relaxed"},
+        "Elite Four Flint": {"ability": "Solar Power", "gender": "Male", "item": "Life Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Fire Blast", "Sucker Punch", "Solar Beam", "Dark Pulse"], "nature": "Naive"},
         "Galactic Squad Deimos #2": {"ability": "Solar Power", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 57, "moves": ["Heat Wave", "Dark Pulse", "Destiny Bond", "Hyper Voice"], "nature": "Hasty"},
         "Galactic Squad Deimos #3": {"ability": "Solar Power", "gender": "Female", "item": "Shell Bell", "ivs": {"at": 24, "df": 24, "hp": 24, "sa": 24, "sd": 24, "sp": 24}, "level": 87, "moves": ["Fire Blast", "Destiny Bond", "Solar Beam", "Dark Pulse"], "nature": "Calm"},
         "Galactic Venus #3": {"ability": "Solar Power", "gender": "Female", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 51, "moves": ["Nasty Plot", "Dark Pulse", "Hidden Power Flying", "Mystical Fire"], "nature": "Careful"},
         "Pokémon Breeder Frank": {"ability": "Solar Power", "gender": "Male", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Sucker Punch", "Super Fang", "Rage", "Fire Fang"], "nature": "Modest"},
         "Policeman Danny": {"ability": "Solar Power", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Glare", "Fire Spin", "Hidden Power Psychic", "Payback"], "nature": "Serious"},
         "Policeman Morton": {"ability": "Solar Power", "gender": "Male", "item": "Custap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 30, "moves": ["Nasty Plot", "Flamethrower", "Destiny Bond", "Feint Attack"], "nature": "Bold"},
-        "Worker Conrad": {"ability": "Solar Power", "gender": "Male", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Destiny Bond", "Thunder Fang", "Fire Spin", "Super Fang"], "nature": "Careful"}
+        "Worker Conrad": {"ability": "Solar Power", "gender": "Male", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Destiny Bond", "Thunder Fang", "Fire Spin", "Super Fang"], "nature": "Hasty"}
     },
     "Houndour": {
         "Galactic Squad Deimos #1": {"ability": "Solar Power", "gender": "Female", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 18, "moves": ["Dark Pulse", "Heat Wave", "Pursuit", "Hidden Power Grass"], "nature": "Hardy"}
@@ -1230,7 +1231,7 @@ const SETDEX_PK = {
         "Pokémon Trainer Dawn @ Veilstone City [Infernape]": {"ability": "Iron Fist", "gender": "Male", "ivs": {"at": 17, "df": 17, "hp": 17, "sa": 17, "sd": 17, "sp": 17}, "level": 44, "moves": ["Flame Wheel", "Rock Smash", "Slack Off", "Torment"], "nature": "Lonely"},
         "Pokémon Trainer Lucas @ Lake Verity": {"ability": "Iron Fist", "gender": "Male", "item": "Black Belt", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 68, "moves": ["Aura Sphere", "Vacuum Wave", "Overheat", "Hidden Power Ice"], "nature": "Naive"},
         "Pokémon Trainer Lucas @ Veilstone City [Infernape]": {"ability": "Iron Fist", "gender": "Male", "ivs": {"at": 17, "df": 17, "hp": 17, "sa": 17, "sd": 17, "sp": 17}, "level": 44, "moves": ["Flame Wheel", "Rock Smash", "Slack Off", "Torment"], "nature": "Hardy"},
-        "Roughneck Wyatt": {"ability": "Iron Fist", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Close Combat", "Flare Blitz", "U-turn", "Stone Edge"], "nature": "Brave"}
+        "Roughneck Wyatt": {"ability": "Iron Fist", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Close Combat", "Flare Blitz", "U-turn", "Stone Edge"], "nature": "Quiet"}
     },
     "Ivysaur": {
         "Lass Caroline": {"ability": "Overgrow", "gender": "Male", "item": "Wide Lens", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 24, "moves": ["Sleep Powder", "Sludge Bomb", "Giga Drain", "Weather Ball Water"], "nature": "Bashful"}
@@ -1241,11 +1242,11 @@ const SETDEX_PK = {
     },
     "Jirachi": {
         "Commander Mars #2": {"ability": "Serene Grace", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 65, "moves": ["Flash Cannon", "Extrasensory", "Aura Sphere", "Shadow Ball"], "nature": "Naughty"},
-        "Commander Mars #3": {"ability": "Serene Grace", "gender": "", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 89, "moves": ["Follow Me", "Iron Head", "Zen Headbutt", "Fire Punch"], "nature": "Timid"},
+        "Commander Mars #3": {"ability": "Serene Grace", "gender": "", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 92, "moves": ["Follow Me", "Iron Head", "Zen Headbutt", "Fire Punch"], "nature": "Adamant"},
         "Leader Byron": {"ability": "Serene Grace", "gender": "", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 61, "moves": ["Doom Desire", "Ancient Power", "Extrasensory", "Thunder"], "nature": "Hasty"}
     },
     "Jolteon": {
-        "Bug Catcher Ford": {"ability": "Static", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Thunderbolt", "Hidden Power Grass", "Signal Beam", "Baton Pass"], "nature": "Modest"},
+        "Bug Catcher Ford": {"ability": "Static", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Thunderbolt", "Hidden Power Grass", "Signal Beam", "Baton Pass"], "nature": "Gentle"},
         "Cameraman Matt": {"ability": "Static", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Pin Missile", "Thunder", "Shadow Ball", "Hidden Power Ice"], "nature": "Quirky"},
         "Collector Ripper": {"ability": "Static", "gender": "Male", "item": "Ganlon Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 47, "moves": ["Calm Mind", "Baton Pass", "Charge Beam", "Shadow Ball"], "nature": "Serious"},
         "Galactic Squad Perdita #2": {"ability": "Static", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Weather Ball Ice", "Charge Beam", "Hidden Power Grass", "Fake Tears"], "nature": "Calm"},
@@ -1259,19 +1260,19 @@ const SETDEX_PK = {
         "Aroma Lady Hannah": {"ability": "Chlorophyll", "gender": "Female", "item": "Light Clay", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 34, "moves": ["Sleep Powder", "Light Screen", "Reflect", "U-turn"], "nature": "Hardy"},
         "Cameraman Matt": {"ability": "Chlorophyll", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Leech Seed", "Cotton Spore", "Endure", "Endeavor"], "nature": "Lax"},
         "Galactic Hyperion #1": {"ability": "Chlorophyll", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 72, "moves": ["Sleep Powder", "Follow Me"], "nature": "Careful"},
-        "Galactic Titania": {"ability": "Chlorophyll", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Leech Seed", "Encore", "Sleep Powder", "Tailwind"], "nature": "Hasty"},
+        "Galactic Titania": {"ability": "Chlorophyll", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Leech Seed", "Encore", "Sleep Powder", "Tailwind"], "nature": "Relaxed"},
         "Lady Celeste": {"ability": "Chlorophyll", "gender": "Female", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 60, "moves": ["Memento", "Sleep Powder", "Leech Seed", "Protect"], "nature": "Mild"}
     },
     "Jynx": {
         "Ace Trainer Olivia": {"ability": "Snow Cloak", "gender": "Female", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 67, "moves": ["Lovely Kiss", "Blizzard", "Psychic", "Aura Sphere"], "nature": "Quiet"},
-        "Dragon Tamer Clinton": {"ability": "Snow Cloak", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Lovely Kiss", "Swallow", "Fake Out", "Pay Day"], "nature": "Mild"},
+        "Dragon Tamer Clinton": {"ability": "Snow Cloak", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Lovely Kiss", "Swallow", "Fake Out", "Pay Day"], "nature": "Naughty"},
         "Galactic Cupid #1": {"ability": "Snow Cloak", "gender": "Female", "item": "Bright Powder", "ivs": {"at": 5, "df": 5, "hp": 5, "sa": 5, "sd": 5, "sp": 5}, "level": 36, "moves": ["Lovely Kiss", "Fake Out", "Blizzard", "Psychic"], "nature": "Hardy"},
         "Galactic Europa #2": {"ability": "Snow Cloak", "gender": "Female", "item": "Starf Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 54, "moves": ["Nasty Plot", "Substitute", "Aurora Beam", "Aura Sphere"], "nature": "Impish"},
         "Galactic Umbriel #2": {"ability": "Snow Cloak", "gender": "Female", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Substitute", "Lovely Kiss", "Blizzard", "Energy Ball"], "nature": "Calm"},
         "Guitarist Garrett": {"ability": "Snow Cloak", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 70, "moves": ["Teeter Dance", "Lovely Kiss", "Blizzard", "Hyper Voice"], "nature": "Modest"},
         "Pokéfan June": {"ability": "Snow Cloak", "gender": "Female", "item": "Wide Lens", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 74, "moves": ["Lovely Kiss", "Ice Beam", "Mystical Fire", "Psychic"], "nature": "Brave"},
         "Psychic Abigail": {"ability": "Snow Cloak", "gender": "Female", "item": "Colbur Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 45, "moves": ["Fake Out", "Lovely Kiss", "Seismic Toss", "Ice Beam"], "nature": "Gentle"},
-        "Skier Anas": {"ability": "Snow Cloak", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 70, "moves": ["Lovely Kiss", "Hidden Power Fire", "Blizzard", "Psychic"], "nature": "Calm"},
+        "Skier Anas": {"ability": "Snow Cloak", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 70, "moves": ["Lovely Kiss", "Hidden Power Fire", "Blizzard", "Psychic"], "nature": "Hasty"},
         "Young Couple Ty & Sue": {"ability": "Snow Cloak", "gender": "Female", "item": "Micle Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 39, "moves": ["Lovely Kiss", "Icy Wind", "Fake Out", "Attract"], "nature": "Calm"}
     },
     "Kabuto": {
@@ -1315,14 +1316,14 @@ const SETDEX_PK = {
         "Galactic Triton #2": {"ability": "Swift Swim", "gender": "Male", "item": "Haban Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 56, "moves": ["Muddy Water", "Twister", "Hidden Power Electric", "Bounce"], "nature": "Modest"},
         "Galactic Valetudo #1": {"ability": "Swift Swim", "gender": "Male", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 50, "moves": ["Twister", "Double Team", "Water Pulse", "Rest"], "nature": "Naive"},
         "Leader Volkner": {"ability": "Swift Swim", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 29, "df": 29, "hp": 29, "sa": 29, "sd": 29, "sp": 29}, "level": 80, "moves": ["Muddy Water", "Twister", "Hurricane", "Icy Wind"], "nature": "Jolly"},
-        "Roughneck Wyatt": {"ability": "Swift Swim", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Hydro Pump", "Draco Meteor", "Ice Beam", "Hidden Power Electric"], "nature": "Jolly"},
+        "Roughneck Wyatt": {"ability": "Swift Swim", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Hydro Pump", "Draco Meteor", "Ice Beam", "Hidden Power Electric"], "nature": "Bold"},
         "Swimmer Wang [A]": {"ability": "Swift Swim", "gender": "Female", "item": "Choice Specs", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Twister", "Hydro Pump", "Ice Beam", "Flash Cannon"], "nature": "Modest"},
         "Swimmer Wang [B]": {"ability": "Swift Swim", "gender": "Female", "item": "Mystic Water", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Outrage", "Waterfall", "Giga Impact", "Iron Head"], "nature": "Rash"},
         "Swimmer Wang [C]": {"ability": "Swift Swim", "gender": "Female", "item": "Choice Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Outrage", "Waterfall", "Double-Edge", "Iron Head"], "nature": "Impish"},
         "Swimmer Wang [D]": {"ability": "Swift Swim", "gender": "Female", "item": "Choice Specs", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Draco Meteor", "Octazooka", "Hyper Beam", "Flash Cannon"], "nature": "Calm"}
     },
     "Kingler": {
-        "Elite Four Aaron": {"ability": "Swift Swim", "gender": "Female", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Crabhammer", "X-Scissor", "Rock Slide", "Crush Grip"], "nature": "Hardy"},
+        "Elite Four Aaron": {"ability": "Swift Swim", "gender": "Female", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Crabhammer", "X-Scissor", "Rock Slide", "Crush Grip"], "nature": "Naughty"},
         "Fisherman Josh": {"ability": "Swift Swim", "gender": "Male", "item": "Razor Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 46, "moves": ["Vise Grip", "X-Scissor", "Crush Grip", "Stomp"], "nature": "Mild"},
         "Galactic Triton #2": {"ability": "Swift Swim", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 57, "moves": ["Vise Grip", "Fury Cutter", "Stomp", "Rock Slide"], "nature": "Modest"},
         "Galactic Valetudo #1": {"ability": "Swift Swim", "gender": "Male", "item": "Salac Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 52, "moves": ["Swords Dance", "Slam", "Substitute", "Crabhammer"], "nature": "Bold"},
@@ -1354,7 +1355,7 @@ const SETDEX_PK = {
     },
     "Lanturn": {
         "Beauty Chelle": {"ability": "Volt Absorb", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 51, "moves": ["Charge Beam", "Sleep Talk", "Scald", "Hyper Beam"], "nature": "Quiet"},
-        "Beauty Jasmine #2": {"ability": "Volt Absorb", "gender": "Female", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Zap Cannon", "Scald", "Confuse Ray", "Charge Beam"], "nature": "Jolly"},
+        "Beauty Jasmine #2": {"ability": "Volt Absorb", "gender": "Female", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Zap Cannon", "Scald", "Confuse Ray", "Charge Beam"], "nature": "Hardy"},
         "Fisherman Kenneth": {"ability": "Volt Absorb", "gender": "Male", "item": "Silver Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 47, "moves": ["Thunder", "Hydro Pump", "Flash", "Signal Beam"], "nature": "Rash"},
         "Galactic Pluto #4": {"ability": "Volt Absorb", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Zap Cannon", "Blizzard", "Hydro Pump", "Hidden Power Ground"], "nature": "Lax"},
         "Galactic Tethys #2": {"ability": "Volt Absorb", "gender": "Male", "item": "Ganlon Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Muddy Water", "Thunder", "Ice Beam", "Supersonic"], "nature": "Naive"},
@@ -1370,7 +1371,7 @@ const SETDEX_PK = {
         "Galactic Laomedeia #2": {"ability": "Serene Grace", "gender": "Female", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Horn Drill", "Double Team", "Substitute", "Water Pulse"], "nature": "Modest"},
         "Galactic Mimas #2": {"ability": "Serene Grace", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Blizzard", "Muddy Water", "Thunderbolt", "Hyper Voice"], "nature": "Brave"},
         "Galactic Neptune #2": {"ability": "Serene Grace", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 58, "moves": ["Thunder", "Avalanche", "Whirlpool", "Ancient Power"], "nature": "Lonely"},
-        "Galactic Neptune #3": {"ability": "Serene Grace", "gender": "Male", "item": "Chople Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Earthquake", "Ice Beam", "Thunder", "Muddy Water"], "nature": "Rash"},
+        "Galactic Neptune #3": {"ability": "Serene Grace", "gender": "Male", "item": "Chople Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Earthquake", "Ice Beam", "Thunder", "Muddy Water"], "nature": "Timid"},
         "Galactic Pluto #2": {"ability": "Serene Grace", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 52, "moves": ["Perish Song", "Block", "Protect", "Substitute"], "nature": "Sassy"},
         "Galactic Tethys #2": {"ability": "Shell Armor", "gender": "Male", "item": "Jaboca Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 87, "moves": ["Muddy Water", "Thunder", "Avalanche", "Drill Run"], "nature": "Mild"},
         "Leader Candice": {"ability": "Serene Grace", "gender": "Female", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 72, "moves": ["Dragon Dance", "Avalanche", "Waterfall", "Earthquake"], "nature": "Bold"},
@@ -1380,11 +1381,11 @@ const SETDEX_PK = {
         "Ruin Maniac Darius": {"ability": "Guts", "gender": "Male", "item": "Toxic Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 11, "moves": ["Protect", "Facade", "Accelerock"], "nature": "Hardy"}
     },
     "Latias": {
-        "Commander Mars #3": {"ability": "Levitate", "gender": "Female", "item": "Colbur Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Twister", "Mystical Fire", "Mist Ball", "Recover"], "nature": "Quiet"},
-        "Elite Four Lucian": {"ability": "Levitate", "gender": "Female", "item": "Soul Dew", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Mist Ball", "Draco Meteor", "Shadow Claw", "Sucker Punch"], "nature": "Quirky"}
+        "Commander Mars #3": {"ability": "Levitate", "gender": "Female", "item": "Colbur Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Twister", "Mystical Fire", "Mist Ball", "Recover"], "nature": "Naive"},
+        "Elite Four Lucian": {"ability": "Levitate", "gender": "Female", "item": "Soul Dew", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Mist Ball", "Draco Meteor", "Shadow Claw", "Sucker Punch"], "nature": "Mild"}
     },
     "Latios": {
-        "Commander Jupiter #3": {"ability": "Levitate", "gender": "Male", "item": "Colbur Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 89, "moves": ["Twister", "Mystical Fire", "Luster Purge", "Thunder"], "nature": "Quiet"}
+        "Commander Jupiter #3": {"ability": "Levitate", "gender": "Male", "item": "Colbur Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Twister", "Mystical Fire", "Luster Purge", "Thunder"], "nature": "Lonely"}
     },
     "Leafeon": {
         "Collector Ripper": {"ability": "Magic Guard", "gender": "Male", "item": "Petaya Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 47, "moves": ["Calm Mind", "Baton Pass", "Leaf Storm", "Hidden Power Fire"], "nature": "Gentle"},
@@ -1449,14 +1450,14 @@ const SETDEX_PK = {
         "Ace Trainer Laura": {"ability": "Iron Fist", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 70, "moves": ["Bullet Punch", "Vacuum Wave", "Psychic", "Ice Punch"], "nature": "Bold"},
         "Aroma Lady Fadel": {"ability": "Iron Fist", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Nasty Plot", "Aura Sphere", "Flash Cannon", "Dark Pulse"], "nature": "Rash"},
         "Double Team Nate & Lisa": {"ability": "Iron Fist", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 38, "moves": ["Aura Sphere", "Flash Cannon", "Calm Mind", "Dark Pulse"], "nature": "Serious"},
-        "Galactic Oberon #2": {"ability": "Iron Fist", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Hyper Beam", "Aura Sphere", "Weather Ball Ice", "Dark Pulse"], "nature": "Gentle"},
+        "Galactic Oberon #2": {"ability": "Iron Fist", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Hyper Beam", "Aura Sphere", "Weather Ball Ice", "Dark Pulse"], "nature": "Quirky"},
         "Galactic Pluto #2": {"ability": "Iron Fist", "gender": "Male", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 51, "moves": ["Nasty Plot", "Aura Sphere", "Dark Pulse", "Substitute"], "nature": "Gentle"},
         "Galactic Squad Perdita #2": {"ability": "Iron Fist", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Vacuum Wave", "Dark Pulse", "Flash Cannon", "Aura Sphere"], "nature": "Adamant"},
         "Hiker Lorenzo": {"ability": "Iron Fist", "gender": "Male", "item": "Razor Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Me First", "Copycat", "Focus Energy", "Bullet Punch"], "nature": "Rash"},
         "Leader Maylene": {"ability": "Adaptability", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 47, "moves": ["Swords Dance", "Close Combat", "Bullet Punch", "Mach Punch"], "nature": "Modest"},
         "Pokémon Trainer Riley @ Coronet Highlands": {"ability": "Iron Fist", "gender": "Male", "item": "Scope Lens", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Extreme Speed", "Cross Chop", "Bone Rush", "Stone Edge"], "nature": "Naive"},
         "Pokémon Trainer Riley @ Iron Island": {"ability": "Iron Fist", "gender": "Male", "item": "Expert Belt", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 62, "moves": ["Aura Sphere", "Bone Rush", "Bullet Punch", "Bonemerang"], "nature": "Docile"},
-        "Worker Conrad": {"ability": "Iron Fist", "gender": "Male", "item": "Choice Specs", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Hyper Beam", "Focus Blast", "Psychic", "Flash Cannon"], "nature": "Gentle"}
+        "Worker Conrad": {"ability": "Iron Fist", "gender": "Male", "item": "Choice Specs", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Hyper Beam", "Focus Blast", "Psychic", "Flash Cannon"], "nature": "Hardy"}
     },
     "Ludicolo": {
         "Clown Julia": {"ability": "Swift Swim", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Hydro Pump", "Giga Drain", "Hidden Power Electric", "Counter"], "nature": "Naive"},
@@ -1467,7 +1468,7 @@ const SETDEX_PK = {
         "Pokémon Trainer Barry #3 [Infernape]": {"ability": "Swift Swim", "gender": "Male", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 39, "moves": ["Leech Seed", "Scald", "Ice Beam", "Giga Drain"], "nature": "Bold"}
     },
     "Lugia": {
-        "Elite Four Lucian": {"ability": "Filter", "gender": "", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Aeroblast", "Iron Head", "Ancient Power", "Extrasensory"], "nature": "Relaxed"}
+        "Elite Four Lucian": {"ability": "Filter", "gender": "", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Aeroblast", "Iron Head", "Ancient Power", "Extrasensory"], "nature": "Mild"}
     },
     "Lumineon": {
         "Cyclist Cecelia": {"ability": "Swift Swim", "gender": "Female", "item": "Silver Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 41, "moves": ["U-turn", "Bounce", "Waterfall", "Confuse Ray"], "nature": "Naive"},
@@ -1481,7 +1482,7 @@ const SETDEX_PK = {
         "Galactic Larissa #1": {"ability": "Levitate", "gender": "", "item": "Babiri Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Ancient Power", "Ice Beam", "Psychic", "Stealth Rock"], "nature": "Gentle"},
         "Galactic Luna #3": {"ability": "Levitate", "gender": "", "item": "Custap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 50, "moves": ["Calm Mind", "Ancient Power", "Psychic", "Explosion"], "nature": "Adamant"},
         "Galactic Luna #4": {"ability": "Levitate", "gender": "", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 65, "moves": ["Blizzard", "Stealth Rock", "Ancient Power", "Earth Power"], "nature": "Calm"},
-        "Galactic Luna #5": {"ability": "Levitate", "gender": "", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Rock Polish", "Moonlight", "Baton Pass", "Ancient Power"], "nature": "Lax"},
+        "Galactic Luna #5": {"ability": "Levitate", "gender": "", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Rock Polish", "Moonlight", "Baton Pass", "Ancient Power"], "nature": "Docile"},
         "Galactic Miranda #2": {"ability": "Levitate", "gender": "", "item": "Jaboca Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Power Gem", "Ice Beam", "Swagger", "Earth Power"], "nature": "Bold"},
         "Galactic Squad Phobos #1": {"ability": "Levitate", "gender": "", "item": "Petaya Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 18, "moves": ["Aurora Beam", "Ancient Power", "Signal Beam", "Psybeam"], "nature": "Mild"},
         "Galactic Squad Phobos #2": {"ability": "Levitate", "gender": "", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 58, "moves": ["Cosmic Power", "Lunar Dance", "Ancient Power", "Future Sight"], "nature": "Docile"},
@@ -1497,7 +1498,7 @@ const SETDEX_PK = {
     },
     "Luxray": {
         "Clown Justin": {"ability": "Tinted Lens", "gender": "Male", "item": "Light Clay", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 33, "moves": ["Shock Wave", "Feint Attack", "Light Screen", "Reflect"], "nature": "Hasty"},
-        "Galactic Terra #5": {"ability": "Tinted Lens", "gender": "Female", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 84, "moves": ["Wild Charge", "Ice Fang", "Fire Fang", "Iron Tail"], "nature": "Jolly"},
+        "Galactic Terra #5": {"ability": "Tinted Lens", "gender": "Female", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Wild Charge", "Ice Fang", "Fire Fang", "Iron Tail"], "nature": "Naughty"},
         "Galactic Valetudo #1": {"ability": "Tinted Lens", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 52, "moves": ["Howl", "Thunder Fang", "Ice Fang", "Substitute"], "nature": "Sassy"},
         "Guitarist Preston": {"ability": "Tinted Lens", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 80, "moves": ["Wild Charge", "Ice Fang", "Fire Fang", "Superpower"], "nature": "Hasty"},
         "Twins Emma & Lil": {"ability": "Tinted Lens", "gender": "Female", "item": "Razor Fang", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 38, "moves": ["Crunch", "Thunder Fang", "Ice Fang", "Fire Fang"], "nature": "Adamant"}
@@ -1511,7 +1512,7 @@ const SETDEX_PK = {
         "Sailor Zachariah": {"ability": "No Guard", "gender": "Male", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Wake-Up Slap", "Smelling Salts", "Submission", "Rock Slide"], "nature": "Lonely"},
         "Sinister Hooded Figure": {"ability": "No Guard", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Dynamic Punch", "Fissure", "Rock Slide", "Knock Off"], "nature": "Adamant"},
         "Swimmer Sheltin": {"ability": "No Guard", "gender": "Male", "item": "Damp Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 47, "moves": ["Light Screen", "Dive", "Cross Chop", "Mega Kick"], "nature": "Mild"},
-        "Worker Dillan": {"ability": "No Guard", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Dynamic Punch", "Substitute", "Payback", "Fire Punch"], "nature": "Docile"}
+        "Worker Dillan": {"ability": "No Guard", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 96, "moves": ["Dynamic Punch", "Substitute", "Payback", "Fire Punch"], "nature": "Bold"}
     },
     "Machoke": {
         "Artist William": {"ability": "Huge Power", "gender": "Male", "item": "Payapa Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 33, "moves": ["Payback", "Ice Punch", "Mach Punch", "Close Combat"], "nature": "Docile"},
@@ -1560,7 +1561,7 @@ const SETDEX_PK = {
         "Galactic Ganymede #1": {"ability": "Magnet Pull", "gender": "", "item": "Shuca Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 31, "moves": ["Charge Beam", "Flash Cannon", "Magnet Rise", "Hidden Power Fire"], "nature": "Rash"},
         "Galactic Ganymede #3": {"ability": "Magnet Pull", "gender": "", "item": "Iron Ball", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Hyper Beam", "Charge Beam", "Magnet Bomb", "Hidden Power Fire"], "nature": "Impish"},
         "Galactic Kari": {"ability": "Magnet Pull", "gender": "", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Charge Beam", "Mirror Shot", "Gravity", "Supersonic"], "nature": "Jolly"},
-        "Galactic Triton #3": {"ability": "Magnet Pull", "gender": "", "item": "Chople Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 85, "moves": ["Thunder", "Hidden Power Water", "Mirror Shot", "Signal Beam"], "nature": "Gentle"},
+        "Galactic Triton #3": {"ability": "Magnet Pull", "gender": "", "item": "Chople Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Thunder", "Hidden Power Water", "Mirror Shot", "Signal Beam"], "nature": "Quirky"},
         "Gambler Carlos": {"ability": "Magnet Pull", "gender": "", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 45, "moves": ["Zap Cannon", "Mirror Shot", "Hidden Power Grass", "Tri Attack"], "nature": "Sassy"},
         "Interviewers Barbara & Walter": {"ability": "Magnet Pull", "gender": "", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 77, "moves": ["Hidden Power Fire", "Thunderbolt", "Magnet Bomb", "Sleep Talk"], "nature": "Impish"},
         "Interviewers Molly & Shannon": {"ability": "Magnet Pull", "gender": "", "item": "Chesto Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 49, "moves": ["Sleep Talk", "Charge Beam", "Magnet Bomb", "Hidden Power Ground"], "nature": "Impish"},
@@ -1568,7 +1569,7 @@ const SETDEX_PK = {
     },
     "Magnezone": {
         "Commander Jupiter #2": {"ability": "Levitate", "gender": "", "item": "Zoom Lens", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 55, "moves": ["Zap Cannon", "Lock-On", "Flash Cannon", "Hidden Power Ground"], "nature": "Modest"},
-        "Commander Jupiter #3": {"ability": "Magnet Pull", "gender": "Male", "item": "Shuca Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Explosion", "Discharge", "Mirror Shot", "Thunder"], "nature": "Quirky"},
+        "Commander Jupiter #3": {"ability": "Levitate", "gender": "Male", "item": "Chople Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 92, "moves": ["Explosion", "Discharge", "Mirror Shot", "Thunder"], "nature": "Docile"},
         "Galactic Larissa #1": {"ability": "Levitate", "gender": "", "item": "Magnet", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Discharge", "Thunderbolt", "Flash Cannon", "Hidden Power Ice"], "nature": "Hasty"},
         "Galactic Miranda #2": {"ability": "Levitate", "gender": "", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Flash Cannon", "Swagger", "Hidden Power Fire", "Charge Beam"], "nature": "Calm"},
         "Galactic Terra #4": {"ability": "Levitate", "gender": "", "item": "Light Clay", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 65, "moves": ["Discharge", "Mirror Shot", "Light Screen", "Supersonic"], "nature": "Brave"},
@@ -1584,12 +1585,12 @@ const SETDEX_PK = {
     },
     "Mamoswine": {
         "Ace Trainer Dalton": {"ability": "Thick Fat", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 67, "moves": ["Earthquake", "Knock Off", "Ice Shard", "Stone Edge"], "nature": "Docile"},
-        "Elite Four Bertha": {"ability": "Thick Fat", "gender": "Female", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Sand Tomb", "Avalanche", "Head Smash", "Thunder Fang"], "nature": "Rash"},
+        "Elite Four Bertha": {"ability": "Thick Fat", "gender": "Female", "item": "Life Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Sand Tomb", "Avalanche", "Head Smash", "Thunder Fang"], "nature": "Naughty"},
         "Galactic Enceladus #1": {"ability": "Thick Fat", "gender": "Male", "item": "Bright Powder", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 65, "moves": ["Ice Ball", "Stomp", "Rock Slide", "Ice Shard"], "nature": "Serious"},
         "Galactic Enceladus #2": {"ability": "Thick Fat", "gender": "Male", "item": "Power Anklet", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Avalanche", "Curse", "Sand Tomb", "Knock Off"], "nature": "Modest"},
         "Galactic Miranda #3": {"ability": "Thick Fat", "gender": "Female", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Earthquake", "Ice Ball", "Stone Edge", "Ice Shard"], "nature": "Docile"},
         "Leader Candice": {"ability": "Thick Fat", "gender": "Male", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 73, "moves": ["Sand Tomb", "Ice Ball", "Knock Off", "Head Smash"], "nature": "Serious"},
-        "Roughneck Wyatt": {"ability": "Thick Fat", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Earthquake", "Ice Shard", "Stone Edge", "Stealth Rock"], "nature": "Relaxed"},
+        "Roughneck Wyatt": {"ability": "Thick Fat", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Earthquake", "Ice Shard", "Stone Edge", "Stealth Rock"], "nature": "Bold"},
         "Veteran Anton": {"ability": "Thick Fat", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 71, "moves": ["Stealth Rock", "Knock Off", "Avalanche", "Earthquake"], "nature": "Quirky"}
     },
     "Manaphy": {
@@ -1609,7 +1610,7 @@ const SETDEX_PK = {
     },
     "Mantine": {
         "Galactic Daphnis #1": {"ability": "Swift Swim", "gender": "Male", "item": "Wacan Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 62, "moves": ["Surf", "Hurricane", "Ice Beam", "Supersonic"], "nature": "Modest"},
-        "Galactic Triton #3": {"ability": "Swift Swim", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 84, "moves": ["Hurricane", "Muddy Water", "Supersonic", "Hidden Power Grass"], "nature": "Gentle"},
+        "Galactic Triton #3": {"ability": "Swift Swim", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Hurricane", "Muddy Water", "Supersonic", "Hidden Power Grass"], "nature": "Serious"},
         "Sailor Cesar": {"ability": "Swift Swim", "gender": "Male", "item": "Wacan Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 60, "moves": ["Air Slash", "Surf", "Ice Beam", "Confuse Ray"], "nature": "Naive"},
         "Swimmer Haley": {"ability": "Swift Swim", "gender": "Female", "item": "Wise Glasses", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 47, "moves": ["Confuse Ray", "Brine", "Ice Beam", "Air Slash"], "nature": "Gentle"}
     },
@@ -1671,14 +1672,14 @@ const SETDEX_PK = {
         "Commander Mars #2": {"ability": "Magic Guard", "gender": "Male", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 67, "moves": ["Calm Mind", "Ice Beam", "Thunderbolt", "Future Sight"], "nature": "Naughty"}
     },
     "Metagross": {
-        "Beauty Jasmine #2": {"ability": "Clear Body", "gender": "", "item": "Occa Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Stealth Rock", "Explosion", "Meteor Mash", "Focus Punch"], "nature": "Modest"},
+        "Beauty Jasmine #2": {"ability": "Clear Body", "gender": "", "item": "Occa Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Stealth Rock", "Explosion", "Meteor Mash", "Focus Punch"], "nature": "Hasty"},
         "Commander Saturn #1": {"ability": "Clear Body", "gender": "", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 65, "moves": ["Meteor Mash", "Earthquake", "Rock Slide", "Magnet Rise"], "nature": "Jolly"},
-        "Commander Saturn #2": {"ability": "Clear Body", "gender": "", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Earthquake", "Meteor Mash", "Hammer Arm", "Rock Slide"], "nature": "Hasty"},
+        "Commander Saturn #2": {"ability": "Clear Body", "gender": "", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Earthquake", "Meteor Mash", "Hammer Arm", "Rock Slide"], "nature": "Brave"},
         "Galactic Boss Cyrus #1": {"ability": "Clear Body", "gender": "", "item": "Life Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 55, "moves": ["Explosion", "Double Team", "Meteor Mash", "Earthquake"], "nature": "Adamant"},
-        "Galactic Neptune #3": {"ability": "Clear Body", "gender": "", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 84, "moves": ["Earthquake", "Meteor Mash", "Rock Slide", "Zen Headbutt"], "nature": "Impish"},
+        "Galactic Neptune #3": {"ability": "Clear Body", "gender": "", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Earthquake", "Meteor Mash", "Rock Slide", "Zen Headbutt"], "nature": "Brave"},
         "Galactic Portia": {"ability": "Clear Body", "gender": "", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 85, "moves": ["Hammer Arm", "Meteor Mash", "Zen Headbutt", "Rock Slide"], "nature": "Quirky"},
         "Galactic Proteus #1": {"ability": "Clear Body", "gender": "", "item": "Iron Ball", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 55, "moves": ["Hammer Arm", "Iron Head", "Zen Headbutt", "Rock Slide"], "nature": "Sassy"},
-        "Galactic Terra #5": {"ability": "Clear Body", "gender": "", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 80, "moves": ["Icy Wind", "Meteor Mash", "Rock Slide", "Earthquake"], "nature": "Relaxed"},
+        "Galactic Terra #5": {"ability": "Clear Body", "gender": "", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Icy Wind", "Meteor Mash", "Rock Slide", "Earthquake"], "nature": "Naughty"},
         "Lady Caitlin": {"ability": "Clear Body", "gender": "", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Meteor Mash", "Bullet Punch", "Pursuit", "Ice Punch"], "nature": "Mild"},
         "Leader Byron": {"ability": "Clear Body", "gender": "", "item": "Shuca Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 64, "moves": ["Earthquake", "Stealth Rock", "Explosion", "Meteor Mash"], "nature": "Careful"},
         "Veteran Anton": {"ability": "Clear Body", "gender": "", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 70, "moves": ["Zen Headbutt", "Meteor Mash", "Earthquake", "Ice Punch"], "nature": "Modest"}
@@ -1692,7 +1693,7 @@ const SETDEX_PK = {
         "Bug Catcher Sebastian": {"ability": "Shed Skin", "gender": "Male", "item": "Berry Juice", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 12, "moves": ["Iron Defense", "Tackle", "Snore", "Bug Bite"], "nature": "Careful"}
     },
     "Mew": {
-        "Elite Four Lucian": {"ability": "Simple", "gender": "", "item": "Apicot Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Baton Pass", "Nasty Plot", "Dragon Dance", "Ominous Wind"], "nature": "Bashful"}
+        "Elite Four Lucian": {"ability": "Simple", "gender": "", "item": "Apicot Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Baton Pass", "Nasty Plot", "Dragon Dance", "Ominous Wind"], "nature": "Timid"}
     },
     "Mightyena": {
         "Clown Chance": {"ability": "Intimidate", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 33, "moves": ["Sucker Punch", "Rage", "Yawn", "Super Fang"], "nature": "Gentle"},
@@ -1739,7 +1740,7 @@ const SETDEX_PK = {
         "Psychic Tony": {"ability": "Levitate", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 32, "moves": ["Mean Look", "Perish Song", "Substitute", "Protect"], "nature": "Quirky"}
     },
     "Mismagius": {
-        "Beauty Jasmine #2": {"ability": "Levitate", "gender": "Female", "item": "Expert Belt", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Shadow Ball", "Energy Ball", "Power Gem", "Psychic"], "nature": "Hasty"},
+        "Beauty Jasmine #2": {"ability": "Levitate", "gender": "Female", "item": "Expert Belt", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Shadow Ball", "Energy Ball", "Power Gem", "Psychic"], "nature": "Jolly"},
         "Double Team Nate & Lisa": {"ability": "Levitate", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 38, "moves": ["Shadow Ball", "Thunder", "Focus Blast", "Energy Ball"], "nature": "Mild"},
         "Galactic Squad Phobos #2": {"ability": "Levitate", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 60, "moves": ["Ominous Wind", "Mean Look", "Perish Song", "Memento"], "nature": "Rash"},
         "Galactic Sycorax #2": {"ability": "Levitate", "gender": "Female", "item": "Power Lens", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 88, "moves": ["Shadow Ball", "Thunder", "Hidden Power Fighting", "Nasty Plot"], "nature": "Calm"},
@@ -1776,7 +1777,7 @@ const SETDEX_PK = {
         "Skier Mirabelle": {"ability": "Filter", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 69, "moves": ["Psychic", "Toxic", "Focus Blast", "Blizzard"], "nature": "Quiet"}
     },
     "Muk": {
-        "Dragon Tamer Clinton": {"ability": "Aftermath", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 96, "moves": ["Explosion", "Gunk Shot", "Minimize", "Protect"], "nature": "Bold"},
+        "Dragon Tamer Clinton": {"ability": "Aftermath", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 97, "moves": ["Explosion", "Gunk Shot", "Minimize", "Protect"], "nature": "Brave"},
         "Galactic Squad Juliet": {"ability": "Aftermath", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Curse", "Swallow", "Payback", "Sweet Kiss"], "nature": "Sassy"},
         "Galactic Umbriel #1": {"ability": "Aftermath", "gender": "Female", "item": "Grip Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Poison Gas", "Swallow", "Fire Punch", "Dig"], "nature": "Quirky"},
         "Ninja Boy Drew": {"ability": "Aftermath", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 34, "moves": ["Explosion", "Shadow Punch", "Gunk Shot", "Fire Punch"], "nature": "Jolly"}
@@ -1842,11 +1843,11 @@ const SETDEX_PK = {
     "Ninetales": {
         "Ace Trainer Alicia": {"ability": "Magic Guard", "gender": "Female", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 72, "moves": ["Weather Ball Ice", "Fire Spin", "Energy Ball", "Hidden Power Rock"], "nature": "Lax"},
         "Beauty Britney": {"ability": "Magic Guard", "gender": "Female", "item": "Toxic Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 49, "moves": ["Heat Wave", "Safeguard", "Energy Ball", "Night Shade"], "nature": "Lax"},
-        "Beauty Jasmine #2": {"ability": "Magic Guard", "gender": "Female", "item": "Shuca Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Flamethrower", "Will-O-Wisp", "Agility", "Baton Pass"], "nature": "Docile"},
+        "Beauty Jasmine #2": {"ability": "Magic Guard", "gender": "Female", "item": "Shuca Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Flamethrower", "Will-O-Wisp", "Agility", "Baton Pass"], "nature": "Serious"},
         "Cameraman Matt": {"ability": "Magic Guard", "gender": "Female", "item": "Sitrus Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Attract", "Blast Burn", "Energy Ball", "Toxic"], "nature": "Adamant"},
         "Commander Mars #2": {"ability": "Magic Guard", "gender": "Male", "item": "Life Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 67, "moves": ["Blast Burn", "Energy Ball", "Memento", "Weather Ball Rock"], "nature": "Quirky"},
         "Commander Mars #3": {"ability": "Magic Guard", "gender": "Female", "item": "Life Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 95, "moves": ["Blast Burn", "Protect", "Energy Ball", "Ancient Power"], "nature": "Mild"},
-        "Galactic Prospero #3": {"ability": "Magic Guard", "gender": "Female", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Weather Ball Ice", "Blast Burn", "Energy Ball", "Dark Pulse"], "nature": "Hardy"}
+        "Galactic Prospero #3": {"ability": "Magic Guard", "gender": "Female", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Weather Ball Ice", "Blast Burn", "Energy Ball", "Dark Pulse"], "nature": "Docile"}
     },
     "Ninjask": {
         "Galactic Luna #5": {"ability": "Speed Boost", "gender": "Male", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Swords Dance", "Substitute", "Baton Pass", "X-Scissor"], "nature": "Jolly"},
@@ -1901,7 +1902,7 @@ const SETDEX_PK = {
         "Twins Liv & Liz": {"ability": "Adaptability", "gender": "Female", "item": "Berry Juice", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 19, "moves": ["Follow Me", "Thunder Shock"], "nature": "Jolly"}
     },
     "Palkia": {
-        "Galactic Boss Cyrus #3": {"ability": "Pressure", "gender": "", "item": "Lustrous Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 96, "moves": ["Spacial Rend", "Hydro Pump", "Earth Power", "Thunder"], "nature": "Rash"}
+        "Galactic Boss Cyrus #3": {"ability": "Pressure", "gender": "", "item": "Lustrous Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 97, "moves": ["Spacial Rend", "Hydro Pump", "Earth Power", "Thunder"], "nature": "Modest"}
     },
     "Paras": {
         "Galactic Terra #1": {"ability": "Dry Skin", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 18, "moves": ["Spore", "Bug Bite", "Seed Bomb", "Pursuit"], "nature": "Modest"}
@@ -1970,7 +1971,7 @@ const SETDEX_PK = {
         "Galactic Pluto #3": {"ability": "Snow Cloak", "gender": "Male", "item": "Salac Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 65, "moves": ["Avalanche", "Endeavor", "Sand Tomb", "Substitute"], "nature": "Hasty"},
         "Galactic Squad Perdita #1": {"ability": "Snow Cloak", "gender": "Female", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 84, "moves": ["Ice Ball", "Rock Slide", "Curse", "Sand Tomb"], "nature": "Lonely"},
         "Hiker Jonathan": {"ability": "Snow Cloak", "gender": "Male", "item": "Jaboca Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 33, "moves": ["Ice Shard", "Ice Fang", "Stomp", "Rock Slide"], "nature": "Gentle"},
-        "Idol Zoe": {"ability": "Snow Cloak", "gender": "Female", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Stealth Rock", "Reversal", "Sand Attack", "Ice Shard"], "nature": "Bashful"},
+        "Idol Zoe": {"ability": "Snow Cloak", "gender": "Female", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Stealth Rock", "Reversal", "Sand Attack", "Ice Shard"], "nature": "Bashful"},
         "Skier Anas": {"ability": "Snow Cloak", "gender": "Male", "item": "Salac Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 72, "moves": ["Earthquake", "Ice Ball", "Substitute", "Stone Edge"], "nature": "Brave"},
         "Skier Edward": {"ability": "Snow Cloak", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 71, "moves": ["Stealth Rock", "Earthquake", "Ice Shard", "Endeavor"], "nature": "Jolly"}
     },
@@ -2047,7 +2048,7 @@ const SETDEX_PK = {
         "Black Belt Kyle": {"ability": "Reckless", "gender": "Male", "item": "Razor Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 31, "moves": ["Accelerock", "U-turn", "Assurance", "Karate Chop"], "nature": "Sassy"},
         "Black Belt Philip": {"ability": "Reckless", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 70, "moves": ["Rage", "U-turn", "Ice Punch", "Secret Power"], "nature": "Brave"},
         "Clown Bob": {"ability": "Reckless", "gender": "Male", "item": "Big Nugget", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 85, "moves": ["Psych Up", "Cross Chop", "Earthquake", "Fling"], "nature": "Quirky"},
-        "Pokémon Ranger Allison": {"ability": "Reckless", "gender": "Female", "item": "Choice Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 98, "moves": ["Close Combat", "Gunk Shot", "Earthquake", "Shadow Claw"], "nature": "Careful"},
+        "Pokémon Ranger Allison": {"ability": "Reckless", "gender": "Female", "item": "Choice Scarf", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Superpower", "Gunk Shot", "Earthquake", "Shadow Claw"], "nature": "Adamant"},
         "Pokémon Trainer Barry #3 [Torterra]": {"ability": "Reckless", "gender": "Male", "item": "Expert Belt", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 39, "moves": ["U-turn", "Close Combat", "Stone Edge", "Pursuit"], "nature": "Hasty"},
         "Sis and Bro Dora & Diego": {"ability": "Reckless", "gender": "Female", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Rage", "Beat Up", "Swagger", "Thunder"], "nature": "Lax"}
     },
@@ -2102,8 +2103,8 @@ const SETDEX_PK = {
     },
     "Raichu": {
         "Beauty Jasmine #1": {"ability": "Lightning Rod", "gender": "Female", "item": "Life Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 39, "moves": ["Thunder", "Surf", "Volt Tackle", "Grass Knot"], "nature": "Sassy"},
-        "Galactic Oberon #2": {"ability": "Lightning Rod", "gender": "Male", "item": "Shuca Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Fake Out", "Petal Dance", "Thunderbolt", "Encore"], "nature": "Hasty"},
-        "Hiker J.J Ahern": {"ability": "Lightning Rod", "gender": "Male", "item": "Zap Plate", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Thunder Wave", "Thunderbolt", "Iron Tail", "Brick Break"], "nature": "Lonely"},
+        "Galactic Oberon #2": {"ability": "Lightning Rod", "gender": "Male", "item": "Shuca Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Fake Out", "Petal Dance", "Thunderbolt", "Encore"], "nature": "Impish"},
+        "Hiker J.J Ahern": {"ability": "Lightning Rod", "gender": "Male", "item": "Zap Plate", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 96, "moves": ["Thunder Wave", "Thunderbolt", "Iron Tail", "Brick Break"], "nature": "Mild"},
         "Poké Kid Jerry": {"ability": "Lightning Rod", "gender": "Female", "item": "Chesto Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 48, "moves": ["Sing", "Thunderbolt", "Ice Punch", "Sleep Talk"], "nature": "Adamant"},
         "Pokéfan RJ": {"ability": "Lightning Rod", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 79, "moves": ["Teeter Dance", "Volt Tackle", "Fake Out", "Hidden Power Ice"], "nature": "Relaxed"},
         "Psychic Mitchell": {"ability": "Lightning Rod", "gender": "Male", "item": "Expert Belt", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 45, "moves": ["Nasty Plot", "Thunderbolt", "Grass Knot", "Focus Blast"], "nature": "Sassy"},
@@ -2118,10 +2119,10 @@ const SETDEX_PK = {
         "Picnicker Diana": {"ability": "Trace", "gender": "Female", "item": "Custap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 9, "moves": ["Destiny Bond", "Confusion", "Magical Leaf", "Icy Wind"], "nature": "Jolly"}
     },
     "Rampardos": {
-        "Galactic Boss Cyrus #2": {"ability": "Mold Breaker", "gender": "Male", "item": "Berserk Gene", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 94, "moves": ["Head Smash", "Pursuit", "Hammer Arm", "Zen Headbutt"], "nature": "Quirky"},
+        "Galactic Boss Cyrus #2": {"ability": "Mold Breaker", "gender": "Male", "item": "Berserk Gene", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Head Smash", "Pursuit", "Hammer Arm", "Zen Headbutt"], "nature": "Brave"},
         "Galactic Halimede #1": {"ability": "Mold Breaker", "gender": "Male", "item": "Stone Plate", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 53, "moves": ["Hammer Arm", "Head Smash", "Pursuit", "Rock Slide"], "nature": "Modest"},
         "Galactic Halimede #2": {"ability": "Rock Head", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Head Smash", "Superpower", "Pursuit", "Zen Headbutt"], "nature": "Bashful"},
-        "Galactic Prospero #2": {"ability": "Rock Head", "gender": "Male", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 84, "moves": ["Head Smash", "Hammer Arm", "Fire Punch", "Swords Dance"], "nature": "Bold"},
+        "Galactic Prospero #2": {"ability": "Rock Head", "gender": "Male", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Head Smash", "Hammer Arm", "Fire Punch", "Swords Dance"], "nature": "Brave"},
         "Galactic Terra #3": {"ability": "Rock Head", "gender": "Male", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 51, "moves": ["Swords Dance", "Head Smash", "Superpower", "Accelerock"], "nature": "Serious"},
         "Ruin Maniac Jones": {"ability": "Rock Head", "gender": "Male", "item": "Iron Ball", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 45, "moves": ["Head Smash", "Hammer Arm", "Zen Headbutt", "Pursuit"], "nature": "Docile"},
         "Scientist Bill": {"ability": "Rock Head", "gender": "Male", "item": "Hard Stone", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 59, "moves": ["Accelerock", "Zen Headbutt", "Earthquake", "Head Smash"], "nature": "Hardy"}
@@ -2149,15 +2150,15 @@ const SETDEX_PK = {
         "Sinister Hooded Figure": {"ability": "Filter", "gender": "", "item": "Lum Berry", "ivs": {"at": 29, "df": 29, "hp": 29, "sa": 29, "sd": 29, "sp": 29}, "level": 100, "moves": ["Ancient Power", "Blizzard", "Focus Blast", "Charge Beam"], "nature": "Bold"}
     },
     "Regigigas": {
-        "Galactic Boss Cyrus #2": {"ability": "Clear Body", "gender": "Male", "item": "Iron Ball", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 90, "moves": ["Hammer Arm", "Crush Grip", "Knock Off", "Earthquake"], "nature": "Relaxed"},
-        "Galactic Boss Cyrus #3": {"ability": "Clear Body", "gender": "", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Crush Grip", "Drain Punch", "Rock Slide", "Fire Punch"], "nature": "Rash"}
+        "Galactic Boss Cyrus #2": {"ability": "Clear Body", "gender": "Male", "item": "Iron Ball", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 93, "moves": ["Hammer Arm", "Crush Grip", "Knock Off", "Earthquake"], "nature": "Bold"},
+        "Galactic Boss Cyrus #3": {"ability": "Clear Body", "gender": "", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 96, "moves": ["Crush Grip", "Drain Punch", "Rock Slide", "Fire Punch"], "nature": "Serious"}
     },
     "Regirock": {
         "Commander Jupiter #2": {"ability": "Solid Rock", "gender": "", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 54, "moves": ["Rock Slide", "Rock Polish", "Stomp", "Ice Punch"], "nature": "Relaxed"},
-        "Commander Jupiter #3": {"ability": "Solid Rock", "gender": "", "item": "Custap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Explosion", "Superpower", "Rock Slide", "Block"], "nature": "Lax"}
+        "Commander Jupiter #3": {"ability": "Solid Rock", "gender": "", "item": "Custap Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 92, "moves": ["Explosion", "Superpower", "Rock Slide", "Block"], "nature": "Lax"}
     },
     "Registeel": {
-        "Galactic Boss Cyrus #2": {"ability": "Clear Body", "gender": "Male", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 91, "moves": ["Gyro Ball", "Explosion", "Curse", "Earthquake"], "nature": "Bashful"}
+        "Galactic Boss Cyrus #2": {"ability": "Clear Body", "gender": "Male", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 95, "moves": ["Gyro Ball", "Explosion", "Curse", "Earthquake"], "nature": "Sassy"}
     },
     "Relicanth": {
         "Fisherman Kenneth": {"ability": "Swift Swim", "gender": "Male", "item": "Wacan Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 47, "moves": ["Head Smash", "Earthquake", "Waterfall", "Sleep Talk"], "nature": "Gentle"},
@@ -2171,7 +2172,7 @@ const SETDEX_PK = {
     },
     "Rhydon": {
         "Beauty Chelle": {"ability": "Lightning Rod", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 52, "moves": ["Rock Wrecker", "Horn Drill", "Earthquake", "Sleep Talk"], "nature": "Relaxed"},
-        "Commander Saturn #2": {"ability": "Lightning Rod", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Earthquake", "Sand Tomb", "Aqua Tail", "Rock Slide"], "nature": "Adamant"},
+        "Commander Saturn #2": {"ability": "Lightning Rod", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 95, "moves": ["Earthquake", "Sand Tomb", "Aqua Tail", "Rock Slide"], "nature": "Brave"},
         "Galactic Dione #1": {"ability": "Lightning Rod", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 67, "moves": ["Earthquake", "Rock Slide", "Megahorn", "Aqua Tail"], "nature": "Timid"},
         "Ruin Maniac Bruno": {"ability": "Lightning Rod", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 49, "moves": ["Sleep Talk", "Rock Slide", "Earthquake", "Rock Polish"], "nature": "Docile"}
     },
@@ -2220,8 +2221,8 @@ const SETDEX_PK = {
     "Rotom-Wash": {
         "Galactic Bebhionn": {"ability": "Levitate", "gender": "", "item": "Power Lens", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Thunder", "Hydro Pump", "Shadow Ball", "Hyper Voice"], "nature": "Lax"},
         "Galactic Phoebe #1": {"ability": "Levitate", "gender": "", "item": "Kasib Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 66, "moves": ["Thunder", "Shadow Ball", "Scald", "Whirlpool"], "nature": "Serious"},
-        "Galactic Triton #3": {"ability": "Levitate", "gender": "", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 84, "moves": ["Thunder", "Hydro Pump", "Hidden Power Ice", "Shadow Ball"], "nature": "Quiet"},
-        "Worker Conrad": {"ability": "Levitate", "gender": "", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Ominous Wind", "Rain Dance", "Thunder", "Thunder Wave"], "nature": "Brave"}
+        "Galactic Triton #3": {"ability": "Levitate", "gender": "", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Thunder", "Hydro Pump", "Hidden Power Ice", "Shadow Ball"], "nature": "Hasty"},
+        "Worker Conrad": {"ability": "Levitate", "gender": "", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Ominous Wind", "Rain Dance", "Thunder", "Thunder Wave"], "nature": "Timid"}
     },
     "Sableye": {
         "Black Belt Roku": {"ability": "Clear Body", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Crunch", "Drain Punch", "Thunder Punch", "Zen Headbutt"], "nature": "Quirky"},
@@ -2236,14 +2237,14 @@ const SETDEX_PK = {
     "Salamence": {
         "Ace Trainer Laura": {"ability": "Intimidate", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 69, "moves": ["Twister", "Secret Power", "Hurricane", "Rage"], "nature": "Quiet"},
         "Commander Saturn #1": {"ability": "Intimidate", "gender": "Female", "item": "Life Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 65, "moves": ["Hurricane", "Dragon Rush", "Hydro Pump", "Earthquake"], "nature": "Calm"},
-        "Dragon Tamer Clinton": {"ability": "Intimidate", "gender": "Male", "item": "Yache Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Draco Meteor", "Outrage", "Fire Blast", "Dragon Dance"], "nature": "Lonely"},
+        "Dragon Tamer Clinton": {"ability": "Intimidate", "gender": "Male", "item": "Yache Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Draco Meteor", "Outrage", "Fire Blast", "Dragon Dance"], "nature": "Careful"},
         "Galactic Boss Cyrus #1": {"ability": "Intimidate", "gender": "Male", "item": "Haban Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 55, "moves": ["Dragon Dance", "Aerial Ace", "Outrage", "Rage"], "nature": "Naive"},
         "Galactic Io #3": {"ability": "Intimidate", "gender": "Male", "item": "Yache Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 52, "moves": ["Draco Meteor", "Dragon Rush", "Aerial Ace", "Heat Wave"], "nature": "Timid"},
         "Galactic Io #4": {"ability": "Intimidate", "gender": "Female", "item": "Macho Brace", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Draco Meteor", "Fire Blast", "Rage", "Sky Attack"], "nature": "Docile"},
-        "Galactic Luna #5": {"ability": "Intimidate", "gender": "Male", "item": "Draco Plate", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 82, "moves": ["Dragon Claw", "Heat Wave", "Aerial Ace", "Brick Break"], "nature": "Careful"},
+        "Galactic Luna #5": {"ability": "Intimidate", "gender": "Male", "item": "Draco Plate", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Dragon Claw", "Heat Wave", "Aerial Ace", "Brick Break"], "nature": "Quiet"},
         "Galactic Squad Amalthia": {"ability": "Intimidate", "gender": "Female", "item": "Yache Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Dragon Pulse", "Heat Wave", "Air Slash", "Tailwind"], "nature": "Careful"},
         "Pokémon Trainer Riley @ Coronet Highlands": {"ability": "Intimidate", "gender": "Male", "item": "Micle Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Dragon Claw", "Aqua Tail", "Fire Fang", "Thunder Fang"], "nature": "Jolly"},
-        "Roughneck Wyatt": {"ability": "Intimidate", "gender": "Male", "item": "Shell Bell", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Sky Attack", "Dragon Claw", "Earthquake", "Dragon Dance"], "nature": "Sassy"}
+        "Roughneck Wyatt": {"ability": "Intimidate", "gender": "Male", "item": "Shell Bell", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Sky Attack", "Dragon Claw", "Earthquake", "Dragon Dance"], "nature": "Naive"}
     },
     "Sandshrew": {
         "Camper Curtis": {"ability": "Rough Skin", "gender": "Male", "item": "Soft Sand", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 9, "moves": ["Earth Power", "Aerial Ace", "Rock Throw", "Slash"], "nature": "Naive"}
@@ -2314,7 +2315,7 @@ const SETDEX_PK = {
         "Twins Emma & Lil": {"ability": "Tinted Lens", "gender": "Female", "item": "Mystic Water", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 37, "moves": ["Crunch", "Ice Fang", "Vise Grip", "Muddy Water"], "nature": "Docile"}
     },
     "Shaymin-Sky": {
-        "Champion Cynthia": {"ability": "Natural Cure", "gender": "Male", "item": "Life Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Air Slash", "Seed Flare", "Earth Power", "Hidden Power Ice"], "nature": "Timid"}
+        "Champion Cynthia": {"ability": "Natural Cure", "gender": "Male", "item": "Life Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Air Slash", "Seed Flare", "Earth Power", "Hidden Power Ice"], "nature": "Rash"}
     },
     "Shedinja": {
         "Galactic Prospero #1": {"ability": "Wonder Guard", "gender": "", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 22, "moves": ["Bug Bite", "Dig", "Sucker Punch", "Sleep Talk"], "nature": "Quirky"},
@@ -2369,10 +2370,10 @@ const SETDEX_PK = {
         "Commander Mars #1": {"ability": "Filter", "gender": "Female", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 20, "moves": ["Stealth Rock", "Tailwind", "Pluck", "Iron Head"], "nature": "Impish"},
         "Galactic Alborix": {"ability": "Filter", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Spikes", "Roost", "Drill Run", "Drill Peck"], "nature": "Naive"},
         "Galactic Despina #1": {"ability": "Filter", "gender": "Female", "item": "Sharp Beak", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Sky Attack", "Iron Head", "Sand Tomb", "Tailwind"], "nature": "Relaxed"},
-        "Galactic Luna #5": {"ability": "Filter", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 84, "moves": ["Sky Attack", "Sand Tomb", "Iron Head", "Spikes"], "nature": "Lonely"},
+        "Galactic Luna #5": {"ability": "Filter", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Sky Attack", "Sand Tomb", "Iron Head", "Spikes"], "nature": "Careful"},
         "Idol Skylar": {"ability": "Filter", "gender": "Female", "item": "Sharp Beak", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 58, "moves": ["Sky Attack", "X-Scissor", "Night Slash", "Rock Slide"], "nature": "Calm"},
         "Swimmer Aubree": {"ability": "Filter", "gender": "Female", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Spikes", "Stealth Rock", "Tailwind", "Toxic"], "nature": "Quirky"},
-        "Worker Dillan": {"ability": "Filter", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 96, "moves": ["Stealth Rock", "Roost", "Counter", "Toxic"], "nature": "Docile"},
+        "Worker Dillan": {"ability": "Filter", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 98, "moves": ["Stealth Rock", "Roost", "Counter", "Toxic"], "nature": "Hasty"},
         "Youngster Butch": {"ability": "Filter", "gender": "Male", "item": "Sitrus Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Spikes", "Roar", "Drill Peck", "Rock Slide"], "nature": "Timid"}
     },
     "Skiploom": {
@@ -2396,7 +2397,7 @@ const SETDEX_PK = {
     "Slaking": {
         "Belle & Pa Ava & Matt": {"ability": "Truant", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 36, "moves": ["Focus Punch", "Slack Off", "Bide", "Sleep Talk"], "nature": "Lax"},
         "Camper Parker": {"ability": "Truant", "gender": "Male", "item": "Chople Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 80, "moves": ["Dynamic Punch", "Gunk Shot", "Thunder", "Mega Kick"], "nature": "Jolly"},
-        "Galactic Oberon #2": {"ability": "Truant", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Secret Power", "Slack Off", "Pursuit", "Earthquake"], "nature": "Quiet"},
+        "Galactic Oberon #2": {"ability": "Truant", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Secret Power", "Slack Off", "Pursuit", "Earthquake"], "nature": "Careful"},
         "Galactic Valetudo #1": {"ability": "Truant", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 50, "moves": ["Slack Off", "Double Team", "Giga Impact", "Rage"], "nature": "Calm"},
         "Gentleman Luther": {"ability": "Truant", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 75, "moves": ["Fire Punch", "Crush Claw", "Pursuit", "Brick Break"], "nature": "Quirky"},
         "Pokémon Ranger Sam": {"ability": "Truant", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 48, "moves": ["Earthquake", "Thunder", "Surf", "Crush Grip"], "nature": "Hardy"},
@@ -2422,7 +2423,7 @@ const SETDEX_PK = {
         "Pokémon Trainer Barry #2 [Turtwig]": {"ability": "Truant", "gender": "Male", "item": "Choice Band", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 9, "moves": ["Crush Claw"], "nature": "Adamant"}
     },
     "Slowbro": {
-        "Bug Catcher Ford": {"ability": "Simple", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Earthquake", "Surf", "Psychic", "Ice Beam"], "nature": "Rash"},
+        "Bug Catcher Ford": {"ability": "Simple", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 96, "moves": ["Earthquake", "Surf", "Psychic", "Ice Beam"], "nature": "Rash"},
         "Fisherman Josh": {"ability": "Simple", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 46, "moves": ["Calm Mind", "Slack Off", "Muddy Water", "Psychic"], "nature": "Rash"},
         "Galactic Angrboda": {"ability": "Simple", "gender": "Female", "item": "Enigma Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Calm Mind", "Slack Off", "Scald", "Future Sight"], "nature": "Quirky"},
         "Galactic Erripaus": {"ability": "Simple", "gender": "Male", "item": "Shell Bell", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Muddy Water", "Calm Mind", "Blizzard", "Focus Blast"], "nature": "Jolly"},
@@ -2430,7 +2431,7 @@ const SETDEX_PK = {
         "Galactic Proteus #1": {"ability": "Simple", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Trick Room", "Whirlpool", "Fire Blast", "Psychic"], "nature": "Modest"},
         "Pokéfan Liz": {"ability": "Simple", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 78, "moves": ["Thunder Wave", "Muddy Water", "Slack Off", "Calm Mind"], "nature": "Modest"},
         "Pokémon Breeder Albert": {"ability": "Simple", "gender": "Male", "item": "Leppa Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 36, "moves": ["Calm Mind", "Thunder Wave", "Slack Off", "Future Sight"], "nature": "Rash"},
-        "Skier Anas": {"ability": "Shell Armor", "gender": "Female", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 72, "moves": ["Blizzard", "Scald", "Slack Off", "Psychic"], "nature": "Timid"},
+        "Skier Anas": {"ability": "Shell Armor", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 72, "moves": ["Blizzard", "Scald", "Slack Off", "Psychic"], "nature": "Lax"},
         "Swimmer Ledecky": {"ability": "Simple", "gender": "Female", "item": "Apicot Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 99, "moves": ["Metronome"], "nature": "Bold"}
     },
     "Slowking": {
@@ -2445,7 +2446,7 @@ const SETDEX_PK = {
         "Galactic Valetudo #1": {"ability": "Simple", "gender": "Male", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 51, "moves": ["Nasty Plot", "Psychic", "Fire Blast", "Water Pulse"], "nature": "Sassy"},
         "Gentleman Luther": {"ability": "Simple", "gender": "Male", "item": "Sitrus Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 77, "moves": ["Weather Ball Fire", "Psychic", "Ice Beam", "Calm Mind"], "nature": "Jolly"},
         "Rich Boy Liam": {"ability": "Simple", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 56, "moves": ["Nasty Plot", "Muddy Water", "Psychic", "Flamethrower"], "nature": "Adamant"},
-        "Ruin Maniac Greg": {"ability": "Simple", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Amnesia", "Iron Defense", "Slack Off", "Whirlpool"], "nature": "Lonely"},
+        "Ruin Maniac Greg": {"ability": "Simple", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Amnesia", "Iron Defense", "Slack Off", "Whirlpool"], "nature": "Sassy"},
         "Skier Savannah": {"ability": "Magic Guard", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 70, "moves": ["Blizzard", "Psychic", "Scald", "Nasty Plot"], "nature": "Lonely"},
         "Swimmer Ledecky": {"ability": "Simple", "gender": "Male", "item": "Ganlon Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 99, "moves": ["Metronome"], "nature": "Quirky"},
         "Swimmer Miranda": {"ability": "Simple", "gender": "Female", "item": "Lax Incense", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Future Sight", "Toxic", "Whirlpool", "Protect"], "nature": "Hardy"}
@@ -2482,14 +2483,14 @@ const SETDEX_PK = {
     },
     "Snorlax": {
         "Ace Trainer Blake": {"ability": "Thick Fat", "gender": "Male", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Explosion", "Crunch", "Double-Edge", "Earthquake"], "nature": "Docile"},
-        "Beauty Jasmine #2": {"ability": "Thick Fat", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Swallow", "Rock Climb", "Yawn", "Counter"], "nature": "Naughty"},
-        "Bug Catcher Ford": {"ability": "Thick Fat", "gender": "Male", "item": "Chople Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Submission", "Flamethrower", "Crunch", "Return"], "nature": "Quirky"},
+        "Beauty Jasmine #2": {"ability": "Thick Fat", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Swallow", "Rock Climb", "Yawn", "Counter"], "nature": "Hardy"},
+        "Bug Catcher Ford": {"ability": "Thick Fat", "gender": "Male", "item": "Chople Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Submission", "Flamethrower", "Crunch", "Return"], "nature": "Gentle"},
         "Galactic Ganymede #2": {"ability": "Thick Fat", "gender": "Male", "item": "Lax Incense", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 53, "moves": ["Slack Off", "Rage", "Body Slam", "Curse"], "nature": "Calm"},
         "Galactic Miranda #3": {"ability": "Thick Fat", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Self-Destruct", "Ice Ball", "Secret Power", "Earthquake"], "nature": "Brave"},
         "Galactic Squad Juliet": {"ability": "Thick Fat", "gender": "Male", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 85, "moves": ["Curse", "Double-Edge", "Pursuit", "Stomp"], "nature": "Modest"},
         "Galactic Titan #1": {"ability": "Thick Fat", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 64, "moves": ["Curse", "Body Slam", "Slack Off", "Pursuit"], "nature": "Quirky"},
         "Galactic Titan #2": {"ability": "Thick Fat", "gender": "Male", "item": "Ganlon Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 86, "moves": ["Rage", "Self-Destruct", "Pursuit", "Giga Impact"], "nature": "Relaxed"},
-        "Hiker J.J Ahern": {"ability": "Thick Fat", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Crunch", "Body Slam", "Flamethrower", "Ice Beam"], "nature": "Bold"},
+        "Hiker J.J Ahern": {"ability": "Thick Fat", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Crunch", "Body Slam", "Flamethrower", "Ice Beam"], "nature": "Mild"},
         "Leader Wake": {"ability": "Thick Fat", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 50, "moves": ["Counter", "Pursuit", "Earthquake", "Body Slam"], "nature": "Adamant"},
         "Pokémon Breeder Frank": {"ability": "Thick Fat", "gender": "Male", "item": "Ganlon Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Pursuit", "Outrage", "Drain Punch", "Seed Bomb"], "nature": "Serious"},
         "Pokémon Trainer Dawn @ Lake Verity": {"ability": "Thick Fat", "gender": "Male", "item": "Sitrus Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 66, "moves": ["Body Slam", "Crunch", "Submission", "Fire Punch"], "nature": "Impish"},
@@ -2548,7 +2549,7 @@ const SETDEX_PK = {
         "Galactic Thebe": {"ability": "Pressure", "gender": "Male", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 51, "moves": ["Pursuit", "Double Team", "Rest", "Toxic"], "nature": "Bashful"},
         "Leader Fantina": {"ability": "Pressure", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 36, "moves": ["Rest", "Sleep Talk", "Pursuit", "Hidden Power Fighting"], "nature": "Lonely"},
         "Ruin Maniac Bryan": {"ability": "Pressure", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 45, "moves": ["Will-O-Wisp", "Payback", "Psychic", "Confuse Ray"], "nature": "Relaxed"},
-        "Ruin Maniac Greg": {"ability": "Pressure", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Double Team", "Curse", "Rest", "Mean Look"], "nature": "Calm"}
+        "Ruin Maniac Greg": {"ability": "Pressure", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Double Team", "Curse", "Rest", "Mean Look"], "nature": "Naughty"}
     },
     "Spoink": {
         "Camper Curtis": {"ability": "Thick Fat", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 10, "moves": ["Future Sight", "Teeter Dance", "Confusion", "Bounce"], "nature": "Docile"},
@@ -2587,7 +2588,7 @@ const SETDEX_PK = {
         "Lass Natalie": {"ability": "Keen Eye", "gender": "Female", "item": "Oran Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 6, "moves": ["Quick Attack", "Peck", "Roost", "Sleep Talk"], "nature": "Hardy"}
     },
     "Starmie": {
-        "Bug Catcher Ford": {"ability": "Magic Guard", "gender": "", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Thunderbolt", "Ice Beam", "Psychic", "Surf"], "nature": "Lax"},
+        "Bug Catcher Ford": {"ability": "Magic Guard", "gender": "", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Thunderbolt", "Ice Beam", "Psychic", "Surf"], "nature": "Modest"},
         "Galactic Callisto #3": {"ability": "Magic Guard", "gender": "", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Gravity", "Hydro Pump", "Blizzard", "Zap Cannon"], "nature": "Naive"},
         "Galactic Dia": {"ability": "Magic Guard", "gender": "", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 53, "moves": ["Minimize", "Recover", "Water Pulse", "Shock Wave"], "nature": "Relaxed"},
         "Galactic Enceladus #1": {"ability": "Magic Guard", "gender": "", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 64, "moves": ["Blizzard", "Whirlpool", "Psychic", "Thunderbolt"], "nature": "Modest"},
@@ -2611,7 +2612,7 @@ const SETDEX_PK = {
         "Galactic Pluto #4": {"ability": "Solid Rock", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Ice Ball", "Sand Tomb", "Explosion", "Iron Tail"], "nature": "Lonely"},
         "Galactic Titan #1": {"ability": "Rock Head", "gender": "Male", "item": "Passho Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 65, "moves": ["Explosion", "Earthquake", "Head Smash", "Gyro Ball"], "nature": "Adamant"},
         "Galactic Titan #2": {"ability": "Solid Rock", "gender": "Male", "item": "Iron Ball", "ivs": {"at": 29, "df": 29, "hp": 29, "sa": 29, "sd": 29, "sp": 29}, "level": 86, "moves": ["Curse", "Gyro Ball", "Earthquake", "Explosion"], "nature": "Sassy"},
-        "Galactic Uranus #3": {"ability": "Rock Head", "gender": "Male", "item": "Rowap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Explosion", "Ice Ball", "Drill Run", "Rock Blast"], "nature": "Naive"},
+        "Galactic Uranus #3": {"ability": "Solid Rock", "gender": "Female", "item": "Rowap Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 92, "moves": ["Explosion", "Ice Ball", "Drill Run", "Rock Blast"], "nature": "Lonely"},
         "Leader Byron": {"ability": "Solid Rock", "gender": "Male", "item": "Life Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 65, "moves": ["Head Smash", "Iron Tail", "Earthquake", "Explosion"], "nature": "Sassy"},
         "Roughneck Robert": {"ability": "Solid Rock", "gender": "Male", "item": "Iron Ball", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 32, "moves": ["Gyro Ball", "Earthquake", "Curse", "Ice Fang"], "nature": "Quirky"},
         "Sinister Hooded Figure": {"ability": "Solid Rock", "gender": "Female", "item": "Apicot Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Fissure", "Gyro Ball", "Sand Tomb", "Stone Edge"], "nature": "Relaxed"},
@@ -2631,7 +2632,7 @@ const SETDEX_PK = {
     },
     "Suicune": {
         "Galactic Boss Cyrus #1": {"ability": "Pressure", "gender": "", "item": "Bright Powder", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 54, "moves": ["Rest", "Calm Mind", "Water Pulse", "Ominous Wind"], "nature": "Calm"},
-        "Galactic Uranus #3": {"ability": "Pressure", "gender": "", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Curse", "Waterfall", "Ice Fang", "Aqua Ring"], "nature": "Brave"}
+        "Galactic Uranus #3": {"ability": "Pressure", "gender": "", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Curse", "Waterfall", "Ice Fang", "Aqua Ring"], "nature": "Rash"}
     },
     "Sunflora": {
         "Artist Angel": {"ability": "Solar Power", "gender": "Male", "item": "Big Root", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 24, "moves": ["Giga Drain", "Hidden Power Rock", "Earth Power", "Sleep Talk"], "nature": "Quiet"},
@@ -2641,7 +2642,7 @@ const SETDEX_PK = {
         "Lass Natalie": {"ability": "Solar Power", "gender": "Female", "item": "Oran Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 6, "moves": ["Toxic", "Leech Seed", "Protect", "Mega Drain"], "nature": "Brave"}
     },
     "Surskit": {
-        "Elite Four Aaron": {"ability": "Swift Swim", "gender": "Male", "item": "Miracle Seed", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Hydro Pump", "Bug Buzz", "Ice Beam", "Giga Drain"], "nature": "Serious"},
+        "Elite Four Aaron": {"ability": "Swift Swim", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Hydro Pump", "Bug Buzz", "Ice Beam", "Giga Drain"], "nature": "Mild"},
         "Galactic Daphnis #1": {"ability": "Swift Swim", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 63, "moves": ["Surf", "Ice Beam", "Bug Buzz", "Giga Drain"], "nature": "Bold"},
         "Galactic Naid": {"ability": "Swift Swim", "gender": "Male", "item": "Wise Glasses", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Scald", "Signal Beam", "Giga Drain", "Ice Beam"], "nature": "Impish"},
         "Parasol Lady Monet": {"ability": "Swift Swim", "gender": "Female", "item": "Petaya Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 47, "moves": ["Bug Buzz", "Ice Beam", "Giga Drain", "Surf"], "nature": "Gentle"},
@@ -2670,15 +2671,15 @@ const SETDEX_PK = {
     "Swampert": {
         "Ace Trainer Olivia": {"ability": "Swift Swim", "gender": "Male", "item": "Rindo Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 67, "moves": ["Stealth Rock", "Ice Ball", "Earthquake", "Aqua Tail"], "nature": "Docile"},
         "Commander Mars #2": {"ability": "Torrent", "gender": "Male", "item": "Rindo Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 66, "moves": ["Muddy Water", "Earthquake", "Ice Beam", "Earth Power"], "nature": "Bold"},
-        "Commander Mars #3": {"ability": "Swift Swim", "gender": "Male", "item": "Sitrus Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 91, "moves": ["Avalanche", "Earthquake", "Muddy Water", "Sand Tomb"], "nature": "Careful"},
+        "Commander Mars #3": {"ability": "Swift Swim", "gender": "Male", "item": "Sitrus Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 93, "moves": ["Avalanche", "Earthquake", "Muddy Water", "Sand Tomb"], "nature": "Docile"},
         "Fisherman Greg": {"ability": "Swift Swim", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 96, "moves": ["Avalanche", "Waterfall", "Earthquake", "Dynamic Punch"], "nature": "Adamant"},
         "Galactic Cordelia": {"ability": "Swift Swim", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Spikes", "Ice Ball", "Sand Tomb", "Aqua Tail"], "nature": "Brave"},
         "Galactic Ferdinand #1": {"ability": "Swift Swim", "gender": "Male", "item": "Persim Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Earthquake", "Curse", "Aqua Tail", "Avalanche"], "nature": "Quirky"},
         "Galactic Neptune #2": {"ability": "Swift Swim", "gender": "Male", "item": "Rindo Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 57, "moves": ["Muddy Water", "Earth Power", "Ice Punch", "Waterfall"], "nature": "Timid"},
-        "Galactic Neptune #3": {"ability": "Swift Swim", "gender": "Male", "item": "Soft Sand", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Earthquake", "Waterfall", "Avalanche", "Bulldoze"], "nature": "Docile"},
+        "Galactic Neptune #3": {"ability": "Swift Swim", "gender": "Male", "item": "Soft Sand", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Earthquake", "Waterfall", "Avalanche", "Bulldoze"], "nature": "Adamant"},
         "Leader Volkner": {"ability": "Swift Swim", "gender": "Male", "item": "Rindo Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 83, "moves": ["Spikes", "Muddy Water", "Sand Tomb", "Avalanche"], "nature": "Quiet"},
         "Leader Wake": {"ability": "Swift Swim", "gender": "Male", "item": "Rindo Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 53, "moves": ["Earthquake", "Surf", "Ice Punch", "Yawn"], "nature": "Naughty"},
-        "Pokémon Ranger Taylor": {"ability": "Swift Swim", "gender": "Male", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 98, "moves": ["Counter", "Mirror Coat", "Ice Punch", "Hydro Cannon"], "nature": "Serious"},
+        "Pokémon Ranger Taylor": {"ability": "Swift Swim", "gender": "Male", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Counter", "Mirror Coat", "Ice Punch", "Hydro Cannon"], "nature": "Hasty"},
         "Pokémon Trainer Barry #4 [Empoleon]": {"ability": "Swift Swim", "gender": "Male", "item": "Expert Belt", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 47, "moves": ["Earth Power", "Ice Beam", "Muddy Water", "Sleep Talk"], "nature": "Bold"},
         "Pokémon Trainer Barry #5 [Empoleon]": {"ability": "Swift Swim", "gender": "Male", "item": "Rindo Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 56, "moves": ["Earthquake", "Avalanche", "Aqua Tail", "Poison Jab"], "nature": "Adamant"},
         "Pokémon Trainer Barry #6 [Empoleon]": {"ability": "Swift Swim", "gender": "Male", "item": "Rindo Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Hydro Cannon", "Earthquake", "Yawn", "Avalanche"], "nature": "Jolly"},
@@ -2709,7 +2710,7 @@ const SETDEX_PK = {
     "Tangela": {
         "Aroma Lady Carolina": {"ability": "Chlorophyll", "gender": "Female", "item": "Occa Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 76, "moves": ["Sleep Powder", "Solar-Beam", "Hyper Beam", "Hidden Power Fire"], "nature": "Lax"},
         "Aroma Lady Hannah": {"ability": "Chlorophyll", "gender": "Female", "item": "Lax Incense", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 35, "moves": ["Tickle", "Power Whip", "Slam", "Nature Power"], "nature": "Quirky"},
-        "Pokémon Breeder Johnny": {"ability": "Chlorophyll", "gender": "Male", "item": "Petaya Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 40, "moves": ["Solar-Beam", "Ancient Power", "Sleep Powder", "Weather Ball Water"], "nature": "Modest"}
+        "Pokémon Breeder Johnny": {"ability": "Chlorophyll", "gender": "Male", "item": "Petaya Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 40, "moves": ["Solar-Beam", "Ancient Power", "Sleep Powder", "Weather Ball Fire"], "nature": "Modest"}
     },
     "Tangrowth": {
         "Commander Jupiter #1": {"ability": "Magic Guard", "gender": "Female", "item": "Toxic Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 33, "moves": ["Sleep Powder", "Power Whip", "Earthquake", "Ancient Power"], "nature": "Brave"},
@@ -2718,9 +2719,9 @@ const SETDEX_PK = {
         "Galactic Atlas #2": {"ability": "Magic Guard", "gender": "Male", "item": "Micle Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 83, "moves": ["Seismic Toss", "Solar Beam", "Endure", "Sleep Powder"], "nature": "Gentle"},
         "Galactic Europa #3": {"ability": "Magic Guard", "gender": "Female", "item": "Big Root", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Nature Power", "Giga Drain", "Leech Seed", "Protect"], "nature": "Bashful"},
         "Galactic Francisco #2": {"ability": "Magic Guard", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Facade", "Power Whip", "Curse", "Brick Break"], "nature": "Careful"},
-        "Galactic Prospero #2": {"ability": "Magic Guard", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Solar-Beam", "Ancient Power", "Earthquake", "Hidden Power Fire"], "nature": "Calm"},
+        "Galactic Prospero #2": {"ability": "Magic Guard", "gender": "Male", "item": "Life Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 87, "moves": ["Solar-Beam", "Ancient Power", "Earthquake", "Hidden Power Fire"], "nature": "Quiet"},
         "Parasol Lady Monet": {"ability": "Magic Guard", "gender": "Female", "item": "Chesto Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 47, "moves": ["Earthquake", "Giga Drain", "Ancient Power", "Stun Spore"], "nature": "Modest"},
-        "Ruin Maniac Greg": {"ability": "Magic Guard", "gender": "Male", "item": "Toxic Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Fling", "Synthesis", "Leech Seed", "Double Team"], "nature": "Bold"}
+        "Ruin Maniac Greg": {"ability": "Magic Guard", "gender": "Male", "item": "Toxic Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Fling", "Synthesis", "Leech Seed", "Double Team"], "nature": "Sassy"}
     },
     "Tauros": {
         "Belle & Pa Scout & Atticus": {"ability": "Intimidate", "gender": "Male", "item": "Muscle Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 73, "moves": ["Blaze Kick", "Mega Kick", "Stomp", "Zen Headbutt"], "nature": "Hardy"},
@@ -2754,7 +2755,7 @@ const SETDEX_PK = {
         "Galactic Cupid #3": {"ability": "Serene Grace", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Follow Me", "Soft-Boiled", "Attract", "Sleep Talk"], "nature": "Adamant"},
         "Galactic Galatea": {"ability": "Serene Grace", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 54, "moves": ["Air Slash", "Tri Attack", "Aura Sphere", "Ancient Power"], "nature": "Rash"},
         "Galactic Thebe": {"ability": "Serene Grace", "gender": "Male", "item": "Cheri Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 53, "moves": ["Tailwind", "Aura Sphere", "Nasty Plot", "Air Slash"], "nature": "Rash"},
-        "Galactic Titania": {"ability": "Serene Grace", "gender": "Male", "item": "Yache Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Gastro Acid", "Air Slash", "Ancient Power", "Secret Power"], "nature": "Gentle"},
+        "Galactic Titania": {"ability": "Serene Grace", "gender": "Male", "item": "Yache Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Gastro Acid", "Secret Power", "Air Slash", "Ancient Power"], "nature": "Gentle"},
         "Pokéfan Liz": {"ability": "Serene Grace", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 80, "moves": ["Nasty Plot", "Thunder Wave", "Air Slash", "Aura Sphere"], "nature": "Timid"},
         "Pokémon Trainer Mira @ Spear Pillar": {"ability": "Serene Grace", "gender": "Male", "item": "Sitrus Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Extreme Speed", "Air Slash", "Aura Sphere", "Psychic"], "nature": "Quirky"}
     },
@@ -2780,7 +2781,7 @@ const SETDEX_PK = {
         "Galactic Ferdinand #1": {"ability": "Thick Fat", "gender": "Male", "item": "Persim Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Earthquake", "Rock Slide", "Curse", "Wood Hammer"], "nature": "Quiet"},
         "Galactic Terra #3": {"ability": "Thick Fat", "gender": "Male", "item": "Tanga Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 54, "moves": ["Sand Tomb", "Swords Dance", "Wood Hammer", "Stone Edge"], "nature": "Quirky"},
         "Galactic Terra #4": {"ability": "Thick Fat", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 67, "moves": ["Sand Tomb", "Wood Hammer", "Stone Edge", "Rock Polish"], "nature": "Careful"},
-        "Galactic Terra #5": {"ability": "Thick Fat", "gender": "Male", "item": "Enigma Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Earthquake", "Wood Hammer", "Swords Dance", "Stone Edge"], "nature": "Gentle"},
+        "Galactic Terra #5": {"ability": "Thick Fat", "gender": "Male", "item": "Enigma Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Earthquake", "Wood Hammer", "Swords Dance", "Stone Edge"], "nature": "Serious"},
         "Galactic Titan #2": {"ability": "Shell Armor", "gender": "Male", "item": "Apicot Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 85, "moves": ["Curse", "Wood Hammer", "Sand Tomb", "Rock Slide"], "nature": "Quirky"},
         "Leader Gardenia": {"ability": "Thick Fat", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 28, "moves": ["Roar", "Bulldoze", "Rock Climb", "Seed Bomb"], "nature": "Adamant"},
         "Pokémon Trainer Barry #3 [Torterra]": {"ability": "Thick Fat", "gender": "Male", "item": "Leftovers", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 40, "moves": ["Earthquake", "Curse", "Seed Bomb", "Stone Edge"], "nature": "Careful"},
@@ -2805,7 +2806,7 @@ const SETDEX_PK = {
         "Galactic Pan #1": {"ability": "Dry Skin", "gender": "Male", "item": "Black Sludge", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 64, "moves": ["Fake Out", "Gunk Shot", "Sucker Punch", "Brick Break"], "nature": "Bashful"},
         "Hiker Alexander": {"ability": "Dry Skin", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 32, "moves": ["Sucker Punch", "Vacuum Wave", "Hyper Voice", "Poison Jab"], "nature": "Gentle"},
         "Roughneck Walter": {"ability": "Dry Skin", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 49, "moves": ["Drain Punch", "Gunk Shot", "Substitute", "Sucker Punch"], "nature": "Brave"},
-        "Worker Conrad": {"ability": "Dry Skin", "gender": "Male", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Fake Out", "Close Combat", "Giga Impact", "Pursuit"], "nature": "Calm"}
+        "Worker Conrad": {"ability": "Dry Skin", "gender": "Male", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 96, "moves": ["Fake Out", "Close Combat", "Giga Impact", "Pursuit"], "nature": "Careful"}
     },
     "Trapinch": {
         "Aroma Lady Fadel": {"ability": "Arena Trap", "gender": "Male", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Fury Cutter", "Crunch", "Rock Tomb", "Earthquake"], "nature": "Serious"},
@@ -2818,7 +2819,7 @@ const SETDEX_PK = {
     "Tropius": {
         "Artist Angel": {"ability": "Chlorophyll", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 22, "moves": ["Air Slash", "Roost", "Leaf Blade", "Brick Break"], "nature": "Serious"},
         "Beauty Jasmine #1": {"ability": "Chlorophyll", "gender": "Female", "item": "White Herb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 39, "moves": ["Dragon Dance", "Earthquake", "Hurricane", "Leaf Blade"], "nature": "Hasty"},
-        "Dragon Tamer Clinton": {"ability": "Chlorophyll", "gender": "Male", "item": "Lax Incense", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Outrage", "Slam", "Seed Bomb", "Attract"], "nature": "Rash"},
+        "Dragon Tamer Clinton": {"ability": "Chlorophyll", "gender": "Male", "item": "Lax Incense", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 96, "moves": ["Outrage", "Slam", "Seed Bomb", "Attract"], "nature": "Rash"},
         "Galactic Sao": {"ability": "Chlorophyll", "gender": "Male", "item": "Occa Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Solar-Beam", "Air Slash", "Stomp", "Twister"], "nature": "Serious"},
         "Pokémon Breeder Frank": {"ability": "Overgrow", "gender": "Male", "item": "Petaya Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 96, "moves": ["Giga Drain", "Leech Seed", "Outrage", "Double Team"], "nature": "Bold"},
         "Sailor Jack": {"ability": "Chlorophyll", "gender": "Male", "item": "Yache Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 75, "moves": ["Solar Beam", "Air Slash", "Twister", "Weather Ball"], "nature": "Naive"}
@@ -2837,10 +2838,10 @@ const SETDEX_PK = {
     },
     "Tyranitar": {
         "Ace Trainer Tenzing": {"ability": "Battle Armor", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 70, "moves": ["Blizzard", "Ancient Power", "Pursuit", "Earth Power"], "nature": "Rash"},
-        "Black Belt Roku": {"ability": "Solid Rock", "gender": "Male", "item": "Tanga Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Accelerock", "Pursuit", "Superpower", "Avalanche"], "nature": "Hardy"},
-        "Commander Jupiter #3": {"ability": "Solid Rock", "gender": "Male", "item": "Berserk Gene", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Superpower", "Rock Slide", "Pursuit", "Earthquake"], "nature": "Adamant"},
+        "Black Belt Roku": {"ability": "Solid Rock", "gender": "Male", "item": "Tanga Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Accelerock", "Pursuit", "Superpower", "Avalanche"], "nature": "Bold"},
+        "Commander Jupiter #3": {"ability": "Solid Rock", "gender": "Male", "item": "Berserk Gene", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 93, "moves": ["Superpower", "Rock Slide", "Pursuit", "Earthquake"], "nature": "Adamant"},
         "Galactic Oberon #1": {"ability": "Battle Armor", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 83, "moves": ["Blizzard", "Pursuit", "Rock Slide", "Sand Tomb"], "nature": "Naive"},
-        "Galactic Oberon #2": {"ability": "Solid Rock", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Blizzard", "Ancient Power", "Earth Power", "Dark Pulse"], "nature": "Bashful"},
+        "Galactic Oberon #2": {"ability": "Solid Rock", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Blizzard", "Ancient Power", "Earth Power", "Dark Pulse"], "nature": "Modest"},
         "Swimmer Francisco": {"ability": "Solid Rock", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Giga Impact", "Hydro Pump", "Rock Blast", "Outrage"], "nature": "Serious"}
     },
     "Tyrogue": {
@@ -2855,7 +2856,7 @@ const SETDEX_PK = {
         "Galactic Umbriel #2": {"ability": "Synchronize", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 94, "moves": ["Dark Pulse", "Sleep Talk", "Hidden Power Ground", "Weather Ball Ice"], "nature": "Rash"},
         "Policeman Kevin": {"ability": "Synchronize", "gender": "Male", "item": "Enigma Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 33, "moves": ["Feint Attack", "Double Team", "Baton Pass", "Substitute"], "nature": "Quiet"},
         "Psychic Destiny": {"ability": "Synchronize", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 80, "moves": ["Thunder Wave", "Dark Pulse", "Rage", "Confuse Ray"], "nature": "Rash"},
-        "Roughneck Wyatt": {"ability": "Synchronize", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Wish", "Protect", "Curse", "Crunch"], "nature": "Naive"}
+        "Roughneck Wyatt": {"ability": "Synchronize", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Wish", "Protect", "Curse", "Crunch"], "nature": "Docile"}
     },
     "Unown": {
         "Artist Allen": {"ability": "Wonder Guard", "gender": "", "item": "Wise Glasses", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 34, "moves": ["Hidden Power Psychic", "Hidden Power Fighting", "Hidden Power Dark", "Hidden Power Fire"], "nature": "Lax"},
@@ -2872,7 +2873,7 @@ const SETDEX_PK = {
         "Roughneck Rafael": {"ability": "Guts", "gender": "Male", "item": "Flame Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 41, "moves": ["Facade", "Close Combat", "Protect", "Seed Bomb"], "nature": "Quirky"}
     },
     "Uxie": {
-        "Commander Saturn #2": {"ability": "Levitate", "gender": "", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Stealth Rock", "Future Sight", "Hypnosis", "Energy Ball"], "nature": "Lax"},
+        "Commander Saturn #2": {"ability": "Levitate", "gender": "", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Stealth Rock", "Future Sight", "Hypnosis", "Energy Ball"], "nature": "Quiet"},
         "Elite Four Flint": {"ability": "Levitate", "gender": "", "item": "Light Clay", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Light Screen", "Reflect", "U-turn", "Memento"], "nature": "Docile"}
     },
     "Vaporeon": {
@@ -2907,7 +2908,7 @@ const SETDEX_PK = {
         "Rancher Gregory": {"ability": "Chlorophyll", "gender": "Male", "item": "Black Sludge", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 39, "moves": ["Weather Ball Water", "Power Whip", "Poison Jab", "Earthquake"], "nature": "Naive"}
     },
     "Vespiquen": {
-        "Elite Four Aaron": {"ability": "Swarm", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Attack Order", "Hurricane", "Heal Order", "Pursuit"], "nature": "Relaxed"},
+        "Elite Four Aaron": {"ability": "Swarm", "gender": "Male", "item": "Life Orb", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 100, "moves": ["Attack Order", "Hurricane", "Heal Order", "Pursuit"], "nature": "Lonely"},
         "Galactic Halimede #1": {"ability": "Tinted Lens", "gender": "Female", "item": "Macho Brace", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 54, "moves": ["Attack Order", "Spikes", "Air Slash", "Power Gem"], "nature": "Bashful"},
         "Galactic Halimede #2": {"ability": "Tinted Lens", "gender": "Female", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Heal Order", "Attack Order", "Power Gem", "Defend Order"], "nature": "Naive"},
         "Galactic Metis": {"ability": "Tinted Lens", "gender": "Female", "item": "Lax Incense", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 53, "moves": ["Toxic Spikes", "Attack Order", "Heal Order", "Defend Order"], "nature": "Naughty"},
@@ -2957,8 +2958,8 @@ const SETDEX_PK = {
     "Wailord": {
         "Collector Tobias": {"ability": "Pressure", "gender": "Male", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Water Spout", "Ice Beam", "Earthquake", "Protect"], "nature": "Adamant"},
         "Commander Saturn #1": {"ability": "Pressure", "gender": "Female", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 64, "moves": ["Water Spout", "Ice Beam", "Earthquake", "Accelerock"], "nature": "Hardy"},
-        "Commander Saturn #2": {"ability": "Pressure", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Water Spout", "Curse", "Earthquake", "Avalanche"], "nature": "Careful"},
-        "Galactic Neptune #3": {"ability": "Pressure", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 85, "moves": ["Earthquake", "Water Spout", "Ice Beam", "Bounce"], "nature": "Serious"},
+        "Commander Saturn #2": {"ability": "Pressure", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 93, "moves": ["Water Spout", "Curse", "Earthquake", "Avalanche"], "nature": "Relaxed"},
+        "Galactic Neptune #3": {"ability": "Pressure", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 88, "moves": ["Earthquake", "Water Spout", "Ice Beam", "Bounce"], "nature": "Lax"},
         "Galactic Terra #3": {"ability": "Pressure", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 50, "moves": ["Toxic", "Whirlpool", "Double Team", "Rest"], "nature": "Naughty"},
         "Galactic Titan #2": {"ability": "Pressure", "gender": "Male", "item": "Apicot Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 82, "moves": ["Self-Destruct", "Aqua Tail", "Earthquake", "Curse"], "nature": "Modest"},
         "Pokéfan June": {"ability": "Pressure", "gender": "Female", "item": "Sitrus Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 72, "moves": ["Water Spout", "Hidden Power Fire", "Ice Beam", "Hyper Beam"], "nature": "Naughty"},
@@ -2971,7 +2972,7 @@ const SETDEX_PK = {
         "Galactic Enceladus #2": {"ability": "Filter", "gender": "Male", "item": "Apicot Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Curse", "Waterfall", "Ice Ball", "Close Combat"], "nature": "Timid"},
         "Galactic Europa #2": {"ability": "Filter", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 52, "moves": ["Belly Drum", "Ice Shard", "Aqua Tail", "Earthquake"], "nature": "Bold"},
         "Galactic Europa #3": {"ability": "Filter", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Double Team", "Substitute", "Protect", "Whirlpool"], "nature": "Naive"},
-        "Galactic Oberon #2": {"ability": "Filter", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Earthquake", "Blizzard", "Super Fang", "Aqua Tail"], "nature": "Quiet"},
+        "Galactic Oberon #2": {"ability": "Filter", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Earthquake", "Blizzard", "Super Fang", "Aqua Tail"], "nature": "Naive"},
         "Galactic Pluto #3": {"ability": "Filter", "gender": "Male", "item": "Grip Claw", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 63, "moves": ["Ice Ball", "Whirlpool", "Super Fang", "Close Combat"], "nature": "Gentle"},
         "Galactic Proteus #1": {"ability": "Filter", "gender": "Male", "item": "Iron Ball", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 55, "moves": ["Ice Shard", "Avalanche", "Aqua Tail", "Super Fang"], "nature": "Docile"},
         "Gambler Carlos": {"ability": "Filter", "gender": "Male", "item": "Leppa Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 46, "moves": ["Fissure", "Sheer Cold", "Sleep Talk", "Rest"], "nature": "Relaxed"},
@@ -2984,7 +2985,7 @@ const SETDEX_PK = {
         "Ace Trainer Alicia": {"ability": "Inner Focus", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 68, "moves": ["Low Kick", "Avalanche", "Pursuit", "Fake Out"], "nature": "Careful"},
         "Clown Julia": {"ability": "Technician", "gender": "Male", "item": "Expert Belt", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Night Slash", "Triple Axel", "Low Kick", "Pursuit"], "nature": "Lonely"},
         "Galactic Boss Cyrus #1": {"ability": "Technician", "gender": "Male", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 57, "moves": ["Feint Attack", "Aerial Ace", "Ice Shard", "Low Kick"], "nature": "Naughty"},
-        "Galactic Boss Cyrus #3": {"ability": "Technician", "gender": "Male", "item": "Berserk Gene", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 97, "moves": ["Triple Axel", "Close Combat", "Avalanche", "Pursuit"], "nature": "Adamant"},
+        "Galactic Boss Cyrus #3": {"ability": "Technician", "gender": "Male", "item": "Berserk Gene", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 98, "moves": ["Triple Axel", "Close Combat", "Avalanche", "Pursuit"], "nature": "Adamant"},
         "Galactic Pluto #4": {"ability": "Technician", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Icicle Spear", "Bite", "Dynamic Punch", "Dig"], "nature": "Sassy"},
         "Galactic Proteus #2": {"ability": "Technician", "gender": "Male", "item": "Focus Band", "ivs": {"at": 18, "df": 18, "hp": 18, "sa": 18, "sd": 18, "sp": 18}, "level": 100, "moves": ["Assist", "Sleep Talk"], "nature": "Naive"},
         "Ninja Boy Matthew": {"ability": "Technician", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 65, "moves": ["Pursuit", "Ice Shard", "Low Kick", "Triple Axel"], "nature": "Relaxed"},
@@ -3032,7 +3033,7 @@ const SETDEX_PK = {
         "Galactic Ganymede #1": {"ability": "Shadow Tag", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 31, "moves": ["Counter", "Tickle", "Mirror Coat", "Destiny Bond"], "nature": "Serious"},
         "Galactic Ganymede #2": {"ability": "Shadow Tag", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 52, "moves": ["Counter", "Mirror Coat", "Destiny Bond", "Safeguard"], "nature": "Timid"},
         "Roughneck Magnus": {"ability": "Shadow Tag", "gender": "Male", "item": "Custap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 40, "moves": ["Counter", "Mirror Coat", "Destiny Bond", "Encore"], "nature": "Impish"},
-        "Ruin Maniac Greg": {"ability": "Shadow Tag", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Counter", "Mirror Coat", "Destiny Bond", "Safeguard"], "nature": "Docile"}
+        "Ruin Maniac Greg": {"ability": "Shadow Tag", "gender": "Male", "item": "Quick Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Counter", "Mirror Coat", "Destiny Bond", "Safeguard"], "nature": "Bashful"}
     },
     "Wooper": {
         "Fisherman Joseph": {"ability": "Water Absorb", "gender": "Male", "item": "Berry Juice", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 23, "moves": ["Curse", "Recover", "Waterfall", "Earthquake"], "nature": "Impish"}
@@ -3058,7 +3059,7 @@ const SETDEX_PK = {
         "Galactic Europa #1": {"ability": "Magic Guard", "gender": "Female", "item": "Odd Incense", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 30, "moves": ["Thunder Wave", "Psybeam", "U-turn", "Confuse Ray"], "nature": "Serious"},
         "Galactic Laomedeia #1": {"ability": "Magic Guard", "gender": "Female", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 56, "moves": ["Me First", "Sky Attack", "Psychic", "Sucker Punch"], "nature": "Gentle"},
         "Galactic Squad Deimos #2": {"ability": "Magic Guard", "gender": "Female", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 57, "moves": ["Sky Attack", "Psycho Boost", "Sucker Punch", "Heat Wave"], "nature": "Naive"},
-        "Galactic Titania": {"ability": "Magic Guard", "gender": "Female", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 87, "moves": ["Weather Ball", "Psycho Boost", "Future Sight", "U-turn"], "nature": "Naive"},
+        "Galactic Titania": {"ability": "Magic Guard", "gender": "Female", "item": "Focus Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Weather Ball Ice", "Psycho Boost", "Future Sight", "U-turn"], "nature": "Modest"},
         "Hiker Reginald": {"ability": "Magic Guard", "gender": "Male", "item": "Enigma Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Me First", "Mirror Move", "Future Sight", "Magic Coat"], "nature": "Calm"},
         "Psychic Destiny": {"ability": "Magic Guard", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 80, "moves": ["Thunder Wave", "Air Slash", "Zen Headbutt", "Heat Wave"], "nature": "Docile"},
         "Psychic Theodore": {"ability": "Magic Guard", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 33, "moves": ["Tailwind", "U-turn", "Aerial Ace", "Feint Attack"], "nature": "Adamant"}
@@ -3066,14 +3067,14 @@ const SETDEX_PK = {
     "Yanma": {
         "Dragon Tamer Drax": {"ability": "Compound Eyes", "gender": "Male", "item": "Metronome", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 34, "moves": ["Ancient Power", "Bug Buzz", "Hypnosis", "Giga Drain"], "nature": "Relaxed"},
         "Galactic Luna #2": {"ability": "Compound Eyes", "gender": "Male", "item": "King's Rock", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 22, "moves": ["Hypnosis", "Supersonic", "Bug Buzz", "Ancient Power"], "nature": "Serious"},
-        "Idol Zoe": {"ability": "Compound Eyes", "gender": "Female", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Roost", "Ominous Wind", "Ancient Power", "Silver Wind"], "nature": "Brave"},
+        "Idol Zoe": {"ability": "Compound Eyes", "gender": "Female", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 95, "moves": ["Roost", "Ominous Wind", "Ancient Power", "Silver Wind"], "nature": "Sassy"},
         "Picnicker Tori": {"ability": "Compound Eyes", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Air Slash", "Detect", "Pursuit", "Bug Buzz"], "nature": "Careful"}
     },
     "Yanmega": {
         "Aroma Lady Fadel": {"ability": "Speed Boost", "gender": "Female", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Bug Buzz", "Air Slash", "Giga Drain", "Ancient Power"], "nature": "Bashful"},
         "Elite Four Aaron": {"ability": "Speed Boost", "gender": "Male", "item": "Charti Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 100, "moves": ["Bug Buzz", "Hurricane", "Ancient Power", "Hidden Power Water"], "nature": "Naughty"},
         "Galactic Mercury #3": {"ability": "Speed Boost", "gender": "Male", "item": "Charti Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 54, "moves": ["Ancient Power", "Silver Wind", "Air Cutter", "Substitute"], "nature": "Rash"},
-        "Galactic Titania": {"ability": "Speed Boost", "gender": "Female", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 85, "moves": ["Ancient Power", "Bug Buzz", "Air Slash", "Hyper Beam"], "nature": "Hasty"}
+        "Galactic Titania": {"ability": "Speed Boost", "gender": "Female", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Ancient Power", "Bug Buzz", "Air Slash", "Hyper Beam"], "nature": "Brave"}
     },
     "Zangoose": {
         "Galactic Amalthia #2": {"ability": "Hyper Cutter", "gender": "Female", "item": "Razor Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 53, "moves": ["Belly Drum", "Rage", "Crush Claw", "Quick Attack"], "nature": "Timid"},
@@ -3082,8 +3083,8 @@ const SETDEX_PK = {
         "Skier Shawn": {"ability": "Hyper Cutter", "gender": "Male", "item": "Ganlon Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 73, "moves": ["Secret Power", "Pursuit", "Close Combat", "Endeavor"], "nature": "Quirky"}
     },
     "Zapdos": {
-        "Commander Saturn #2": {"ability": "Drizzle", "gender": "", "item": "Macho Brace", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 91, "moves": ["Hurricane", "Thunder", "Weather Ball Water", "Twister"], "nature": "Lax"},
-        "Galactic Triton #3": {"ability": "Drizzle", "gender": "", "item": "Light Clay", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Thunder", "Hurricane", "Weather Ball Water", "Light Screen"], "nature": "Bold"},
+        "Commander Saturn #2": {"ability": "Drizzle", "gender": "", "item": "Macho Brace", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 92, "moves": ["Hurricane", "Thunder", "Weather Ball Water", "Twister"], "nature": "Quiet"},
+        "Galactic Triton #3": {"ability": "Drizzle", "gender": "", "item": "Light Clay", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Thunder", "Hurricane", "Weather Ball Water", "Light Screen"], "nature": "Quirky"},
         "Leader Volkner": {"ability": "Drizzle", "gender": "", "item": "Lum Berry", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 80, "moves": ["Thunder", "Hurricane", "Hidden Power Grass", "Weather Ball Water"], "nature": "Lax"}
     },
     "Zigzagoon": {

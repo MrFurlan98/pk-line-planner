@@ -406,7 +406,7 @@ const TRAINER_AI_FLAGS_PK = {
     "Galactic Phoebe #2": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 1, CheckHP: 0, Weather: 0, Harassment: 1 },
     "Galactic Atlas #2": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 0, Weather: 0, Harassment: 0 },
     "Galactic Rhea #2": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 1, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 0, Weather: 0, Harassment: 0 },
-    "Galactic Uranus #3": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 1, Weather: 0, Harassment: 0 },
+    "Galactic Uranus #3": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 1, DamagePriority: 1, BatonPass: 0, TagStrategy: 0, CheckHP: 0, Weather: 0, Harassment: 0 },
     "Galactic Boss Cyrus #2": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 1, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 0, Weather: 0, Harassment: 0 },
     "Galactic Io #4": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 0, Weather: 0, Harassment: 0 },
     "Commander Saturn #2": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 1, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 1, CheckHP: 1, Weather: 0, Harassment: 0 },
