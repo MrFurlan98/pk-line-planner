@@ -7,10 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.6.3";
+const VERSION = "1.7";
 const CHANGELOG = `
-- Updated to the Nightmare Update hotfix patch.
-- Updated Hurricane's effect description to match its in-game behavior. This is temporary, and will be reverted when the move is fixed.
+- Updated to the Nightmare Final patch.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
