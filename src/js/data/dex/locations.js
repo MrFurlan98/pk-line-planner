@@ -6733,7 +6733,7 @@ const LOCATIONS = {
             {'species': 'none', 'chance': 4, 'minLevel': 0, 'maxLevel': 0, 'method': 'surf'},
             {'species': 'none', 'chance': 1, 'minLevel': 0, 'maxLevel': 0, 'method': 'surf'}
         ],
-        metLocationId: -1,
+        metLocationId: 107,
         search: true,
     },
     distortionworldzone2: {
@@ -6779,7 +6779,7 @@ const LOCATIONS = {
             {'species': 'none', 'chance': 1, 'minLevel': 0, 'maxLevel': 0, 'method': 'grass', 'time': 'night'},
             {'species': 'none', 'chance': 1, 'minLevel': 0, 'maxLevel': 0, 'method': 'grass', 'time': 'night'}
         ],
-        metLocationId: -1,
+        metLocationId: 105,
         search: true,
     },
     distortionworldzone3: {
@@ -6825,7 +6825,7 @@ const LOCATIONS = {
             {'species': 'none', 'chance': 1, 'minLevel': 0, 'maxLevel': 0, 'method': 'grass', 'time': 'night'},
             {'species': 'none', 'chance': 1, 'minLevel': 0, 'maxLevel': 0, 'method': 'grass', 'time': 'night'}
         ],
-        metLocationId: -1,
+        metLocationId: 120,
         search: true,
     },
     sendoffspring: {

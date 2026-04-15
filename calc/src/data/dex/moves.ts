@@ -176,4 +176,3 @@ export const PK_PATCH: {[name: string]: DeepPartial<MoveData>} = {
   "Aqua Cutter": {bp: 70, type: 'Water', category: 'Physical', makesContact: true},
   "Hidden Power Flying": {bp: 70, type: 'Flying', category: 'Special'},
 };
-s
