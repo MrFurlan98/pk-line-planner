@@ -156,7 +156,7 @@ const FLAGS_PK = {
             "Double Team Stevie & Lindsey": {},
             // Clamberclaw Cliffs
             "Galactic Leda": {},
-            "Galactic Themisto": {},
+            "Galactic Squad Themisto": {},
             "Galactic Squad Himalia": {},
             "Galactic Io #3": {},
             "Commander Jupiter #2": {},
@@ -786,7 +786,7 @@ const FLAGS_PK = {
             "Galactic Leda",
             "Galactic Amalthia #2",
             "Galactic Metis",
-            "Galactic Themisto",
+            "Galactic Squad Themisto",
             "Galactic Dia",
             "Galactic Thebe",
             "Galactic Squad Himalia",

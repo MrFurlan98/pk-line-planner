@@ -222,7 +222,7 @@ const TRAINER_AI_FLAGS_PK = {
     "Galactic Leda": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 1, Risky: 0, DamagePriority: 1, BatonPass: 0, TagStrategy: 1, CheckHP: 0, Weather: 0, Harassment: 1 },
     "Galactic Amalthia #2": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 1, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 0, Weather: 0, Harassment: 0 },
     "Galactic Metis": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 1, Weather: 0, Harassment: 0 },
-    "T.G. Squad Themisto": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 0, DamagePriority: 0, BatonPass: 1, TagStrategy: 1, CheckHP: 1, Weather: 0, Harassment: 1 },
+    "Galactic Squad Themisto": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 0, DamagePriority: 0, BatonPass: 1, TagStrategy: 1, CheckHP: 1, Weather: 0, Harassment: 1 },
     "Galactic Dia": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 1, Risky: 1, DamagePriority: 0, BatonPass: 1, TagStrategy: 0, CheckHP: 1, Weather: 0, Harassment: 0 },
     "Galactic Thebe": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 1, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 1, Weather: 0, Harassment: 0 },
     "Galactic Squad Himalia": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 1, DamagePriority: 1, BatonPass: 1, TagStrategy: 1, CheckHP: 1, Weather: 0, Harassment: 1 },

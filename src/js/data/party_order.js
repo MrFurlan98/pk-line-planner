@@ -228,7 +228,7 @@ const PARTY_ORDER_PK = {
     "Galactic Leda": ["Weezing", "Lickilicky", "Dodrio", "Sceptile", "Gastrodon", "Arcanine"],
     "Galactic Amalthia #2": ["Torkoal", "Shuckle", "Zangoose", "Scizor", "Crawdaunt", "Gardevoir"],
     "Galactic Metis": ["Golem", "Vespiquen", "Gengar", "Bronzor", "Lickilicky", "Poliwrath"],
-    "T.G. Squad Themisto": ["Parasect", "Hypno", "Blaziken", "Tentacruel", "Solrock", "Banette"],
+    "Galactic Squad Themisto": ["Parasect", "Hypno", "Blaziken", "Tentacruel", "Solrock", "Banette"],
     "Galactic Dia": ["Espeon", "Wormadam-Sandy", "Starmie", "Clefable", "Haunter", "Magneton"],
     "Galactic Thebe": ["Swalot", "Togekiss", "Breloom", "Spiritomb", "Dugtrio", "Ampharos"],
     "Galactic Squad Himalia": ["Venomoth", "Absol", "Aggron", "Starmie", "Pidgeot", "Marowak"],
