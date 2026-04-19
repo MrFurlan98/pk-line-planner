@@ -159,16 +159,16 @@ function displayDamageHits(damage) {
 
 function displayRecoilHits(damage, recoil) {
 	// Fixed Damage
-	if (typeof damage === 'number') return Math.max(Math.floor(Math.min(damage, createPokemon($("#p2")).rawStats.hp) * recoil[0] / recoil[1]), 1);
+	if (typeof damage === 'number') return Math.max(Math.floor(Math.min(damage, createPokemon($("#p1")).rawStats.hp) * recoil[0] / recoil[1]), 1);
 	// Standard Damage
-	if (damage.length > 2) return damage.map(x => Math.max(Math.floor(Math.min(x, createPokemon($("#p2")).rawStats.hp) * recoil[0] / recoil[1]), 1)).join(', ');
+	if (damage.length > 2) return damage.map(x => Math.max(Math.floor(Math.min(x, createPokemon($("#p1")).rawStats.hp) * recoil[0] / recoil[1]), 1)).join(', ');
 }
 
 function displayDrainHits(damage, drain) {
 	// Fixed Damage
-	if (typeof damage === 'number') return Math.max(Math.floor(Math.min(damage, createPokemon($("#p2")).rawStats.hp) * drain[0] / drain[1]), 1);
+	if (typeof damage === 'number') return Math.max(Math.floor(Math.min(damage, createPokemon($("#p1")).rawStats.hp) * drain[0] / drain[1]), 1);
 	// Standard Damage
-	if (damage.length > 2) return damage.map(x => Math.max(Math.floor(Math.min(x, createPokemon($("#p2")).rawStats.hp) * drain[0] / drain[1]), 1)).join(', ');
+	if (damage.length > 2) return damage.map(x => Math.max(Math.floor(Math.min(x, createPokemon($("#p1")).rawStats.hp) * drain[0] / drain[1]), 1)).join(', ');
 }
 
 function findDamageResult(resultMoveObj) {
