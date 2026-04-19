@@ -1515,6 +1515,15 @@ const LOCATIONS = {
         metLocationId: 9,
         search: true,
     },
+    cycleshop: {
+        id: "cycleshop",
+        name: "Cycle Shop",
+        coords: [],
+        sublocations: [],
+        encounters: [],
+        metLocationId: 96,
+        search: false,
+    },
     route211: {
         id: "route211",
         name: "Route 211",
