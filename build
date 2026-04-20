@@ -7,10 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.2";
+const VERSION = "1.7.3";
 const CHANGELOG = `
-- Fixed move recoil/draining damage using the user's max HP as a cap.
-- Added the Cycle Shop as a valid met location.
+- Fixed the Rock Wrecker and Triple Kick calculation.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
