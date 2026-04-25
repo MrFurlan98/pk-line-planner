@@ -7,9 +7,10 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.4";
+const VERSION = "1.7.5";
 const CHANGELOG = `
 - Added move range to the Pokédex.
+- Updated Honey Tree encounter odds.
 - Fixed Cherrim's Sunshine forme stats.
 - Fixed an issue with move recoil calculation.
 
