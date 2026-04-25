@@ -127,15 +127,15 @@ $(".result-move").change(function () {
 			$("#mainResult").text(desc);
 			$("#damageValues").text("Possible damage amounts: (" + displayDamageHits(result.damage) + ")");
 			if (result.move.recoil && !result.attacker.hasAbility("Rock Head") && (result.damage > 0 || result.damage[0] > 0)) {
-				$("#recoilValues").show().text("Possible recoil amounts: (" + displayRecoilHits(result.damage, result.move.recoil) + ")");
+				$("#recoilValues").show().text("Possible recoil amounts: (" + displayRecoilHits(result.damage, result.move.recoil, result.defender.rawStats.hp) + ")");
 			} else {
 				$("#recoilValues").hide();
 			}
 			if (result.move.drain && (result.damage > 0 || result.damage[0] > 0)) {
 				if (result.defender.hasAbility("Liquid Ooze") && !result.move.named("Dream Eater")) {
-					$("#drainValues").show().text("Possible recoil amounts: (" + displayRecoilHits(result.damage, result.move.drain) + ")");
+					$("#drainValues").show().text("Possible recoil amounts: (" + displayRecoilHits(result.damage, result.move.drain, result.defender.rawStats.hp) + ")");
 				} else {
-					$("#drainValues").show().text("Possible drain amounts: (" + displayRecoilHits(result.damage, result.move.drain) + ")");
+					$("#drainValues").show().text("Possible drain amounts: (" + displayRecoilHits(result.damage, result.move.drain, result.defender.rawStats.hp) + ")");
 				}
 			} else {
 				$("#drainValues").hide();
@@ -157,18 +157,11 @@ function displayDamageHits(damage) {
 	return '1st Hit: ' + damage[0].join(', ') + '; 2nd Hit: ' + damage[1].join(', ');
 }
 
-function displayRecoilHits(damage, recoil) {
+function displayRecoilHits(damage, recoil, cap) {
 	// Fixed Damage
-	if (typeof damage === 'number') return Math.max(Math.floor(Math.min(damage, createPokemon($("#p1")).rawStats.hp) * recoil[0] / recoil[1]), 1);
+	if (typeof damage === 'number') return Math.max(Math.floor(Math.min(damage, cap) * recoil[0] / recoil[1]), 1);
 	// Standard Damage
-	if (damage.length > 2) return damage.map(x => Math.max(Math.floor(Math.min(x, createPokemon($("#p1")).rawStats.hp) * recoil[0] / recoil[1]), 1)).join(', ');
-}
-
-function displayDrainHits(damage, drain) {
-	// Fixed Damage
-	if (typeof damage === 'number') return Math.max(Math.floor(Math.min(damage, createPokemon($("#p1")).rawStats.hp) * drain[0] / drain[1]), 1);
-	// Standard Damage
-	if (damage.length > 2) return damage.map(x => Math.max(Math.floor(Math.min(x, createPokemon($("#p1")).rawStats.hp) * drain[0] / drain[1]), 1)).join(', ');
+	if (damage.length > 2) return damage.map(x => Math.max(Math.floor(Math.min(x, cap) * recoil[0] / recoil[1]), 1)).join(', ');
 }
 
 function findDamageResult(resultMoveObj) {
