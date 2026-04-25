@@ -315,6 +315,39 @@ function loadDexEntry(entryID) {
             var move = MOVES[id];
             var machine = ITEMS[move.machine > 0 ? `tm${String(move.machine).padStart(2, "0")}` : `hm${String(-move.machine).padStart(2, "0")}`];
             var tutorLocation = move.tutor;
+            var range = "";
+            switch (move.target) {
+                case "normal":
+                    range = "Single target";
+                    break;
+                case "allAdjacentFoes":
+                    range = "All opponents";
+                    break;
+                case "allySide":
+                    range = "User's side";
+                    break;
+                case "allAdjacent":
+                    range = "All Pokémon";
+                    break;
+                case "self":
+                    range = "User";
+                    break;
+                case "all":
+                    range = "Entire field";
+                    break;
+                case "randomNormal":
+                    range = "Random opponent";
+                    break;
+                case "foeSide":
+                    range = "Opponent's side";
+                    break;
+                case "scripted":
+                    range = "Variable";
+                    break;
+                default:
+                    range = "Not specified for some reason";
+                    break;
+            }
             var html = `
             <div class="info">
                 <span class="name">${move.name}</span>
@@ -325,6 +358,7 @@ function loadDexEntry(entryID) {
                 <span class="powerPoints">PP: ${move.pp}</span>
                 ${move.priority ? `<span class="priority">Priority: ${move.priority > 0 ? "+" : ""}${move.priority}</span>` : ""}
                 <span class="description">${move.effect}</span>
+                <span class="range">Range: ${range}</span>
                 ${move.machine ? `<span class="machine">Machine: <span data-target="item/${machine.id}"><img src="/img/dex/icon/items/${machine.id}.png">${machine.name}</span></span>` : ""}
                 ${move.tutor ? `<span class="tutor">Tutor location: <span data-target="location/${tutorLocation}">${tutorLocation}</span></span>` : ""}
                 <span class="flags">

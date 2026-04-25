@@ -421,7 +421,7 @@
                 width: 64px;
             }
         }
-        .basePower, .accuracy, .powerPoints, .priority, .description, .machine, .tutor {
+        .basePower, .accuracy, .powerPoints, .priority, .range, .description, .machine, .tutor {
             display: block;
             margin-top: 16px;
             margin-left: 12px;
