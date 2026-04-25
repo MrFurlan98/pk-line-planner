@@ -7,9 +7,11 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.3";
+const VERSION = "1.7.4";
 const CHANGELOG = `
-- Fixed the Rock Wrecker and Triple Kick calculation.
+- Added move range to the Pokédex.
+- Fixed Cherrim's Sunshine forme stats.
+- Fixed an issue with move recoil calculation.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
