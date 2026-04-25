@@ -67,6 +67,7 @@ export const PK_PATCH: {[name: string]: DeepPartial<SpeciesData>} = {
   Charmeleon: {expYield: 142},
   Chatot: {abilities: {0: "Scrappy"}, bs: {at: 91, sa: 102, sp: 110}, expYield: 107},
   Cherrim: {bs: {at: 87, df: 90, sd: 98}, expYield: 133},
+  "Cherrim-Sunshine": {bs: {at: 87, df: 90, sd: 98}, expYield: 133},
   Cherubi: {expYield: 68},
   Chikorita: {expYield: 64},
   Chimchar: {expYield: 65},
