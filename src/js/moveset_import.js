@@ -117,9 +117,9 @@ function placeBsBtn() {
 			else if ((genderForme >> 2) & 1) gender = "N";
 			if (gender !== "N") pokemon += ` (${gender})`;
 
-			if (heldItem) pokemon += ` @ ${heldItem.name}`;
+			if (heldItem) pokemon += ` @ ${heldItem.calcName}`;
 			pokemon += "\n";
-			pokemon += `Ability: ${ability.name}\n`;
+			pokemon += `Ability: ${ability.calcName}\n`;
 			if (location) pokemon += `Location: ${location.name}\n`;
 			pokemon += `Level: ${level}\n`;
 			pokemon += `${nature.name} Nature\n`;
