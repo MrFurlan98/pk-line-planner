@@ -7,12 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.5";
+const VERSION = "1.7.6";
 const CHANGELOG = `
-- Added move range to the Pokédex.
-- Updated Honey Tree encounter odds.
-- Fixed Cherrim's Sunshine forme stats.
-- Fixed an issue with move recoil calculation.
+- Fixed an issue with the "Upload Save" function.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
