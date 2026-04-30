@@ -7,9 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.6";
+const VERSION = "1.7.7";
 const CHANGELOG = `
-- Fixed an issue with the "Upload Save" function.
+- Fixed evolution by Beauty stat showing wrong Beauty values.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
