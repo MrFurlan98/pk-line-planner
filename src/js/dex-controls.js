@@ -96,7 +96,7 @@ function loadDexEntry(entryID) {
                             evoMethod += `Evolves from <span data-target=\"species/${species.prevo}\">${SPECIES[species.prevo].name}</span> at level ${evo.extra} if the player has a free party slot and at least one <span data-target=\"item/pokeball\">Poké Ball</span> in the bag`
                             break;
                         case "Beauty":
-                            evoMethod += `Evolves from <span data-target=\"species/${species.prevo}\">${SPECIES[species.prevo].name}</span> when leveled up with 170 Beauty`
+                            evoMethod += `Evolves from <span data-target=\"species/${species.prevo}\">${SPECIES[species.prevo].name}</span> when leveled up with ${evo.extra} Beauty`
                             break;
                         case "Item (Female)":
                             evoMethod += `Evolves from female <span data-target=\"species/${species.prevo}\">${SPECIES[species.prevo].name}</span> by using a <span data-target=\"item/${evo.extra}\">${ITEMS[evo.extra].name}</span>`
