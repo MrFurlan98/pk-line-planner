@@ -7,10 +7,11 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.9";
+const VERSION = "1.7.10";
 const CHANGELOG = `
-- Added the new fling items.
-- Added more egg hatching locations.
+- Added manual location duping using the "Additional Dupes" box in the Settings tab.
+- Added a missing move description.
+- Set "Splash" moves to 0 base power.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
