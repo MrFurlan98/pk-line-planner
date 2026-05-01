@@ -3975,7 +3975,7 @@ const LOCATIONS = {
         id: "oldchateau",
         name: "Old Chateau",
         coords: [],
-        sublocations: ["oldchateauentrance", "oldchateau1fdiningarea", "oldchateau2fsiderooms", "oldchateau2fcorridor", "oldchateau2fleft", "oldchateau2fmiddleleft", "oldchateau2fmiddle", "oldchateau2fmiddleright", "oldchateau2fright"],
+        sublocations: ["oldchateauentrance", "oldchateau1fdiningarea", "oldchateau2fsiderooms", "oldchateau2fcorridor", "oldchateau2fleft", "oldchateau2fmiddle", "oldchateau2fmiddleright", "oldchateau2fright"],
         encounters: [],
         metLocationId: 70,
         search: false,
