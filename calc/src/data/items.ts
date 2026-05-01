@@ -254,6 +254,19 @@ const DPP = ADV.concat([
   'Zoom Lens',
 ]);
 
+const PK = DPP.concat([
+  'Berserk Gene',
+  'Bicycle',
+  'Big Nugget',
+  'Big Pearl',
+  'Blue Scarf',
+  'Lava Cookie',
+  'Lucky Egg',
+  'Pink Scarf',
+  'RageCandyBar',
+  'Town Map'
+]);
+
 const BW = DPP.concat([
   'Absorb Bulb',
   'Air Balloon',
@@ -574,7 +587,7 @@ const BERRIES: {[berry: string]: {t: I.TypeName; p: number}} = {
   'Yache Berry': {t: 'Ice', p: 80},
 };
 
-export const ITEMS = [[], RBY, GSC, ADV, DPP, BW, XY, SM, SS, SV];
+export const ITEMS = [[], RBY, GSC, ADV, PK, BW, XY, SM, SS, SV];
 
 export class Items implements I.Items {
   private readonly gen: I.GenerationNum;

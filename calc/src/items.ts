@@ -392,6 +392,12 @@ export function getFlingPower(item?: string) {
   if (FLING_30.has(item)) return 30;
   if (item === 'TR82') return 20;
   if (item.includes('Berry') || FLING_10.has(item)) return 10;
+
+  if (['Blue Scarf', 'Pink Scarf'].includes(item)) return 10;
+  if (['Berserk Gene', 'Big Pearl', 'Lava Cookie', 'Lucky Egg', 'RageCandyBar'].includes(item)) return 30;
+  if (item == 'Town Map') return 120;
+  if (item == 'Bicycle') return 150;
+  if (item == 'Big Nugget') return 250;
   return 0;
 }
 
