@@ -63,6 +63,9 @@ $(document).ready(function() {
                 var species = SPECIES[str];
                 while (species.prevo) species = SPECIES[species.prevo];
                 if (!dupes.includes(species.id)) dupes.push(species.id);
+            } else if (LOCATIONS[str]) {
+                var location = LOCATIONS[str];
+                if (!dupes.includes(location.id)) dupes.push(location.id);
             }
         }
         SETTINGS.dupes = dupes;
