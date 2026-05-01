@@ -1085,7 +1085,7 @@ const ABILITIES = {
         name: "Unaware",
         calcName: "Unaware",
         desc: {
-            battle: "Ignores the user's and the opposing Pokémon's stat changes when calculating damage.",
+            battle: "Ignores the opposing Pokémon's stat changes when calculating damage.",
             overworld: ""
         }
     },
@@ -1125,7 +1125,7 @@ const ABILITIES = {
         name: "Scrappy",
         calcName: "Scrappy",
         desc: {
-            battle: "Enables the user to hit <span data-target=\"type/ghost\">Ghost</span type Pokémon with <span data-target=\"type/normal\">Normal</span> or <span data-target=\"type/fighting\">Fighting</span> type moves.",
+            battle: "Enables the user to hit <span data-target=\"type/ghost\">Ghost</span> type Pokémon with <span data-target=\"type/normal\">Normal</span> or <span data-target=\"type/fighting\">Fighting</span> type moves.",
             overworld: ""
         }
     },
