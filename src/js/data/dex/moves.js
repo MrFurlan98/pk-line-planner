@@ -2345,7 +2345,7 @@ const MOVES = {
         secondaryChance: 0,
         priority: 0,
         target: "self",
-        effect: "108",
+        effect: "Increases the user's Evasion by 2 stages, and causes it to take double damage from <span data-target=\"move/stomp\">Stomp</span>.",
         hits: 1,
         flags: [],
         machine: 0,

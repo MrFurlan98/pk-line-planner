@@ -136,6 +136,7 @@ export const PK_PATCH: {[name: string]: DeepPartial<MoveData>} = {
   Superpower: {bp: 140, recoil: [1, 2]},
   Swallow: {bp: 90, type: 'Poison', category: 'Physical', target: 'normal'},
   "Take Down": {recoil: [1, 4]},
+  Thief: {bp: 0},
   Thrash: {bp: 120, target: 'normal', recoil: [1, 3]},
   "Thunder Fang": {bp: 90},
   "Thunder Punch": {bp: 95},
