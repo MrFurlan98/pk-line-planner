@@ -176,6 +176,8 @@ const FLAGS_PK = {
             "Galactic Squad Perdita #1": {},
             "Galactic Squad Mab": {},
             "Galactic Squad Belinda": {},
+            // Galactic HQ
+            "Commander Saturn #2": {},
             // Mt. Coronet
             "Galactic Squad Phobos #3": {},
             "Galactic Squad Deimos #3": {},
