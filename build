@@ -7,11 +7,12 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.10";
+const VERSION = "1.7.11";
 const CHANGELOG = `
-- Added manual location duping using the "Additional Dupes" box in the Settings tab.
-- Added a missing move description.
-- Set "Splash" moves to 0 base power.
+- Added a selector for Nature Power's move that shows up if the active Pokémon on either side has Nature Power (the selector will be automated per-trainer in the future).
+- Added Casino encounters to the dex.
+- Changed Saturn #2 to a true double.
+- Fixed some missing/incorrect encounter tables.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
