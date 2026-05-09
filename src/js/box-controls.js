@@ -195,7 +195,7 @@ $(document).ready(function() {
     var itemOptions = getSelectOptions(calc.ITEMS[gen], true);
     $(".edit-item-selector").append("<option value=\"\">(none)</option>" + itemOptions);
     var locationOptions = getSelectOptions(Object.values(LOCATIONS).filter(x => x.metLocationId >= 0).map(x => x.name), true);
-    $(".edit-location-selector").append("<option value=\"\">(none)</option>" + locationOptions);
+    $(".edit-location-selector").append("<option value=\"\">(none)</option>" + locationOptions + "<option value=\"Link Trade\">Link Trade</option>");
     $("#cancel-edit").on("click", function() {
         $("#popup-container").hide();
     });
