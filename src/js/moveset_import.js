@@ -228,6 +228,7 @@ $("#exportL").click(function () {
 	var setName = $("#p1").find(".select2-chosen")[0].textContent.split(
 		/^([^(@]+)(\((.+)\))? ?(@ (.+))?/
 	)[3];
+	if (setName == "Blank Set") setName = "";
 	$("textarea.import-team-text").val(ExportPokemon($("#p1"), setName ?? "Custom Set"));
 });
 
@@ -235,6 +236,7 @@ $("#exportR").click(function () {
 	var setName = $("#p2").find(".select2-chosen")[0].textContent.split(
 		/^([^(@]+)(\((.+)\))? ?(@ (.+))?/
 	)[3];
+	if (setName == "Blank Set") setName = "";
 	$("textarea.import-team-text").val(ExportPokemon($("#p2"), setName ?? "Custom Set"));
 });
 
@@ -242,6 +244,7 @@ $("#saveL").click(function () {
 	var setName = $("#p1").find(".select2-chosen")[0].textContent.split(
 		/^([^(@]+)(\((.+)\))? ?(@ (.+))?/
 	)[3];
+	if (setName == "Blank Set" || setName in partyOrder) setName = "Custom Set";
 	addSets(ExportPokemon($("#p1")), setName ?? "Custom Set");
 });
 
