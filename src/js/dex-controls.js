@@ -459,7 +459,7 @@ function loadDexEntry(entryID) {
                 $(".dex-info").removeClass(classes).addClass("location").html(html);
                 function listLocationPokemon() {
                     $(".dex-info .results").empty();
-                    $(".dex-info .results").append(`
+                    if (location.encounters.some(x => x.method == "grass")) $(".dex-info .results").append(`
                         <ul class="encounter-time-nav">
                             <li class="current-time" data-time="morning" title="Morning (4:00 AM - 10:00 AM)">🌅</li>
                             <li data-time="day" title="Day (10:00 AM - 8:00 PM)">☀️</li>
