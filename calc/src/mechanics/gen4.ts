@@ -2,7 +2,7 @@ import type {Generation, AbilityName} from '../data/interface';
 import {getItemBoostType, getNaturalGift, getFlingPower, getBerryResistType} from '../items';
 import type {RawDesc} from '../desc';
 import type {Field} from '../field';
-import type {Move} from '../move';
+import {Move} from '../move';
 import type {Pokemon} from '../pokemon';
 import {Result} from '../result';
 import {
@@ -108,6 +108,9 @@ export function calculateDPP(
   } else if (move.named('Brick Break')) {
     field.defenderSide.isReflect = false;
     field.defenderSide.isLightScreen = false;
+  } else if (move.named('Nature Power')) {
+    move = new Move(gen, field.naturePowerTarget ?? "(No Move)");
+    desc.moveName = move.name;
   }
 
   if (attacker.hasAbility('Normalize') && !move.named('Struggle')) {

@@ -512,6 +512,8 @@ $(".move-selector").change(function () {
 		moveGroupObj.children(".magnitude-bp, .present-bp, .transform").hide();
 		moveGroupObj.children(".move-bp").prop("disabled", false);
 	}
+	if ($.map($("select.move-selector"), x => x.value).includes("Nature Power")) $(".nature-power").show();
+	else $(".nature-power").hide();
 });
 
 $(".magnitude-bp, .present-bp").on("change", function() {
@@ -1077,6 +1079,7 @@ function createField() {
 	var isMagicRoom = $("#magicroom").prop("checked");
 	var isWonderRoom = $("#wonderroom").prop("checked");
 	var isGravity = $("#gravity").prop("checked");
+	var naturePowerTarget = $("#naturePowerTarget").val();
 	var isSR = [$("#srL").prop("checked"), $("#srR").prop("checked")];
 	var weather;
 	var spikes;
@@ -1143,6 +1146,7 @@ function createField() {
 		isMagicRoom: isMagicRoom,
 		isWonderRoom: isWonderRoom,
 		isGravity: isGravity,
+		naturePowerTarget: naturePowerTarget,
 		attackerSide: createSide(0),
 		defenderSide: createSide(1)
 	});
@@ -1242,6 +1246,8 @@ $(".gen").change(function () {
 	$("select.type2").find("option").remove().end().append("<option value=\"\">(none)</option>" + typeOptions);
 	var moveOptions = getSelectOptions(Object.keys(moves), true);
 	$("select.move-selector").find("option").remove().end().append(moveOptions);
+	var naturePowerMoveOptions = getSelectOptions(["Tri-Attack", "Earthquake", "Rock Slide", "Seed Bomb", "Hydro Pump", "Blizzard", "Ice Beam", "Mud Bomb"], false);
+	$(".np-move-selector").find("option").remove().end().append(naturePowerMoveOptions);
 	var abilityOptions = getSelectOptions(abilities, true);
 	$("select.ability").find("option").remove().end().append("<option value=\"\">(other)</option>" + abilityOptions);
 	var itemOptions = getSelectOptions(items, true);
@@ -1997,7 +2003,7 @@ $(document).ready(function () {
 	$("#singles-format").prop("checked", true);
 	$("#singles-format").change();
 	// loadDefaultLists();
-	$(".move-selector").select2({
+	$(".move-selector, .np-move-selector").select2({
 		dropdownAutoWidth: true,
 		matcher: function (term, text) {
 			// 2nd condition is for Hidden Power

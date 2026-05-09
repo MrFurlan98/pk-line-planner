@@ -51,6 +51,7 @@ export namespace State {
     isSwordOfRuin?: boolean;
     isTabletsOfRuin?: boolean;
     isVesselOfRuin?: boolean;
+    naturePowerTarget?: string;
     attackerSide: Side;
     defenderSide: Side;
   }

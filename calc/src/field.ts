@@ -15,6 +15,7 @@ export class Field implements State.Field {
   isSwordOfRuin?: boolean;
   isTabletsOfRuin?: boolean;
   isVesselOfRuin?: boolean;
+  naturePowerTarget?: string;
   attackerSide: Side;
   defenderSide: Side;
 
@@ -32,6 +33,7 @@ export class Field implements State.Field {
     this.isSwordOfRuin = field.isSwordOfRuin || false;
     this.isTabletsOfRuin = field.isTabletsOfRuin || false;
     this.isVesselOfRuin = field.isVesselOfRuin || false;
+    this.naturePowerTarget = field.naturePowerTarget || undefined;
 
     this.attackerSide = new Side(field.attackerSide || {});
     this.defenderSide = new Side(field.defenderSide || {});
@@ -67,6 +69,7 @@ export class Field implements State.Field {
       isSwordOfRuin: this.isSwordOfRuin,
       isTabletsOfRuin: this.isTabletsOfRuin,
       isVesselOfRuin: this.isVesselOfRuin,
+      naturePowerTarget: this.naturePowerTarget,
     });
   }
 }
