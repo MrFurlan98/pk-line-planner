@@ -469,13 +469,15 @@ function loadDexEntry(entryID) {
                     var lastMethod = "";
                     for (var i in location.encounters) {
                         var encounter = location.encounters[i];
-                        if (lastMethod !== encounter.method) $(".dex-info .results").append(`<legend class="result-header">${ENCOUNTER_METHODS[encounter.method].name}</legend>`);
-                        lastMethod = encounter.method;
+                        var methodName = ENCOUNTER_METHODS[encounter.method].name;
+                        if (encounter.method == "casino") methodName = `${encounter.badge} Badges to unlock`;
+                        if (lastMethod !== methodName) $(".dex-info .results").append(`<legend class="result-header">${methodName}</legend>`);
+                        lastMethod = methodName;
                         var species = SPECIES[encounter.species];
                         var base = species;
                         while (base.prevo) base = SPECIES[base.prevo];
                         var dupe = dupes.includes(base.id);
-                        var data = encounter.chance ? `${encounter.chance}%` : `-`;
+                        var data = encounter.chance ? `${encounter.chance}%` : encounter.price ? encounter.price : `-`;
                         var minLevel = encounter.minLevel;
                         var maxLevel = encounter.maxLevel;
                         var level;
@@ -512,7 +514,7 @@ function loadDexEntry(entryID) {
                             }
                             dangerStyle += "); color: black;";
                         }
-                        if (["gift", "egg"].includes(encounter.method)) {
+                        if (["gift", "egg", "casino"].includes(encounter.method)) {
                             danger = [];
                             dangerStyle = "";
                         }

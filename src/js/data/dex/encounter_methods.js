@@ -51,6 +51,10 @@ const ENCOUNTER_METHODS = {
         id: "fossil",
         name: "Fossil"
     },
+    casino: {
+        id: "casino",
+        name: "Casino"
+    },
     special: {
         id: "special",
         name: "Special"
