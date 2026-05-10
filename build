@@ -7,12 +7,10 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.11";
+const VERSION = "1.7.12";
 const CHANGELOG = `
-- Added a selector for Nature Power's move that shows up if the active Pokémon on either side has Nature Power (the selector will be automated per-trainer in the future).
-- Added Casino encounters to the dex.
-- Changed Saturn #2 to a true double.
-- Fixed some missing/incorrect encounter tables.
+- The calc will now automatically populate Hidden Power type and power from the Pokémon's IVs when the move is loaded.
+- Added Trade encounters to the dex.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
