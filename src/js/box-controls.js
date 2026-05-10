@@ -98,9 +98,31 @@ function reloadEncounters() {
         }
     }
 
+    $(".encounter-list").append(
+                `<span class="encounter new-encounter">
+                    <span class="new-encounter-text">Add Pokémon...</span>
+                    <hr />
+                    <span class="buttons"></span>
+                </span>`);
+
     $(".encounter [data-target]").on("click", function() {
         var target = $(this).attr("data-target");
         window.location = `#/dex/${target}`;
+    });
+    $(".new-encounter").on("click", function() {
+        EDITING = "";
+        $(".edit-species-selector").val("Bidoof").change();
+        $(".edit-nickname").val("").change();
+        $(".edit-gender").val("None").change();
+        $(".edit-level").val(100).change();
+        $(".edit-ivs").val(31).change();
+        $(".edit-evs").val(0).change();
+        $(".edit-nature-selector").val("Hardy").change();
+        $(".edit-ability-selector").val("").change();
+        $(".edit-item-selector").val("").change();
+        $(".edit-location-selector").val("").change();
+        $(".edit-move-selector").val("").change();
+        $("#popup-container").show();
     });
     $(".edit-encounter").on("click", function() {
         var dataSetName = $(this).closest(".encounter").attr("data-set-name");
@@ -206,6 +228,7 @@ $(document).ready(function() {
         currentPoke.item = $(".edit-item-selector").val();
         currentPoke.isCustomSet = true;
         currentPoke.ability = $(".edit-ability-selector").val();
+        if (!currentPoke.ability) currentPoke.ability = currentPoke.abilities[0];
         currentPoke.level = $(".edit-level").val();
         currentPoke.ivs = {
             "hp": $("#edit-iv-hp").val(),
@@ -230,12 +253,15 @@ $(document).ready(function() {
         if ($("#edit-move2").val() !== "(No Move)") currentPoke.moves.push($("#edit-move2").val());
         if ($("#edit-move3").val() !== "(No Move)") currentPoke.moves.push($("#edit-move3").val());
         if ($("#edit-move4").val() !== "(No Move)") currentPoke.moves.push($("#edit-move4").val());
-        var set = EDITING;
-        var mon = set.substring(0, set.indexOf(" ("));
-	    var setName = set.substring(set.indexOf("(") + 1, set.lastIndexOf(")"));
         currentPoke.nameProp = $(".edit-nickname").val() ? $(".edit-nickname").val() : "Custom Set";
         addToDex(currentPoke);
         $("#popup-container").hide();
-        if (mon !== currentPoke.name || setName !== currentPoke.nameProp) removeSet(set);
+        if (EDITING) {
+            var set = EDITING;
+            var mon = set.substring(0, set.indexOf(" ("));
+	        var setName = set.substring(set.indexOf("(") + 1, set.lastIndexOf(")"));
+            if (mon !== currentPoke.name || setName !== currentPoke.nameProp) removeSet(set);
+            EDITING = "";
+        }
     });
 });

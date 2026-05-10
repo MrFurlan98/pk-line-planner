@@ -67,4 +67,18 @@
         background-color: rgba(255, 0, 0, 0.144);
         order: 1;
     }
+    .new-encounter {
+        cursor: pointer;
+        user-select: none;
+        
+        .new-encounter-text {
+            display: inline-block;
+            height: 174px;
+            width: 100%;
+            text-align: center;
+            align-content: center;
+            font-size: 32pt;
+            opacity: 0.5;
+        }
+    }
 }
