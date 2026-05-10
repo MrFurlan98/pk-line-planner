@@ -2740,7 +2740,7 @@ const LOCATIONS = {
         sublocations: ["greatmarsharea1", "greatmarsharea2", "greatmarsharea3", "greatmarsharea4", "greatmarsharea5", "greatmarsharea6"],
         encounters: [],
         metLocationId: 52,
-        search: true,
+        search: false,
     },
     greatmarsharea1: {
         id: "greatmarsharea1",
@@ -3759,7 +3759,7 @@ const LOCATIONS = {
         sublocations: ["theundergroundarea1", "theundergroundarea2", "theundergroundarea3", "theundergroundarea4"],
         encounters: [],
         metLocationId: 119,
-        search: true,
+        search: false,
     },
     theundergroundarea1: {
         id: "theundergroundarea1",
