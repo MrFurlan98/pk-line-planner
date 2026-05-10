@@ -240,12 +240,13 @@ function loadDexEntry(entryID) {
                         var minLevel = encounter.minLevel;
                         var maxLevel = encounter.maxLevel;
                         if (!locations[location.id]) locations[location.id] = {};
-                        var fullMethod = encounter.method + ("-" + encounter.time ?? "")
+                        var fullMethod = encounter.method + (encounter.time ? ("-" + encounter.time) : "")
                         if (!locations[location.id][fullMethod]) locations[location.id][fullMethod] = {
                             chance: chance,
                             minLevel: minLevel,
                             maxLevel: maxLevel
                         };
+                        if (encounter.trade) locations[location.id][fullMethod].trade = encounter.trade;
                         else {
                             locations[location.id][fullMethod].chance += chance;
                             if (minLevel < locations[location.id][fullMethod].minLevel) locations[location.id][fullMethod].minLevel = minLevel;
@@ -282,7 +283,7 @@ function loadDexEntry(entryID) {
                         var maxLevel = encounter.maxLevel;
                         var level;
                         if ([].includes(encounter.method)) level = "-";
-                        else level = minLevel == maxLevel ? `Lv. ${minLevel}` : `Lv. ${minLevel}-${maxLevel}`;
+                        else level = fullMethod == "trade" ? encounter.trade.nickname : minLevel == maxLevel ? `Lv. ${minLevel}` : `Lv. ${minLevel}-${maxLevel}`;
                         var method = ENCOUNTER_METHODS[fullMethod.split("-")[0]];
                         $(".dex-info .results").append(`
                             <li class="species-location${dupe ? " dupe" : ""}" data-target="location/${location.id}">
@@ -446,6 +447,21 @@ function loadDexEntry(entryID) {
                             ${location.sublocations.map(x => `<li><span data-target="location/${x}">${LOCATIONS[x].name}</span></li>`).join("")}
                         </ul>
                     ` : ``}
+                    ${location.encounters.some(x => x.method == "trade") ? function() {
+                        var encounter = location.encounters.find(x => x.method == "trade");
+                        var species = SPECIES[encounter.species];
+                        return `
+                        <span class="description">
+                            Trade Pokémon:<br />
+                            <span class="trade-info">
+                                Any Pokémon -> <span data-target="species/${species.id}">${species.name}</span><br />
+                                Nickname: ${encounter.trade.nickname}<br />
+                                Nature: <span data-target="nature/${encounter.trade.nature}">${NATURES[encounter.trade.nature].name}</span><br />
+                                Ability: <span data-target="ability/${encounter.trade.ability}">${ABILITIES[encounter.trade.ability].name}</span><br />
+                                Level: Same as traded Pokémon
+                            </span>
+                        </span>`
+                    }() : ``}
                 </div>
                 <div class="list">
                     <ul class="list-nav">
@@ -482,7 +498,7 @@ function loadDexEntry(entryID) {
                         var maxLevel = encounter.maxLevel;
                         var level;
                         if ([].includes(encounter.method)) level = "-";
-                        else level = minLevel == maxLevel ? `Lv. ${minLevel}` : `Lv. ${minLevel}-${maxLevel}`;
+                        else level = encounter.method == "trade" ? encounter.trade.nickname : minLevel == maxLevel ? `Lv. ${minLevel}` : `Lv. ${minLevel}-${maxLevel}`;
                         var learnset = species.learnset.filter(x => x.method == "level" && x.level <= minLevel).slice(-4).map(x => x.move);
                         if (minLevel !== maxLevel) learnset = learnset.concat(species.learnset.filter(x => x.method == "level" && x.level > minLevel && x.level <= maxLevel).map(x => x.move));
                         var danger = [];
@@ -514,7 +530,7 @@ function loadDexEntry(entryID) {
                             }
                             dangerStyle += "); color: black;";
                         }
-                        if (["gift", "egg", "casino"].includes(encounter.method)) {
+                        if (["gift", "egg", "trade", "casino"].includes(encounter.method)) {
                             danger = [];
                             dangerStyle = "";
                         }
@@ -536,13 +552,17 @@ function loadDexEntry(entryID) {
                     
                     $(".dex-info").find("[data-target]").on("click", function(e) {
                         var target = $(this).attr("data-target");
-                        if (e.ctrlKey) {
+                        if (e.ctrlKey && $(this).find(".level").length) {
                             var species = SPECIES[target.split("/")[1]];
                             var level = $(this).find(".level").html().split(" ")[1];
-                            if (level.includes("-")) level = level.split("-")[1];
-                            var moves = species.learnset.filter(x => x.method == "level" && x.level <= level).slice(-4).map(x => x.move);
-                            loadSet(`${species.name} (Blank Set)`, "p2", { level: level, moves: moves });
-                            window.location = `#/calc`;
+                            if (level > 0) {
+                                if (level.includes("-")) level = level.split("-")[1];
+                                var moves = species.learnset.filter(x => x.method == "level" && x.level <= level).slice(-4).map(x => x.move);
+                                loadSet(`${species.name} (Blank Set)`, "p2", { level: level, moves: moves });
+                                window.location = `#/calc`;
+                            } else {
+                                window.location = `#/dex/${target}`;
+                            }
                         } else {
                             window.location = `#/dex/${target}`;
                         }

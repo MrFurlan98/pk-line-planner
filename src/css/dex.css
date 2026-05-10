@@ -483,6 +483,12 @@
             margin-left: 12px;
             padding-right: 5px;
             font-size: 12pt;
+
+            .trade-info {
+                display: block;
+                margin-left: 16px;
+                font-size: 0.9em;
+            }
         }
         .sublocations {
             list-style: none;
