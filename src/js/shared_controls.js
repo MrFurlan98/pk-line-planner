@@ -514,6 +514,13 @@ $(".move-selector").change(function () {
 	}
 	if ($.map($("select.move-selector"), x => x.value).includes("Nature Power")) $(".nature-power").show();
 	else $(".nature-power").hide();
+	
+	if (moveName == "Hidden Power") {
+		var pokemon = createPokemon($(this).closest(".poke-info"));
+		var hiddenPower = calc.Stats.getHiddenPower(GENERATION, pokemon.ivs);
+		moveGroupObj.children(".move-type").val(hiddenPower.type).change();
+		moveGroupObj.children(".move-bp").val(hiddenPower.power).change();
+	}
 });
 
 $(".magnitude-bp, .present-bp").on("change", function() {
