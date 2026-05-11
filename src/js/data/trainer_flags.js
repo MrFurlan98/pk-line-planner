@@ -234,6 +234,7 @@ const TRAINER_AI_FLAGS_PK = {
     "Commander Jupiter #2": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 1, Risky: 1, DamagePriority: 0, BatonPass: 0, TagStrategy: 1, CheckHP: 1, Weather: 0, Harassment: 1 },
     "Galactic Mercury #3": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 1, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 1, Weather: 0, Harassment: 0 },
     "Galactic Boss Cyrus #1": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 1, Weather: 0, Harassment: 0 },
+    "Veteran Grant": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 0, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 0, Weather: 0, Harassment: 0 },
     "Worker Dillan": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 1, Risky: 1, DamagePriority: 0, BatonPass: 0, TagStrategy: 0, CheckHP: 0, Weather: 0, Harassment: 0 },
     "Worker Holden": { Basic: 1, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 0, DamagePriority: 0, BatonPass: 1, TagStrategy: 0, CheckHP: 0, Weather: 0, Harassment: 0 },
     "Worker Conrad": { Basic: 0, EvaluateAttack: 1, Expert: 1, Setup: 0, Risky: 0, DamagePriority: 1, BatonPass: 0, TagStrategy: 1, CheckHP: 0, Weather: 0, Harassment: 1 },

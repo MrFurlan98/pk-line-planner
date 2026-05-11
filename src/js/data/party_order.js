@@ -240,6 +240,7 @@ const PARTY_ORDER_PK = {
     "Commander Jupiter #2": ["Tauros", "Gyarados", "Magnezone", "Medicham", "Regirock", "Tangrowth"],
     "Galactic Mercury #3": ["Claydol", "Honchkrow", "Crobat", "Gliscor", "Yanmega"],
     "Galactic Boss Cyrus #1": ["Deoxys-Speed", "Metagross", "Rotom-Frost", "Suicune", "Salamence", "Weavile"],
+    "Veteran Grant": ["Spiritomb", "Muk", "Pachirisu", "Mightyena", "Sudowoodo"],
     "Worker Dillan": ["Skarmory", "Machamp", "Charizard", "Aggron", "Camerupt"],
     "Worker Holden": ["Mawile", "Steelix", "Blaziken", "Arcanine", "Rapidash"],
     "Worker Conrad": ["Houndoom", "Rotom-Wash", "Blastoise", "Toxicroak", "Lucario"],

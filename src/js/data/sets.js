@@ -1697,7 +1697,8 @@ const SETDEX_PK = {
     },
     "Mightyena": {
         "Clown Chance": {"ability": "Intimidate", "gender": "Male", "item": "Lum Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 33, "moves": ["Sucker Punch", "Rage", "Yawn", "Super Fang"], "nature": "Gentle"},
-        "Hiker Reginald": {"ability": "Intimidate", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Me First", "Super Fang", "Embargo", "Endure"], "nature": "Naive"}
+        "Hiker Reginald": {"ability": "Intimidate", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 89, "moves": ["Me First", "Super Fang", "Embargo", "Endure"], "nature": "Naive"},
+        "Veteran Grant": {"ability": "Intimidate", "gender": "Male", "item": "Focus Sash", "ivs": {"at": 18, "df": 18, "hp": 18, "sa": 18, "sd": 18, "sp": 18}, "level": 80, "moves": ["Odor Sleuth", "Mean Look", "Astonish", "Torment"], "nature": "Naughty"}
     },
     "Milotic": {
         "Galactic Cupid #1": {"ability": "Filter", "gender": "Male", "item": "Leftovers", "ivs": {"at": 5, "df": 5, "hp": 5, "sa": 5, "sd": 5, "sp": 5}, "level": 36, "moves": ["Blizzard", "Muddy Water", "Recover", "Attract"], "nature": "Calm"},
@@ -1780,7 +1781,8 @@ const SETDEX_PK = {
         "Dragon Tamer Clinton": {"ability": "Aftermath", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 97, "moves": ["Explosion", "Gunk Shot", "Minimize", "Protect"], "nature": "Brave"},
         "Galactic Squad Juliet": {"ability": "Aftermath", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Curse", "Swallow", "Payback", "Sweet Kiss"], "nature": "Sassy"},
         "Galactic Umbriel #1": {"ability": "Aftermath", "gender": "Female", "item": "Grip Claw", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 86, "moves": ["Poison Gas", "Swallow", "Fire Punch", "Dig"], "nature": "Quirky"},
-        "Ninja Boy Drew": {"ability": "Aftermath", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 34, "moves": ["Explosion", "Shadow Punch", "Gunk Shot", "Fire Punch"], "nature": "Jolly"}
+        "Ninja Boy Drew": {"ability": "Aftermath", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 34, "moves": ["Explosion", "Shadow Punch", "Gunk Shot", "Fire Punch"], "nature": "Jolly"},
+        "Veteran Grant": {"ability": "Aftermath", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 99, "moves": ["Torment", "Explosion", "Smokescreen", "Sweet Kiss"], "nature": "Timid"}
     },
     "Munchlax": {
         "Beauty Jasmine #1": {"ability": "Guts", "gender": "Male", "item": "Chople Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 42, "moves": ["Slack Off", "Pursuit", "Body Slam", "Bide"], "nature": "Gentle"},
@@ -1899,7 +1901,8 @@ const SETDEX_PK = {
         "Scientist Jonathon": {"ability": "Rock Head", "gender": "Male", "item": "Sticky Barb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 12, "moves": ["Self-Destruct", "Swagger", "Dig", "Rock Throw"], "nature": "Lonely"}
     },
     "Pachirisu": {
-        "Twins Liv & Liz": {"ability": "Adaptability", "gender": "Female", "item": "Berry Juice", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 19, "moves": ["Follow Me", "Thunder Shock"], "nature": "Jolly"}
+        "Twins Liv & Liz": {"ability": "Adaptability", "gender": "Female", "item": "Berry Juice", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 19, "moves": ["Follow Me", "Thunder Shock"], "nature": "Jolly"},
+        "Veteran Grant": {"ability": "Adaptability", "gender": "Male", "item": "Ganlon Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 75, "moves": ["Follow Me", "Super Fang", "Tail Whip", "Flatter"], "nature": "Hardy"}
     },
     "Palkia": {
         "Galactic Boss Cyrus #3": {"ability": "Pressure", "gender": "", "item": "Lustrous Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 97, "moves": ["Spacial Rend", "Hydro Pump", "Earth Power", "Thunder"], "nature": "Modest"}
@@ -2549,7 +2552,8 @@ const SETDEX_PK = {
         "Galactic Thebe": {"ability": "Pressure", "gender": "Male", "item": "Bright Powder", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 51, "moves": ["Pursuit", "Double Team", "Rest", "Toxic"], "nature": "Bashful"},
         "Leader Fantina": {"ability": "Pressure", "gender": "Female", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 36, "moves": ["Rest", "Sleep Talk", "Pursuit", "Hidden Power Fighting"], "nature": "Lonely"},
         "Ruin Maniac Bryan": {"ability": "Pressure", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 45, "moves": ["Will-O-Wisp", "Payback", "Psychic", "Confuse Ray"], "nature": "Relaxed"},
-        "Ruin Maniac Greg": {"ability": "Pressure", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Double Team", "Curse", "Rest", "Mean Look"], "nature": "Naughty"}
+        "Ruin Maniac Greg": {"ability": "Pressure", "gender": "Male", "item": "Leftovers", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 92, "moves": ["Double Team", "Curse", "Rest", "Mean Look"], "nature": "Naughty"},
+        "Veteran Grant": {"ability": "Pressure", "gender": "Male", "item": "Rowap Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 70, "moves": ["Trick Room", "Destiny Bond", "Memento", "Screech"], "nature": "Naughty"}
     },
     "Spoink": {
         "Camper Curtis": {"ability": "Thick Fat", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 10, "moves": ["Future Sight", "Teeter Dance", "Confusion", "Bounce"], "nature": "Docile"},
@@ -2628,7 +2632,8 @@ const SETDEX_PK = {
         "Galactic Puck #1": {"ability": "Rock Head", "gender": "Male", "item": "White Herb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 23, "moves": ["Fire Punch", "Self-Destruct", "Accelerock", "Wood Hammer"], "nature": "Quiet"},
         "Poké Kid Danielle": {"ability": "Rock Head", "gender": "Female", "item": "Chesto Berry", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 38, "moves": ["Sucker Punch", "Wood Hammer", "Earthquake", "Head Smash"], "nature": "Adamant"},
         "Pokéfan June": {"ability": "Rock Head", "gender": "Female", "item": "Focus Sash", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 75, "moves": ["Wood Hammer", "Fire Punch", "Head Smash", "Sucker Punch"], "nature": "Rash"},
-        "Scientist Stephano": {"ability": "Rock Head", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Explosion", "Wood Hammer", "Hammer Arm", "Head Smash"], "nature": "Gentle"}
+        "Scientist Stephano": {"ability": "Rock Head", "gender": "Male", "item": "Life Orb", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 90, "moves": ["Explosion", "Wood Hammer", "Hammer Arm", "Head Smash"], "nature": "Gentle"},
+        "Veteran Grant": {"ability": "Rock Head", "gender": "Male", "item": "Choice Band", "ivs": {"at": 31, "df": 31, "hp": 31, "sa": 31, "sd": 31, "sp": 31}, "level": 85, "moves": ["Self-Destruct"], "nature": "Docile"}
     },
     "Suicune": {
         "Galactic Boss Cyrus #1": {"ability": "Pressure", "gender": "", "item": "Bright Powder", "ivs": {"at": 30, "df": 30, "hp": 30, "sa": 30, "sd": 30, "sp": 30}, "level": 54, "moves": ["Rest", "Calm Mind", "Water Pulse", "Ominous Wind"], "nature": "Calm"},

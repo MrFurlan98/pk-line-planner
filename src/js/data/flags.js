@@ -455,6 +455,8 @@ const FLAGS_PK = {
         // Clamberclaw Cliffs
         "Galactic Valetudo #1",
         "Galactic Dia",
+        // Oreburgh Gate
+        "Veteran Grant",
         // Fuego Ironworks
         "Worker Dillan",
         "Worker Holden",
