@@ -7,7 +7,7 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.14";
+const VERSION = "1.7.15";
 const CHANGELOG = `
 - Added a missing trainer.
 
