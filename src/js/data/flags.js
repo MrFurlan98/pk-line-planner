@@ -162,6 +162,8 @@ const FLAGS_PK = {
             "Commander Jupiter #2": {},
             // Celestic Town
             "Galactic Mercury #3": {},
+            // Oreburgh Gate
+            "Veteran Grant": {},
             // Route 222
             "Belle & Pa Scout & Atticus": {},
             "Pokéfan Sheen": {},
