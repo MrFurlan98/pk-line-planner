@@ -7,11 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.13";
+const VERSION = "1.7.14";
 const CHANGELOG = `
-- The calc will now automatically populate Hidden Power type and power from the Pokémon's IVs when the move is loaded.
-- Added Trade encounters to the dex.
-- Added a button to add new Pokémon to the box.
+- Added a missing trainer.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
