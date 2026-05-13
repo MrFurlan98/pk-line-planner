@@ -240,18 +240,18 @@ function loadDexEntry(entryID) {
                         var minLevel = encounter.minLevel;
                         var maxLevel = encounter.maxLevel;
                         if (!locations[location.id]) locations[location.id] = {};
-                        var fullMethod = encounter.method + (encounter.time ? ("-" + encounter.time) : "")
+                        var fullMethod = encounter.method + (encounter.time ? ("-" + encounter.time) : "");
                         if (!locations[location.id][fullMethod]) locations[location.id][fullMethod] = {
                             chance: chance,
                             minLevel: minLevel,
                             maxLevel: maxLevel
                         };
-                        if (encounter.trade) locations[location.id][fullMethod].trade = encounter.trade;
                         else {
                             locations[location.id][fullMethod].chance += chance;
                             if (minLevel < locations[location.id][fullMethod].minLevel) locations[location.id][fullMethod].minLevel = minLevel;
                             if (maxLevel > locations[location.id][fullMethod].maxLevel) locations[location.id][fullMethod].maxLevel = maxLevel;
                         }
+                        if (encounter.trade) locations[location.id][fullMethod].trade = encounter.trade;
                     }
                 }
                 for (var id in locations) {
