@@ -7,9 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.16";
+const VERSION = "1.7.17";
 const CHANGELOG = `
-- Removed an unused Iron Island encounter table.
+- Added Move Tutor move prices to the dex.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
