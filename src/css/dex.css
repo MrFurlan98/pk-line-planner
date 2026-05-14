@@ -421,12 +421,22 @@
                 width: 64px;
             }
         }
-        .basePower, .accuracy, .powerPoints, .priority, .range, .description, .machine, .tutor {
+        .basePower, .accuracy, .powerPoints, .priority, .range, .description, .machine, .tutor-location {
             display: block;
             margin-top: 16px;
             margin-left: 12px;
             padding-right: 5px;
             font-size: 12pt;
+        }
+        .tutor-price {
+            display: block;
+            margin-left: 12px;
+            padding-right: 5px;
+            font-size: 12pt;
+
+            img {
+                width: 32px;
+            }
         }
         .flags {
             display: block;

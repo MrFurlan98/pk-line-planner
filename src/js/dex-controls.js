@@ -315,7 +315,9 @@ function loadDexEntry(entryID) {
         case "move":
             var move = MOVES[id];
             var machine = ITEMS[move.machine > 0 ? `tm${String(move.machine).padStart(2, "0")}` : `hm${String(-move.machine).padStart(2, "0")}`];
-            var tutorLocation = move.tutor;
+            var tutorLocation = LOCATIONS[move.tutor];
+            const shards = ["redshard", "blueshard", "yellowshard", "greenshard"];
+            var tutorPrice = move.price;
             var range = "";
             switch (move.target) {
                 case "normal":
@@ -361,7 +363,10 @@ function loadDexEntry(entryID) {
                 <span class="description">${move.effect}</span>
                 <span class="range">Range: ${range}</span>
                 ${move.machine ? `<span class="machine">Machine: <span data-target="item/${machine.id}"><img src="/img/dex/icon/items/${machine.id}.png">${machine.name}</span></span>` : ""}
-                ${move.tutor ? `<span class="tutor">Tutor location: <span data-target="location/${tutorLocation}">${tutorLocation}</span></span>` : ""}
+                ${move.tutor ? `
+                    <span class="tutor-location">Tutor location: <span data-target="location/${tutorLocation.id}">${tutorLocation.name}</span></span>
+                    <span class="tutor-price">Price: ${tutorPrice.map((x, i) => x ? `<span data-target="item/${shards[i]}">${x}x<img src="img/dex/icon/items/${shards[i]}.png"></span>` : "").filter(x => x).join(", ")}</span>
+                ` : ""}
                 <span class="flags">
                     ${move.flags.includes("Contact") ? `<span class="contact">This move makes contact with the target.</span>` : ""}
                     ${move.flags.includes("Punch") ? `<span class="punch">This move is a Punching move, which is boosted by <span data-target=\"ability/ironfist\">Iron Fist</span>.</span>` : ""}
