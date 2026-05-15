@@ -11,18 +11,39 @@ function placeBsBtn() {
 		var name = "Custom Set";
 		addSets(pokes, name);
 	});
+	var VERSION_ALERTED = false;
 	$("#sync.bs-btn").click(function () {
 		var luaVersion = "";
 		fetch("http://localhost:31125/version").then(x => x.text()).then(function (x) {
 			luaVersion = x.split(" ").at(-1).split("-")[0];
 		}).then(function () {
-			if (parseFloat(luaVersion) < parseFloat(LUA_VERSION)) {
+			if (parseFloat(luaVersion) < 1.3) {
 				alert("You are using an unsupported version of the Lua script. Please update to the latest version.");
 				return;
 			}
-			fetch("http://localhost:31125/update").then(x => x.text()).then(function (x) {
-				addSets(x, "Custom Set");
-			}).catch(() => alert("Please make sure both parts of the Lua script are running. A link to the script can be found at the bottom of the page."));
+			var status;
+			if (parseFloat(luaVersion) < parseFloat(LUA_VERSION)) {
+				if (!VERSION_ALERTED) {
+					VERSION_ALERTED = true;
+					alert("You are using an outdated version of the Lua script. Please update to the latest version.\n\n(This is not an error, sync will start when this message is closed)");
+				}
+				fetch("http://localhost:31125/update").then(x => {status = x.status; return x.text()}).then(function (x) {
+					if (status !== 200) {
+						alert(x);
+						return;
+					}
+					addSets(x, "Custom Set");
+				}).catch(() => alert("An unknown error has occured."));
+				return;
+			}
+			fetch("http://localhost:31125/update").then(x => {status = x.status; return x.text()}).then(function (x) {
+				if (status !== 200) {
+					alert(x);
+					return;
+				}
+				var data = JSON.parse(x);
+				for (var i in data) addSavePokemon(data[i]);
+			}).catch(() => alert("An unknown error has occured."));
 		}).catch(() => alert("Please make sure both parts of the Lua script are running. A link to the script can be found at the bottom of the page."));
 	});
 	$("#upload.bs-btn").click(function () {
