@@ -1868,6 +1868,7 @@ function removeSet(set) {
 	var customSets = JSON.parse(localStorage.customsets);
 	delete customSets[mon][setName];
 	delete setdex[mon][setName];
+	if (!Object.keys(customSets[mon]).length) delete customSets[mon];
 	updateDex(customSets);
 	$(`.pokemon-icon[data-set="${set}"]`).remove();
 }

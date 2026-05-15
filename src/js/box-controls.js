@@ -31,7 +31,6 @@ var editEncounterPopup = `
 </fieldset>`;
 
 var EDITING = "";
-var EDIT_SPECIES = "";
 
 function reloadEncounters() {
     $(".encounter-list").empty();
@@ -53,7 +52,7 @@ function reloadEncounters() {
             var gender = set.gender ? `(${set.gender[0]})` : "";
             var item = ITEMS[toID(set.item)] ?? "";
             var ability = ABILITIES[toID(set.ability) ?? species.abilities[0]];
-            var location = LOCATIONS[toID(set.location)] ?? undefined;
+            var location = LOCATIONS[toID(set.data.location)] ?? undefined;
             var moves = set.moves.map(x => Object.values(MOVES).find(y => y.calcName == x)).filter(x => x);
 
             var index = 1;
@@ -73,7 +72,7 @@ function reloadEncounters() {
                         </span>
                         <span class="stats">${!Object.values(evs).every(x => x == 0) ? "EVs: " + statsEV : ""}</span>
                         <span class="item">${item ? `@ <span data-target="item/${item.id}"><img src="/img/dex/icon/items/${item.id}.png"> ${item.name}</span>` : ``}</span>
-                        <span class="ability">Ability: <span data-target="ability/${ability.id}">${ability.name}</span></span>
+                        <span class="ability">Ability: <span data-target="ability/${ability.id}">${ability.name}</span>${set.data.id ? ` (${set.data.abilityIndex + 1})` : ""}</span>
                         <span class="location">${location ? `Met location: <span${location.id !== "linktrade" ? ` data-target="location/${location.id}"` : ""}>${location.name}</span>` : ""}</span>
                     </span>
                     <span class="moves">
@@ -154,7 +153,7 @@ function reloadEncounters() {
         $(".edit-nature-selector").val(set.nature ?? "Hardy").change();
         $(".edit-ability-selector").val(set.ability ?? "").change();
         $(".edit-item-selector").val(set.item ?? "").change();
-        $(".edit-location-selector").val(set.location ?? "").change();
+        $(".edit-location-selector").val(set.data.location ?? "").change();
         $(".edit-move-selector").val("").change();
         for (var i in set.moves) {
             var move = Object.values(MOVES).find(x => x.calcName == set.moves[i]);
@@ -192,8 +191,8 @@ function getDupedLocations() {
         var species = customSets[i];
         for (var j in species) {
             var set = species[j];
-            if (!set.location) continue;
-            var location = LOCATIONS[toID(set.location)];
+            if (!set.data.location) continue;
+            var location = LOCATIONS[toID(set.data.location)];
             if (!dupes.includes(location.id)) dupes.push(location.id);
         }
     }
@@ -246,7 +245,6 @@ $(document).ready(function() {
             "sd": $("#edit-ev-spd").val(),
             "sp": $("#edit-ev-spe").val()
         };
-        currentPoke.location = $(".edit-location-selector").val();
         currentPoke.nature = $(".edit-nature-selector").val();
         currentPoke.moves = [];
         if ($("#edit-move1").val() !== "(No Move)") currentPoke.moves.push($("#edit-move1").val());
@@ -254,14 +252,16 @@ $(document).ready(function() {
         if ($("#edit-move3").val() !== "(No Move)") currentPoke.moves.push($("#edit-move3").val());
         if ($("#edit-move4").val() !== "(No Move)") currentPoke.moves.push($("#edit-move4").val());
         currentPoke.nameProp = $(".edit-nickname").val() ? $(".edit-nickname").val() : "Custom Set";
-        addToDex(currentPoke);
-        $("#popup-container").hide();
         if (EDITING) {
             var set = EDITING;
             var mon = set.substring(0, set.indexOf(" ("));
 	        var setName = set.substring(set.indexOf("(") + 1, set.lastIndexOf(")"));
+            currentPoke.data = JSON.parse(localStorage.customsets)[mon][setName].data;
             if (mon !== currentPoke.name || setName !== currentPoke.nameProp) removeSet(set);
             EDITING = "";
-        }
+        } else currentPoke.data = {id: "", location: $(".edit-location-selector").val()};
+        currentPoke.data.location = $(".edit-location-selector").val();
+        addToDex(currentPoke);
+        $("#popup-container").hide();
     });
 });
