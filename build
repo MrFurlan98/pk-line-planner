@@ -7,13 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.18";
+const VERSION = "1.7.19";
 const CHANGELOG = `
-- The latest Lua Script version is now "1.4". Older versions will continue to be supported for now.
-- Updated "Sync" and "Upload Save" (These features do not work if the Pokémon is created manually, imported with a paste, or modified with the "Save" button):
-  - If a Pokémon evolves, or has its nickname changed, the old Pokémon will be removed and replaced with it.
-  - The Pokémon's ability slot is now shown in the Box tab.
-  - If a Pokémon's nickname is a valid Pokémon's name, the calc will no longer import a set for that name.
+- Fixed an issue with alternate formes not counting as dupes for their base Pokémon.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
