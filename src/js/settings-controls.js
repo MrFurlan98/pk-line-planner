@@ -61,6 +61,7 @@ $(document).ready(function() {
             var str = toID(lines[i]);
             if (SPECIES[str]) {
                 var species = SPECIES[str];
+                if (species.baseSpecies) species = SPECIES[species.baseSpecies];
                 while (species.prevo) species = SPECIES[species.prevo];
                 if (!dupes.includes(species.id)) dupes.push(species.id);
             } else if (LOCATIONS[str]) {

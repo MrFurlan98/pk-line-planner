@@ -177,6 +177,7 @@ function getDupes() {
     var customSets = JSON.parse(localStorage.customsets ?? '{}');
     for (var i in customSets) {
         var species = SPECIES[toID(i)];
+        if (species.baseSpecies) species = SPECIES[species.baseSpecies];
         while (species.prevo) species = SPECIES[species.prevo];
         if (!dupes.includes(species.id)) dupes.push(species.id);
     }
