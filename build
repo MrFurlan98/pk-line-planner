@@ -10,6 +10,7 @@ const rootDir = '.';
 const VERSION = "1.7.22";
 const CHANGELOG = `
 - "Upload Save" now imports dead Pokémon. This does not work yet for manual import or Lua sync.
+- Trump Card now always uses a base power of 200.
 - Added a missing egg hatching location.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
