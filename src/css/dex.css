@@ -444,7 +444,7 @@
             margin-left: 12px;
             font-size: 8pt;
 
-            .contact, .punch, .sound {
+            .move-flag {
                 display: block;
             }
         }

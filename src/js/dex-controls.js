@@ -368,9 +368,13 @@ function loadDexEntry(entryID) {
                     <span class="tutor-price">Price: ${tutorPrice.map((x, i) => x ? `<span data-target="item/${shards[i]}">${x}x<img src="img/dex/icon/items/${shards[i]}.png"></span>` : "").filter(x => x).join(", ")}</span>
                 ` : ""}
                 <span class="flags">
-                    ${move.flags.includes("Contact") ? `<span class="contact">This move makes contact with the target.</span>` : ""}
-                    ${move.flags.includes("Punch") ? `<span class="punch">This move is a Punching move, which is boosted by <span data-target=\"ability/ironfist\">Iron Fist</span>.</span>` : ""}
-                    ${move.flags.includes("Sound") ? `<span class="sound">This move is a Sound-based move, which does not affect Pokémon with the ability <span data-target=\"ability/soundproof\">Soundproof</span>.</span>` : ""}
+                    ${move.flags.includes("Contact") ? `<span class="move-flag">This move makes contact with the target.</span>` : ""}
+                    ${move.flags.includes("Protect") ? `<span class="move-flag">This move can be blocked by <span data-target="move/protect">Protect</span>.</span>` : ""}
+                    ${move.flags.includes("MagicCoat") ? `<span class="move-flag">This move can be reflected by <span data-target="move/magiccoat">Magic Coat</span>.</span>` : ""}
+                    ${move.flags.includes("MirrorMove") ? `<span class="move-flag">This move can be copied by <span data-target="move/mirrormove">Mirror Move</span>.</span>` : ""}
+                    ${move.flags.includes("KingsRock") ? `<span class="move-flag">This move can be affected by <span data-target="item/kingsrock">King's Rock</span>.</span>` : ""}
+                    ${move.flags.includes("Punch") ? `<span class="move-flag">This move is a Punching move, which is boosted by <span data-target=\"ability/ironfist\">Iron Fist</span>.</span>` : ""}
+                    ${move.flags.includes("Sound") ? `<span class="move-flag">This move is a Sound-based move, which does not affect Pokémon with the ability <span data-target=\"ability/soundproof\">Soundproof</span>.</span>` : ""}
                 </span>
             </div>
             <div class="list">
