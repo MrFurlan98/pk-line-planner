@@ -7,7 +7,7 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.22";
+const VERSION = "1.7.23";
 const CHANGELOG = `
 - "Upload Save" now imports dead Pokémon. This does not work yet for manual import or Lua sync.
 - Trump Card now always uses a base power of 200.
