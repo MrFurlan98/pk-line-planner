@@ -59,7 +59,7 @@ function reloadEncounters() {
             while ($(`.encounter-list #dead-encounter-${index}`).length) index++;
 
             $(".encounter-list").append(
-                `<span class="encounter${set.dead ? " dead" : ""}" data-set-name="${i} (${j})">
+                `<span class="encounter${set.data.dead ? " dead" : ""}" data-set-name="${i} (${j})">
                     <img src="/img/dex/large/species/${species.id}.png" class="icon" data-target="species/${species.id}">
                     <span class="info">
                         <span class="name-level">

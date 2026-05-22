@@ -1877,11 +1877,7 @@ function deadSet(set, dead) {
 	var mon = set.substring(0, set.indexOf(" ("));
 	var setName = set.substring(set.indexOf("(") + 1, set.lastIndexOf(")"));
 	var customSets = JSON.parse(localStorage.customsets);
-	if (dead) {
-		customSets[mon][setName].dead = true;
-	} else {
-		delete customSets[mon][setName].dead;
-	}
+	customSets[mon][setName].data.dead = dead;
 	updateDex(customSets);
 }
 
