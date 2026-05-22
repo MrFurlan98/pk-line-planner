@@ -440,6 +440,10 @@ export function calculateBasePowerDPP(
     basePower = hit * 30;
     desc.moveBP = move.hits === 2 ? 90 : move.hits === 3 ? 180 : 30;
     break;
+  case 'Trump Card':
+    basePower = 200;
+    desc.moveBP = 200;
+    break;
   default:
     basePower = move.bp;
   }
