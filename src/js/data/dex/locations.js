@@ -1147,6 +1147,15 @@ const LOCATIONS = {
         metLocationId: 3,
         search: true,
     },
+    flowershop: {
+        id: "flowershop",
+        name: "Flower Shop",
+        coords: [],
+        sublocations: [],
+        encounters: [],
+        metLocationId: 95,
+        search: false,
+    },
     valleywindworks: {
         id: "valleywindworks",
         name: "Valley Windworks",
