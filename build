@@ -7,9 +7,10 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.19";
+const VERSION = "1.7.20";
 const CHANGELOG = `
-- Fixed an issue with alternate formes not counting as dupes for their base Pokémon.
+- Added more move flags (affected by Protect, Magic Coat, Mirror Move, King's Rock)
+- Updated some inaccurate move effects. (Chatter, Me First)
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
