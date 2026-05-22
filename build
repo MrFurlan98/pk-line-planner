@@ -7,8 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.21";
+const VERSION = "1.7.22";
 const CHANGELOG = `
+- "Upload Save" now imports dead Pokémon. This does not work yet for manual import or Lua sync.
 - Added a missing egg hatching location.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
