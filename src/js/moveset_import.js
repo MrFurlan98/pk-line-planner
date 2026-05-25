@@ -182,7 +182,7 @@ function parseSaveFile(data) {
 	var smallBlock;
 
 	if (readUInt32(smallBlock1, -8) !== 0x20060623 && readUInt32(smallBlock2, -8) !== 0x20060623) {
-		alert("The selected save file was not initialized. Make sure to save in-game, export your save file again, and upload the new save file instead.");
+		alert("The selected save file was not initialized. Make sure to save in-game again, export your new save file, and upload that save instead.");
 		return;
 	}
 	if (readUInt32(smallBlock1, -8) !== 0x20060623) smallBlock = smallBlock2;
