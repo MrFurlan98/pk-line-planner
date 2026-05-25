@@ -1176,6 +1176,7 @@ const DPP: {[name: string]: MoveData} = extend(true, {}, ADV, DPP_PATCH);
 
 const PK: {[name: string]: MoveData} = extend(true, {}, DPP, PK_PATCH);
 
+// START_PK_DELETION
 delete PK['Comet Punch'];
 delete PK['Bind'];
 delete PK['Horn Attack'];
@@ -1208,6 +1209,7 @@ delete (PK['Overheat'] as any).self;
 delete (PK['Psycho Boost'] as any).self;
 delete (PK['Draco Meteor'] as any).self;
 delete (PK['Leaf Storm'] as any).self;
+// END_PK_DELETION
 
 const BW_PATCH: {[name: string]: DeepPartial<MoveData>} = {
   'Air Slash': {secondaries: true},
