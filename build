@@ -7,8 +7,10 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.24";
+const VERSION = "1.7.25";
 const CHANGELOG = `
+- The latest Lua Script version is now "1.5". Scripts older than "1.4" are no longer supported.
+  - Syncing the box using the Lua script now imports the last four PC boxes as dead Pokémon.
 - Fixed the dex showing the wrong description for No Guard.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
@@ -32,10 +34,10 @@ function makeCachebuster(template, output) {
 
 		return b + '="./' + c + '?' + hash + '"';
 	}).replace(/\.template\.html/g, '.html')
-.replace("{VERSION}", VERSION)
-.replace("{CHANGELOG}", CHANGELOG)
+	  .replace("{VERSION}", VERSION)
+	  .replace("{CHANGELOG}", CHANGELOG)
 	  .replace("{CURRENT_LUA_VERSION}", CURRENT_LUA_VERSION)
-.replace("{MINIMUM_LUA_VERSION}", MINIMUM_LUA_VERSION);
+	  .replace("{MINIMUM_LUA_VERSION}", MINIMUM_LUA_VERSION);
 	process.stdout.write("Writing new `" + output + "` file... ");
 	fs.writeFileSync(path.resolve(rootDir, output), indexContents);
 	console.log("DONE");
