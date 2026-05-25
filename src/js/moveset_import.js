@@ -17,12 +17,12 @@ function placeBsBtn() {
 		fetch("http://localhost:31125/version").then(x => x.text()).then(function (x) {
 			luaVersion = x.split(" ").at(-1).split("-")[0];
 		}).then(function () {
-			if (parseFloat(luaVersion) < 1.3) {
-				alert("You are using an unsupported version of the Lua script. Please update to the latest version.");
+			if (parseFloat(luaVersion) < MINIMUM_LUA_VERSION) {
+				alert("This version of the Lua script is no longer supported. Please update to the latest version.");
 				return;
 			}
 			var status;
-			if (parseFloat(luaVersion) < parseFloat(LUA_VERSION)) {
+			if (parseFloat(luaVersion) < parseFloat(CURRENT_LUA_VERSION)) {
 				if (!VERSION_ALERTED) {
 					VERSION_ALERTED = true;
 					alert("You are using an outdated version of the Lua script. Please update to the latest version.\n\n(This is not an error, sync will start when this message is closed)");
@@ -32,8 +32,12 @@ function placeBsBtn() {
 						alert(x);
 						return;
 					}
-					addSets(x, "Custom Set");
-				}).catch(() => alert("An unknown error has occured."));
+					var data = JSON.parse(x);
+				for (var i in data) addSavePokemon(data[i]);
+				}).catch((x) => {
+					alert("An unknown error has occured. The error details can be found in the browser console.");
+					console.log(x);
+				});
 				return;
 			}
 			fetch("http://localhost:31125/update").then(x => {status = x.status; return x.text()}).then(function (x) {
@@ -42,9 +46,16 @@ function placeBsBtn() {
 					return;
 				}
 				var data = JSON.parse(x);
-				for (var i in data) addSavePokemon(data[i]);
-			}).catch(() => alert("An unknown error has occured."));
-		}).catch(() => alert("Please make sure both parts of the Lua script are running. A link to the script can be found at the bottom of the page."));
+				for (var i in data[0]) addSavePokemon(data[0][i]);
+				for (var i in data[1]) addSavePokemon(data[1][i], true);
+			}).catch((x) => {
+				alert("An unknown error has occured. The error details can be found in the browser console.");
+				console.log(x);
+			});
+		}).catch((x) => {
+			alert("Please make sure both parts of the Lua script are running. A link to the script can be found at the bottom of the page.");
+			console.log(x);
+		});
 	});
 	$("#upload.bs-btn").click(function () {
 		$("#saveFile").click();

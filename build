@@ -13,7 +13,8 @@ const CHANGELOG = `
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
-const LUA_VERSION = 1.4;
+const CURRENT_LUA_VERSION = 1.5;
+const MINIMUM_LUA_VERSION = 1.4;
 
 // update version
 function makeCachebuster(template, output) {
@@ -30,7 +31,11 @@ function makeCachebuster(template, output) {
 		} catch (e) {}
 
 		return b + '="./' + c + '?' + hash + '"';
-	}).replace(/\.template\.html/g, '.html').replace("{VERSION}", VERSION).replace("{CHANGELOG}", CHANGELOG).replace("{LUA_VERSION}", LUA_VERSION);
+	}).replace(/\.template\.html/g, '.html')
+.replace("{VERSION}", VERSION)
+.replace("{CHANGELOG}", CHANGELOG)
+	  .replace("{CURRENT_LUA_VERSION}", CURRENT_LUA_VERSION)
+.replace("{MINIMUM_LUA_VERSION}", MINIMUM_LUA_VERSION);
 	process.stdout.write("Writing new `" + output + "` file... ");
 	fs.writeFileSync(path.resolve(rootDir, output), indexContents);
 	console.log("DONE");
