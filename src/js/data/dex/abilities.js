@@ -985,7 +985,7 @@ const ABILITIES = {
         name: "No Guard",
         calcName: "No Guard",
         desc: {
-            battle: "Prevents the user from missing its moves.",
+            battle: "Prevents the user's moves and any moves targeting the user from missing.",
             overworld: "Increases wild Pokémon encounter rates by 100%, if the user is the first member of the party."
         }
     },
