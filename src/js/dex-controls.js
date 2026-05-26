@@ -456,21 +456,24 @@ function loadDexEntry(entryID) {
                             ${location.sublocations.map(x => `<li><span data-target="location/${x}">${LOCATIONS[x].name}</span></li>`).join("")}
                         </ul>
                     ` : ``}
+                    <span class="description">
+                    ${location.desc ? `
+                        ${location.desc}
+                    ` : ""}
                     ${location.encounters.some(x => x.method == "trade") ? function() {
                         var encounter = location.encounters.find(x => x.method == "trade");
                         var species = SPECIES[encounter.species];
                         return `
-                        <span class="description">
-                            Trade Pokémon:<br />
-                            <span class="trade-info">
-                                Any Pokémon -> <span data-target="species/${species.id}">${species.name}</span><br />
-                                Nickname: ${encounter.trade.nickname}<br />
-                                Nature: <span data-target="nature/${encounter.trade.nature}">${NATURES[encounter.trade.nature].name}</span><br />
-                                Ability: <span data-target="ability/${encounter.trade.ability}">${ABILITIES[encounter.trade.ability].name}</span><br />
-                                Level: Same as traded Pokémon
-                            </span>
+                        Trade Pokémon:<br />
+                        <span class="trade-info">
+                            Any Pokémon -> <span data-target="species/${species.id}">${species.name}</span><br />
+                            Nickname: ${encounter.trade.nickname}<br />
+                            Nature: <span data-target="nature/${encounter.trade.nature}">${NATURES[encounter.trade.nature].name}</span><br />
+                            Ability: <span data-target="ability/${encounter.trade.ability}">${ABILITIES[encounter.trade.ability].name}</span><br />
+                            Level: Same as traded Pokémon
                         </span>`
                     }() : ``}
+                    </span>
                 </div>
                 <div class="list">
                     <ul class="list-nav">

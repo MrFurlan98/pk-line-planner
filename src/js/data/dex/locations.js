@@ -4,6 +4,7 @@ const LOCATIONS = {
         name: "Route 201",
         coords: [[4, 22], [5, 22]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'igglybuff', 'chance': 20, 'minLevel': 4, 'maxLevel': 4, 'method': 'grass', 'time': 'morning'},
             {'species': 'delibird', 'chance': 20, 'minLevel': 4, 'maxLevel': 4, 'method': 'grass', 'time': 'morning'},
@@ -53,6 +54,7 @@ const LOCATIONS = {
         name: "Twinleaf Town",
         coords: [[4, 23]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'farfetchd', 'chance': 20, 'minLevel': 8, 'maxLevel': 8, 'method': 'grass', 'time': 'morning'},
             {'species': 'delibird', 'chance': 20, 'minLevel': 8, 'maxLevel': 8, 'method': 'grass', 'time': 'morning'},
@@ -119,6 +121,7 @@ const LOCATIONS = {
         name: "Verity Lakefront",
         coords: [[2, 21], [3, 21], [2, 22], [3, 22]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'igglybuff', 'chance': 20, 'minLevel': 4, 'maxLevel': 4, 'method': 'grass', 'time': 'morning'},
             {'species': 'delibird', 'chance': 20, 'minLevel': 4, 'maxLevel': 4, 'method': 'grass', 'time': 'morning'},
@@ -181,6 +184,7 @@ const LOCATIONS = {
         name: "Lake Verity",
         coords: [],
         sublocations: ["lakeveritypregalactic", "lakeveritypostgalactic"],
+        desc: "",
         encounters: [],
         metLocationId: 76,
         search: false,
@@ -190,6 +194,7 @@ const LOCATIONS = {
         name: "Lake Verity (Pre-Galactic)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'spheal', 'chance': 20, 'minLevel': 3, 'maxLevel': 3, 'method': 'grass', 'time': 'morning'},
             {'species': 'bidoof', 'chance': 20, 'minLevel': 3, 'maxLevel': 3, 'method': 'grass', 'time': 'morning'},
@@ -236,6 +241,7 @@ const LOCATIONS = {
         name: "Sandgem Town",
         coords: [[6, 22]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'glameow', 'chance': 20, 'minLevel': 5, 'maxLevel': 5, 'method': 'grass', 'time': 'morning'},
             {'species': 'igglybuff', 'chance': 20, 'minLevel': 5, 'maxLevel': 5, 'method': 'grass', 'time': 'morning'},
@@ -282,6 +288,7 @@ const LOCATIONS = {
         name: "Route 219",
         coords: [[6, 23]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'luvdisc', 'chance': 60, 'minLevel': 7, 'maxLevel': 7, 'method': 'oldrod'},
             {'species': 'luvdisc', 'chance': 30, 'minLevel': 7, 'maxLevel': 7, 'method': 'oldrod'},
@@ -312,6 +319,7 @@ const LOCATIONS = {
         name: "Route 202",
         coords: [[6, 21]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'sentret', 'chance': 20, 'minLevel': 5, 'maxLevel': 5, 'method': 'grass', 'time': 'morning'},
             {'species': 'burmy', 'chance': 20, 'minLevel': 5, 'maxLevel': 5, 'method': 'grass', 'time': 'morning'},
@@ -358,6 +366,7 @@ const LOCATIONS = {
         name: "Route 204",
         coords: [[6, 17], [6, 18]],
         sublocations: ["route204south", "route204north"],
+        desc: "",
         encounters: [],
         metLocationId: 19,
         search: false,
@@ -367,6 +376,7 @@ const LOCATIONS = {
         name: "Route 204 (South)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'burmy', 'chance': 20, 'minLevel': 9, 'maxLevel': 9, 'method': 'grass', 'time': 'morning'},
             {'species': 'seedot', 'chance': 20, 'minLevel': 9, 'maxLevel': 9, 'method': 'grass', 'time': 'morning'},
@@ -433,6 +443,7 @@ const LOCATIONS = {
         name: "Ravaged Path",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'zubat', 'chance': 20, 'minLevel': 7, 'maxLevel': 7, 'method': 'grass', 'time': 'morning'},
             {'species': 'sandshrew', 'chance': 20, 'minLevel': 7, 'maxLevel': 7, 'method': 'grass', 'time': 'morning'},
@@ -506,6 +517,7 @@ const LOCATIONS = {
         name: "Route 218",
         coords: [[3, 19], [4, 19]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'wurmple', 'chance': 20, 'minLevel': 30, 'maxLevel': 30, 'method': 'grass', 'time': 'morning'},
             {'species': 'sealeo', 'chance': 20, 'minLevel': 30, 'maxLevel': 30, 'method': 'grass', 'time': 'morning'},
@@ -586,6 +598,7 @@ const LOCATIONS = {
         name: "Route 203",
         coords: [[7, 19], [8, 19]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'bidoof', 'chance': 20, 'minLevel': 8, 'maxLevel': 8, 'method': 'grass', 'time': 'morning'},
             {'species': 'shinx', 'chance': 20, 'minLevel': 8, 'maxLevel': 8, 'method': 'grass', 'time': 'morning'},
@@ -652,6 +665,7 @@ const LOCATIONS = {
         name: "Oreburgh Gate",
         coords: [],
         sublocations: ["oreburghgate1f", "oreburghgateb1f"],
+        desc: "",
         encounters: [],
         metLocationId: 59,
         search: false,
@@ -661,6 +675,7 @@ const LOCATIONS = {
         name: "Oreburgh Gate 1F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'teddiursa', 'chance': 20, 'minLevel': 5, 'maxLevel': 5, 'method': 'grass', 'time': 'morning'},
             {'species': 'chingling', 'chance': 20, 'minLevel': 5, 'maxLevel': 5, 'method': 'grass', 'time': 'morning'},
@@ -714,6 +729,7 @@ const LOCATIONS = {
         name: "Oreburgh Gate B1F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'machop', 'chance': 20, 'minLevel': 15, 'maxLevel': 15, 'method': 'grass', 'time': 'morning'},
             {'species': 'geodude', 'chance': 20, 'minLevel': 5, 'maxLevel': 5, 'method': 'grass', 'time': 'morning'},
@@ -787,6 +803,7 @@ const LOCATIONS = {
         name: "Oreburgh City",
         coords: [[9, 19], [10, 19], [10, 20]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'grimer', 'chance': 20, 'minLevel': 10, 'maxLevel': 10, 'method': 'grass', 'time': 'morning'},
             {'species': 'koffing', 'chance': 20, 'minLevel': 10, 'maxLevel': 10, 'method': 'grass', 'time': 'morning'},
@@ -841,6 +858,7 @@ const LOCATIONS = {
         name: "Mining Museum",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [],
         metLocationId: 94,
         search: false,
@@ -850,6 +868,7 @@ const LOCATIONS = {
         name: "Route 207",
         coords: [[10, 18], [11, 18]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'magby', 'chance': 20, 'minLevel': 11, 'maxLevel': 11, 'method': 'grass', 'time': 'morning'},
             {'species': 'vulpix', 'chance': 20, 'minLevel': 11, 'maxLevel': 11, 'method': 'grass', 'time': 'morning'},
@@ -919,6 +938,7 @@ const LOCATIONS = {
         name: "Oreburgh Mine",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'magby', 'chance': 20, 'minLevel': 10, 'maxLevel': 10, 'method': 'grass', 'time': 'morning'},
             {'species': 'sandshrew', 'chance': 20, 'minLevel': 10, 'maxLevel': 10, 'method': 'grass', 'time': 'morning'},
@@ -972,6 +992,7 @@ const LOCATIONS = {
         name: "Jubilife City",
         coords: [[5, 19], [6, 19], [5, 20], [6, 20]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'grimer', 'chance': 20, 'minLevel': 16, 'maxLevel': 16, 'method': 'grass', 'time': 'morning'},
             {'species': 'koffing', 'chance': 20, 'minLevel': 16, 'maxLevel': 16, 'method': 'grass', 'time': 'morning'},
@@ -1018,6 +1039,7 @@ const LOCATIONS = {
         name: "Trainers' School",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [],
         metLocationId: 93,
         search: false,
@@ -1027,6 +1049,7 @@ const LOCATIONS = {
         name: "Pokétch Co.",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'skitty', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'},
             {'species': 'glameow', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'},
@@ -1040,6 +1063,7 @@ const LOCATIONS = {
         name: "Route 204 (North)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'bulbasaur', 'chance': 20, 'minLevel': 14, 'maxLevel': 14, 'method': 'grass', 'time': 'morning'},
             {'species': 'chikorita', 'chance': 20, 'minLevel': 14, 'maxLevel': 14, 'method': 'grass', 'time': 'morning'},
@@ -1106,6 +1130,7 @@ const LOCATIONS = {
         name: "Floaroma Town",
         coords: [[6, 15], [6, 16]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'silcoon', 'chance': 20, 'minLevel': 15, 'maxLevel': 15, 'method': 'grass', 'time': 'morning'},
             {'species': 'cascoon', 'chance': 20, 'minLevel': 15, 'maxLevel': 15, 'method': 'grass', 'time': 'morning'},
@@ -1152,6 +1177,7 @@ const LOCATIONS = {
         name: "Flower Shop",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [],
         metLocationId: 95,
         search: false,
@@ -1161,6 +1187,7 @@ const LOCATIONS = {
         name: "Valley Windworks",
         coords: [[8, 16]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'spearow', 'chance': 20, 'minLevel': 17, 'maxLevel': 17, 'method': 'grass', 'time': 'morning'},
             {'species': 'hoppip', 'chance': 20, 'minLevel': 17, 'maxLevel': 17, 'method': 'grass', 'time': 'morning'},
@@ -1237,6 +1264,7 @@ const LOCATIONS = {
         name: "Route 205",
         coords: [[7, 14], [7, 15], [7, 16], [9, 12]],
         sublocations: ["route205south", "route205east"],
+        desc: "",
         encounters: [],
         metLocationId: 20,
         search: false,
@@ -1246,6 +1274,7 @@ const LOCATIONS = {
         name: "Route 205 (South)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'starly', 'chance': 20, 'minLevel': 15, 'maxLevel': 15, 'method': 'grass', 'time': 'morning'},
             {'species': 'bidoof', 'chance': 20, 'minLevel': 15, 'maxLevel': 15, 'method': 'grass', 'time': 'morning'},
@@ -1335,6 +1364,7 @@ const LOCATIONS = {
         name: "Eterna Forest",
         coords: [[7, 12], [8, 12], [7, 13], [8, 13]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'buneary', 'chance': 20, 'minLevel': 23, 'maxLevel': 23, 'method': 'grass', 'time': 'morning'},
             {'species': 'roselia', 'chance': 20, 'minLevel': 23, 'maxLevel': 23, 'method': 'grass', 'time': 'morning'},
@@ -1397,6 +1427,7 @@ const LOCATIONS = {
         name: "Route 205 (East)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'buizel', 'chance': 20, 'minLevel': 20, 'maxLevel': 20, 'method': 'grass', 'time': 'morning'},
             {'species': 'pachirisu', 'chance': 20, 'minLevel': 20, 'maxLevel': 20, 'method': 'grass', 'time': 'morning'},
@@ -1479,6 +1510,7 @@ const LOCATIONS = {
         name: "Eterna City",
         coords: [[10, 12], [11, 12], [10, 13]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'gloom', 'chance': 20, 'minLevel': 20, 'maxLevel': 20, 'method': 'grass', 'time': 'morning'},
             {'species': 'weepinbell', 'chance': 20, 'minLevel': 20, 'maxLevel': 20, 'method': 'grass', 'time': 'morning'},
@@ -1554,6 +1586,7 @@ const LOCATIONS = {
         name: "T.G. Eterna Bldg",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [],
         metLocationId: 122,
         search: false,
@@ -1563,6 +1596,7 @@ const LOCATIONS = {
         name: "Cycle Shop",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [],
         metLocationId: 96,
         search: false,
@@ -1572,6 +1606,7 @@ const LOCATIONS = {
         name: "Route 211",
         coords: [[12, 12], [14, 12]],
         sublocations: ["route211west", "route211east"],
+        desc: "",
         encounters: [],
         metLocationId: 26,
         search: false,
@@ -1581,6 +1616,7 @@ const LOCATIONS = {
         name: "Route 211 (West)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'ralts', 'chance': 20, 'minLevel': 17, 'maxLevel': 17, 'method': 'grass', 'time': 'morning'},
             {'species': 'chingling', 'chance': 20, 'minLevel': 17, 'maxLevel': 17, 'method': 'grass', 'time': 'morning'},
@@ -1634,6 +1670,7 @@ const LOCATIONS = {
         name: "Route 206",
         coords: [[10, 14], [10, 15], [10, 16], [10, 17]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'nuzleaf', 'chance': 20, 'minLevel': 23, 'maxLevel': 23, 'method': 'grass', 'time': 'morning'},
             {'species': 'phanpy', 'chance': 20, 'minLevel': 23, 'maxLevel': 23, 'method': 'grass', 'time': 'morning'},
@@ -1703,6 +1740,7 @@ const LOCATIONS = {
         name: "Jubilife TV",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [],
         metLocationId: 90,
         search: false,
@@ -1712,6 +1750,7 @@ const LOCATIONS = {
         name: "Mt. Coronet",
         coords: [[13, 8], [13, 9], [13, 10], [13, 11], [13, 12], [13, 13], [13, 14], [12, 15], [13, 15], [12, 16], [12, 17], [12, 18]],
         sublocations: ["mtcoronet1fsouth", "mtcoronet1fcentral", "mtcoronetb1f", "mtcoronet1fnorth", "mtcoronet2f", "mtcoronet3f"],
+        desc: "",
         encounters: [],
         metLocationId: 50,
         search: false,
@@ -1721,6 +1760,7 @@ const LOCATIONS = {
         name: "Mt. Coronet 1F (South)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'chimecho', 'chance': 20, 'minLevel': 24, 'maxLevel': 24, 'method': 'grass', 'time': 'morning'},
             {'species': 'geodude', 'chance': 20, 'minLevel': 24, 'maxLevel': 24, 'method': 'grass', 'time': 'morning'},
@@ -1794,6 +1834,7 @@ const LOCATIONS = {
         name: "Route 208",
         coords: [[13, 18], [14, 18]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'tyrogue', 'chance': 20, 'minLevel': 18, 'maxLevel': 18, 'method': 'grass', 'time': 'morning'},
             {'species': 'linoone', 'chance': 20, 'minLevel': 18, 'maxLevel': 18, 'method': 'grass', 'time': 'morning'},
@@ -1883,6 +1924,7 @@ const LOCATIONS = {
         name: "Hearthome City",
         coords: [[15, 17], [16, 17], [15, 18], [16, 18]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'eevee', 'chance': 100, 'minLevel': 20, 'maxLevel': 20, 'method': 'gift'}
         ],
@@ -1894,6 +1936,7 @@ const LOCATIONS = {
         name: "Amity Square",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'skitty', 'chance': 20, 'minLevel': 20, 'maxLevel': 20, 'method': 'grass', 'time': 'morning'},
             {'species': 'jigglypuff', 'chance': 20, 'minLevel': 20, 'maxLevel': 20, 'method': 'grass', 'time': 'morning'},
@@ -1967,6 +2010,7 @@ const LOCATIONS = {
         name: "Route 209",
         coords: [[18, 17], [17, 18], [18, 18]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'kricketune', 'chance': 20, 'minLevel': 36, 'maxLevel': 36, 'method': 'grass', 'time': 'morning'},
             {'species': 'mareep', 'chance': 20, 'minLevel': 36, 'maxLevel': 36, 'method': 'grass', 'time': 'morning'},
@@ -2056,6 +2100,7 @@ const LOCATIONS = {
         name: "Solaceon Town",
         coords: [[18, 16], [19, 16]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'flaaffy', 'chance': 20, 'minLevel': 38, 'maxLevel': 38, 'method': 'grass', 'time': 'morning'},
             {'species': 'grumpig', 'chance': 20, 'minLevel': 38, 'maxLevel': 38, 'method': 'grass', 'time': 'morning'},
@@ -2110,6 +2155,7 @@ const LOCATIONS = {
         name: "Pokémon Day Care",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [],
         metLocationId: 100,
         search: false,
@@ -2119,6 +2165,7 @@ const LOCATIONS = {
         name: "Solaceon Ruins",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'baltoy', 'chance': 20, 'minLevel': 37, 'maxLevel': 37, 'method': 'grass', 'time': 'morning'},
             {'species': 'xatu', 'chance': 20, 'minLevel': 37, 'maxLevel': 37, 'method': 'grass', 'time': 'morning'},
@@ -2165,6 +2212,7 @@ const LOCATIONS = {
         name: "Route 210",
         coords: [[18, 13], [18, 14], [18, 15]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'mothim', 'chance': 20, 'minLevel': 41, 'maxLevel': 41, 'method': 'grass', 'time': 'morning'},
             {'species': 'venomoth', 'chance': 20, 'minLevel': 41, 'maxLevel': 41, 'method': 'grass', 'time': 'morning'},
@@ -2227,6 +2275,7 @@ const LOCATIONS = {
         name: "Route 215",
         coords: [[19, 14], [20, 14], [21, 14]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'azumarill', 'chance': 20, 'minLevel': 42, 'maxLevel': 42, 'method': 'grass', 'time': 'morning'},
             {'species': 'golduck', 'chance': 20, 'minLevel': 42, 'maxLevel': 42, 'method': 'grass', 'time': 'morning'},
@@ -2296,6 +2345,7 @@ const LOCATIONS = {
         name: "Veilstone City",
         coords: [[22, 14], [23, 14], [22, 15], [23, 15]],
         sublocations: [],
+        desc: "",
         encounters: [],
         metLocationId: 12,
         search: true,
@@ -2305,15 +2355,24 @@ const LOCATIONS = {
         name: "Veilstone Store",
         coords: [],
         sublocations: [],
-        encounters: [],
+        desc: "If \"BLK COFFEE\" is purchased from the vending machine, there is a 97% chance of a wild encounter.",
+        encounters: [
+            {'species': 'ekans', 'chance': 37, 'minLevel': 25, 'maxLevel': 25, 'method': 'vending'},
+            {'species': 'grimer', 'chance': 28, 'minLevel': 25, 'maxLevel': 25, 'method': 'vending'},
+            {'species': 'koffing', 'chance': 25, 'minLevel': 25, 'maxLevel': 25, 'method': 'vending'},
+            {'species': 'porygon', 'chance': 6, 'minLevel': 25, 'maxLevel': 25, 'method': 'vending'},
+            {'species': 'voltorb', 'chance': 0.5, 'minLevel': 60, 'maxLevel': 60, 'method': 'vending'},
+            {'species': 'muk', 'chance': 0.5, 'minLevel': 70, 'maxLevel': 70, 'method': 'vending'}
+        ],
         metLocationId: 101,
-        search: false,
+        search: true,
     },
     casino: {
         id: "casino",
         name: "Casino",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'persian', 'price': 300, 'minLevel': 45, 'maxLevel': 45, 'method': 'casino', 'badge': 3},
             {'species': 'porygon', 'price': 400, 'minLevel': 45, 'maxLevel': 45, 'method': 'casino', 'badge': 3},
@@ -2352,6 +2411,7 @@ const LOCATIONS = {
         name: "Route 214",
         coords: [[23, 16], [23, 17], [23, 18]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'graveler', 'chance': 20, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'morning'},
             {'species': 'machoke', 'chance': 20, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'morning'},
@@ -2441,6 +2501,7 @@ const LOCATIONS = {
         name: "Maniac Tunnel",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'sandslash', 'chance': 20, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'morning'},
             {'species': 'geodude', 'chance': 20, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'morning'},
@@ -2487,6 +2548,7 @@ const LOCATIONS = {
         name: "Valor Lakefront",
         coords: [[22, 19], [23, 19], [22, 20], [23, 20]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'staraptor', 'chance': 20, 'minLevel': 47, 'maxLevel': 47, 'method': 'grass', 'time': 'morning'},
             {'species': 'rapidash', 'chance': 20, 'minLevel': 47, 'maxLevel': 47, 'method': 'grass', 'time': 'morning'},
@@ -2549,6 +2611,7 @@ const LOCATIONS = {
         name: "Restaurant",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'rattata', 'chance': 20, 'minLevel': 15, 'maxLevel': 15, 'method': 'grass', 'time': 'morning'},
             {'species': 'rattata', 'chance': 20, 'minLevel': 25, 'maxLevel': 25, 'method': 'grass', 'time': 'morning'},
@@ -2601,6 +2664,7 @@ const LOCATIONS = {
         name: "Route 213",
         coords: [[21, 21], [22, 21], [23, 21], [21, 22], [22, 22], [23, 22]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'swellow', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
             {'species': 'tropius', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
@@ -2681,6 +2745,7 @@ const LOCATIONS = {
         name: "Pastoria City",
         coords: [[19, 21], [20, 21], [19, 22], [20, 22]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'gastrodon', 'chance': 20, 'minLevel': 49, 'maxLevel': 49, 'method': 'grass', 'time': 'morning'},
             {'species': 'croagunk', 'chance': 20, 'minLevel': 49, 'maxLevel': 49, 'method': 'grass', 'time': 'morning'},
@@ -2747,6 +2812,7 @@ const LOCATIONS = {
         name: "Great Marsh",
         coords: [],
         sublocations: ["greatmarsharea1", "greatmarsharea2", "greatmarsharea3", "greatmarsharea4", "greatmarsharea5", "greatmarsharea6"],
+        desc: "",
         encounters: [],
         metLocationId: 52,
         search: false,
@@ -2756,6 +2822,7 @@ const LOCATIONS = {
         name: "Great Marsh (Area 1)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'kecleon', 'chance': 20, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'morning'},
             {'species': 'scyther', 'chance': 20, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'morning'},
@@ -2822,6 +2889,7 @@ const LOCATIONS = {
         name: "Great Marsh (Area 2)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'seviper', 'chance': 20, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'morning'},
             {'species': 'absol', 'chance': 20, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'morning'},
@@ -2888,6 +2956,7 @@ const LOCATIONS = {
         name: "Great Marsh (Area 3)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'drowzee', 'chance': 20, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'morning'},
             {'species': 'stantler', 'chance': 20, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'morning'},
@@ -2954,6 +3023,7 @@ const LOCATIONS = {
         name: "Great Marsh (Area 4)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'lopunny', 'chance': 20, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'morning'},
             {'species': 'carnivine', 'chance': 20, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'morning'},
@@ -3020,6 +3090,7 @@ const LOCATIONS = {
         name: "Great Marsh (Area 5)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'linoone', 'chance': 20, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'morning'},
             {'species': 'pinsir', 'chance': 20, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'morning'},
@@ -3086,6 +3157,7 @@ const LOCATIONS = {
         name: "Great Marsh (Area 6)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'zangoose', 'chance': 20, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'morning'},
             {'species': 'venusaur', 'chance': 20, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'morning'},
@@ -3152,6 +3224,7 @@ const LOCATIONS = {
         name: "Fuego Ironworks",
         coords: [[6, 14]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'manectric', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
             {'species': 'torkoal', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
@@ -3226,6 +3299,7 @@ const LOCATIONS = {
         name: "Floaroma Meadow",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'roselia', 'chance': 20, 'minLevel': 60, 'maxLevel': 60, 'method': 'grass', 'time': 'morning'},
             {'species': 'bellossom', 'chance': 20, 'minLevel': 60, 'maxLevel': 60, 'method': 'grass', 'time': 'morning'},
@@ -3281,6 +3355,7 @@ const LOCATIONS = {
         name: "Clamberclaw Cliffs",
         coords: [[16, 12], [17, 12], [18, 12]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'kecleon', 'chance': 20, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'morning'},
             {'species': 'mothim', 'chance': 20, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'morning'},
@@ -3370,6 +3445,7 @@ const LOCATIONS = {
         name: "Celestic Town",
         coords: [[15, 12]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'wigglytuff', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
             {'species': 'delcatty', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
@@ -3436,6 +3512,7 @@ const LOCATIONS = {
         name: "Route 211 (East)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'torkoal', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
             {'species': 'chimecho', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
@@ -3503,6 +3580,7 @@ const LOCATIONS = {
         name: "Mt. Coronet 1F (Central)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'chimecho', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
             {'species': 'nosepass', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
@@ -3576,6 +3654,7 @@ const LOCATIONS = {
         name: "Canalave City",
         coords: [[2, 18], [2, 19]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'lumineon', 'chance': 60, 'minLevel': 55, 'maxLevel': 65, 'method': 'oldrod'},
             {'species': 'corsola', 'chance': 30, 'minLevel': 35, 'maxLevel': 45, 'method': 'oldrod'},
@@ -3606,6 +3685,7 @@ const LOCATIONS = {
         name: "Canalave Library",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'lunatone', 'chance': 50, 'minLevel': 40, 'maxLevel': 40, 'method': 'gift'},
             {'species': 'solrock', 'chance': 50, 'minLevel': 40, 'maxLevel': 40, 'method': 'gift'}
@@ -3618,6 +3698,7 @@ const LOCATIONS = {
         name: "Iron Island",
         coords: [[4, 11]],
         sublocations: ["ironislandb2fleft", "ironislandb3f"],
+        desc: "",
         encounters: [],
         metLocationId: 69,
         search: false,
@@ -3627,6 +3708,7 @@ const LOCATIONS = {
         name: "Iron Island B2F (Left)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'sandslash', 'chance': 20, 'minLevel': 56, 'maxLevel': 56, 'method': 'grass', 'time': 'morning'},
             {'species': 'graveler', 'chance': 20, 'minLevel': 56, 'maxLevel': 56, 'method': 'grass', 'time': 'morning'},
@@ -3673,6 +3755,7 @@ const LOCATIONS = {
         name: "Iron Island B3F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'mawile', 'chance': 20, 'minLevel': 56, 'maxLevel': 56, 'method': 'grass', 'time': 'morning'},
             {'species': 'hariyama', 'chance': 20, 'minLevel': 56, 'maxLevel': 56, 'method': 'grass', 'time': 'morning'},
@@ -3720,6 +3803,7 @@ const LOCATIONS = {
         name: "The Underground",
         coords: [],
         sublocations: ["theundergroundarea1", "theundergroundarea2", "theundergroundarea3", "theundergroundarea4"],
+        desc: "",
         encounters: [],
         metLocationId: 119,
         search: false,
@@ -3729,6 +3813,7 @@ const LOCATIONS = {
         name: "The Underground (Area 1)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'diglett', 'chance': 20, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'morning'},
             {'species': 'sandshrew', 'chance': 20, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'morning'},
@@ -3795,6 +3880,7 @@ const LOCATIONS = {
         name: "The Underground (Area 2)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'bellossom', 'chance': 20, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'morning'},
             {'species': 'sudowoodo', 'chance': 20, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'morning'},
@@ -3861,6 +3947,7 @@ const LOCATIONS = {
         name: "The Underground (Area 3)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'torkoal', 'chance': 20, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'morning'},
             {'species': 'kecleon', 'chance': 20, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'morning'},
@@ -3927,6 +4014,7 @@ const LOCATIONS = {
         name: "The Underground (Area 4)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'snorunt', 'chance': 20, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'morning'},
             {'species': 'spinda', 'chance': 20, 'minLevel': 45, 'maxLevel': 45, 'method': 'grass', 'time': 'morning'},
@@ -3993,6 +4081,7 @@ const LOCATIONS = {
         name: "Old Chateau",
         coords: [],
         sublocations: ["oldchateauentrance", "oldchateau1fdiningarea", "oldchateau2fsiderooms", "oldchateau2fcorridor", "oldchateau2fleft", "oldchateau2fmiddle", "oldchateau2fmiddleright", "oldchateau2fright"],
+        desc: "",
         encounters: [],
         metLocationId: 70,
         search: false,
@@ -4002,6 +4091,7 @@ const LOCATIONS = {
         name: "Old Chateau (Entrance)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'gastly', 'chance': 20, 'minLevel': 46, 'maxLevel': 46, 'method': 'grass', 'time': 'morning'},
             {'species': 'gastly', 'chance': 20, 'minLevel': 16, 'maxLevel': 16, 'method': 'grass', 'time': 'morning'},
@@ -4048,6 +4138,7 @@ const LOCATIONS = {
         name: "Old Chateau 1F (Dining Area)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'sableye', 'chance': 20, 'minLevel': 46, 'maxLevel': 46, 'method': 'grass', 'time': 'morning'},
             {'species': 'snorunt', 'chance': 20, 'minLevel': 16, 'maxLevel': 16, 'method': 'grass', 'time': 'morning'},
@@ -4094,6 +4185,7 @@ const LOCATIONS = {
         name: "Old Chateau 2F (Side Rooms)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'gastly', 'chance': 20, 'minLevel': 36, 'maxLevel': 36, 'method': 'grass', 'time': 'morning'},
             {'species': 'gastly', 'chance': 20, 'minLevel': 36, 'maxLevel': 36, 'method': 'grass', 'time': 'morning'},
@@ -4140,6 +4232,7 @@ const LOCATIONS = {
         name: "Old Chateau 2F (Corridor)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'haunter', 'chance': 20, 'minLevel': 46, 'maxLevel': 46, 'method': 'grass', 'time': 'morning'},
             {'species': 'gastly', 'chance': 20, 'minLevel': 16, 'maxLevel': 16, 'method': 'grass', 'time': 'morning'},
@@ -4186,6 +4279,7 @@ const LOCATIONS = {
         name: "Old Chateau 2F (Left)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'gastly', 'chance': 20, 'minLevel': 14, 'maxLevel': 14, 'method': 'grass', 'time': 'morning'},
             {'species': 'gastly', 'chance': 20, 'minLevel': 15, 'maxLevel': 15, 'method': 'grass', 'time': 'morning'},
@@ -4232,6 +4326,7 @@ const LOCATIONS = {
         name: "ROTOM's Room",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [],
         metLocationId: 121,
         search: true,
@@ -4241,6 +4336,7 @@ const LOCATIONS = {
         name: "Old Chateau 2F (Middle)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'drowzee', 'chance': 20, 'minLevel': 46, 'maxLevel': 46, 'method': 'grass', 'time': 'morning'},
             {'species': 'gastly', 'chance': 20, 'minLevel': 16, 'maxLevel': 16, 'method': 'grass', 'time': 'morning'},
@@ -4287,6 +4383,7 @@ const LOCATIONS = {
         name: "Old Chateau 2F (Middle Right)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'misdreavus', 'chance': 20, 'minLevel': 46, 'maxLevel': 46, 'method': 'grass', 'time': 'morning'},
             {'species': 'gastly', 'chance': 20, 'minLevel': 16, 'maxLevel': 16, 'method': 'grass', 'time': 'morning'},
@@ -4333,6 +4430,7 @@ const LOCATIONS = {
         name: "Old Chateau 2F (Right)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'misdreavus', 'chance': 20, 'minLevel': 46, 'maxLevel': 46, 'method': 'grass', 'time': 'morning'},
             {'species': 'gastly', 'chance': 20, 'minLevel': 16, 'maxLevel': 16, 'method': 'grass', 'time': 'morning'},
@@ -4379,6 +4477,7 @@ const LOCATIONS = {
         name: "Lost Tower",
         coords: [],
         sublocations: ["losttower1f", "losttower2f", "losttower3f", "losttower4f", "losttower5f"],
+        desc: "",
         encounters: [],
         metLocationId: 118,
         search: false,
@@ -4388,6 +4487,7 @@ const LOCATIONS = {
         name: "Lost Tower 1F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'whismur', 'chance': 20, 'minLevel': 24, 'maxLevel': 24, 'method': 'grass', 'time': 'morning'},
             {'species': 'whismur', 'chance': 20, 'minLevel': 24, 'maxLevel': 24, 'method': 'grass', 'time': 'morning'},
@@ -4434,6 +4534,7 @@ const LOCATIONS = {
         name: "Lost Tower 2F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'raticate', 'chance': 20, 'minLevel': 46, 'maxLevel': 46, 'method': 'grass', 'time': 'morning'},
             {'species': 'chimecho', 'chance': 20, 'minLevel': 46, 'maxLevel': 46, 'method': 'grass', 'time': 'morning'},
@@ -4480,6 +4581,7 @@ const LOCATIONS = {
         name: "Lost Tower 3F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'golbat', 'chance': 20, 'minLevel': 66, 'maxLevel': 66, 'method': 'grass', 'time': 'morning'},
             {'species': 'golbat', 'chance': 20, 'minLevel': 66, 'maxLevel': 66, 'method': 'grass', 'time': 'morning'},
@@ -4526,6 +4628,7 @@ const LOCATIONS = {
         name: "Lost Tower 4F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'persian', 'chance': 20, 'minLevel': 78, 'maxLevel': 78, 'method': 'grass', 'time': 'morning'},
             {'species': 'golbat', 'chance': 20, 'minLevel': 78, 'maxLevel': 78, 'method': 'grass', 'time': 'morning'},
@@ -4572,6 +4675,7 @@ const LOCATIONS = {
         name: "Lost Tower 5F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'crobat', 'chance': 20, 'minLevel': 86, 'maxLevel': 86, 'method': 'grass', 'time': 'morning'},
             {'species': 'hypno', 'chance': 20, 'minLevel': 86, 'maxLevel': 86, 'method': 'grass', 'time': 'morning'},
@@ -4618,6 +4722,7 @@ const LOCATIONS = {
         name: "Route 220",
         coords: [[6, 24], [7, 24]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'mantyke', 'chance': 60, 'minLevel': 10, 'maxLevel': 45, 'method': 'oldrod'},
             {'species': 'mantyke', 'chance': 30, 'minLevel': 10, 'maxLevel': 45, 'method': 'oldrod'},
@@ -4648,6 +4753,7 @@ const LOCATIONS = {
         name: "Lake Valor",
         coords: [],
         sublocations: ["lakevalordry", "lakevalorrestored"],
+        desc: "",
         encounters: [],
         metLocationId: 77,
         search: false,
@@ -4657,6 +4763,7 @@ const LOCATIONS = {
         name: "Lake Valor (Dry)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'magikarp', 'chance': 20, 'minLevel': 44, 'maxLevel': 44, 'method': 'grass', 'time': 'morning'},
             {'species': 'magikarp', 'chance': 20, 'minLevel': 33, 'maxLevel': 33, 'method': 'grass', 'time': 'morning'},
@@ -4704,6 +4811,7 @@ const LOCATIONS = {
         name: "Lake Verity (Post-Galactic)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'spheal', 'chance': 20, 'minLevel': 4, 'maxLevel': 4, 'method': 'grass', 'time': 'morning'},
             {'species': 'bidoof', 'chance': 20, 'minLevel': 4, 'maxLevel': 4, 'method': 'grass', 'time': 'morning'},
@@ -4770,6 +4878,7 @@ const LOCATIONS = {
         name: "Mt. Coronet B1F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'chimecho', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
             {'species': 'nosepass', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
@@ -4843,6 +4952,7 @@ const LOCATIONS = {
         name: "Mt. Coronet 1F (North)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'chimecho', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
             {'species': 'nosepass', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
@@ -4909,6 +5019,7 @@ const LOCATIONS = {
         name: "Route 216",
         coords: [[10, 8], [11, 8], [12, 8]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'mightyena', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
             {'species': 'machoke', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
@@ -4955,6 +5066,7 @@ const LOCATIONS = {
         name: "Route 217",
         coords: [[10, 4], [10, 5], [10, 6], [10, 7]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'ursaring', 'chance': 20, 'minLevel': 70, 'maxLevel': 70, 'method': 'grass', 'time': 'morning'},
             {'species': 'piloswine', 'chance': 20, 'minLevel': 70, 'maxLevel': 70, 'method': 'grass', 'time': 'morning'},
@@ -5001,6 +5113,7 @@ const LOCATIONS = {
         name: "Acuity Lakefront",
         coords: [[10, 2], [11, 2], [10, 3], [11, 3]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'absol', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
             {'species': 'ursaring', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
@@ -5055,6 +5168,7 @@ const LOCATIONS = {
         name: "Snowpoint City",
         coords: [[12, 2], [12, 3]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'slowpoke', 'chance': 20, 'minLevel': 45, 'maxLevel': 60, 'method': 'oldrod'},
             {'species': 'sealeo', 'chance': 20, 'minLevel': 45, 'maxLevel': 55, 'method': 'oldrod'},
@@ -5081,6 +5195,7 @@ const LOCATIONS = {
         name: "Snowpoint Temple",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'mawile', 'chance': 20, 'minLevel': 75, 'maxLevel': 75, 'method': 'grass', 'time': 'morning'},
             {'species': 'bronzor', 'chance': 20, 'minLevel': 75, 'maxLevel': 75, 'method': 'grass', 'time': 'morning'},
@@ -5134,6 +5249,7 @@ const LOCATIONS = {
         name: "Fight Area",
         coords: [[20, 9], [21, 9]],
         sublocations: [],
+        desc: "",
         encounters: [],
         metLocationId: 81,
         search: true,
@@ -5143,6 +5259,7 @@ const LOCATIONS = {
         name: "Battle Frontier",
         coords: [[21, 8]],
         sublocations: [],
+        desc: "",
         encounters: [],
         metLocationId: 112,
         search: true,
@@ -5152,6 +5269,7 @@ const LOCATIONS = {
         name: "Route 225",
         coords: [[20, 6], [20, 7], [20, 8]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'mawile', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
             {'species': 'carnivine', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
@@ -5218,6 +5336,7 @@ const LOCATIONS = {
         name: "Survival Area",
         coords: [[21, 6]],
         sublocations: [],
+        desc: "",
         encounters: [],
         metLocationId: 82,
         search: true,
@@ -5227,6 +5346,7 @@ const LOCATIONS = {
         name: "Route 227",
         coords: [[24, 4], [24, 5]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'spinda', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
             {'species': 'cacnea', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
@@ -5293,6 +5413,7 @@ const LOCATIONS = {
         name: "Route 228",
         coords: [[25, 6], [25, 7], [25, 8]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'quagsire', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
             {'species': 'gastrodon', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
@@ -5366,6 +5487,7 @@ const LOCATIONS = {
         name: "Route 229",
         coords: [[25, 9], [26, 9]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'volbeat', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
             {'species': 'illumise', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
@@ -5432,6 +5554,7 @@ const LOCATIONS = {
         name: "Resort Area",
         coords: [[26, 10]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'ditto', 'chance': 60, 'minLevel': 99, 'maxLevel': 100, 'method': 'oldrod'},
             {'species': 'ditto', 'chance': 30, 'minLevel': 99, 'maxLevel': 100, 'method': 'oldrod'},
@@ -5462,6 +5585,7 @@ const LOCATIONS = {
         name: "Route 226",
         coords: [[22, 6], [23, 6], [24, 6]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'machoke', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
             {'species': 'graveler', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
@@ -5528,6 +5652,7 @@ const LOCATIONS = {
         name: "Route 230",
         coords: [[22, 9], [23, 9], [24, 9]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'togepi', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
             {'species': 'jigglypuff', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
@@ -5601,6 +5726,7 @@ const LOCATIONS = {
         name: "Stark Mountain",
         coords: [[24, 3]],
         sublocations: ["starkmountainexterior", "starkmountaininterior"],
+        desc: "",
         encounters: [],
         metLocationId: 84,
         search: true,
@@ -5610,6 +5736,7 @@ const LOCATIONS = {
         name: "Stark Mountain (Exterior)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'rapidash', 'chance': 20, 'minLevel': 95, 'maxLevel': 95, 'method': 'grass', 'time': 'morning'},
             {'species': 'rhydon', 'chance': 20, 'minLevel': 95, 'maxLevel': 95, 'method': 'grass', 'time': 'morning'},
@@ -5656,6 +5783,7 @@ const LOCATIONS = {
         name: "Stark Mountain (Interior)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'torkoal', 'chance': 20, 'minLevel': 90, 'maxLevel': 90, 'method': 'grass', 'time': 'morning'},
             {'species': 'donphan', 'chance': 20, 'minLevel': 90, 'maxLevel': 90, 'method': 'grass', 'time': 'morning'},
@@ -5709,6 +5837,7 @@ const LOCATIONS = {
         name: "Route 222",
         coords: [[24, 20], [25, 20], [26, 20]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'chatot', 'chance': 20, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'morning'},
             {'species': 'pachirisu', 'chance': 20, 'minLevel': 50, 'maxLevel': 50, 'method': 'grass', 'time': 'morning'},
@@ -5789,6 +5918,7 @@ const LOCATIONS = {
         name: "Sunyshore City",
         coords: [[27, 19], [28, 19], [27, 20], [28, 20]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'wingull', 'chance': 20, 'minLevel': 85, 'maxLevel': 85, 'method': 'grass', 'time': 'morning'},
             {'species': 'pelipper', 'chance': 20, 'minLevel': 85, 'maxLevel': 85, 'method': 'grass', 'time': 'morning'},
@@ -5862,6 +5992,7 @@ const LOCATIONS = {
         name: "Route 223",
         coords: [[27, 15], [27, 16], [27, 17], [27, 18]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'horsea', 'chance': 60, 'minLevel': 4, 'maxLevel': 6, 'method': 'oldrod'},
             {'species': 'mantyke', 'chance': 30, 'minLevel': 3, 'maxLevel': 7, 'method': 'oldrod'},
@@ -5892,6 +6023,7 @@ const LOCATIONS = {
         name: "Route 221",
         coords: [[8, 24], [9, 24], [10, 24]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'miltank', 'chance': 20, 'minLevel': 90, 'maxLevel': 90, 'method': 'grass', 'time': 'morning'},
             {'species': 'roserade', 'chance': 20, 'minLevel': 90, 'maxLevel': 90, 'method': 'grass', 'time': 'morning'},
@@ -5965,6 +6097,7 @@ const LOCATIONS = {
         name: "Pokémon Mansion",
         coords: [[15, 19], [15, 20], [15, 21]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'weedle', 'chance': 5, 'minLevel': 10, 'maxLevel': 10, 'method': 'honey'},
             {'species': 'combee', 'chance': 17, 'minLevel': 10, 'maxLevel': 10, 'method': 'honey'},
@@ -5984,6 +6117,7 @@ const LOCATIONS = {
         name: "Route 212",
         coords: [[15, 22], [16, 22], [17, 22], [18, 22]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'stantler', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
             {'species': 'lickitung', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
@@ -6064,6 +6198,7 @@ const LOCATIONS = {
         name: "Wayward Cave",
         coords: [],
         sublocations: ["waywardcave1f", "waywardcaveb1f"],
+        desc: "",
         encounters: [],
         metLocationId: 65,
         search: false,
@@ -6073,6 +6208,7 @@ const LOCATIONS = {
         name: "Wayward Cave 1F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'rhydon', 'chance': 20, 'minLevel': 75, 'maxLevel': 75, 'method': 'grass', 'time': 'morning'},
             {'species': 'lairon', 'chance': 20, 'minLevel': 75, 'maxLevel': 75, 'method': 'grass', 'time': 'morning'},
@@ -6127,6 +6263,7 @@ const LOCATIONS = {
         name: "Wayward Cave B1F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'spinda', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
             {'species': 'sandslash', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'grass', 'time': 'morning'},
@@ -6173,6 +6310,7 @@ const LOCATIONS = {
         name: "Lake Acuity",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'absol', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
             {'species': 'ursaring', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
@@ -6239,6 +6377,7 @@ const LOCATIONS = {
         name: "Galactic HQ",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'cacnea', 'chance': 20, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
             {'species': 'gulpin', 'chance': 20, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
@@ -6254,6 +6393,7 @@ const LOCATIONS = {
         name: "Mt. Coronet 2F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'electrode', 'chance': 20, 'minLevel': 90, 'maxLevel': 90, 'method': 'grass', 'time': 'morning'},
             {'species': 'dugtrio', 'chance': 20, 'minLevel': 90, 'maxLevel': 90, 'method': 'grass', 'time': 'morning'},
@@ -6300,6 +6440,7 @@ const LOCATIONS = {
         name: "Mt. Coronet 3F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'wobbuffet', 'chance': 20, 'minLevel': 90, 'maxLevel': 90, 'method': 'grass', 'time': 'morning'},
             {'species': 'electrode', 'chance': 20, 'minLevel': 90, 'maxLevel': 90, 'method': 'grass', 'time': 'morning'},
@@ -6346,6 +6487,7 @@ const LOCATIONS = {
         name: "Coronet Highlands",
         coords: [],
         sublocations: ["coronethighlandssouthexterior", "coronethighlands1froom12", "coronethighlands1froom3", "coronethighlandsnorthexterior", "coronethighlands2f", "coronethighlands3f"],
+        desc: "",
         encounters: [],
         metLocationId: 115,
         search: false,
@@ -6355,6 +6497,7 @@ const LOCATIONS = {
         name: "Coronet Highlands (South Exterior)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'absol', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
             {'species': 'gengar', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
@@ -6408,6 +6551,7 @@ const LOCATIONS = {
         name: "Coronet Highlands 1F (Room 1/2)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'dugtrio', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
             {'species': 'electrode', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
@@ -6481,6 +6625,7 @@ const LOCATIONS = {
         name: "Coronet Highlands 1F (Room 3)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'wobbuffet', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
             {'species': 'crobat', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
@@ -6527,6 +6672,7 @@ const LOCATIONS = {
         name: "Coronet Highlands (North Exterior)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'absol', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
             {'species': 'glalie', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
@@ -6580,6 +6726,7 @@ const LOCATIONS = {
         name: "Coronet Highlands 2F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'wobbuffet', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
             {'species': 'gengar', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
@@ -6626,6 +6773,7 @@ const LOCATIONS = {
         name: "Coronet Highlands 3F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'wobbuffet', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
             {'species': 'gengar', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
@@ -6672,6 +6820,7 @@ const LOCATIONS = {
         name: "Celestica Ruins",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'bagon', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
             {'species': 'larvitar', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
@@ -6725,6 +6874,7 @@ const LOCATIONS = {
         name: "Distortion World (Zone 1)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'none', 'chance': 20, 'minLevel': 0, 'maxLevel': 0, 'method': 'grass', 'time': 'morning'},
             {'species': 'none', 'chance': 20, 'minLevel': 0, 'maxLevel': 0, 'method': 'grass', 'time': 'morning'},
@@ -6791,6 +6941,7 @@ const LOCATIONS = {
         name: "Distortion World (Zone 2)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'none', 'chance': 20, 'minLevel': 0, 'maxLevel': 0, 'method': 'grass', 'time': 'morning'},
             {'species': 'none', 'chance': 20, 'minLevel': 0, 'maxLevel': 0, 'method': 'grass', 'time': 'morning'},
@@ -6837,6 +6988,7 @@ const LOCATIONS = {
         name: "Distortion World (Zone 3)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'none', 'chance': 20, 'minLevel': 0, 'maxLevel': 0, 'method': 'grass', 'time': 'morning'},
             {'species': 'none', 'chance': 20, 'minLevel': 0, 'maxLevel': 0, 'method': 'grass', 'time': 'morning'},
@@ -6883,6 +7035,7 @@ const LOCATIONS = {
         name: "Sendoff Spring",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'gengar', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
             {'species': 'altaria', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
@@ -6949,6 +7102,7 @@ const LOCATIONS = {
         name: "Turnback Cave",
         coords: [],
         sublocations: ["turnbackcaveinterior", "turnbackcaveportalroom"],
+        desc: "",
         encounters: [],
         metLocationId: 62,
         search: true,
@@ -6958,6 +7112,7 @@ const LOCATIONS = {
         name: "Turnback Cave (Interior)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'chingling', 'chance': 20, 'minLevel': 66, 'maxLevel': 66, 'method': 'grass', 'time': 'morning'},
             {'species': 'bronzor', 'chance': 20, 'minLevel': 66, 'maxLevel': 66, 'method': 'grass', 'time': 'morning'},
@@ -7004,6 +7159,7 @@ const LOCATIONS = {
         name: "Turnback Cave (Portal Room)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'sableye', 'chance': 20, 'minLevel': 66, 'maxLevel': 66, 'method': 'grass', 'time': 'morning'},
             {'species': 'sableye', 'chance': 20, 'minLevel': 66, 'maxLevel': 66, 'method': 'grass', 'time': 'morning'},
@@ -7050,6 +7206,7 @@ const LOCATIONS = {
         name: "Victory Road",
         coords: [],
         sublocations: ["victoryroad1f", "victoryroad2f", "victoryroadb1f", "victoryroadbackroom1", "victoryroadbackroom2", "victoryroadbackroom3"],
+        desc: "",
         encounters: [],
         metLocationId: 54,
         search: false,
@@ -7059,6 +7216,7 @@ const LOCATIONS = {
         name: "Victory Road 1F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'mightyena', 'chance': 20, 'minLevel': 97, 'maxLevel': 97, 'method': 'grass', 'time': 'morning'},
             {'species': 'granbull', 'chance': 20, 'minLevel': 97, 'maxLevel': 97, 'method': 'grass', 'time': 'morning'},
@@ -7105,6 +7263,7 @@ const LOCATIONS = {
         name: "Victory Road 2F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'nidoking', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
             {'species': 'nidoqueen', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
@@ -7158,6 +7317,7 @@ const LOCATIONS = {
         name: "Victory Road B1F",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'aggron', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
             {'species': 'persian', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
@@ -7224,6 +7384,7 @@ const LOCATIONS = {
         name: "Victory Road (Back Room 1)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'aggron', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
             {'species': 'ursaring', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
@@ -7270,6 +7431,7 @@ const LOCATIONS = {
         name: "Victory Road (Back Room 2)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'aggron', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
             {'species': 'persian', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
@@ -7336,6 +7498,7 @@ const LOCATIONS = {
         name: "Victory Road (Back Room 3)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'wobbuffet', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
             {'species': 'gengar', 'chance': 20, 'minLevel': 100, 'maxLevel': 100, 'method': 'grass', 'time': 'morning'},
@@ -7382,6 +7545,7 @@ const LOCATIONS = {
         name: "Route 224",
         coords: [[29, 11], [28, 12], [29, 12], [28, 13]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'meganium', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
             {'species': 'venusaur', 'chance': 20, 'minLevel': 65, 'maxLevel': 65, 'method': 'grass', 'time': 'morning'},
@@ -7448,6 +7612,7 @@ const LOCATIONS = {
         name: "Lake Valor (Restored)",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'stantler', 'chance': 20, 'minLevel': 75, 'maxLevel': 75, 'method': 'grass', 'time': 'morning'},
             {'species': 'staraptor', 'chance': 20, 'minLevel': 80, 'maxLevel': 80, 'method': 'grass', 'time': 'morning'},
@@ -7514,6 +7679,7 @@ const LOCATIONS = {
         name: "Pokémon League",
         coords: [[27, 13], [27, 14]],
         sublocations: [],
+        desc: "",
         encounters: [
             {'species': 'torterra', 'chance': 20, 'minLevel': 75, 'maxLevel': 75, 'method': 'grass', 'time': 'morning'},
             {'species': 'eevee', 'chance': 20, 'minLevel': 75, 'maxLevel': 75, 'method': 'grass', 'time': 'morning'},
@@ -7580,6 +7746,7 @@ const LOCATIONS = {
         name: "Link Trade",
         coords: [],
         sublocations: [],
+        desc: "",
         encounters: [],
         metLocationId: -1,
         search: false,

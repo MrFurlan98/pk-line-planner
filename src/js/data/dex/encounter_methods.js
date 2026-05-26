@@ -55,6 +55,10 @@ const ENCOUNTER_METHODS = {
         id: "casino",
         name: "Casino"
     },
+    vending: {
+        id: "vending",
+        name: "Vending Machine"
+    },
     special: {
         id: "special",
         name: "Special"
