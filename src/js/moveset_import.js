@@ -18,14 +18,14 @@ function placeBsBtn() {
 			luaVersion = x.split(" ").at(-1).split("-")[0];
 		}).then(function () {
 			if (parseFloat(luaVersion) < MINIMUM_LUA_VERSION) {
-				alert("This version of the Lua script is no longer supported. Please update to the latest version.");
+				alert(`This version of the Lua script is no longer supported. Please update to the latest version.\n\n- Your version: ${luaVersion}\n- Latest version: ${CURRENT_LUA_VERSION}`);
 				return;
 			}
 			var status;
 			if (parseFloat(luaVersion) < parseFloat(CURRENT_LUA_VERSION)) {
 				if (!VERSION_ALERTED) {
 					VERSION_ALERTED = true;
-					alert("You are using an outdated version of the Lua script. Please update to the latest version.\n\n(This is not an error, sync will start when this message is closed)");
+					alert(`You are using an outdated version of the Lua script. Please update to the latest version.\n\n- Your version: ${luaVersion}\n- Latest version: ${CURRENT_LUA_VERSION}\n\n(This is not an error, sync will start when this message is closed)`);
 				}
 				fetch("http://localhost:31125/update").then(x => {status = x.status; return x.text()}).then(function (x) {
 					if (status !== 200) {
@@ -39,6 +39,12 @@ function placeBsBtn() {
 					console.log(x);
 				});
 				return;
+			}
+			if (luaVersion !== CURRENT_LUA_VERSION) {
+				if (!VERSION_ALERTED) {
+					VERSION_ALERTED = true;
+					alert(`You are using an outdated version of the Lua script. Please update to the latest version.\n\n- Your version: ${luaVersion}\n- Latest version: ${CURRENT_LUA_VERSION}\n\n(This is not an error, sync will start when this message is closed)`);
+				}
 			}
 			fetch("http://localhost:31125/update").then(x => {status = x.status; return x.text()}).then(function (x) {
 				if (status !== 200) {

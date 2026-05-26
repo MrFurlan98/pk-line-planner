@@ -16,8 +16,8 @@ const CHANGELOG = `
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
-const CURRENT_LUA_VERSION = 1.5;
-const MINIMUM_LUA_VERSION = 1.4;
+const CURRENT_LUA_VERSION = "1.5.1";
+const MINIMUM_LUA_VERSION = "1.4";
 
 // update version
 function makeCachebuster(template, output) {
