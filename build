@@ -7,12 +7,11 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.26";
+const VERSION = "1.7.27";
 const CHANGELOG = `
-- The latest Lua Script version is now "1.5". Scripts older than "1.4" are no longer supported.
-  - Syncing the box using the Lua script now imports the last four PC boxes as dead Pokémon.
-- Added Veilstone Store vending machine encounters to the dex.
-- Fixed the dex showing the wrong description for No Guard.
+- The latest Lua Script version is now "1.5.1". Scripts older than "1.4" are no longer supported.
+  - (1.5.1) Fixed a sync issue if there are no dead Pokémon.
+  - (1.5) Syncing the box using the Lua script now imports the last four PC boxes as dead Pokémon.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
