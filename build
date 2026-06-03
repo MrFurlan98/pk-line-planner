@@ -7,9 +7,10 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.28";
+const VERSION = "1.7.29";
 const CHANGELOG = `
-- Fixed Fling not using the correct base power for a Big Nugget.
+- Fixed the Farm Egg and Restaurant Egg showing the wrong odds.
+- Fixed a description error for Pursuit and similar moves.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
