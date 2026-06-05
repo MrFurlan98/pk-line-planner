@@ -84,10 +84,10 @@ function loadDexEntry(entryID) {
                             evoMethod += `Evolves from <span data-target=\"species/${species.prevo}\">${SPECIES[species.prevo].name}</span> at level ${evo.extra} if its Attack stat is higher than its Defense stat`
                             break;
                         case "Atk = Def":
-                            evoMethod += `Evolves from <span data-target=\"species/${species.prevo}\">${SPECIES[species.prevo].name}</span> at level ${evo.extra} if its Attack stat is lower than its Defense stat`
+                            evoMethod += `Evolves from <span data-target=\"species/${species.prevo}\">${SPECIES[species.prevo].name}</span> at level ${evo.extra} if its Attack stat is equal to its Defense stat`
                             break;
                         case "Atk < Def":
-                            evoMethod += `Evolves from <span data-target=\"species/${species.prevo}\">${SPECIES[species.prevo].name}</span> at level ${evo.extra} if its Attack stat is equal to its Defense stat`
+                            evoMethod += `Evolves from <span data-target=\"species/${species.prevo}\">${SPECIES[species.prevo].name}</span> at level ${evo.extra} if its Attack stat is lower than its Defense stat`
                             break;
                         case "Random":
                             evoMethod += `Can randomly evolve from <span data-target=\"species/${species.prevo}\">${SPECIES[species.prevo].name}</span> at level ${evo.extra}`
