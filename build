@@ -7,9 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.30";
+const VERSION = "1.7.31";
 const CHANGELOG = `
-- Fixed the dex showing incorrect evolution methods for Tyrogue.
+- This is a test update, to make sure notifications work on the new backend.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
