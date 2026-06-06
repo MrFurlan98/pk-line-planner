@@ -7,9 +7,10 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.31";
+const VERSION = "1.7.32";
 const CHANGELOG = `
-- This is a test update, to make sure notifications work on the new backend.
+- The latest Lua Script version is now "1.5.2". Scripts older than "1.4" are not supported.
+  - This update fixes the script crash after syncing.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
