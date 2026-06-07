@@ -7,10 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.32";
+const VERSION = "1.7.33";
 const CHANGELOG = `
-- The latest Lua Script version is now "1.5.2". Scripts older than "1.4" are not supported.
-  - This update fixes the script crash after syncing.
+- Added missing TMs for Faint Attack and Drill Run.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
