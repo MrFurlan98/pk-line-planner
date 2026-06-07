@@ -2532,7 +2532,7 @@ const ITEMS = {
         id: "tm12",
         name: "TM12",
         calcName: "TM12",
-        desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/\">-</span>.",
+        desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/faintattack\">Faint Attack</span>.",
         search: false
     },
     tm13: {
@@ -2828,7 +2828,7 @@ const ITEMS = {
         id: "tm49",
         name: "TM49",
         calcName: "TM49",
-        desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/\">-</span>.",
+        desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/drillrun\">Drill Run</span>.",
         search: false
     },
     tm50: {

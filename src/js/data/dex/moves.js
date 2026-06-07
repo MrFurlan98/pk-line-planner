@@ -4064,7 +4064,7 @@ const MOVES = {
         effect: "Never misses, except if the target is in a semi-invulnerable turn.",
         hits: 1,
         flags: ["Contact", "Protect", "MirrorMove", "KingsRock"],
-        machine: 0,
+        machine: 12,
         tutor: "",
         price: [],
         available: true
@@ -6352,7 +6352,7 @@ const MOVES = {
         effect: "Has an increased critical hit ratio.",
         hits: 1,
         flags: ["Contact", "Protect"],
-        machine: 0,
+        machine: 49,
         tutor: "",
         price: [],
         available: true
