@@ -7,9 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.33";
+const VERSION = "1.7.34";
 const CHANGELOG = `
-- Added missing TMs for Faint Attack and Drill Run.
+- Added the Contest Hall met location.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
