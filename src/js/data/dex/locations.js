@@ -2005,6 +2005,16 @@ const LOCATIONS = {
         metLocationId: 56,
         search: true,
     },
+    contesthall: {
+        id: "contesthall",
+        name: "Contest Hall",
+        coords: [],
+        sublocations: [],
+        desc: "",
+        encounters: [],
+        metLocationId: 97,
+        search: false,
+    },
     route209: {
         id: "route209",
         name: "Route 209",
