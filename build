@@ -7,11 +7,12 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.35";
+const VERSION = "1.7.36";
 const CHANGELOG = `
 - Added the Poffin House met location.
 - Added the missing Fancy Egg table to the Pokémon Mansion.
 - Fixed an error caused by attempting to import Egg Pokémon.
+- Fixed Solar Beam showing as Solar-Beam in the move results section.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
