@@ -6117,7 +6117,12 @@ const LOCATIONS = {
             {'species': 'caterpie', 'chance': 23, 'minLevel': 10, 'maxLevel': 10, 'method': 'honey'},
             {'species': 'lickilicky', 'chance': 6, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
             {'species': 'chatot', 'chance': 50, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
-            {'species': 'murkrow', 'chance': 44, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'}
+            {'species': 'murkrow', 'chance': 44, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
+            {'species': 'larvitar', 'chance': 20, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'smoochum', 'chance': 20, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'tyrogue', 'chance': 20, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'cleffa', 'chance': 20, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
+            {'species': 'bagon', 'chance': 20, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'}
         ],
         metLocationId: 106,
         search: true,
