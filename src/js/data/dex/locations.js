@@ -2015,6 +2015,16 @@ const LOCATIONS = {
         metLocationId: 97,
         search: false,
     },
+    poffinhouse: {
+        id: "poffinhouse",
+        name: "Poffin House",
+        coords: [],
+        sublocations: [],
+        desc: "",
+        encounters: [],
+        metLocationId: 98,
+        search: false,
+    },
     route209: {
         id: "route209",
         name: "Route 209",
