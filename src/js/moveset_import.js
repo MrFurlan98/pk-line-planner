@@ -171,7 +171,7 @@ function addSavePokemon(array, dead) {
 	pokemon.data = {
 		id: `${pid.toString(16).padStart(8, "0")}-${Object.values(pokemon.ivs).map(x => x.toString(16).padStart(2, "0")).join("")}-${metAtLevel.toString(16).padStart(2, "0")}`,
 		abilityIndex: pid & 0x1,
-		location: location.name,
+		location: location ? location.name : undefined,
 		dead: dead == true
 	};
 
