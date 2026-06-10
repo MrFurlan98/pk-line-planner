@@ -425,6 +425,7 @@ function getMoves(currentPoke, rows, offset) {
 			if (rows[x][0] == "-") {
 				movesFound = true;
 				var move = rows[x].substr(2, rows[x].length - 2).replace("[", "").replace("]", "").replace("  ", "").trim();
+				if (toID(move) in MOVES) move = MOVES[toID(move)].calcName;
 				moves.push(move);
 			} else {
 				if (movesFound == true) {
