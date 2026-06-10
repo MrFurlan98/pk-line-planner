@@ -728,13 +728,8 @@ function calculateFinalModsDPP(
   }
 
   if (move.named('Pursuit', 'Rage') && field.defenderSide.isSwitching === 'out') {
-    // technician negates switching boost, thanks DaWoblefet
-    if (attacker.hasAbility('Technician')) {
-      baseDamage = Math.floor(baseDamage * 1);
-    } else {
-      baseDamage = Math.floor(baseDamage * 2);
-      desc.isSwitching = 'out';
-    }
+    baseDamage = Math.floor(baseDamage * 2);
+    desc.isSwitching = 'out';
   }
   return baseDamage;
 }
