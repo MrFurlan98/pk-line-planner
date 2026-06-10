@@ -7,8 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.37";
+const VERSION = "1.7.38";
 const CHANGELOG = `
+- Fixed Pursuit and Rage not getting boosted if the user has the ability Technician.
 - Fixed some moves not importing with updated names.
 - Updated some move descriptions.
 
