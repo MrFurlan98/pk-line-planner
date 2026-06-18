@@ -387,6 +387,7 @@ export function calculateBasePowerDPP(
     desc.moveBP = basePower;
     break;
   case 'Payback':
+  case 'Revenge':
     if (turnOrder !== 'first') {
       basePower *= 2;
       desc.moveBP = basePower;
