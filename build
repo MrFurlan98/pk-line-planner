@@ -7,11 +7,10 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.38";
+const VERSION = "1.7.39";
 const CHANGELOG = `
-- Fixed Pursuit and Rage not getting boosted if the user has the ability Technician.
-- Fixed some moves not importing with updated names.
-- Updated some move descriptions.
+- Fixed Revenge not doubling in damage if the user is slower than the target.
+- Fixed Flower Gift's description.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
