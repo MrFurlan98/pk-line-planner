@@ -1215,7 +1215,7 @@ const ABILITIES = {
         name: "Flower Gift",
         calcName: "Flower Gift",
         desc: {
-            battle: "Increases the Attack and Special Attack stats of the user and its allies by 50% in sun.",
+            battle: "Increases the Attack and Special Defense stats of the user and its allies by 50% in sun.",
             overworld: ""
         }
     },
