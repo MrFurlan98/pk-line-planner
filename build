@@ -7,11 +7,11 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.40";
+const VERSION = "1.7.41";
 const CHANGELOG = `
 - Added detailed effect information for Secret Power, Nature Power, and Present.
 
-If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, so the calculator can navigate to the correct rival sets. Good luck!`
+If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, in order for the calculator to navigate to the correct rival sets. Good luck, have fun!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
 const CURRENT_LUA_VERSION = "1.5.2";
 const MINIMUM_LUA_VERSION = "1.4";
