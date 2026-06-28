@@ -7,9 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.41";
+const VERSION = "1.7.42";
 const CHANGELOG = `
-- Added detailed effect information for Secret Power, Nature Power, and Present.
+- The calculator now accounts for the ability Simple when calculating speed.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, in order for the calculator to navigate to the correct rival sets. Good luck, have fun!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
