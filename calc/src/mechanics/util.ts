@@ -92,7 +92,9 @@ export function computeFinalStats(
 export function getFinalSpeed(gen: Generation, pokemon: Pokemon, field: Field, side: Side) {
   const weather = field.weather || '';
   const terrain = field.terrain;
-  let speed = getModifiedStat(pokemon.rawStats.spe, pokemon.boosts.spe, gen);
+  let boosts = pokemon.boosts.spe;
+  if (pokemon.hasAbility('Simple')) boosts = Math.abs(boosts) < 4 ? boosts * 2 : boosts > 0 ? Math.min(boosts * 2, 6) : Math.max(boosts * 2, -6);
+  let speed = getModifiedStat(pokemon.rawStats.spe, boosts, gen);
   const speedMods = [];
 
   if (side.isTailwind) speedMods.push(8192);
