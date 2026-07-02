@@ -587,7 +587,7 @@ const LOCATIONS = {
             {'species': 'taillow', 'chance': 14, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
             {'species': 'scyther', 'chance': 15, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
             {'species': 'pinsir', 'chance': 15, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
-            {'species': 'zangoose', 'chance': 16, 'minLevel': 5, 'maxLevel': 55, 'method': 'honeylocal'},
+            {'species': 'zangoose', 'chance': 16, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
             {'species': 'pineco', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'}
         ],
         metLocationId: 33,
@@ -3589,7 +3589,7 @@ const LOCATIONS = {
             {'species': 'taillow', 'chance': 14, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
             {'species': 'scyther', 'chance': 15, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
             {'species': 'pinsir', 'chance': 15, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
-            {'species': 'zangoose', 'chance': 16, 'minLevel': 5, 'maxLevel': 55, 'method': 'honeylocal'},
+            {'species': 'zangoose', 'chance': 16, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
             {'species': 'pineco', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'}
         ],
         metLocationId: -1,
@@ -5927,7 +5927,7 @@ const LOCATIONS = {
             {'species': 'taillow', 'chance': 14, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
             {'species': 'scyther', 'chance': 15, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
             {'species': 'pinsir', 'chance': 15, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
-            {'species': 'zangoose', 'chance': 16, 'minLevel': 5, 'maxLevel': 55, 'method': 'honeylocal'},
+            {'species': 'zangoose', 'chance': 16, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
             {'species': 'pineco', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'}
         ],
         metLocationId: 37,
@@ -6212,7 +6212,7 @@ const LOCATIONS = {
             {'species': 'taillow', 'chance': 14, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
             {'species': 'scyther', 'chance': 15, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
             {'species': 'pinsir', 'chance': 15, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
-            {'species': 'zangoose', 'chance': 16, 'minLevel': 5, 'maxLevel': 55, 'method': 'honeylocal'},
+            {'species': 'zangoose', 'chance': 16, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'},
             {'species': 'pineco', 'chance': 20, 'minLevel': 55, 'maxLevel': 55, 'method': 'honeylocal'}
         ],
         metLocationId: 27,
