@@ -7,7 +7,7 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.43";
+const VERSION = "1.7.44";
 const CHANGELOG = `
 - Fixed Zangoose's encounter level in the late Honey Tree table.
 
