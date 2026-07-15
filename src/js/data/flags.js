@@ -131,6 +131,10 @@ const FLAGS_PK = {
                 enemy2: "Galactic Cressida #2"
             },
             {
+                enemy1: "Galactic Ariel #2",
+                enemy2: "Galactic Umbriel #2"
+            },
+            {
                 enemy1: "Galactic Callisto #3",
                 enemy2: "Galactic Hippocamp #2"
             }
