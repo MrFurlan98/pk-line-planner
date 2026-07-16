@@ -10,6 +10,12 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+    - name: Check working directory
+      run: ls
+    - name: Check src directory
+      run: ls src
+    - name: Check src/img directory
+      run: ls src/img
     - name: Checkout images
       uses: actions/checkout@v4
       with:
