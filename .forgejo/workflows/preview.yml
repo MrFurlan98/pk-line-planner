@@ -17,6 +17,7 @@ jobs:
         path: 'img/'
         sparse-checkout: .
         ref: 'main'
+        token: '${{ secrets.IMG_REPO_TOKEN }}'
     - name: Build
       run: |
         npm install
