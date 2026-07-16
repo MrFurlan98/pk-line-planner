@@ -13,3 +13,4 @@ npm-debug.log
 *.bat
 *.sh
 src/img/*/
+src/img/.gitignore
