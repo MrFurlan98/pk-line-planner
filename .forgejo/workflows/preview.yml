@@ -18,6 +18,10 @@ jobs:
         sparse-checkout: .
         ref: 'main'
         token: '${{ secrets.IMG_REPO_TOKEN }}'
+    - name: Check working directory
+      run: ls
+    - name: Check src directory
+      run: ls src
     - name: Check src/img directory
       run: ls src/img
     - name: Build
