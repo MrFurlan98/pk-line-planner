@@ -21,7 +21,7 @@ jobs:
       with:
         repository: 'anas/PKCalc-img'
         path: 'src/img/'
-        clean: false
+        clean: false # I'm learning that this doesn't actually do anything :/
         ref: 'main'
         token: '${{ secrets.IMG_REPO_TOKEN }}'
     - name: Check working directory
