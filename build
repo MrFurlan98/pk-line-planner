@@ -7,7 +7,7 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.45";
+const VERSION = "1.7.46";
 const CHANGELOG = `
 - Changed Galactic Ariel and Umbriel in Coronet Highlands to a double battle.
 - Fixed an issue where Swarm and similar abilities did not apply on a 0 HP Pokémon. (this is relevant for switch AI)
