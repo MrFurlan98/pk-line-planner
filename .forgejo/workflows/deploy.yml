@@ -1,0 +1,40 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Build
+      run: |
+        npm install
+        node build
+    - id: local_status
+      name: Get local status.json
+      run: |
+        local="$(cat dist/status.json)"
+        echo "status=$local" > $FORGEJO_OUTPUT
+    - id: remote_status
+      name: Get remote status.json
+      run: |
+        status_code="$(curl -s -o response -w '%{response_code}' https://pkcalc.anastarawneh.com/status.json)"
+        test "$status_code" = "200"
+        remote="$(cat ./response)"
+        echo "status=$remote" > $FORGEJO_OUTPUT
+    - name: Compare versions
+      run: |
+        local=${{ fromJSON(steps.local_status.outputs.status).version }}
+        remote=${{ fromJSON(steps.remote_status.outputs.status).version }}
+        echo "Local version: $local"
+        echo "Remote version: $remote"
+        test "$local" != "$remote"
+    - name: Deploy build
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CF_PAGES_TOKEN_PKCALC }}
+      run: npx -y wrangler pages deploy dist
