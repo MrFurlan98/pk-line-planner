@@ -452,6 +452,15 @@ th {
     width: 22px;
     margin-right: 2px;
 }
+button {
+    background-color: var(--button-color);
+    border: 1px solid #aaaaaa;
+    border-radius: 4px;
+    padding: 2px 5px;
+}
+button:hover:not(:disabled) {
+    background-color: var(--button-hover);
+}
 .set-selector {
     width: 100%;
 }
