@@ -1,47 +1,99 @@
-# Pokémon Platinum Kaizo Damage Calculator
+# Pokémon Platinum Kaizo — Line Planner
 
-This is the official damage calculator for Pokémon Platinum Kaizo, it includes the sets of all trainers in the game, in addition to a Dex with information about the Pokémon, moves, locations, etc., and automatic encounter tracking.
+A fork of the [Platinum Kaizo Damage Calculator][pkcalc] that adds a **visual
+line planner** for Nuzlocke runs.
 
-The calculator can be found at https://pkcalc.anastarawneh.com.
+> This is a personal fork, not the official calculator. The official PK calc
+> lives at <https://pkcalc.anastarawneh.com> and is maintained by anastarawneh —
+> please report issues with the calculator itself there, not here.
 
-For any questions or issues with the calc, or if you want to play the game, join the SinisterHQ Discord server: https://discord.gg/GgtjZVS
+## What a "line" is
 
-## Developer?
+In a Nuzlocke a faint is permanent, so a fight isn't improvised — it's planned.
+A **line** is the plan for a single trainer battle: which Pokémon leads, what it
+does each turn, and where the plan branches when things don't go to script.
 
-I won't stop you from forking this repository for your own projects, but keep in mind that I am working on a template version of this calculator that is less hard-coded for PK.
+Platinum Kaizo makes this sharper than a normal run. Every trainer fields a full
+competitive team with items and near-perfect IVs, so most fights need an answer
+worked out in advance rather than found on the fly.
 
-## Smogon Calculator Installation Instructions
+## What the planner does
 
-The [UI layer][2] is currently is written in vanilla JavaScript and HTML. To view the UI locally you
-first must install dependencies by running `npm install` at the top level and without `calc/`. This
-should create a `node_modules/` folder under both the root directory and under `calc/`:
+- **Turns as cards on a canvas**, dragged into place and joined by labelled
+  arrows. Drop an arrow on empty space to start the next turn there.
+- **Both movesets side by side** on every turn, so a move is chosen by comparing
+  what you can do against what's coming back at you.
+- **Branches are directional** — *You KO* / *They KO you*, *You miss* /
+  *They miss*, crit, crit KO, sacrifice, they switch, they set up — and several
+  branches can converge on the same turn.
+- **Fight state is derived, not typed in.** Stat boosts, entry hazards, screens,
+  weather and status are worked out by walking back up the plan, so changing one
+  turn updates everything after it.
+  - Status is tracked per Pokémon: switching clears boosts and confusion, but a
+    non-volatile status follows the Pokémon and comes back with it.
+  - Only one non-volatile status at a time — which is what makes deliberately
+    statusing your own Pokémon (Rest, Magic Guard + poison) a real tactic for
+    locking the AI out of something worse.
+- **Trainer AI flags** are shown in plain language, because they decide how much
+  branching a fight actually needs. A `Risky` trainer needs a miss branch; a
+  `CheckHP` one will switch rather than let you finish it.
+- **Team and box** with drag-and-drop, held-item editing, and folding for the
+  parts of a long plan you aren't looking at.
+
+The roadmap is in [PLANNER.md](PLANNER.md).
+
+## Running it locally
 
 ```sh
-$ npm install
-$ cd calc && npm install
+npm install
 ```
 
-Next, run `node build` from the root directory of your clone of this repository. This should
-run `npm run compile` in the `calc/` subdirectory to compile the `@smogon/calc` package from
-TypeScript to JavaScript that can be run in the browser, and then compile the 'templated' HTML
-and copy everything into the top-level `dist/` folder. To then view the UI, open `dist/index.html` -
-simply double-clicking on the file from your operating system's file manager UI should open it in
-your default browser.
+One `npm install` at the top level is enough — the root `postinstall` installs
+`calc/` too.
 
 ```sh
-$ node build
-$ open dist/index.html # open works on macOS, simply double-clicking the file on Windows/macOS works
+node build
+node server.js
 ```
 
-**If you make changes to anything in `calc/`, you must run `node build` from the top level to
-compile the files and copy them into `dist/` again. If you make changes to the HTML or JavaScript in
-`src/`you must run `node build view` before the changes will become visible in your browser**
-(`node build` also works, but it is slower, as it will compile `calc/` as well, which is
-unnecessary if you did not make any changes to that directory).
+Then open <http://localhost:3000>.
+
+**Serve `dist/`, don't open `src/index.template.html` directly.** The template is
+a build input: it has no `calc/` folder beside it, so `toID` and the whole
+calculator engine are missing, and the page fails quietly rather than loudly.
+Opening `dist/index.html` straight off disk doesn't work either, since the app
+requests root-absolute paths like `/calc/util.js`.
+
+After editing anything under `src/`, rebuild before refreshing:
+
+```sh
+node build view
+```
+
+`node build view` skips recompiling the TypeScript in `calc/`, which is only
+needed if you changed that directory. The build stamps cache-busting hashes onto
+the JS and CSS but not onto `index.html`, so hard-refresh (Ctrl+Shift+R) after a
+rebuild.
+
+### Sprites
+
+The production image set lives in a separate private repository that is checked
+out into `src/img/` at deploy time, so a fork has none and every `/img/dex/...`
+request 404s. This fork resolves Pokémon, type and item sprites from
+[Pokémon Showdown's CDN][psprites] instead, via the adapter in
+`src/js/data/games.js`.
 
 ## Credits
 
-This project is based on the Smogon damage calculator, originally created by Honko and primarily maintained by Austin and jetou.
+This fork stands on two projects, and all the interesting parts belong to them.
+
+**The Platinum Kaizo calculator** — by **anastarawneh**, who built the PK-specific
+work this planner depends on entirely: every trainer's sets, the trainer AI
+flags, encounter and location data, the Dex, encounter tracking, and the Lua
+game-sync script. Source: <https://git.anastarawneh.com/anas/PKCalc>.
+
+**The Smogon damage calculator** — originally created by **Honko** and primarily
+maintained by **Austin** and **jetou**. Source: <https://github.com/smogon/damage-calc>.
 
 - Gens 1-6 were originally implemented by Honko.
 - The Omega Ruby / Alpha Sapphire update was done by gamut-was-taken and Austin.
@@ -50,20 +102,20 @@ This project is based on the Smogon damage calculator, originally created by Hon
 - The Gen 9 update was done by Austin and Kris.
 - Some CSS styling was contributed by Zarel to match the Pokémon Showdown! theme.
 
-Many other contributors have added features or contributed bug fixes, please see the
-[full list of contributors](https://github.com/smogon/damage-calc/graphs/contributors).
+Many other contributors have added features or contributed bug fixes, please see
+the [full list of contributors](https://github.com/smogon/damage-calc/graphs/contributors).
+
+The git history of this repository is preserved from upstream, so every one of
+those contributions is still attributed commit by commit.
+
+Pokémon and all related names are trademarks of Nintendo, Game Freak and
+Creatures Inc. This is an unofficial fan project and is not affiliated with them,
+with Smogon, or with the Platinum Kaizo development team.
 
 ## License
 
-This package is distributed under the terms of the [MIT License][3].
+Distributed under the terms of the [MIT License](LICENSE), unchanged from
+upstream.
 
-  [0]: https://github.com/smogon/damage-calc
-  [1]: https://github.com/smogon/damage-calc/tree/master/calc
-  [2]: https://github.com/smogon/damage-calc/tree/master/src
-  [3]: https://github.com/smogon/damage-calc/blob/master/LICENSE
-  [4]: https://github.com/smogon/damage-calc/blob/master/TASKS.md
-  [5]: https://unpkg.com/
-  [6]: https://webpack.js.org/
-  [7]: https://rollupjs.org/
-  [8]: https://parceljs.org/
-  [9]: https://github.com/pkmn/ps/blob/master/data
+  [pkcalc]: https://git.anastarawneh.com/anas/PKCalc
+  [psprites]: https://play.pokemonshowdown.com/sprites/
