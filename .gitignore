@@ -14,3 +14,8 @@ npm-debug.log
 *.sh
 src/img/*/
 src/img/.gitignore
+
+# Local dev helpers for trying out the planner - not part of the app.
+# (*.bat above already covers start-planner.bat)
+src/testdata.json
+src/seed.html

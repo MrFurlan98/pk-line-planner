@@ -1,0 +1,1022 @@
+/*
+ * The shared .btn is built for segmented radio groups: a fixed 5em width and a
+ * negative horizontal margin so the segments butt up against each other. Neither
+ * suits a standalone button, so these sit alongside .btn and undo both while
+ * keeping the theme's colours.
+ */
+.planner-btn {
+    width: auto;
+    margin: 0;
+    padding: 3px 10px;
+    white-space: nowrap;
+    border-radius: 6px;
+}
+
+.planner-btn.small {
+    padding: 1px 8px;
+    font-size: 10px;
+    border-radius: 5px;
+}
+
+/* Caret shows whether the section it controls is open. */
+#planner-toggle-parties::after {
+    content: " \25BE";
+    font-size: 12px;
+    line-height: 1;
+}
+
+#planner-toggle-parties.folded::after {
+    content: " \25B8";
+}
+
+.planner-panel-wrapper {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* line list */
+
+.planner-sidebar {
+    width: 200px;
+    flex: 0 0 auto;
+}
+
+.planner-sidebar .planner-btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 6px;
+}
+
+.planner-line-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 520px;
+    overflow-y: auto;
+}
+
+.planner-line-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    padding: 4px 6px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 11px;
+}
+
+.planner-line-item:hover {
+    background: rgba(128, 128, 128, 0.18);
+}
+
+.planner-line-item.selected {
+    background: rgba(90, 140, 220, 0.28);
+    font-weight: bold;
+}
+
+.planner-line-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.planner-delete-line {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 2px;
+    color: inherit;
+    opacity: 0.5;
+}
+
+.planner-delete-line:hover {
+    opacity: 1;
+    color: #c0392b;
+}
+
+.planner-empty {
+    padding: 6px;
+    font-size: 11px;
+    opacity: 0.6;
+}
+
+/* foe party */
+
+.planner-main {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.planner-trainer-name {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.planner-foe-party {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 6px 0;
+}
+
+/*
+ * One card definition for both parties, so the two rows stay the same size.
+ * The held-item line is always present - reserved even when empty - because a
+ * Pokémon holding nothing would otherwise make its card shorter than the rest.
+ */
+.planner-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 92px;
+    padding: 4px;
+    border: 1px solid rgba(128, 128, 128, 0.35);
+    border-radius: 4px;
+    font-size: 10px;
+    text-align: center;
+    cursor: grab;
+    user-select: none;
+    box-sizing: content-box;
+}
+
+.planner-foe:hover {
+    border-color: rgba(200, 60, 50, 0.8);
+    background: rgba(200, 60, 50, 0.1);
+}
+
+.planner-card-sprite {
+    width: 64px;
+    height: 64px;
+    image-rendering: pixelated;
+}
+
+.planner-card-name {
+    font-weight: bold;
+}
+
+.planner-card-meta {
+    opacity: 0.7;
+}
+
+.planner-card-item {
+    display: block;
+    min-height: 14px;
+    line-height: 14px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.planner-card-item img {
+    width: 12px;
+    vertical-align: middle;
+}
+
+/* Only your own cards can have their held item changed. */
+.planner-card-item.editable {
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+.planner-card-item.editable:hover {
+    background: rgba(90, 140, 220, 0.25);
+    outline: 1px solid rgba(90, 140, 220, 0.6);
+}
+
+.planner-item-add {
+    opacity: 0;
+    font-style: italic;
+}
+
+.planner-card-item.editable:hover .planner-item-add {
+    opacity: 0.75;
+}
+
+.planner-item-popup {
+    width: 340px;
+}
+
+.planner-party-block {
+    margin-bottom: 6px;
+}
+
+.planner-party-label {
+    display: block;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.55;
+    margin-bottom: 3px;
+}
+
+.planner-party-hint {
+    text-transform: none;
+    letter-spacing: 0;
+    font-style: italic;
+}
+
+/*
+ * Team sized to exactly six cards so it lines up with the opposing party above
+ * it; the box then sits immediately alongside at a predictable position rather
+ * than being pushed to the far edge of the 1250px wrapper, where it fell
+ * outside narrower viewports.
+ */
+.planner-party-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    /* Keeps the right-anchored box off the panel edge. */
+    padding-right: 14px;
+}
+
+/*
+ * .hide lives in main.css, which loads before this file. These display rules
+ * match it on specificity, so without an explicit override the later one wins
+ * and .hide silently does nothing.
+ */
+.planner-party-row.hide,
+.planner-ai-flags.hide,
+.planner-box-block.hide,
+.planner-your-party.hide,
+.planner-box-party.hide {
+    display: none;
+}
+
+/* Both party strips stack in one column so the box can sit beside the pair. */
+.planner-parties {
+    flex: 0 0 auto;
+}
+
+.planner-team-block {
+    flex: 0 0 auto;
+}
+
+/*
+ * Pushed to the far edge and aligned with the top of the strips rather than
+ * hanging off the bottom one.
+ */
+.planner-box-block {
+    flex: 0 0 auto;
+    margin-left: auto;
+    align-self: flex-start;
+}
+
+/* Six cards plus the five gaps between them. */
+.planner-foe-party,
+.planner-your-party {
+    width: calc(6 * 102px + 5 * 6px);
+}
+
+.planner-your-party {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 34px;
+    align-content: flex-start;
+}
+
+/* Team cards inherit .planner-card; only the hover accent differs. */
+.planner-mine:not(.compact):hover {
+    border-color: rgba(90, 140, 220, 0.8);
+    background: rgba(90, 140, 220, 0.12);
+}
+
+.planner-box-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.planner-box-title {
+    flex: 1 1 auto;
+}
+
+.planner-box-nav {
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    background: transparent;
+    color: inherit;
+    border-radius: 3px;
+    font-size: 8px;
+    line-height: 1;
+    padding: 2px 5px;
+    cursor: pointer;
+}
+
+.planner-box-nav:hover:not(:disabled) {
+    background: rgba(128, 128, 128, 0.25);
+}
+
+.planner-box-nav:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+/* Fixed 6x5 grid of slots, filled from the top left. */
+.planner-box-party {
+    display: grid;
+    grid-template-columns: repeat(6, 34px);
+    grid-auto-rows: 34px;
+    gap: 3px;
+    padding: 4px;
+    justify-content: start;
+    align-content: start;
+    border: 1px dashed rgba(128, 128, 128, 0.35);
+    border-radius: 4px;
+}
+
+.planner-box-slot {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+.planner-box-slot.empty {
+    background: rgba(128, 128, 128, 0.08);
+    border: 1px solid rgba(128, 128, 128, 0.15);
+}
+
+.planner-mine.compact {
+    width: 34px;
+    padding: 0;
+    border: 1px solid transparent;
+    opacity: 0.9;
+}
+
+.planner-mine.compact:hover {
+    opacity: 1;
+    border-color: rgba(90, 140, 220, 0.8);
+    background: rgba(90, 140, 220, 0.15);
+}
+
+.planner-mine-icon {
+    display: block;
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+}
+
+.planner-mine.compact.dead {
+    opacity: 0.4;
+    filter: grayscale(1);
+}
+
+.planner-mine.dead {
+    opacity: 0.5;
+}
+
+.planner-mine.dead .planner-card-name {
+    text-decoration: line-through;
+}
+
+.planner-party-empty {
+    font-size: 10px;
+    opacity: 0.55;
+    font-style: italic;
+}
+
+/* While something is in hand, every turn reads as a drop target. */
+.planner-canvas.assigning .planner-node {
+    cursor: copy;
+}
+
+.planner-canvas.assigning .planner-node:hover {
+    outline: 2px solid #5a8cdc;
+    outline-offset: 1px;
+}
+
+/* The sprite that follows the cursor mid-drag. */
+.planner-drag-ghost {
+    position: fixed;
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+    pointer-events: none;
+    z-index: 20000;
+    opacity: 0.85;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.5));
+}
+
+.planner-ai-flags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 6px;
+}
+
+.planner-flag-label {
+    font-size: 10px;
+    opacity: 0.7;
+}
+
+.planner-flag {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 9px;
+    background: rgba(200, 140, 40, 0.28);
+    border: 1px solid rgba(200, 140, 40, 0.5);
+    cursor: help;
+}
+
+/* canvas */
+
+.planner-canvas {
+    position: relative;
+    height: 560px;
+    overflow: auto;
+    border: 1px solid rgba(128, 128, 128, 0.35);
+    border-radius: 4px;
+    background-image: radial-gradient(rgba(128, 128, 128, 0.25) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.planner-canvas.connecting {
+    cursor: crosshair;
+}
+
+.planner-canvas-edges {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3000px;
+    height: 2000px;
+    pointer-events: none;
+}
+
+.planner-edge {
+    fill: none;
+    stroke-width: 2;
+    stroke: #8a8a8a;
+}
+
+.planner-edge.good { stroke: #2e9e5b; }
+.planner-edge.bad { stroke: #c0392b; }
+.planner-edge.warn { stroke: #d08a20; }
+
+.planner-edge-label {
+    font-size: 10px;
+    fill: #8a8a8a;
+    text-anchor: middle;
+    pointer-events: all;
+    cursor: pointer;
+    paint-order: stroke;
+    /* Halo in the page background colour so labels stay readable over arrows. */
+    stroke: var(--background, #ffffff);
+    stroke-width: 3px;
+}
+
+.planner-edge-label.good { fill: #2e9e5b; }
+.planner-edge-label.bad { fill: #c0392b; }
+.planner-edge-label.warn { fill: #d08a20; }
+
+/* Underline on hover, so it reads as something you can click. */
+.planner-edge-label:hover {
+    text-decoration: underline;
+}
+
+/*
+ * This layer sits above the arrow SVG and spans the whole canvas, so left
+ * clickable it swallows every click aimed at an edge label. Only the cards
+ * themselves should take pointer input; the empty space lets clicks through to
+ * the arrows underneath.
+ */
+.planner-canvas-nodes {
+    position: relative;
+    width: 3000px;
+    height: 2000px;
+    pointer-events: none;
+}
+
+.planner-canvas-nodes > .planner-node {
+    pointer-events: auto;
+}
+
+/*
+ * dark-theme.css is toggled on and off wholesale, so its custom properties only
+ * exist in dark mode. Reading them with a light fallback keeps the planner
+ * legible in both themes without duplicating the ruleset.
+ */
+.planner-node {
+    position: absolute;
+    width: 274px;
+    padding: 6px;
+    border: 1px solid rgba(128, 128, 128, 0.6);
+    border-radius: 5px;
+    background: var(--fieldset-color, #fdfdfd);
+    color: var(--text, #1b1b1b);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+    font-size: 11px;
+    cursor: move;
+    user-select: none;
+}
+
+.planner-node.dead {
+    opacity: 0.55;
+    border-style: dashed;
+}
+
+.planner-node-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+.planner-node-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+}
+
+/* Scoped to the sprite: a bare `img` here also caught the type icon in
+   .planner-chosen and stretched it to sprite width. */
+.planner-node-side .planner-sprite {
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+}
+
+.planner-node-side em {
+    font-style: normal;
+    opacity: 0.7;
+}
+
+.planner-node-vs {
+    font-size: 10px;
+    opacity: 0.6;
+}
+
+.planner-node-blank {
+    opacity: 0.45;
+    font-style: italic;
+}
+
+.planner-move-type {
+    height: 12px;
+    vertical-align: middle;
+}
+
+/* both movesets on the card */
+
+.planner-moves {
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid rgba(128, 128, 128, 0.3);
+}
+
+.planner-moves-toggle {
+    width: 100%;
+    padding: 1px 4px;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: left;
+    border: none;
+    background: none;
+    color: inherit;
+    opacity: 0.55;
+    cursor: pointer;
+}
+
+.planner-moves-toggle:hover {
+    opacity: 1;
+}
+
+.planner-moves-toggle::before {
+    content: "\25B8 ";
+}
+
+.planner-moves-toggle.open::before {
+    content: "\25BE ";
+}
+
+.planner-move-columns {
+    display: flex;
+    gap: 4px;
+}
+
+.planner-move-column {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.planner-move-column-title {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.5;
+}
+
+.planner-move {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 3px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 10px;
+}
+
+.planner-move:hover {
+    background: rgba(128, 128, 128, 0.2);
+}
+
+/* Your pick reads as the plan; theirs reads as the threat. */
+.planner-move.you.selected {
+    background: rgba(90, 140, 220, 0.28);
+    box-shadow: inset 2px 0 0 #5a8cdc;
+    font-weight: bold;
+}
+
+.planner-move.them.selected {
+    background: rgba(200, 60, 50, 0.22);
+    box-shadow: inset 2px 0 0 #c0392b;
+    font-weight: bold;
+}
+
+.planner-move img {
+    height: 10px;
+    flex: 0 0 auto;
+}
+
+.planner-move-name {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.planner-move-bp {
+    flex: 0 0 auto;
+    opacity: 0.6;
+    font-variant-numeric: tabular-nums;
+}
+
+.planner-move-empty {
+    font-size: 9px;
+    opacity: 0.45;
+    font-style: italic;
+}
+
+/* the chosen move, under its own sprite */
+.planner-chosen {
+    display: block;
+    margin-top: 2px;
+    font-size: 10px;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.planner-chosen .planner-move-type {
+    height: 10px;
+    width: auto;
+}
+
+.planner-switch {
+    font-style: italic;
+}
+
+.planner-nodrop {
+    font-size: 8px;
+    text-transform: uppercase;
+    padding: 0 3px;
+    border-radius: 2px;
+    background: #7a5ea8;
+    color: #fff;
+    cursor: help;
+}
+
+/* persistent fight state */
+
+.planner-state-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-bottom: 4px;
+}
+
+.planner-field {
+    font-size: 9px;
+    padding: 0 4px;
+    border-radius: 2px;
+    background: rgba(90, 140, 220, 0.25);
+    border: 1px solid rgba(90, 140, 220, 0.45);
+}
+
+.planner-field.you {
+    background: rgba(200, 60, 50, 0.2);
+    border-color: rgba(200, 60, 50, 0.45);
+}
+
+.planner-field.ambiguous {
+    background: rgba(208, 138, 32, 0.25);
+    border-color: rgba(208, 138, 32, 0.5);
+    cursor: help;
+}
+
+/* status */
+
+.planner-statuses {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px;
+    margin-top: 1px;
+}
+
+.planner-status {
+    font-size: 9px;
+    font-weight: bold;
+    letter-spacing: 0.03em;
+    padding: 0 4px;
+    border-radius: 2px;
+    color: #fff;
+    cursor: help;
+}
+
+.planner-status.slp { background: #8a8a8a; }
+.planner-status.psn { background: #9b59b6; }
+.planner-status.tox { background: #7a3b95; }
+.planner-status.brn { background: #d4562b; }
+.planner-status.par { background: #c9a227; color: #2a2a2a; }
+.planner-status.frz { background: #4aa8c4; }
+.planner-status.volatile {
+    background: transparent;
+    border: 1px solid rgba(160, 120, 200, 0.8);
+    color: inherit;
+}
+
+.planner-status-block {
+    margin-top: 4px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 9px;
+    text-align: center;
+    background: rgba(46, 158, 91, 0.22);
+    border: 1px solid rgba(46, 158, 91, 0.5);
+    cursor: help;
+}
+
+.planner-boosts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px;
+    margin-top: 1px;
+}
+
+.planner-boost {
+    font-size: 9px;
+    padding: 0 3px;
+    border-radius: 2px;
+    font-variant-numeric: tabular-nums;
+}
+
+.planner-boost.up {
+    background: rgba(46, 158, 91, 0.3);
+}
+
+.planner-boost.down {
+    background: rgba(192, 57, 43, 0.3);
+}
+
+/* branch editor */
+
+.planner-edge-popup {
+    width: 360px;
+}
+
+/* Wider than the others: trainer names are long. */
+.planner-line-popup {
+    width: 420px;
+}
+
+/* Keep the dropdown inside the dialog rather than sized to its longest entry. */
+.planner-line-popup .select2-container {
+    max-width: 100%;
+}
+
+.select2-drop .select2-results li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Shared chrome for all three planner popups. */
+.planner-node-popup,
+.planner-edge-popup,
+.planner-line-popup {
+    padding: 4px 14px 12px;
+}
+
+.planner-node-popup legend,
+.planner-edge-popup legend,
+.planner-line-popup legend {
+    font-weight: bold;
+    padding: 0 8px;
+}
+
+.planner-node-popup hr,
+.planner-edge-popup hr,
+.planner-line-popup hr {
+    margin: 11px 0;
+    border: none;
+    border-top: 1px solid rgba(128, 128, 128, 0.3);
+}
+
+.planner-hint {
+    font-size: 11px;
+    line-height: 1.35;
+    opacity: 0.75;
+    margin: 0 0 9px;
+}
+
+/* select2 3.x renders its dropdown into a body-level container, which sits
+   below the popup overlay without this. */
+.select2-drop,
+.select2-drop-mask {
+    z-index: 12000;
+}
+
+.planner-condition-group {
+    margin-bottom: 6px;
+}
+
+.planner-condition-title {
+    display: block;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.55;
+    margin-bottom: 3px;
+}
+
+.planner-condition {
+    font-size: 10px;
+    padding: 2px 7px;
+    margin: 0 3px 3px 0;
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    border-radius: 10px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.planner-condition:hover {
+    background: rgba(128, 128, 128, 0.2);
+}
+
+.planner-condition.selected {
+    font-weight: bold;
+    border-width: 2px;
+    padding: 1px 6px;
+}
+
+.planner-condition.good.selected { border-color: #2e9e5b; background: rgba(46, 158, 91, 0.22); }
+.planner-condition.bad.selected { border-color: #c0392b; background: rgba(192, 57, 43, 0.22); }
+.planner-condition.warn.selected { border-color: #d08a20; background: rgba(208, 138, 32, 0.22); }
+.planner-condition.neutral.selected { border-color: #8a8a8a; background: rgba(138, 138, 138, 0.22); }
+
+.planner-node-warn {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    line-height: 13px;
+    text-align: center;
+    border-radius: 50%;
+    background: #d08a20;
+    color: #fff;
+    font-size: 9px;
+    font-weight: bold;
+    cursor: help;
+}
+
+.planner-node-note {
+    margin-top: 3px;
+    font-size: 10px;
+    opacity: 0.75;
+    font-style: italic;
+}
+
+/* Kept compact and right-aligned: these are incidental next to the move lists. */
+.planner-node-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 5px;
+}
+
+/* A folded turn keeps a visible marker of what's tucked behind it. */
+.planner-fold-node.folded {
+    border-color: #d08a20;
+    background: rgba(208, 138, 32, 0.22);
+    font-weight: bold;
+}
+
+.planner-node.has-folded {
+    border-style: dashed;
+    border-color: rgba(208, 138, 32, 0.7);
+}
+
+/* the connector nub hanging off the bottom of each card */
+.planner-node-handle {
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    margin-left: -6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #5a8cdc;
+    border: 2px solid var(--background, #fff);
+    cursor: crosshair;
+}
+
+.planner-node-handle:hover {
+    background: #2e9e5b;
+}
+
+/* Mirrors #popup-container, which belongs to the Box tab. */
+#planner-popup-container {
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(96, 96, 96, 0.4);
+    position: fixed;
+    z-index: 2;
+}
+
+/* Centring only - each popup sets its own width. */
+#planner-popup-container fieldset {
+    margin: 10% auto 0;
+    float: none;
+}
+
+.planner-node-popup {
+    width: 360px;
+}
+
+/*
+ * Label/control pairs on a two-column grid rather than fixed widths and <br>:
+ * that older approach left no gap after long labels, misaligned any row whose
+ * markup happened to contain a newline, and let inputs and selects disagree on
+ * width. The grid keeps one column edge for every row.
+ */
+.planner-form {
+    display: grid;
+    grid-template-columns: 108px minmax(0, 1fr);
+    gap: 7px 12px;
+    align-items: center;
+}
+
+.planner-form label {
+    font-size: 11px;
+    line-height: 1.2;
+}
+
+.planner-form select,
+.planner-form input {
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.planner-placeholder {
+    padding: 40px;
+    text-align: center;
+    opacity: 0.6;
+}
+
+.planner-toolbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+/* Popup footers: Cancel / Save and friends. */
+.planner-node-popup .buttons,
+.planner-edge-popup .buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}

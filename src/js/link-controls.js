@@ -11,7 +11,7 @@ CURRENT_TAB = "calc";
 function changeTab(tab) {
     if (tab == CURRENT_TAB) return;
 	$(".wrapper").hide();
-    if (!["calc", "dex", "box", "map", "settings"].includes(tab)) tab = "calc";
+    if (!["calc", "dex", "box", "map", "planner", "settings"].includes(tab)) tab = "calc";
     $(`#${tab}-wrapper`).show();
     $(".tabSelection").detach().appendTo(`#${tab}-wrapper .settings`);
     $(`#${tab}:radio[name='tab']`).prop("checked", true).change();

@@ -10,6 +10,7 @@
     <link type="text/css" rel="stylesheet" href="./css/dex.css?" />
     <link type="text/css" rel="stylesheet" href="./css/encounters.css?" />
     <link type="text/css" rel="stylesheet" href="./css/map.css?" />
+    <link type="text/css" rel="stylesheet" href="./css/planner.css?" />
     <link type="text/css" rel="stylesheet" href="./css/settings.css?" />
     <link type="text/css" rel="stylesheet" href="./css/vendor/bootstrap.css" />
     <link type="text/css" rel="stylesheet" href="./css/dark-theme.css" id="dark-theme-styles">
@@ -57,6 +58,7 @@
                 <input class="tab visually-hidden" type="radio" name="tab" id="dex" value="dex" /><label class="btn btn-mid" for="dex">Pok&eacute;dex</label>
                 <input class="tab visually-hidden" type="radio" name="tab" id="box" value="box" /><label class="btn btn-small btn-mid" for="box">Box</label>
                 <input class="tab visually-hidden" type="radio" name="tab" id="map" value="map" /><label class="btn btn-small btn-mid" for="map">Map</label>
+                <input class="tab visually-hidden" type="radio" name="tab" id="planner" value="planner" /><label class="btn btn-mid" for="planner">Planner</label>
                 <input class="tab visually-hidden" type="radio" name="tab" id="settings" value="settings" /><label class="btn btn-right" for="settings">Settings</label>
             </span>
         </div>
@@ -1477,8 +1479,12 @@
         <script type="text/javascript" src="./js/data/dex/species.js?"></script>
         <script type="text/javascript" src="./js/data/dex/stats.js?"></script>
         <script type="text/javascript" src="./js/data/dex/types.js?"></script>
+        <script type="text/javascript" src="./js/data/games.js?"></script>
+        <script type="text/javascript" src="./js/data/move_effects.js?"></script>
         <script type="text/javascript" src="./js/box-controls.js?"></script>
         <script type="text/javascript" src="./js/map-controls.js?"></script>
+        <script type="text/javascript" src="./js/planner-model.js?"></script>
+        <script type="text/javascript" src="./js/planner-controls.js?"></script>
     </div>
     
     <div class="wrapper hide" id="dex-wrapper">
@@ -1523,6 +1529,76 @@
                 <div class="dupe-overlay"></div>
             </fieldset>
         </div>
+    </div>
+
+    <div class="wrapper hide" id="planner-wrapper">
+        <span class="title-text">Platinum Kaizo Damage Calculator</span>
+        <span class="update-text hide" title="Reload the page to get the latest changes!" onclick="location.reload()">(Update available!)</span>
+        <div class="settings" aria-label="Settings" role="region"></div>
+        <hr />
+        <div class="planner-panel-wrapper">
+            <fieldset class="planner-sidebar">
+                <legend align="center">Lines</legend>
+                <button id="planner-new-line" class="btn planner-btn">New line</button>
+                <ul class="planner-line-list"></ul>
+            </fieldset>
+            <fieldset class="planner-main">
+                <div class="planner-placeholder">Pick a line on the left, or create one to start planning a fight.</div>
+                <div class="planner-workspace hide">
+                    <div class="planner-toolbar">
+                        <span class="planner-trainer-name"></span>
+                        <button id="planner-add-node" class="btn planner-btn">Add turn</button>
+                        <button id="planner-toggle-moves" class="btn planner-btn" title="Expand or collapse the move pickers on every turn">All moves</button>
+                        <button id="planner-toggle-parties" class="btn planner-btn" title="Show or hide the teams and box, to give the canvas more room">Teams</button>
+                    </div>
+                    <div class="planner-ai-flags"></div>
+                    <div class="planner-party-row">
+                        <div class="planner-parties">
+                            <div class="planner-party-block">
+                                <span class="planner-party-label">Their team <span class="planner-party-hint">- drag onto a turn, or onto empty space for a new one</span></span>
+                                <div class="planner-foe-party"></div>
+                            </div>
+                            <div class="planner-party-block planner-team-block">
+                                <span class="planner-party-label">Your team <span class="planner-party-hint">- drag onto a turn, or onto another to swap</span></span>
+                                <div class="planner-your-party"></div>
+                            </div>
+                        </div>
+                        <div class="planner-party-block planner-box-block hide">
+                            <span class="planner-party-label planner-box-header">
+                                <button class="planner-box-nav planner-box-prev" title="Previous box">&#9664;</button>
+                                <span class="planner-box-title">Box</span>
+                                <button class="planner-box-nav planner-box-next" title="Next box">&#9654;</button>
+                            </span>
+                            <div class="planner-box-party"></div>
+                        </div>
+                    </div>
+                    <div class="planner-canvas">
+                        <svg class="planner-canvas-edges" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <marker id="planner-arrow-neutral" viewBox="0 0 10 10" refX="9" refY="5"
+                                        markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a8a8a" />
+                                </marker>
+                                <marker id="planner-arrow-good" viewBox="0 0 10 10" refX="9" refY="5"
+                                        markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e9e5b" />
+                                </marker>
+                                <marker id="planner-arrow-bad" viewBox="0 0 10 10" refX="9" refY="5"
+                                        markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#c0392b" />
+                                </marker>
+                                <marker id="planner-arrow-warn" viewBox="0 0 10 10" refX="9" refY="5"
+                                        markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#d08a20" />
+                                </marker>
+                            </defs>
+                        </svg>
+                        <div class="planner-canvas-nodes"></div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="hide" id="planner-popup-container"></div>
     </div>
 
     <div class="wrapper hide" id="settings-wrapper">
