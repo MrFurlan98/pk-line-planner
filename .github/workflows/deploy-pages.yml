@@ -1,0 +1,83 @@
+# Publishes the built site to GitHub Pages.
+#
+# Upstream deploys to Cloudflare Pages instead (.forgejo/workflows/deploy.yml).
+# This is the fork's equivalent, with two of upstream's steps deliberately
+# dropped:
+#
+#   - the PKCalc-img checkout, since a fork has no access to that private
+#     repository. Sprites resolve from Showdown's CDN at runtime instead - see
+#     src/js/sprite-fallback.js.
+#   - the version comparison against the live status.json, which exists to stop
+#     upstream redeploying the same build. Here every push to main should
+#     publish.
+#
+# Pages must also be switched on in the repository: Settings > Pages > Build and
+# deployment > Source: "GitHub Actions". Without that this workflow fails at the
+# deploy step.
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # So a deploy can be re-run from the Actions tab without an empty commit.
+  workflow_dispatch:
+
+# The default GITHUB_TOKEN has none of these; Pages needs all three.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One publish at a time. Queued rather than cancelled, so a run that is already
+# uploading isn't killed half way through and left partially deployed.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # One install at the top level is enough: the root postinstall runs
+      # `subpkg install`, which installs calc/ as well.
+      - name: Install
+        run: npm install
+
+      # The full build, not `node build view`. calc/dist is not committed, so
+      # the TypeScript in calc/ genuinely has to be compiled here - `view` skips
+      # exactly that step and would leave the calculator engine missing.
+      - name: Build
+        run: node build
+
+      # Fails loudly here rather than shipping a site whose every sprite 404s.
+      - name: Check the build produced something servable
+        run: |
+          test -f dist/index.html
+          test -f dist/how-to-use.html
+          test -f dist/calc/util.js
+          test -f dist/js/sprite-fallback.js
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

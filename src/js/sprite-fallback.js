@@ -49,9 +49,26 @@
      */
     var SVG = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'>";
     var DRAWN = {
-        "/img/calc/icon/faster.png": svgIcon(SVG + "<path d='M6 1.5 11 10.5 1 10.5Z' fill='#2e9e5b'/></svg>"),
-        "/img/calc/icon/slower.png": svgIcon(SVG + "<path d='M6 10.5 1 1.5 11 1.5Z' fill='#c0392b'/></svg>"),
-        "/img/calc/icon/tie.png": svgIcon(SVG + "<path d='M1.5 3.6h9v1.7h-9zM1.5 6.7h9v1.7h-9z' fill='#8a8a8a'/></svg>")
+        faster: svgIcon(SVG + "<path d='M6 1.5 11 10.5 1 10.5Z' fill='#2e9e5b'/></svg>"),
+        slower: svgIcon(SVG + "<path d='M6 10.5 1 1.5 11 1.5Z' fill='#c0392b'/></svg>"),
+        tie: svgIcon(SVG + "<path d='M1.5 3.6h9v1.7h-9zM1.5 6.7h9v1.7h-9z' fill='#8a8a8a'/></svg>")
+    };
+
+    function drawnFor(path) {
+        var match = IMG_PATH.calc.exec(path);
+        return match ? DRAWN[match[1]] || null : null;
+    }
+
+    /*
+     * Matched against the tail of the path rather than anchored at the root.
+     * Most call sites write "/img/...", but a handful in the Dex write "img/..."
+     * relatively, and the app can be served from a subdirectory - a project-page
+     * URL like /<repo>/ on GitHub Pages - in which case those arrive here as
+     * "/<repo>/img/..." instead.
+     */
+    var IMG_PATH = {
+        dex: /(?:^|\/)img\/dex\/(icon|large)\/(species|types|items|other)\/(.+)\.png$/,
+        calc: /(?:^|\/)img\/calc\/icon\/([a-z]+)\.png$/
     };
 
     /*
@@ -83,7 +100,7 @@
     function cdnUrl(path) {
         if (typeof SHOWDOWN_SPRITES === "undefined") return null;
 
-        var match = /^\/img\/dex\/(icon|large)\/(species|types|items|other)\/(.+)\.png$/.exec(path);
+        var match = IMG_PATH.dex.exec(path);
         if (!match) return null;
 
         var large = match[1] === "large";
@@ -147,9 +164,10 @@
         // Kept so a blanked image can still be traced back to what it wanted.
         img.setAttribute("data-sprite-original", path);
 
-        if (DRAWN[path]) {
+        var drawn = drawnFor(path);
+        if (drawn) {
             img.setAttribute("data-sprite-fallback", "blank");
-            img.src = DRAWN[path];
+            img.src = drawn;
             return;
         }
 
