@@ -11,7 +11,10 @@ CURRENT_TAB = "calc";
 function changeTab(tab) {
     if (tab == CURRENT_TAB) return;
 	$(".wrapper").hide();
-    if (!["calc", "dex", "box", "map", "planner", "settings"].includes(tab)) tab = "calc";
+    // "map" is deliberately absent: the tab is hidden in this fork (see the
+    // comment in index.template.html), so an old #/map link falls back to the
+    // calculator rather than showing an empty wrapper.
+    if (!["calc", "dex", "box", "planner", "settings"].includes(tab)) tab = "calc";
     $(`#${tab}-wrapper`).show();
     $(".tabSelection").detach().appendTo(`#${tab}-wrapper .settings`);
     $(`#${tab}:radio[name='tab']`).prop("checked", true).change();

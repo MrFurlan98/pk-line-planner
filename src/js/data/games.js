@@ -54,6 +54,15 @@ const SHOWDOWN_SPRITES = {
     item: function(item) {
         var name = item.name.toLowerCase().replace(/[^a-z0-9 ]+/g, "").replace(/ +/g, "-");
         return `${this.base}/itemicons/${name}.png`;
+    },
+
+    /*
+     * Machines have no per-number icon on the CDN - there is no "tm02.png" -
+     * but there is one per type, which is what the games themselves use, since
+     * a machine's colour is its move's type. `kind` is "tm" or "hm".
+     */
+    machine: function(kind, type) {
+        return `${this.base}/itemicons/${kind}-${type.toLowerCase()}.png`;
     }
 };
 
@@ -92,6 +101,48 @@ const GAMES = {
 };
 
 var GAME = GAMES.platinumkaizo;
+
+/*
+ * How many Pokémon each side has out, and who else is involved. Three formats
+ * live under FLAGS_PK.battleType and they are genuinely different fights:
+ *
+ *   double      two trainers fought at once
+ *   trueDouble  a real 2v2 against one trainer
+ *   tag         2v2 with an AI partner you don't command
+ */
+function battleFormat(trainerName) {
+    var flags = GAME.fieldFlags();
+    var types = (flags && flags.battleType) || {};
+
+    var tag = (types.tag || []).find(function(entry) {
+        return resolveTrainerName(entry.enemy1) === trainerName ||
+            resolveTrainerName(entry.enemy2) === trainerName;
+    });
+    if (tag) {
+        return {
+            id: "tag", slots: 2,
+            trainers: [resolveTrainerName(tag.enemy1), resolveTrainerName(tag.enemy2)].filter(x => x),
+            partner: resolveTrainerName(tag.partner)
+        };
+    }
+
+    var pair = (types.double || []).find(function(entry) {
+        return resolveTrainerName(entry.enemy1) === trainerName ||
+            resolveTrainerName(entry.enemy2) === trainerName;
+    });
+    if (pair) {
+        return {
+            id: "double", slots: 2,
+            trainers: [resolveTrainerName(pair.enemy1), resolveTrainerName(pair.enemy2)].filter(x => x)
+        };
+    }
+
+    if (types.trueDouble && Object.prototype.hasOwnProperty.call(types.trueDouble, trainerName)) {
+        return {id: "trueDouble", slots: 2, trainers: [trainerName]};
+    }
+
+    return {id: "single", slots: 1, trainers: [trainerName]};
+}
 
 // Substitutes any {PLACEHOLDER} in a trainer key for its current value.
 function resolveTrainerName(name) {

@@ -40,6 +40,13 @@ worked out in advance rather than found on the fly.
 - **Team and box** with drag-and-drop, held-item editing, and folding for the
   parts of a long plan you aren't looking at.
 
+A good deal of this isn't discoverable by looking at the screen — dragging a
+turn's connector nub onto empty canvas to start the next turn, clicking an
+arrow's label to edit or delete a branch — so there's a **How to use** page at
+`/how-to-use.html`, linked from the Planner tab. It renders real, styled cards
+pulled from `planner.css` rather than screenshots, so it can't fall out of date
+with the UI.
+
 The roadmap is in [PLANNER.md](PLANNER.md).
 
 ## Running it locally
@@ -74,14 +81,6 @@ node build view
 needed if you changed that directory. The build stamps cache-busting hashes onto
 the JS and CSS but not onto `index.html`, so hard-refresh (Ctrl+Shift+R) after a
 rebuild.
-
-### Sprites
-
-The production image set lives in a separate private repository that is checked
-out into `src/img/` at deploy time, so a fork has none and every `/img/dex/...`
-request 404s. This fork resolves Pokémon, type and item sprites from
-[Pokémon Showdown's CDN][psprites] instead, via the adapter in
-`src/js/data/games.js`.
 
 ## Credits
 
@@ -118,4 +117,3 @@ Distributed under the terms of the [MIT License](LICENSE), unchanged from
 upstream.
 
   [pkcalc]: https://git.anastarawneh.com/anas/PKCalc
-  [psprites]: https://play.pokemonshowdown.com/sprites/

@@ -57,7 +57,12 @@
                 <input class="tab visually-hidden" type="radio" name="tab" id="calc" value="calc" checked="checked" /><label class="btn btn-wide btn-left" for="calc">Calculator</label>
                 <input class="tab visually-hidden" type="radio" name="tab" id="dex" value="dex" /><label class="btn btn-mid" for="dex">Pok&eacute;dex</label>
                 <input class="tab visually-hidden" type="radio" name="tab" id="box" value="box" /><label class="btn btn-small btn-mid" for="box">Box</label>
-                <input class="tab visually-hidden" type="radio" name="tab" id="map" value="map" /><label class="btn btn-small btn-mid" for="map">Map</label>
+                <!--
+                  Hidden in this fork: the region map is a single large image
+                  from the private sprite repo, so there is nothing to show.
+                  Restore this line and the "map" entry in link-controls.js
+                  together. #map-wrapper is left in place, just unreachable.
+                -->
                 <input class="tab visually-hidden" type="radio" name="tab" id="planner" value="planner" /><label class="btn btn-mid" for="planner">Planner</label>
                 <input class="tab visually-hidden" type="radio" name="tab" id="settings" value="settings" /><label class="btn btn-right" for="settings">Settings</label>
             </span>
@@ -1480,7 +1485,10 @@
         <script type="text/javascript" src="./js/data/dex/stats.js?"></script>
         <script type="text/javascript" src="./js/data/dex/types.js?"></script>
         <script type="text/javascript" src="./js/data/games.js?"></script>
+        <!-- After games.js: it reuses that file's CDN resolvers. -->
+        <script type="text/javascript" src="./js/sprite-fallback.js?"></script>
         <script type="text/javascript" src="./js/data/move_effects.js?"></script>
+        <script type="text/javascript" src="./js/data/ability_effects.js?"></script>
         <script type="text/javascript" src="./js/box-controls.js?"></script>
         <script type="text/javascript" src="./js/map-controls.js?"></script>
         <script type="text/javascript" src="./js/planner-model.js?"></script>
@@ -1541,9 +1549,12 @@
                 <legend align="center">Lines</legend>
                 <button id="planner-new-line" class="btn planner-btn">New line</button>
                 <ul class="planner-line-list"></ul>
+                <a class="planner-help-link" href="./how-to-use.html" target="_blank" rel="noopener"
+                   title="Opens in a new tab">How to use &rarr;</a>
             </fieldset>
             <fieldset class="planner-main">
-                <div class="planner-placeholder">Pick a line on the left, or create one to start planning a fight.</div>
+                <div class="planner-placeholder">Pick a line on the left, or create one to start planning a fight.<br />
+                    New here? <a class="links-lighten" href="./how-to-use.html" target="_blank" rel="noopener">How to use the planner</a>.</div>
                 <div class="planner-workspace hide">
                     <div class="planner-toolbar">
                         <span class="planner-trainer-name"></span>
@@ -1561,6 +1572,10 @@
                             <div class="planner-party-block planner-team-block">
                                 <span class="planner-party-label">Your team <span class="planner-party-hint">- drag onto a turn, or onto another to swap</span></span>
                                 <div class="planner-your-party"></div>
+                            </div>
+                            <div class="planner-party-block planner-partner-block hide">
+                                <span class="planner-party-label">Partner <span class="planner-partner-name planner-party-hint"></span></span>
+                                <div class="planner-partner-party"></div>
                             </div>
                         </div>
                         <div class="planner-party-block planner-box-block hide">
@@ -1651,11 +1666,25 @@
         </fieldset>
     </div>
 
-    <div class="credits">Maintained by anastarawneh
-        <br />Forked from the <a href="https://calc.pokemonshowdown.com/" class="links-lighten" target="_blank">Smogon Damage Calculator</a>
-        <li><a href="https://git.anastarawneh.com/anas/PKCalc" class="links-lighten" target="_blank">Source Code</a></li></ul>
-        <li><a href="https://git.anastarawneh.com/anas/PKCalc/issues" class="links-lighten" target="_blank">Issue Tracker</a></li>
-        <li><a href="https://github.com/anastarawneh/PKLuaScript/releases/latest" class="links-lighten" target="_blank">Lua Script</a></li>
+    <!--
+      An attributed fork: the line planner is the only thing added here, and the
+      calculator underneath it is anastarawneh's work. Both are named, and
+      calculator bugs are pointed upstream rather than at this fork's tracker.
+
+      The list markup upstream was malformed - bare <li> with no <ul>, plus a
+      stray </ul> - which is why it rendered oddly.
+    -->
+    <div class="credits">
+        <b>Platinum Kaizo Line Planner</b> &mdash; a fork by MrFurlan98.
+        <br />Platinum Kaizo calculator by <a href="https://git.anastarawneh.com/anas/PKCalc" class="links-lighten" target="_blank" rel="noopener">anastarawneh</a>,
+        itself forked from the <a href="https://calc.pokemonshowdown.com/" class="links-lighten" target="_blank" rel="noopener">Smogon Damage Calculator</a>.
+        <ul>
+            <li><a href="./how-to-use.html" class="links-lighten" target="_blank" rel="noopener">How to use the planner</a></li>
+            <li><a href="https://github.com/MrFurlan98/pk-line-planner" class="links-lighten" target="_blank" rel="noopener">Source Code</a> &mdash; this fork</li>
+            <li><a href="https://github.com/MrFurlan98/pk-line-planner/issues" class="links-lighten" target="_blank" rel="noopener">Planner Issues</a> &mdash; anything about the planner</li>
+            <li><a href="https://pkcalc.anastarawneh.com" class="links-lighten" target="_blank" rel="noopener">Official PK Calculator</a> &mdash; report calculator bugs there, not here</li>
+            <li><a href="https://github.com/anastarawneh/PKLuaScript/releases/latest" class="links-lighten" target="_blank" rel="noopener">Lua Script</a></li>
+        </ul>
 
         <button class="hide" type="button" id="dark-theme-toggle"></button>
         <script type="text/javascript" src="./js/dark-theme-toggle.js?"></script>

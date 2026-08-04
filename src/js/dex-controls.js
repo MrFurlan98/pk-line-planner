@@ -687,7 +687,10 @@ function loadDexEntry(entryID) {
             $(".dex-info").removeClass(classes).addClass("ability").html(html);
             function listAbilityPokemon() {
                 $(".dex-info .results").empty();
-                var speciesList = Object.values(SPECIES).filter(x => x.abilities.includes(ability.id));
+                // Guarded for the same reason as the type listing below: the
+                // placeholder only survives here because its abilities happen
+                // to be an empty array rather than missing.
+                var speciesList = Object.values(SPECIES).filter(x => x.abilities && x.abilities.includes(ability.id));
                 if (!speciesList.length) {
                     $(".dex-info .results").append("No Pokémon normally has this ability.");
                 }
@@ -730,7 +733,10 @@ function loadDexEntry(entryID) {
             $(".dex-info").removeClass(classes).addClass("type").html(html);
             function listTypePokemon() {
                 $(".dex-info .results").empty();
-                var speciesList = Object.values(SPECIES).filter(x => x.types.includes(type.id));
+                // SPECIES.none is the "-----" placeholder and carries no types
+                // at all, so an unguarded .includes() threw and took the whole
+                // page with it.
+                var speciesList = Object.values(SPECIES).filter(x => x.types && x.types.includes(type.id));
                 if (!speciesList.length) {
                     $(".dex-info .results").append("There are no Pokémon with this type.");
                 }

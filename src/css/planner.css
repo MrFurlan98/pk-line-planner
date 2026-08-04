@@ -106,6 +106,28 @@
     opacity: 0.6;
 }
 
+/*
+ * Deliberately not a .btn: the shared button is built for segmented radio groups
+ * and this sits under a scrolling list, where a full-width button would read as
+ * another line item.
+ */
+.planner-help-link {
+    display: block;
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(128, 128, 128, 0.3);
+    font-size: 11px;
+    text-align: center;
+    color: inherit;
+    opacity: 0.65;
+    text-decoration: none;
+}
+
+.planner-help-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
 /* foe party */
 
 .planner-main {
@@ -162,6 +184,27 @@
 
 .planner-card-meta {
     opacity: 0.7;
+}
+
+/* Always present, like the item line, so cards stay the same height. */
+.planner-card-ability {
+    display: block;
+    min-height: 13px;
+    line-height: 13px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 9px;
+    opacity: 0.7;
+    cursor: help;
+}
+
+/* Underlined when the planner actually acts on it, rather than just showing it. */
+.planner-card-ability.tracked {
+    opacity: 0.95;
+    text-decoration: underline dotted;
+    text-underline-offset: 2px;
 }
 
 .planner-card-item {
@@ -407,6 +450,41 @@
     filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.5));
 }
 
+/* Names the owner when a fight has more than one trainer on a side. */
+.planner-party-owner {
+    flex-basis: 100%;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.5;
+    margin: 2px 0 -2px;
+}
+
+/* Sits under your own team, because the partner fights on your side. */
+.planner-partner-party {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: calc(6 * 102px + 5 * 6px);
+}
+
+/* An ally you don't command, so it reads quieter than your own team. */
+.planner-partner-mon {
+    cursor: grab;
+    user-select: none;
+    opacity: 0.72;
+}
+
+.planner-partner-mon:hover {
+    opacity: 1;
+    border-color: rgba(120, 190, 140, 0.8);
+    background: rgba(120, 190, 140, 0.1);
+}
+
+.planner-partner-name {
+    opacity: 0.7;
+}
+
 .planner-ai-flags {
     display: flex;
     flex-wrap: wrap;
@@ -533,6 +611,58 @@
     gap: 4px;
 }
 
+/*
+ * A turn with two Pokemon out per side grows a second slot rather than becoming
+ * a different card - everything around it keeps its place.
+ */
+.planner-node.doubles {
+    width: 420px;
+}
+
+.planner-slots {
+    display: flex;
+    gap: 3px;
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.planner-slot {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 3px 2px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.planner-slot.empty {
+    border-style: dashed;
+    border-color: rgba(128, 128, 128, 0.35);
+}
+
+/* A tag partner acts on its own, so it never reads as an order you gave. */
+.planner-slot.ai,
+.planner-move-column.ai {
+    opacity: 0.62;
+}
+
+.planner-slot.ai:hover,
+.planner-move-column.ai:hover {
+    opacity: 0.9;
+}
+
+.planner-slot-name {
+    font-weight: bold;
+}
+
+.planner-predicted {
+    font-style: italic;
+    opacity: 0.8;
+}
+
 .planner-node-side {
     display: flex;
     flex-direction: column;
@@ -604,9 +734,29 @@
     content: "\25BE ";
 }
 
+/* Yours left, theirs right - always, so the comparison reads across. */
 .planner-move-columns {
     display: flex;
-    gap: 4px;
+    gap: 8px;
+}
+
+/* Within a side, a double stacks its two Pokémon. */
+.planner-move-side {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.planner-move-side .planner-move-column + .planner-move-column {
+    padding-top: 5px;
+    border-top: 1px solid rgba(128, 128, 128, 0.25);
+}
+
+.planner-slot .planner-sprite {
+    width: 44px;
+    height: 44px;
 }
 
 .planner-move-column {
@@ -692,6 +842,92 @@
 
 .planner-switch {
     font-style: italic;
+    cursor: help;
+}
+
+/* switching */
+
+.planner-switch-btn {
+    margin-top: 2px;
+    width: 100%;
+    padding: 1px 4px;
+    font: inherit;
+    font-size: 10px;
+    text-align: left;
+    border: 1px dashed rgba(128, 128, 128, 0.5);
+    border-radius: 3px;
+    background: transparent;
+    color: inherit;
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.planner-switch-btn:hover {
+    opacity: 1;
+    background: rgba(128, 128, 128, 0.2);
+}
+
+.planner-switch-btn.active {
+    opacity: 1;
+    font-weight: bold;
+    border-style: solid;
+    border-color: #5a8cdc;
+    background: rgba(90, 140, 220, 0.25);
+}
+
+/* Their side keeps the red accent used for everything the opponent does. */
+.planner-switch-btn.them.active {
+    border-color: #c0392b;
+    background: rgba(200, 60, 50, 0.22);
+}
+
+.planner-switch-popup {
+    width: 360px;
+}
+
+.planner-switch-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.planner-switch-option {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px 3px 4px;
+    font: inherit;
+    font-size: 11px;
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.planner-switch-option:hover:not(:disabled) {
+    border-color: #5a8cdc;
+    background: rgba(90, 140, 220, 0.2);
+}
+
+.planner-switch-option.selected {
+    border-color: #5a8cdc;
+    border-width: 2px;
+    padding: 2px 7px 2px 3px;
+    background: rgba(90, 140, 220, 0.25);
+    font-weight: bold;
+}
+
+.planner-switch-option:disabled {
+    opacity: 0.4;
+    filter: grayscale(1);
+    cursor: default;
+}
+
+.planner-switch-option img {
+    width: 28px;
+    height: 28px;
+    image-rendering: pixelated;
 }
 
 .planner-nodrop {
@@ -724,6 +960,12 @@
 .planner-field.you {
     background: rgba(200, 60, 50, 0.2);
     border-color: rgba(200, 60, 50, 0.45);
+}
+
+.planner-field.cured {
+    background: rgba(46, 158, 91, 0.22);
+    border-color: rgba(46, 158, 91, 0.5);
+    cursor: help;
 }
 
 .planner-field.ambiguous {

@@ -24,6 +24,12 @@ const EDGE_CONDITIONS = {
     youmiss: {id: "youmiss", name: "You miss", color: "bad", side: "you"},
     youcrit: {id: "youcrit", name: "You crit", color: "good", side: "you"},
     youcritko: {id: "youcritko", name: "You crit KO", color: "good", side: "you"},
+    /*
+     * Sleep and freeze break on their own schedule and can do it on the very
+     * first turn, so the honest way to plan around them is a branch rather than
+     * a turn count.
+     */
+    youwake: {id: "youwake", name: "You wake / thaw", color: "good", side: "you"},
     // A planned trade: let something die to get a free switch-in.
     sac: {id: "sac", name: "Sacrifice", color: "warn", side: "you"},
     theyko: {id: "theyko", name: "They KO you", color: "bad", side: "them"},
@@ -31,6 +37,7 @@ const EDGE_CONDITIONS = {
     theymiss: {id: "theymiss", name: "They miss", color: "good", side: "them"},
     theycrit: {id: "theycrit", name: "They crit", color: "bad", side: "them"},
     theycritko: {id: "theycritko", name: "They crit KO", color: "bad", side: "them"},
+    theywake: {id: "theywake", name: "They wake / thaw", color: "bad", side: "them"},
     theyswitch: {id: "theyswitch", name: "They switch out", color: "warn", side: "them"},
     theysetup: {id: "theysetup", name: "They set up", color: "warn", side: "them"},
     always: {id: "always", name: "Then", color: "neutral", side: ""},
@@ -87,10 +94,17 @@ function newNode(x, y) {
         id: `node-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
         x: x,
         y: y,
-        mon: "",
-        foe: "",
-        action: {type: "move", value: ""},
-        foeMove: "",
+        /*
+         * A slot per Pokémon out on each side. Singles use index 0 only;
+         * doubles, tag and two-trainer fights use both. Kept as arrays so the
+         * two cases are the same code rather than a special case each.
+         */
+        mons: ["", ""],
+        foes: ["", ""],
+        // Each slot acts independently: attack or switch, a switch costing that
+        // slot its turn.
+        actions: [{type: "move", value: ""}, {type: "move", value: ""}],
+        foeActions: [{type: "move", value: ""}, {type: "move", value: ""}],
         note: "",
         /*
          * Status carried into this turn rather than caused by it - for walking
@@ -168,8 +182,53 @@ const VOLATILES = {
     confusion: {id: "confusion", name: "Confused", short: "CNF"}
 };
 
+/*
+ * Held items that cure a status the moment it lands, and are used up doing it.
+ * This is deterministic, unlike sleep timers, so it can be modelled honestly -
+ * and it matters: Roark's Cranidos holds a Lum Berry, so a plan built on
+ * poisoning it simply doesn't work.
+ */
+const STATUS_CURES = {
+    lumberry: {statuses: "all", volatiles: ["confusion"], name: "Lum Berry"},
+    lavacookie: {statuses: "all", name: "Lava Cookie"},
+    oldgateau: {statuses: "all", name: "Old Gateau"},
+    cheriberry: {statuses: ["par"], name: "Cheri Berry"},
+    chestoberry: {statuses: ["slp"], name: "Chesto Berry"},
+    // Pecha covers the badly-poisoned case too.
+    pechaberry: {statuses: ["psn", "tox"], name: "Pecha Berry"},
+    rawstberry: {statuses: ["brn"], name: "Rawst Berry"},
+    aspearberry: {statuses: ["frz"], name: "Aspear Berry"},
+    persimberry: {statuses: [], volatiles: ["confusion"], name: "Persim Berry"}
+};
+
+// Sentinel for "this status ends on this turn", as opposed to naming a new one.
+const STATUS_CURED = "cured";
+
+/*
+ * With two Pokémon out per side, "the side's boosts" stops meaning anything -
+ * boosts, status and volatiles all belong to a particular Pokémon. So they live
+ * in a per-Pokémon record, keyed by the same reference a slot holds, and the
+ * side keeps only what is genuinely shared: hazards and screens.
+ *
+ * This also makes switching fall out for free. Nothing needs copying between
+ * slots; a Pokémon simply keeps its own record, and boosts are cleared when it
+ * leaves the field while its status stays with it.
+ */
+function emptyMonState() {
+    // statusTurns counts how long the current status has been sitting there,
+    // which is what tells you whether a sleep is about to run out.
+    return {boosts: {}, status: "", statusTurns: 0, volatiles: {}};
+}
+
 function emptySide() {
-    return {boosts: {}, hazards: {}, status: "", volatiles: {}};
+    return {hazards: {}};
+}
+
+// The record for one Pokémon, created the first time anything touches it.
+function monState(state, side, ref) {
+    if (!ref) return emptyMonState();
+    if (!state.mons[side][ref]) state.mons[side][ref] = emptyMonState();
+    return state.mons[side][ref];
 }
 
 /*
@@ -184,17 +243,23 @@ function emptyState() {
     return {
         you: emptySide(),
         them: emptySide(),
+        // Per-Pokémon boosts, status and volatiles, keyed by slot reference.
+        mons: {you: {}, them: {}},
         weather: "",
         ambiguous: false,
-        statusMemory: {you: {}, them: {}}
+        // A curing berry only works once, so spent ones are remembered per Pokémon.
+        itemsUsed: {you: {}, them: {}}
     };
 }
 
-// Older saved overrides predate statusMemory.
+// Older saved overrides predate these.
 function normalizeState(state) {
-    if (!state.statusMemory) state.statusMemory = {you: {}, them: {}};
-    if (!state.statusMemory.you) state.statusMemory.you = {};
-    if (!state.statusMemory.them) state.statusMemory.them = {};
+    if (!state.mons) state.mons = {you: {}, them: {}};
+    if (!state.mons.you) state.mons.you = {};
+    if (!state.mons.them) state.mons.them = {};
+    if (!state.itemsUsed) state.itemsUsed = {you: {}, them: {}};
+    if (!state.itemsUsed.you) state.itemsUsed.you = {};
+    if (!state.itemsUsed.them) state.itemsUsed.them = {};
     return state;
 }
 
@@ -202,8 +267,17 @@ function cloneState(state) {
     return JSON.parse(JSON.stringify(state));
 }
 
-function addBoosts(target, boosts) {
+/*
+ * `guard` is the ability of whoever is being boosted. Several abilities refuse
+ * stat drops inflicted by the opponent - Clear Body and White Smoke refuse all
+ * of them, Hyper Cutter only Attack, Keen Eye only accuracy - and a drop that
+ * never lands changes the plan.
+ */
+function addBoosts(target, boosts, guard) {
+    var blocked = guard && guard.blocksDrops;
     for (var stat in boosts) {
+        if (boosts[stat] < 0 && blocked &&
+            (blocked === "all" || blocked.indexOf(stat) >= 0)) continue;
         var next = (target[stat] || 0) + boosts[stat];
         target[stat] = Math.max(-MAX_BOOST, Math.min(MAX_BOOST, next));
     }
@@ -218,38 +292,142 @@ function findMove(name) {
  * Folds one move into the running state. Hazards and stat drops land on the
  * side opposite the user; boosts, screens and weather on their own.
  */
-function applyMoveEffect(moveName, state, actor) {
+/*
+ * What the active Pokémon on a side is holding, and who it is. Your side reads
+ * from the Box; theirs from the trainer's set for that fight.
+ */
+function activeHolder(line, node, side, slot) {
+    var ref = monAt(node, side, slot);
+    if (!ref) return null;
+
+    // Your own Box, only for slots you actually control.
+    if (side === "you" && !isPartnerSlot(line, side, slot)) {
+        var entry = boxEntry(ref);
+        return entry ? {id: ref, item: entry.set.item, ability: entry.set.ability} : null;
+    }
+
+    var set = side === "you"
+        ? trainerSet(trainerForSlot(line, side, slot), ref)
+        : foeSetFor(line, node, ref);
+    return {id: ref, item: set ? set.item : "", ability: set ? set.ability : ""};
+}
+
+/*
+ * The planner-relevant half of an ability - status protection, stat-drop
+ * protection, switch-in effects, trapping. Anything that only changes damage is
+ * absent on purpose; @smogon/calc already handles those.
+ */
+function abilityEffect(abilityName) {
+    if (!abilityName || typeof ABILITY_EFFECTS === "undefined") return null;
+    return ABILITY_EFFECTS[toID(abilityName)] || null;
+}
+
+function abilityOf(line, node, side, slot) {
+    var holder = activeHolder(line, node, side, slot);
+    if (!holder || !holder.ability) return null;
+    var ability = typeof ABILITIES === "undefined" ? null : ABILITIES[toID(holder.ability)];
+    return {
+        id: toID(holder.ability),
+        name: ability ? ability.name : holder.ability,
+        text: ability && ability.desc ? String(ability.desc.battle || "") : "",
+        effect: abilityEffect(holder.ability)
+    };
+}
+
+// Whether an ability stops a status landing at all.
+function abilityBlocksStatus(holder, status, volatile_, state) {
+    var fx = holder && abilityEffect(holder.ability);
+    if (!fx) return false;
+    // Leaf Guard only holds while its weather is up.
+    if (fx.requiresWeather && (!state || state.weather !== fx.requiresWeather)) return false;
+    if (status) return (fx.blocksStatus || []).indexOf(status) >= 0;
+    return (fx.blocksVolatiles || []).indexOf(volatile_) >= 0;
+}
+
+/*
+ * Spends a curing item if the Pokémon holds one that covers what it just
+ * caught. Returns true when the status was cured, so the caller knows not to
+ * apply it.
+ */
+function tryCureWithItem(state, side, holder, status, volatile_) {
+    if (!holder || !holder.item) return false;
+    var cure = STATUS_CURES[toID(holder.item)];
+    if (!cure) return false;
+    if (state.itemsUsed[side][holder.id]) return false;
+
+    var covers = status
+        ? (cure.statuses === "all" || (cure.statuses || []).indexOf(status) >= 0)
+        : (cure.volatiles || []).indexOf(volatile_) >= 0;
+    if (!covers) return false;
+
+    state.itemsUsed[side][holder.id] = cure.name;
+    return true;
+}
+
+/*
+ * Applies one move.
+ *
+ * `from` is the slot using it; `targets` are the opposing slots it lands on.
+ * A spread move names both of them, which is the thing that makes a double
+ * genuinely different from two 1v1 plans running side by side.
+ */
+function applyMoveEffect(moveName, state, actor, from, targets, line, node) {
     var move = findMove(moveName);
     if (!move) return;
     var fx = typeof MOVE_EFFECTS === "undefined" ? null : MOVE_EFFECTS[move.id];
     if (!fx) return;
 
-    var own = actor === "you" ? state.you : state.them;
-    var other = actor === "you" ? state.them : state.you;
+    var otherSide = actor === "you" ? "them" : "you";
+    var userHolder = activeHolder(line, node, actor, from);
+    var user = monState(state, actor, monAt(node, actor, from));
 
-    if (fx.self) addBoosts(own.boosts, fx.self);
-    if (fx.target) addBoosts(other.boosts, fx.target);
+    if (fx.self) addBoosts(user.boosts, fx.self, abilityEffect(userHolder && userHolder.ability));
 
-    // A side that already has a non-volatile status can't take another - this is
-    // the mechanic behind pre-statusing your own Pokémon to lock out worse ones.
-    if (fx.selfStatus && !own.status) own.status = fx.selfStatus;
-    if (fx.targetStatus && !other.status) other.status = fx.targetStatus;
-    if (fx.targetVolatiles) {
-        fx.targetVolatiles.forEach(function(v) { other.volatiles[v] = true; });
+    targets.forEach(function(slot) {
+        var ref = monAt(node, otherSide, slot);
+        if (!ref) return;
+        var holder = activeHolder(line, node, otherSide, slot);
+        var target = monState(state, otherSide, ref);
+        var guard = abilityEffect(holder && holder.ability);
+
+        if (fx.target) addBoosts(target.boosts, fx.target, guard);
+
+        /*
+         * A status has to get past two things before it sticks: an ability that
+         * refuses it outright, and a held item that cures it on arrival. And a
+         * Pokémon already carrying a non-volatile status can't take another -
+         * the mechanic behind pre-statusing your own to lock out worse ones.
+         */
+        if (fx.targetStatus && !target.status &&
+            !abilityBlocksStatus(holder, fx.targetStatus, "", state) &&
+            !tryCureWithItem(state, otherSide, holder, fx.targetStatus)) {
+            target.status = fx.targetStatus;
+            target.statusTurns = 0;
+        }
+        if (fx.targetVolatiles) {
+            fx.targetVolatiles.forEach(function(v) {
+                if (abilityBlocksStatus(holder, "", v, state)) return;
+                if (tryCureWithItem(state, otherSide, holder, "", v)) return;
+                target.volatiles[v] = true;
+            });
+        }
+    });
+
+    if (fx.selfStatus && !user.status &&
+        !abilityBlocksStatus(userHolder, fx.selfStatus, "", state) &&
+        !tryCureWithItem(state, actor, userHolder, fx.selfStatus)) {
+        user.status = fx.selfStatus;
+        user.statusTurns = 0;
     }
 
+    // Hazards and screens are the side's, not any one Pokémon's.
     if (fx.hazard) {
         var field = fx.hazard.field;
-        other.hazards[field] = Math.min((other.hazards[field] || 0) + 1, fx.hazard.max);
+        state[otherSide].hazards[field] =
+            Math.min((state[otherSide].hazards[field] || 0) + 1, fx.hazard.max);
     }
-    if (fx.screen) own.hazards[fx.screen] = 1;
+    if (fx.screen) state[actor].hazards[fx.screen] = 1;
     if (fx.weather) state.weather = fx.weather;
-}
-
-function applyNodeActions(node, state) {
-    if (!node) return;
-    if (node.action && node.action.type === "move") applyMoveEffect(node.action.value, state, "you");
-    if (node.foeMove) applyMoveEffect(node.foeMove, state, "them");
 }
 
 function parentEdges(line, nodeId) {
@@ -323,38 +501,228 @@ function hiddenBehind(line, nodeId, visible) {
  * carry different boosts - so the first parent wins and the node is marked
  * ambiguous for the UI to flag. Pin a stateOverride to settle it.
  */
-// A status carried into the turn overrides whatever was inherited.
+/*
+ * Slot accessors. Every turn has two slots per side; singles simply leave the
+ * second empty, so one code path covers both.
+ */
+function monAt(node, side, slot) {
+    if (!node) return "";
+    var list = side === "you" ? node.mons : node.foes;
+    return (list && list[slot]) || "";
+}
+
+function actionAt(node, side, slot) {
+    if (!node) return {type: "move", value: ""};
+    var list = side === "you" ? node.actions : node.foeActions;
+    return (list && list[slot]) || {type: "move", value: ""};
+}
+
+function switchTargetAt(node, side, slot) {
+    var action = actionAt(node, side, slot);
+    return action.type === "switch" ? action.value : "";
+}
+
+function moveAt(node, side, slot) {
+    var action = actionAt(node, side, slot);
+    return action.type === "move" ? action.value : "";
+}
+
+// How many slots a fight actually uses, so singles stay single.
+function slotCount(line) {
+    return battleFormat(line.trainer).slots;
+}
+
+/*
+ * In a tag battle your second slot belongs to an ally you don't command. Its
+ * Pokemon come from that trainer's party in the game data, not from your Box,
+ * so anything reading a slot has to know which of the two it is looking at.
+ */
+function isPartnerSlot(line, side, slot) {
+    return side === "you" && slot === 1 && battleFormat(line.trainer).id === "tag";
+}
+
+// The trainer whose party fills a given slot, or "" for your own Box.
+function trainerForSlot(line, side, slot) {
+    var format = battleFormat(line.trainer);
+    if (side === "you") return isPartnerSlot(line, side, slot) ? format.partner : "";
+    return format.trainers[Math.min(slot, format.trainers.length - 1)];
+}
+
+// A set belonging to a named trainer, for slots that aren't yours.
+function trainerSet(trainerName, speciesName) {
+    if (!trainerName || !speciesName) return null;
+    var sets = GAME.setdex()[speciesName];
+    return sets ? sets[trainerName] || null : null;
+}
+
+/*
+ * The set for a particular opposing Pokemon. In a two-trainer fight the slots
+ * belong to different trainers, so each is looked up against whichever of them
+ * actually owns it.
+ */
+function foeSetFor(line, node, speciesName) {
+    if (!speciesName) return null;
+    var sets = GAME.setdex()[speciesName];
+    if (!sets) return null;
+    var trainers = battleFormat(line.trainer).trainers || [line.trainer];
+    for (var i = 0; i < trainers.length; i++) {
+        if (sets[trainers[i]]) return sets[trainers[i]];
+    }
+    return null;
+}
+
+/*
+ * A status pinned onto this turn, either naming one carried in or saying that
+ * whatever was there ends here.
+ *
+ * Sleep is the reason the second option exists: its duration is random and not
+ * in the game data, so there is no honest number to expire it on. The counter
+ * shows how long it has run and the player says when it broke.
+ *
+ * Applied to slot one, which is the Pokemon a seed is nearly always about.
+ */
 function applyStatusSeed(node, state) {
     if (!node || !node.statusSeed) return state;
-    if (node.statusSeed.you) {
-        state.you.status = node.statusSeed.you;
-        if (node.mon) state.statusMemory.you[node.mon] = node.statusSeed.you;
-    }
-    if (node.statusSeed.them) {
-        state.them.status = node.statusSeed.them;
-        if (node.foe) state.statusMemory.them[node.foe] = node.statusSeed.them;
-    }
+    ["you", "them"].forEach(function(side) {
+        var seed = node.statusSeed[side];
+        var who = monAt(node, side, 0);
+        if (!seed || !who) return;
+        var mon = monState(state, side, who);
+
+        if (seed === STATUS_CURED) {
+            mon.status = "";
+            mon.statusTurns = 0;
+            mon.volatiles = {};
+            return;
+        }
+        mon.status = seed;
+        mon.statusTurns = 0;
+    });
     return state;
 }
 
 /*
- * Carries state across the gap between two turns. Whatever was out has its
- * status filed away; if something else is out now, it arrives with a clean set
- * of boosts and volatiles and whatever status it was last known to have.
+ * What an ability does the moment its Pokemon lands: Intimidate drops the
+ * Attack of everything opposite it, the weather abilities set the field.
  */
-function applySwitchIn(parent, node, state) {
-    [["you", "mon"], ["them", "foe"]].forEach(function(pair) {
-        var side = pair[0];
-        var was = parent ? parent[pair[1]] : "";
-        var now = node[pair[1]];
+function applySwitchInAbility(line, node, state, side, slot) {
+    var holder = activeHolder(line, node, side, slot);
+    var fx = abilityEffect(holder && holder.ability);
+    if (!fx || !fx.onSwitchIn) return;
+    if (fx.onSwitchIn.weather) state.weather = fx.onSwitchIn.weather;
+    if (!fx.onSwitchIn.opponentBoosts) return;
 
-        if (was) state.statusMemory[side][was] = state[side].status;
-        // An unset slot means "unchanged" rather than "empty", so leave it be.
+    // Intimidate hits every opposing slot, not just the one across from it.
+    var otherSide = side === "you" ? "them" : "you";
+    for (var i = 0; i < 2; i++) {
+        var ref = monAt(node, otherSide, i);
+        if (!ref) continue;
+        var guard = abilityEffect((activeHolder(line, node, otherSide, i) || {}).ability);
+        addBoosts(monState(state, otherSide, ref).boosts, fx.onSwitchIn.opponentBoosts, guard);
+    }
+}
+
+/*
+ * Which opposing slots a move lands on. Only genuine spread moves reach both;
+ * everything else hits the slot across from the user, falling back to whoever
+ * is actually there.
+ */
+function targetsOf(node, actorSide, slot, moveName) {
+    var otherSide = actorSide === "you" ? "them" : "you";
+    var move = findMove(moveName);
+    var spread = move && /allAdjacentFoes|allAdjacent/i.test(move.target || "");
+    if (spread) return [0, 1];
+    if (monAt(node, otherSide, slot)) return [slot];
+    return monAt(node, otherSide, 0) ? [0] : [1];
+}
+
+/*
+ * A Pokemon leaving the field loses its boosts and volatiles. Natural Cure
+ * takes its status with it too; otherwise the status waits for its return.
+ */
+function leaveField(line, parent, state, side, slot) {
+    var ref = monAt(parent, side, slot);
+    if (!ref) return;
+    var mon = monState(state, side, ref);
+    mon.boosts = {};
+    mon.volatiles = {};
+    var holder = activeHolder(line, parent, side, slot);
+    var fx = abilityEffect(holder && holder.ability);
+    if (fx && fx.curesOnSwitchOut) {
+        mon.status = "";
+        mon.statusTurns = 0;
+    }
+}
+
+/*
+ * Folds one turn into the running state, then hands over to the next.
+ *
+ * Ordering is the whole point. A switch resolves before any move does and costs
+ * that slot its turn, so whoever comes in is the one that takes the other
+ * side's attack. Every slot decides independently.
+ *
+ * Boosts and volatiles are cleared when a Pokemon leaves the field; its status
+ * stays with it, because the record is the Pokemon's rather than the slot's.
+ */
+function applyTurn(line, parent, node, state) {
+    if (!parent) return state;
+    var slots = slotCount(line);
+
+    function eachSlot(fn) {
+        ["you", "them"].forEach(function(side) {
+            for (var i = 0; i < slots; i++) fn(side, i);
+        });
+    }
+
+    // Declared switches happen first, so the newcomer is what gets hit.
+    eachSlot(function(side, i) {
+        if (!switchTargetAt(parent, side, i)) return;
+        leaveField(line, parent, state, side, i);
+        applySwitchInAbility(line, node, state, side, i);
+    });
+
+    // A status that survived the turn has been there one turn longer.
+    eachSlot(function(side, i) {
+        var ref = monAt(parent, side, i);
+        if (!ref) return;
+        var mon = monState(state, side, ref);
+        if (mon.status) mon.statusTurns = (mon.statusTurns || 0) + 1;
+    });
+
+    /*
+     * Who is actually standing in each slot when the moves land. A slot that
+     * switched has already been replaced, so anything aimed at it hits the
+     * Pokemon that just came in - which is the free hit a switch pays for.
+     */
+    var onField = {
+        mons: [0, 1].map(function(i) {
+            return switchTargetAt(parent, "you", i)
+                ? (monAt(node, "you", i) || switchTargetAt(parent, "you", i))
+                : monAt(parent, "you", i);
+        }),
+        foes: [0, 1].map(function(i) {
+            return switchTargetAt(parent, "them", i)
+                ? (monAt(node, "them", i) || switchTargetAt(parent, "them", i))
+                : monAt(parent, "them", i);
+        })
+    };
+
+    // Then the moves of whichever slots did not switch.
+    eachSlot(function(side, i) {
+        if (switchTargetAt(parent, side, i)) return;
+        var move = moveAt(parent, side, i);
+        if (!move) return;
+        applyMoveEffect(move, state, side, i, targetsOf(onField, side, i, move), line, onField);
+    });
+
+    // Anything that changed without being declared a switch happens between turns.
+    eachSlot(function(side, i) {
+        if (switchTargetAt(parent, side, i)) return;
+        var was = monAt(parent, side, i);
+        var now = monAt(node, side, i);
         if (!now || now === was) return;
-
-        state[side].boosts = {};
-        state[side].volatiles = {};
-        state[side].status = state.statusMemory[side][now] || "";
+        leaveField(line, parent, state, side, i);
+        applySwitchInAbility(line, node, state, side, i);
     });
     return state;
 }
@@ -371,23 +739,40 @@ function computeNodeState(line, nodeId, seen) {
     seen[nodeId] = true;
 
     var parents = parentEdges(line, nodeId);
-    if (!parents.length) return applyStatusSeed(node, emptyState());
+    if (!parents.length) {
+        var fresh = emptyState();
+        // Whoever leads brings their switch-in ability with them.
+        for (var i = 0; i < slotCount(line); i++) {
+            applySwitchInAbility(line, node, fresh, "you", i);
+            applySwitchInAbility(line, node, fresh, "them", i);
+        }
+        return applyStatusSeed(node, fresh);
+    }
 
     var parent = line.nodes[parents[0].from];
     var state = computeNodeState(line, parents[0].from, seen);
     if (parents.length > 1) state.ambiguous = true;
-    applyNodeActions(parent, state);
-    // Between the two turns, whatever changed sides gets swapped over.
-    applySwitchIn(parent, node, state);
+    applyTurn(line, parent, node, state);
     return applyStatusSeed(node, state);
 }
 
+/*
+ * The state of whichever Pokemon is in a given slot, for rendering. Empty slots
+ * get a blank record rather than null so callers do not need to check.
+ */
+function slotState(line, node, state, side, slot) {
+    return monState(state, side, monAt(node, side, slot));
+}
+
 function hasState(state) {
-    return !!(state.weather ||
-        state.you.status || state.them.status ||
-        Object.keys(state.you.volatiles).length || Object.keys(state.them.volatiles).length ||
-        Object.keys(state.you.boosts).length || Object.keys(state.you.hazards).length ||
-        Object.keys(state.them.boosts).length || Object.keys(state.them.hazards).length);
+    if (state.weather) return true;
+    var anyMon = ["you", "them"].some(function(side) {
+        return Object.values(state.mons[side] || {}).some(function(mon) {
+            return mon.status || Object.keys(mon.boosts).length || Object.keys(mon.volatiles).length;
+        });
+    });
+    if (anyMon) return true;
+    return !!(Object.keys(state.you.hazards).length || Object.keys(state.them.hazards).length);
 }
 
 /*
@@ -414,7 +799,28 @@ function loadLines() {
         var line = LINES[id];
         for (var nodeId in line.nodes) {
             var node = line.nodes[nodeId];
-            if (node.foeMove === undefined) node.foeMove = "";
+            /*
+             * Everything used to assume one Pokemon out per side. Older turns
+             * carry singular fields, which become slot one of the new arrays.
+             */
+            if (!node.mons) {
+                node.mons = [node.mon || "", ""];
+                delete node.mon;
+            }
+            if (!node.foes) {
+                node.foes = [node.foe || "", ""];
+                delete node.foe;
+            }
+            if (!node.actions) {
+                node.actions = [node.action || {type: "move", value: ""}, {type: "move", value: ""}];
+                delete node.action;
+            }
+            if (!node.foeActions) {
+                var theirs = node.foeAction || {type: "move", value: node.foeMove || ""};
+                node.foeActions = [theirs, {type: "move", value: ""}];
+                delete node.foeAction;
+                delete node.foeMove;
+            }
             if (node.stateOverride === undefined) node.stateOverride = null;
             if (node.statusSeed === undefined) node.statusSeed = {you: "", them: ""};
             // Existing turns are already decided, so start them collapsed.
@@ -448,26 +854,47 @@ function deleteLine(id) {
  * The Box is the roster a line draws from. Stored as {Species: {SetName: set}},
  * flattened here into the "Species (Set)" keys nodes refer to.
  */
+/*
+ * How a plan refers to one of your Pokémon.
+ *
+ * The obvious handle - "Species (Nickname)" - changes the moment it evolves, and
+ * addToDex deletes the old entry when it re-keys, so every reference to it goes
+ * stale. `data.id` is <PID>-<IVs>-<met level>, all fixed for the Pokémon's whole
+ * life, and is already what upstream uses to recognise it across an evolution.
+ *
+ * It's only filled in by the Lua game sync though, so Pokémon entered by hand
+ * fall back to the old key. Those still break on evolution - there's nothing
+ * stable to hold on to - but nothing regresses.
+ */
+function monRef(entry) {
+    return (entry.set.data && entry.set.data.id) || entry.key;
+}
+
 function boxRoster() {
     var customSets = JSON.parse(localStorage.customsets ?? "{}");
     var roster = [];
     for (var speciesName in customSets) {
         for (var setName in customSets[speciesName]) {
             var set = customSets[speciesName][setName];
-            roster.push({
+            var entry = {
                 key: `${speciesName} (${setName})`,
                 species: speciesName,
                 nickname: setName === "Custom Set" ? "" : setName,
                 dead: !!(set.data && set.data.dead),
                 set: set
-            });
+            };
+            entry.ref = monRef(entry);
+            roster.push(entry);
         }
     }
     return roster;
 }
 
-function boxEntry(key) {
-    return boxRoster().find(x => x.key === key);
+// Accepts either form, so plans saved before this existed keep resolving.
+function boxEntry(ref) {
+    if (!ref) return undefined;
+    var roster = boxRoster();
+    return roster.find(x => x.ref === ref) || roster.find(x => x.key === ref);
 }
 
 /* ------------------------------------------------------------ team vs box */
@@ -484,7 +911,7 @@ const TEAM_SIZE = 6;
  */
 function teamKeys() {
     var roster = boxRoster();
-    var live = roster.filter(x => !x.dead).map(x => x.key);
+    var live = roster.filter(x => !x.dead).map(x => x.ref);
 
     var stored;
     try {
@@ -492,12 +919,43 @@ function teamKeys() {
     } catch (e) {
         stored = null;
     }
-    if (!Array.isArray(stored)) return live.slice(0, TEAM_SIZE);
 
-    // Drop anything that has since been deleted from the Box.
-    var known = {};
-    roster.forEach(x => { known[x.key] = true; });
-    return stored.filter(k => known[k]).slice(0, TEAM_SIZE);
+    /*
+     * With nothing stored, the first few living Pokémon stand in - but that
+     * default is written down straight away rather than recomputed each time.
+     * Left unsaved it follows Box order, and evolution re-keys an entry to the
+     * end of the Box, which would silently shuffle somebody off the team.
+     */
+    if (!Array.isArray(stored)) {
+        var seeded = live.slice(0, TEAM_SIZE);
+        if (seeded.length) saveTeamKeys(seeded);
+        return seeded;
+    }
+
+    /*
+     * Resolved through boxEntry, which accepts the old species+nickname handles
+     * as well - so a team saved before refs existed upgrades itself - and drops
+     * anything that has since left the Box.
+     */
+    var resolved = stored
+        .map(function(handle) {
+            var entry = boxEntry(handle);
+            return entry ? entry.ref : null;
+        })
+        .filter(function(ref) { return ref; })
+        .slice(0, TEAM_SIZE);
+
+    /*
+     * A stored team where nothing resolves any more means the Box was replaced -
+     * a new attempt, say - so seed a fresh one. A team stored as empty is a
+     * deliberate choice and is left alone.
+     */
+    if (stored.length && !resolved.length && live.length) {
+        var reseeded = live.slice(0, TEAM_SIZE);
+        saveTeamKeys(reseeded);
+        return reseeded;
+    }
+    return resolved;
 }
 
 function saveTeamKeys(keys) {
@@ -505,16 +963,16 @@ function saveTeamKeys(keys) {
 }
 
 function teamRoster() {
-    var keys = teamKeys();
+    var refs = teamKeys();
     var roster = boxRoster();
     // Keep the stored order rather than Box order - it's the party order.
-    return keys.map(k => roster.find(x => x.key === k)).filter(x => x);
+    return refs.map(r => roster.find(x => x.ref === r)).filter(x => x);
 }
 
 function benchRoster() {
     var onTeam = {};
-    teamKeys().forEach(k => { onTeam[k] = true; });
-    return boxRoster().filter(x => !onTeam[x.key]);
+    teamKeys().forEach(r => { onTeam[r] = true; });
+    return boxRoster().filter(x => !onTeam[x.ref]);
 }
 
 function addToTeam(key) {
@@ -550,9 +1008,3 @@ function swapIntoTeam(incoming, targetKey) {
     saveTeamKeys(keys);
 }
 
-// The enemy set for a node, which is where their moves and level come from.
-function foeSet(line, node) {
-    if (!node.foe) return null;
-    var sets = GAME.setdex()[node.foe];
-    return sets ? sets[line.trainer] || null : null;
-}

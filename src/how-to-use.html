@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<!--
+  Line planner - how to use.
+
+  Built the way src/doubles-mockup.html was: a standalone page that pulls in the
+  planner's own stylesheet and renders real, styled elements rather than
+  screenshots. Screenshots go stale the moment the UI moves; this doesn't,
+  because every card, badge and button below is the same markup planner-
+  controls.js emits, styled by the same planner.css the tool uses.
+
+  Only layout chrome is defined inline. If something here looks wrong, the fix
+  belongs in planner.css, not in this file.
+
+  Copied to dist/ verbatim by `node build` (cpdir), so it is reachable at
+  /how-to-use.html. It has no cache-busting hash, so hard-refresh it after
+  changing planner.css.
+-->
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Line Planner - how to use</title>
+    <link rel="icon" type="image/x-icon" href="./img/favicon.png">
+    <link type="text/css" rel="stylesheet" href="./css/main.css" />
+    <link type="text/css" rel="stylesheet" href="./css/planner.css" />
+    <link type="text/css" rel="stylesheet" href="./css/dark-theme.css" id="dark-theme-styles">
+    <script>
+        // Same key and same reasoning as index.template.html: localStorage only
+        // stores strings, so the string 'false' would be truthy.
+        if (localStorage.getItem('darkTheme') !== 'true') {
+            document.getElementById('dark-theme-styles').disabled = true;
+        }
+    </script>
+
+    <style>
+        /* ------------------------------------------------------- page chrome */
+
+        /*
+         * main.css pins `html, body { min-width: 100em }` for the calculator's
+         * fixed-width tables. This page is prose and reflows fine, so the pin
+         * only buys a horizontal scrollbar on anything narrower than 1400px.
+         */
+        html, body {
+            min-width: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+            font-size: 14px;
+            line-height: 1.55;
+            margin: 0;
+        }
+
+        .doc {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 26px 24px 90px;
+        }
+
+        .doc-head {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 10px 16px;
+            margin-bottom: 4px;
+        }
+
+        .doc-head h1 {
+            font-size: 22px;
+            margin: 0;
+        }
+
+        .doc-lede {
+            margin: 0 0 18px;
+            max-width: 68ch;
+            opacity: 0.85;
+        }
+
+        .doc-back,
+        .doc-theme {
+            font-size: 12px;
+            border: 1px solid rgba(128, 128, 128, 0.5);
+            border-radius: 6px;
+            padding: 2px 9px;
+            background: transparent;
+            color: inherit;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .doc-back:hover,
+        .doc-theme:hover {
+            background: rgba(128, 128, 128, 0.2);
+        }
+
+        /* Section index. Sticky so it survives the scroll on a long page. */
+        .doc-toc {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 6px;
+            padding: 8px 0 10px;
+            margin-bottom: 22px;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.35);
+            background: var(--background, #ffffff);
+        }
+
+        .doc-toc a {
+            font-size: 11px;
+            text-decoration: none;
+            color: inherit;
+            opacity: 0.7;
+            padding: 1px 8px;
+            border: 1px solid rgba(128, 128, 128, 0.4);
+            border-radius: 10px;
+        }
+
+        .doc-toc a:hover {
+            opacity: 1;
+            background: rgba(90, 140, 220, 0.2);
+            border-color: rgba(90, 140, 220, 0.7);
+        }
+
+        h2 {
+            font-size: 17px;
+            margin: 38px 0 2px;
+            padding-top: 6px;
+            scroll-margin-top: 52px;
+        }
+
+        h3 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.65;
+            margin: 22px 0 6px;
+        }
+
+        .doc p {
+            max-width: 68ch;
+        }
+
+        .doc li {
+            max-width: 66ch;
+        }
+
+        .doc code {
+            font-size: 12px;
+            padding: 0 4px;
+            border-radius: 3px;
+            background: rgba(128, 128, 128, 0.2);
+        }
+
+        kbd {
+            font: inherit;
+            font-size: 11px;
+            padding: 1px 5px;
+            border: 1px solid rgba(128, 128, 128, 0.6);
+            border-bottom-width: 2px;
+            border-radius: 4px;
+            background: rgba(128, 128, 128, 0.12);
+            white-space: nowrap;
+        }
+
+        /* A demo sitting beside the text that explains it. */
+        .doc-row {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            margin: 14px 0 6px;
+        }
+
+        .doc-aside {
+            flex: 1 1 300px;
+            min-width: 280px;
+            font-size: 13px;
+        }
+
+        .doc-aside p:first-child {
+            margin-top: 0;
+        }
+
+        /* Legend entries that lead with the real element they describe. */
+        .doc-parts {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .doc-parts > li {
+            display: grid;
+            grid-template-columns: 118px minmax(0, 1fr);
+            gap: 4px 12px;
+            align-items: baseline;
+            padding: 7px 0;
+            border-top: 1px solid rgba(128, 128, 128, 0.25);
+            max-width: none;
+        }
+
+        .doc-parts > li:first-child {
+            border-top: none;
+        }
+
+        .doc-part-demo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            justify-content: flex-end;
+            text-align: right;
+        }
+
+        .doc-part-text {
+            font-size: 12.5px;
+        }
+
+        .doc-part-text b {
+            display: block;
+        }
+
+        /*
+         * Some of the real components have fixed widths - a doubles card is
+         * 434px, the branch editor 360 - and simply don't fit a phone. They
+         * scroll inside their own box rather than dragging the whole page
+         * sideways with them.
+         */
+        .doc-scroll {
+            max-width: 100%;
+            overflow-x: auto;
+            /* Room for the connector nub, which hangs 7px below the card. */
+            padding-bottom: 9px;
+        }
+
+        /* A boxed aside for the things that bite people. */
+        .doc-note {
+            max-width: 68ch;
+            margin: 12px 0;
+            padding: 8px 12px;
+            font-size: 13px;
+            border-left: 3px solid #d08a20;
+            background: rgba(208, 138, 32, 0.12);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .doc-note.good {
+            border-left-color: #2e9e5b;
+            background: rgba(46, 158, 91, 0.12);
+        }
+
+        /* --------------------------------------------- neutralising the app's
+           positioning, so real components can sit in ordinary page flow */
+
+        /*
+         * Cards are absolutely positioned onto the canvas in the app. Relative
+         * rather than static, so the connector nub - which hangs off the bottom
+         * at `bottom: -7px` - still anchors to its own card.
+         */
+        .doc .planner-node {
+            position: relative;
+            left: auto;
+            top: auto;
+            margin: 0;
+            cursor: default;
+            flex: 0 0 auto;
+        }
+
+        /* fieldset floats left in main.css; these are laid out by flex here. */
+        .doc fieldset {
+            float: none;
+            margin: 0;
+        }
+
+        .doc .planner-sidebar,
+        .doc .planner-edge-popup,
+        .doc .planner-node-popup,
+        .doc .planner-switch-popup {
+            flex: 0 0 auto;
+        }
+
+        /* The strips size themselves to six cards; let them shrink here. */
+        .doc .planner-foe-party,
+        .doc .planner-your-party,
+        .doc .planner-partner-party {
+            width: auto;
+        }
+
+        .doc .planner-toolbar,
+        .doc .planner-ai-flags {
+            margin: 0;
+            flex-wrap: wrap;
+        }
+
+        /* A stand-in for the canvas, sized to its contents. */
+        .doc-stage {
+            position: relative;
+            height: 340px;
+            width: 100%;
+            max-width: 640px;
+            /* Pannable rather than clipped, so the diagram survives a phone. */
+            overflow-x: auto;
+            overflow-y: hidden;
+            border: 1px solid rgba(128, 128, 128, 0.35);
+            border-radius: 4px;
+            background-image: radial-gradient(rgba(128, 128, 128, 0.25) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .doc-stage .planner-node {
+            position: absolute;
+        }
+
+        .doc-stage-edges {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* Ghost outline for "drop it here and a turn appears". */
+        .doc-ghost-node {
+            position: absolute;
+            border: 2px dashed rgba(90, 140, 220, 0.8);
+            border-radius: 5px;
+            background: rgba(90, 140, 220, 0.08);
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6px;
+            opacity: 0.9;
+        }
+
+        .doc-cursor {
+            position: absolute;
+            font-size: 18px;
+            pointer-events: none;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+        }
+
+        /* Arrow-colour key. */
+        .doc-swatches {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 18px;
+            margin: 10px 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .doc-swatches li {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12.5px;
+        }
+
+        .doc-swatch {
+            display: inline-block;
+            width: 26px;
+            height: 3px;
+            border-radius: 2px;
+            flex: 0 0 auto;
+        }
+
+        .doc-swatch.good { background: #2e9e5b; }
+        .doc-swatch.bad { background: #c0392b; }
+        .doc-swatch.warn { background: #d08a20; }
+        .doc-swatch.neutral { background: #8a8a8a; }
+
+        /* Compact two-column list for the cheat sheet. */
+        .doc-cheats {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2px 22px;
+        }
+
+        .doc-cheats li {
+            display: grid;
+            grid-template-columns: 128px minmax(0, 1fr);
+            gap: 10px;
+            padding: 6px 0;
+            border-top: 1px solid rgba(128, 128, 128, 0.22);
+            font-size: 12.5px;
+            max-width: none;
+        }
+
+        .doc-cheats .doc-cheat-do {
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .doc-formats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 0;
+            margin: 12px 0;
+            list-style: none;
+        }
+
+        .doc-formats li {
+            flex: 1 1 210px;
+            min-width: 200px;
+            padding: 8px 11px;
+            border: 1px solid rgba(128, 128, 128, 0.35);
+            border-radius: 5px;
+            font-size: 12.5px;
+            max-width: none;
+        }
+
+        .doc-formats b {
+            display: block;
+            font-size: 13px;
+        }
+
+        .doc-formats em {
+            font-style: normal;
+            opacity: 0.6;
+            font-size: 11px;
+        }
+
+        .doc-foot {
+            margin-top: 46px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(128, 128, 128, 0.35);
+            font-size: 12px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body>
+<div class="doc">
+
+    <div class="doc-head">
+        <h1>Line Planner</h1>
+        <a class="doc-back" href="./index.html">&larr; Back to the calculator</a>
+        <button class="doc-theme" id="doc-theme">Toggle theme</button>
+    </div>
+
+    <p class="doc-lede">
+        A line is your plan for one trainer fight: who leads, what it does each turn, and where
+        the plan forks when the fight doesn't go to script. The planner draws that as turns joined
+        by labelled arrows, and works out the fight state &mdash; boosts, status, hazards, weather
+        &mdash; for every turn from the ones before it.
+    </p>
+
+    <nav class="doc-toc">
+        <a href="#start">Starting a line</a>
+        <a href="#workspace">The workspace</a>
+        <a href="#turn">Reading a turn</a>
+        <a href="#filling">Filling a turn</a>
+        <a href="#branching">Branching</a>
+        <a href="#derived">What it works out for you</a>
+        <a href="#formats">Battle formats</a>
+        <a href="#cheats">Easy to miss</a>
+        <a href="#notyet">Not built yet</a>
+    </nav>
+
+
+    <!-- ===================================================== starting a line -->
+
+    <h2 id="start">Starting a line</h2>
+
+    <p>
+        Lines live in the sidebar on the left of the <b>Planner</b> tab. <b>New line</b> asks for a
+        trainer &mdash; type to filter, the list covers every trainer in the game &mdash; and
+        everything after that hangs off which one you picked: their party, their sets, their AI
+        flags, and whether the fight is a single, a double or a tag battle.
+    </p>
+
+    <div class="doc-row">
+        <fieldset class="planner-sidebar">
+            <legend align="center">Lines</legend>
+            <button class="btn planner-btn">New line</button>
+            <ul class="planner-line-list">
+                <li class="planner-line-item selected">
+                    <span class="planner-line-name">Leader Roark</span>
+                    <button class="planner-delete-line" title="Delete this line">&times;</button>
+                </li>
+                <li class="planner-line-item">
+                    <span class="planner-line-name">Twins Liv &amp; Liz</span>
+                    <button class="planner-delete-line" title="Delete this line">&times;</button>
+                </li>
+                <li class="planner-line-item">
+                    <span class="planner-line-name">Galactic Luna #1</span>
+                    <button class="planner-delete-line" title="Delete this line">&times;</button>
+                </li>
+            </ul>
+        </fieldset>
+
+        <div class="doc-aside">
+            <p>Click a line to open it. The <b>&times;</b> deletes it.</p>
+            <p>
+                A line reads live from your Box, so levelling a Pokémon, teaching it a move or
+                changing what it holds updates every line that uses it. Nothing is copied at the
+                moment you build the plan.
+            </p>
+            <p>
+                Your Pokémon are identified by who they <em>are</em>, not by species, so a line
+                survives evolution &mdash; the Machop you planned with is still the same entry once
+                it's a Machoke.
+            </p>
+            <p>
+                Lines are saved in this browser, on this machine. Clearing site data loses them.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- ======================================================== the workspace -->
+
+    <h2 id="workspace">The workspace</h2>
+
+    <p>
+        Above the canvas: the toolbar, the opponent's AI flags, and the two party strips with your
+        Box beside them.
+    </p>
+
+    <div class="doc-row">
+        <div class="planner-toolbar">
+            <span class="planner-trainer-name">Leader Roark</span>
+            <button class="btn planner-btn">Add turn</button>
+            <button class="btn planner-btn">All moves</button>
+            <button class="btn planner-btn" id="planner-toggle-parties">Teams</button>
+        </div>
+    </div>
+
+    <ul>
+        <li><b>Add turn</b> drops an empty turn onto the canvas. New turns are staggered so they don't land on top of each other.</li>
+        <li><b>All moves</b> expands or collapses the move lists on <em>every</em> turn at once. Collapsing them is what keeps a long line readable.</li>
+        <li><b>Teams</b> folds the party strips and the Box away to give the canvas more room. The choice is remembered.</li>
+    </ul>
+
+    <h3>AI flags</h3>
+
+    <p>
+        Straight from the game's own trainer data, in plain language on hover. These decide how much
+        branching a fight actually needs: a <code>Risky</code> trainer will gamble on a low-accuracy
+        move, so that fight wants a miss branch; a <code>CheckHP</code> trainer switches out when
+        low, so planning a clean KO on it is optimistic.
+    </p>
+
+    <div class="doc-row">
+        <div class="planner-ai-flags">
+            <span class="planner-flag-label">AI:</span>
+            <span class="planner-flag" title="Avoids obviously bad moves.">Basic</span>
+            <span class="planner-flag" title="Accounts for type matchups when choosing a move.">EvaluateAttack</span>
+            <span class="planner-flag" title="Picks the strongest move rather than a random one.">Expert</span>
+            <span class="planner-flag" title="Will gamble on low-accuracy or high-roll plays. Plan a miss branch.">Risky</span>
+        </div>
+    </div>
+
+    <p>Roark's actual flags, above. Hover any of them for what it means for your plan.</p>
+
+    <h3>The party strips</h3>
+
+    <p>
+        Theirs on top, yours underneath, and your Box to the right. Both strips use the same card, so
+        the two rows line up and you can read the matchup straight down a column.
+    </p>
+
+    <div class="doc-row">
+        <div>
+            <span class="planner-party-label">Their team <span class="planner-party-hint">- drag onto a turn, or onto empty space for a new one</span></span>
+            <div class="planner-foe-party">
+                <span class="planner-foe planner-card" title="Bonsly - Leader Roark">
+                    <img class="planner-card-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/bonsly.png" alt="Bonsly">
+                    <span class="planner-card-name">Bonsly</span>
+                    <span class="planner-card-meta">Lv. 15</span>
+                    <span class="planner-card-ability" title="Rock Head - Protects the Pokémon from recoil damage.">Rock Head</span>
+                    <span class="planner-card-item"><img src="https://play.pokemonshowdown.com/sprites/itemicons/focus-sash.png" alt=""> Focus Sash</span>
+                </span>
+                <span class="planner-foe planner-card" title="Gible - Leader Roark">
+                    <img class="planner-card-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/gible.png" alt="Gible">
+                    <span class="planner-card-name">Gible</span>
+                    <span class="planner-card-meta">Lv. 14</span>
+                    <span class="planner-card-ability" title="Sand Veil - Boosts the Pokémon's evasion in a sandstorm.">Sand Veil</span>
+                    <span class="planner-card-item"><img src="https://play.pokemonshowdown.com/sprites/itemicons/chesto-berry.png" alt=""> Chesto Berry</span>
+                </span>
+                <span class="planner-foe planner-card" title="Cranidos - Leader Roark">
+                    <img class="planner-card-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/cranidos.png" alt="Cranidos">
+                    <span class="planner-card-name">Cranidos</span>
+                    <span class="planner-card-meta">Lv. 16</span>
+                    <span class="planner-card-ability" title="Rock Head - Protects the Pokémon from recoil damage.">Rock Head</span>
+                    <span class="planner-card-item"><img src="https://play.pokemonshowdown.com/sprites/itemicons/lum-berry.png" alt=""> Lum Berry</span>
+                </span>
+            </div>
+
+            <span class="planner-party-label" style="margin-top:8px">Your team <span class="planner-party-hint">- drag onto a turn, or onto another to swap</span></span>
+            <div class="planner-your-party">
+                <span class="planner-mine planner-card" title="Bruiser - Makuhita, Lv. 16. Drag onto a turn, onto another team member to swap, or into the box to bench it">
+                    <img class="planner-card-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/makuhita.png" alt="Makuhita">
+                    <span class="planner-card-name">Bruiser</span>
+                    <span class="planner-card-meta">Lv. 16</span>
+                    <span class="planner-card-ability tracked" title="Guts - Boosts the Attack stat if the Pokémon has a status condition.">Guts</span>
+                    <span class="planner-card-item editable"><img src="https://play.pokemonshowdown.com/sprites/itemicons/oran-berry.png" alt=""> Oran Berry</span>
+                </span>
+                <span class="planner-mine planner-card dead" title="Rustle - Budew, Lv. 13, fainted.">
+                    <img class="planner-card-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/budew.png" alt="Budew">
+                    <span class="planner-card-name">Rustle</span>
+                    <span class="planner-card-meta">Lv. 13</span>
+                    <span class="planner-card-ability" title="Natural Cure">Natural Cure</span>
+                    <span class="planner-card-item empty"><span class="planner-item-add">+ item</span></span>
+                </span>
+            </div>
+        </div>
+
+        <div class="doc-aside">
+            <ul class="doc-parts">
+                <li>
+                    <span class="doc-part-demo"><span class="planner-card-ability tracked" title="This ability is modelled">Guts</span></span>
+                    <span class="doc-part-text">
+                        <b>Underlined ability</b>
+                        The planner actually models this one. Plain text means it's shown for reference
+                        only. Hover either for the full description.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo"><span class="planner-card-item editable"><img src="https://play.pokemonshowdown.com/sprites/itemicons/oran-berry.png" alt=""> Oran Berry</span></span>
+                    <span class="doc-part-text">
+                        <b>Held item</b>
+                        On <em>your</em> cards this is clickable, and writes straight back to the Box.
+                        Theirs comes from the game's data and can't be changed.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo"><span class="planner-card-name" style="text-decoration: line-through; opacity: .6">Rustle</span></span>
+                    <span class="doc-part-text">
+                        <b>Struck through</b>
+                        Fainted, per the Box. It can't be picked for a turn or switched to.
+                    </span>
+                </li>
+            </ul>
+            <p>
+                Only the six on <b>your team</b> can fight. A Box Pokémon can be dragged onto the team
+                to swap in, but not straight into a turn &mdash; it isn't at the fight, so a plan
+                built on it could never happen.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- ====================================================== reading a turn -->
+
+    <h2 id="turn">Reading a turn</h2>
+
+    <p>
+        One card is one turn. Yours on the left, theirs on the right, always &mdash; so a move is
+        read straight across the middle against what it's up against.
+    </p>
+
+    <div class="doc-row">
+        <div class="planner-node">
+            <div class="planner-state-bar">
+                <span class="planner-field them">Their side: Stealth Rock</span>
+                <span class="planner-field cured" title="Cranidos used its Lum Berry to cure a status. It only works once, so anything later sticks.">Lum Berry spent</span>
+            </div>
+            <div class="planner-node-head">
+                <span class="planner-slots">
+                    <span class="planner-slot" data-side="you" data-slot="0">
+                        <img class="planner-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/makuhita.png" alt="">
+                        <span class="planner-slot-name">Bruiser</span>
+                        <span class="planner-statuses">
+                            <span class="planner-status brn" title="Burned, 2 turns elapsed">BRN 2</span>
+                        </span>
+                        <span class="planner-boosts">
+                            <span class="planner-boost up">+1 Atk</span>
+                        </span>
+                        <span class="planner-chosen">
+                            <img class="planner-move-type" src="https://play.pokemonshowdown.com/sprites/types/Fighting.png" alt=""> <b>Vital Throw</b>
+                        </span>
+                    </span>
+                </span>
+                <span class="planner-node-vs">vs</span>
+                <span class="planner-slots">
+                    <span class="planner-slot foe" data-side="them" data-slot="0">
+                        <img class="planner-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/cranidos.png" alt="">
+                        <span class="planner-slot-name">Cranidos <em>Lv.16</em></span>
+                        <span class="planner-boosts">
+                            <span class="planner-boost up">+2 Spe</span>
+                        </span>
+                        <span class="planner-chosen">
+                            <img class="planner-move-type" src="https://play.pokemonshowdown.com/sprites/types/Rock.png" alt=""> <b>Head Smash</b>
+                        </span>
+                    </span>
+                </span>
+            </div>
+            <div class="planner-moves">
+                <button class="planner-moves-toggle open" title="Hide the movesets">Moves</button>
+                <div class="planner-move-columns">
+                    <div class="planner-move-side you">
+                        <div class="planner-move-column" data-side="you" data-slot="0">
+                            <span class="planner-move-column-title">Bruiser</span>
+                            <span class="planner-move you selected" title="Vital Throw — Physical, 70 BP, —% acc">
+                                <img src="https://play.pokemonshowdown.com/sprites/types/Fighting.png" alt="">
+                                <span class="planner-move-name">Vital Throw</span>
+                                <span class="planner-move-bp">70</span>
+                            </span>
+                            <span class="planner-move you" title="Brick Break — Physical, 75 BP, 100% acc">
+                                <img src="https://play.pokemonshowdown.com/sprites/types/Fighting.png" alt="">
+                                <span class="planner-move-name">Brick Break</span>
+                                <span class="planner-move-bp">75</span>
+                            </span>
+                            <span class="planner-move you" title="Fake Out — Physical, 40 BP, 100% acc">
+                                <img src="https://play.pokemonshowdown.com/sprites/types/Normal.png" alt="">
+                                <span class="planner-move-name">Fake Out</span>
+                                <span class="planner-move-bp">40</span>
+                            </span>
+                            <span class="planner-move you" title="Bulk Up — status, 0 BP, —% acc">
+                                <img src="https://play.pokemonshowdown.com/sprites/types/Fighting.png" alt="">
+                                <span class="planner-move-name">Bulk Up</span>
+                                <span class="planner-move-bp">&mdash;</span>
+                            </span>
+                            <button class="planner-switch-btn" title="Switch instead of attacking. The turn is given up, so whoever comes in takes the hit.">&#8646; Switch</button>
+                        </div>
+                    </div>
+                    <div class="planner-move-side them">
+                        <div class="planner-move-column" data-side="them" data-slot="0">
+                            <span class="planner-move-column-title">Cranidos</span>
+                            <span class="planner-move them selected" title="Head Smash — Physical, 150 BP, 80% acc">
+                                <img src="https://play.pokemonshowdown.com/sprites/types/Rock.png" alt="">
+                                <span class="planner-move-name">Head Smash</span>
+                                <span class="planner-move-bp">150</span>
+                            </span>
+                            <span class="planner-move them" title="Zen Headbutt — Physical, 80 BP, 90% acc">
+                                <img src="https://play.pokemonshowdown.com/sprites/types/Psychic.png" alt="">
+                                <span class="planner-move-name">Zen Headbutt</span>
+                                <span class="planner-move-bp">80</span>
+                            </span>
+                            <span class="planner-move them" title="Crunch — Physical, 80 BP, 100% acc">
+                                <img src="https://play.pokemonshowdown.com/sprites/types/Dark.png" alt="">
+                                <span class="planner-move-name">Crunch</span>
+                                <span class="planner-move-bp">80</span>
+                            </span>
+                            <span class="planner-move them" title="Rock Polish — status, 0 BP, —% acc">
+                                <img src="https://play.pokemonshowdown.com/sprites/types/Rock.png" alt="">
+                                <span class="planner-move-name">Rock Polish</span>
+                                <span class="planner-move-bp">&mdash;</span>
+                            </span>
+                            <button class="planner-switch-btn them" title="Switch instead of attacking. The turn is given up, so whoever comes in takes the hit.">&#8646; Switch</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="planner-node-note">Rock Head means recoil costs it nothing. Don't wait it out.</div>
+            <div class="planner-node-buttons">
+                <button class="planner-fold-node btn planner-btn small" title="Fold away the turns that follow this one">Fold</button>
+                <button class="btn planner-btn small">Edit</button>
+                <button class="btn planner-btn small">Remove</button>
+            </div>
+            <div class="planner-node-handle" title="Drag onto another turn to branch to it, or onto empty space to make a new one"></div>
+        </div>
+
+        <div class="doc-aside">
+            <ul class="doc-parts">
+                <li>
+                    <span class="doc-part-demo"><span class="planner-field them">Their side: Stealth Rock</span></span>
+                    <span class="doc-part-text">
+                        <b>State bar</b>
+                        Weather, hazards and screens in play on this turn. Worked out from the turns
+                        before it, never typed in.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo">
+                        <span class="planner-status brn">BRN 2</span>
+                        <span class="planner-boost up">+1 Atk</span>
+                    </span>
+                    <span class="doc-part-text">
+                        <b>Status and boosts</b>
+                        These belong to the Pokémon, not the slot. It keeps its status when it
+                        switches out and loses its boosts, exactly as the game does.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo">
+                        <span class="planner-chosen"><img class="planner-move-type" src="https://play.pokemonshowdown.com/sprites/types/Fighting.png" alt=""> <b>Vital Throw</b></span>
+                    </span>
+                    <span class="doc-part-text">
+                        <b>The action</b>
+                        What that slot does this turn &mdash; a move, or <span class="planner-switch">&#8646; <b>a switch</b></span>.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo"><button class="planner-moves-toggle open" style="width:auto">Moves</button></span>
+                    <span class="doc-part-text">
+                        <b>Both movesets</b>
+                        Yours left, theirs right. Click one of yours to plan it; click one of
+                        <em>theirs</em> to pin the threat you're planning around. Click the same one
+                        again to clear it. The toggle collapses the lists once the turn is decided.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo"><button class="planner-switch-btn" style="width:auto">&#8646; Switch</button></span>
+                    <span class="doc-part-text">
+                        <b>Switch</b>
+                        A real action for either side, and it costs that slot its turn &mdash; whoever
+                        comes in takes the hit. Switches resolve before moves.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo"><button class="planner-fold-node btn planner-btn small">Fold</button></span>
+                    <span class="doc-part-text">
+                        <b>Fold</b>
+                        Hides everything downstream. Only appears when there <em>is</em> something
+                        downstream. See <a href="#folding">folding</a>.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo"><span class="planner-node-handle" style="position:static;display:inline-block;margin:0"></span></span>
+                    <span class="doc-part-text">
+                        <b>The connector nub</b>
+                        The blue dot under the card. Drag it to branch. This is the least obvious
+                        control in the tool &mdash; see <a href="#branching">branching</a>.
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="doc-note">
+        <b>nd</b> on a move &mdash; as in <span class="planner-nodrop">nd</span> &mdash; means Platinum
+        Kaizo has removed that move's self-inflicted stat drop. Superpower, Overheat, Psycho Boost,
+        Draco Meteor and Leaf Storm have no drawback here, for you <em>and</em> for the AI.
+    </div>
+
+    <h3>The turn editor</h3>
+
+    <p>
+        <b>Edit</b> opens a small dialog holding only what the card can't: the turn's note, and
+        status carried <em>into</em> the turn. Pokémon, moves and switches are all set on the card
+        itself.
+    </p>
+
+    <p>
+        Carried-in status is for walking in pre-slept or pre-poisoned &mdash; a Pokémon can only
+        carry one non-volatile status at a time, so giving yours a harmless one is real protection
+        against a trainer who leads with status. It carries down to every later turn.
+        <b>&mdash; ends on this turn &mdash;</b> is how you close a sleep out.
+    </p>
+
+
+    <!-- ====================================================== filling a turn -->
+
+    <h2 id="filling">Filling a turn</h2>
+
+    <p>
+        Four ways in, because the party strips can be folded away and you shouldn't be forced to
+        unfold them.
+    </p>
+
+    <ul>
+        <li><b>Drag</b> a Pokémon from any strip onto a slot.</li>
+        <li><b>Click</b> a slot &mdash; empty or filled &mdash; to pick from the right source for that slot.</li>
+        <li><b>Right-click</b> a slot to empty it. An empty slot is a real state: after a faint, before the next one is in.</li>
+        <li><b>Switch</b> on the move list, for a mid-fight change.</li>
+    </ul>
+
+    <p>
+        Slots know who owns them, so clicking one offers the right roster: your team for your slots,
+        that trainer's party for theirs, the ally's party for a tag partner's slot.
+    </p>
+
+    <div class="doc-note">
+        Dragging a Pokémon onto <b>empty canvas</b> &mdash; not onto a card &mdash; creates a new
+        turn there with that Pokémon already in it. It's the fastest way to start a line.
+    </div>
+
+
+    <!-- =========================================================== branching -->
+
+    <h2 id="branching">Branching</h2>
+
+    <p>
+        Every card has a blue <b>connector nub</b> hanging off its bottom edge. Drag it to say
+        "and then":
+    </p>
+
+    <ul>
+        <li>Drop it <b>on another turn</b> to branch to that turn.</li>
+        <li>Drop it <b>on empty canvas</b> to create the next turn right there.</li>
+    </ul>
+
+    <div class="doc-row">
+        <div class="doc-stage" id="doc-branch-stage">
+            <svg class="doc-stage-edges" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <marker id="doc-arrow-good" viewBox="0 0 10 10" refX="9" refY="5"
+                            markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e9e5b" />
+                    </marker>
+                    <marker id="doc-arrow-bad" viewBox="0 0 10 10" refX="9" refY="5"
+                            markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#c0392b" />
+                    </marker>
+                </defs>
+            </svg>
+
+            <div class="planner-node" data-doc-from style="left: 177px; top: 12px;">
+                <div class="planner-node-head">
+                    <span class="planner-slots">
+                        <span class="planner-slot">
+                            <img class="planner-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/makuhita.png" alt="">
+                            <span class="planner-slot-name">Bruiser</span>
+                            <span class="planner-chosen"><img class="planner-move-type" src="https://play.pokemonshowdown.com/sprites/types/Fighting.png" alt=""> <b>Vital Throw</b></span>
+                        </span>
+                    </span>
+                    <span class="planner-node-vs">vs</span>
+                    <span class="planner-slots">
+                        <span class="planner-slot foe">
+                            <img class="planner-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/bonsly.png" alt="">
+                            <span class="planner-slot-name">Bonsly <em>Lv.15</em></span>
+                            <span class="planner-chosen"><img class="planner-move-type" src="https://play.pokemonshowdown.com/sprites/types/Rock.png" alt=""> <b>Stealth Rock</b></span>
+                        </span>
+                    </span>
+                </div>
+                <div class="planner-moves collapsed"><button class="planner-moves-toggle">Moves</button></div>
+                <div class="planner-node-handle"></div>
+            </div>
+
+            <div class="planner-node" data-doc-to="good" data-doc-label="You KO" style="left: 12px; top: 205px;">
+                <div class="planner-node-head">
+                    <span class="planner-slots">
+                        <span class="planner-slot">
+                            <img class="planner-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/makuhita.png" alt="">
+                            <span class="planner-slot-name">Bruiser</span>
+                            <span class="planner-chosen"><img class="planner-move-type" src="https://play.pokemonshowdown.com/sprites/types/Fighting.png" alt=""> <b>Vital Throw</b></span>
+                        </span>
+                    </span>
+                    <span class="planner-node-vs">vs</span>
+                    <span class="planner-slots">
+                        <span class="planner-slot foe">
+                            <img class="planner-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/gible.png" alt="">
+                            <span class="planner-slot-name">Gible <em>Lv.14</em></span>
+                            <span class="planner-chosen"><span class="planner-node-blank">&mdash;</span></span>
+                        </span>
+                    </span>
+                </div>
+                <div class="planner-moves collapsed"><button class="planner-moves-toggle">Moves</button></div>
+                <div class="planner-node-handle"></div>
+            </div>
+
+            <div class="doc-ghost-node" data-doc-to="bad" data-doc-label="They crit"
+                 style="left: 340px; top: 205px; width: 200px; height: 118px;">
+                drop on empty canvas &rarr;<br />a new turn appears here
+            </div>
+            <span class="doc-cursor" style="left: 428px; top: 250px;">&#10021;</span>
+        </div>
+
+        <div class="doc-aside">
+            <p>
+                Arrows are coloured by what the branch means, so a line can be read at a glance
+                without reading the labels:
+            </p>
+            <ul class="doc-swatches">
+                <li><span class="doc-swatch good"></span> went your way</li>
+                <li><span class="doc-swatch bad"></span> went their way</li>
+                <li><span class="doc-swatch warn"></span> a complication</li>
+                <li><span class="doc-swatch neutral"></span> no condition &mdash; just "then"</li>
+            </ul>
+            <p>
+                <b>Click an arrow's label</b> to change the condition, give it a custom label, or
+                delete the branch. That is the only way to delete one &mdash; deleting isn't the
+                consequence of clicking the most obvious target on the arrow.
+            </p>
+            <p>
+                Several branches can converge on the same turn. "You KO" and "They miss" both
+                continuing into the same plan is normal, and each keeps its own label.
+            </p>
+        </div>
+    </div>
+
+    <h3>Conditions</h3>
+
+    <p>
+        Conditions are <b>directional</b>: a fight forks because of something you did or something
+        they did, and "you miss" is a very different plan from "they miss". This is the full
+        palette, as it appears in the branch editor.
+    </p>
+
+    <div class="doc-row">
+        <div class="doc-scroll">
+        <fieldset class="planner-edge-popup">
+            <legend align="center">Edit Branch</legend>
+            <p class="planner-hint">What has to happen for the fight to take this path?</p>
+            <div class="planner-condition-grid">
+                <div class="planner-condition-group">
+                    <span class="planner-condition-title">Something you did</span>
+                    <button class="planner-condition good">You KO</button>
+                    <button class="planner-condition bad">You don't KO</button>
+                    <button class="planner-condition bad">You miss</button>
+                    <button class="planner-condition good">You crit</button>
+                    <button class="planner-condition good selected">You crit KO</button>
+                    <button class="planner-condition good">You wake / thaw</button>
+                    <button class="planner-condition warn">Sacrifice</button>
+                </div>
+                <div class="planner-condition-group">
+                    <span class="planner-condition-title">Something they did</span>
+                    <button class="planner-condition bad">They KO you</button>
+                    <button class="planner-condition good">You survive</button>
+                    <button class="planner-condition good">They miss</button>
+                    <button class="planner-condition bad">They crit</button>
+                    <button class="planner-condition bad">They crit KO</button>
+                    <button class="planner-condition bad">They wake / thaw</button>
+                    <button class="planner-condition warn">They switch out</button>
+                    <button class="planner-condition warn">They set up</button>
+                </div>
+                <div class="planner-condition-group">
+                    <span class="planner-condition-title">No condition</span>
+                    <button class="planner-condition neutral">Then</button>
+                </div>
+            </div>
+            <hr />
+            <div class="planner-form">
+                <label>Custom label</label><input class="planner-edit-edge-label" type="text" placeholder="Optional" />
+            </div>
+            <hr />
+            <span class="buttons">
+                <button class="btn planner-btn">Delete branch</button>
+                <button class="btn planner-btn">Cancel</button>
+                <button class="btn planner-btn">Save</button>
+            </span>
+        </fieldset>
+        </div>
+
+        <div class="doc-aside">
+            <p>
+                <b>Sacrifice</b> is a planned trade: let something die to get a free switch-in. It's
+                a legitimate move in a Nuzlocke, so it's a condition rather than something you have
+                to describe in a note.
+            </p>
+            <p>
+                <b>You wake / thaw</b> and <b>They wake / thaw</b> exist because sleep and freeze
+                break on their own schedule and can break on the very first turn. A branch is the
+                honest way to plan around them; a turn count isn't.
+            </p>
+            <p>
+                A <b>custom label</b> overrides whatever condition is selected, for the cases the
+                palette doesn't cover.
+            </p>
+        </div>
+    </div>
+
+    <h3 id="folding">Folding</h3>
+
+    <p>
+        <b>Fold</b> on a card hides the turns that follow it, and the button becomes a count of what
+        it's hiding. A folded card is drawn with a dashed amber border so you can see there's
+        something behind it.
+    </p>
+
+    <div class="doc-row" style="align-items: center; gap: 14px;">
+        <button class="planner-fold-node folded btn planner-btn small" title="Show the turns that follow this one">4 hidden</button>
+        <span class="doc-aside" style="min-width: 0; flex: 1 1 380px;">
+            Folding hides only what is reachable <em>exclusively</em> through the folded turn. A turn
+            that some other branch also leads to stays on the canvas, and isn't counted &mdash; so
+            the number is what's genuinely hidden, not how many turns are downstream.
+        </span>
+    </div>
+
+
+    <!-- ============================================================= derived -->
+
+    <h2 id="derived">What the planner works out for you</h2>
+
+    <p>
+        Nothing about fight state is stored on a turn. It's recomputed by walking back up the graph,
+        so editing one turn updates every turn after it, and rewiring a branch re-derives everything
+        underneath it.
+    </p>
+
+    <ul class="doc-parts">
+        <li>
+            <span class="doc-part-demo">
+                <span class="planner-status slp" title="Asleep, 2 turns elapsed">SLP 2</span>
+            </span>
+            <span class="doc-part-text">
+                <b>Sleep is counted, not predicted</b>
+                The number is turns <em>elapsed</em>, not a countdown. Sleep duration is random and
+                isn't in the game data, so no number here promises anything &mdash; it can break on
+                any turn, including the first. Plan the early wake as a branch, and use
+                "ends on this turn" to close it out.
+            </span>
+        </li>
+        <li>
+            <span class="doc-part-demo">
+                <span class="planner-status psn">PSN</span>
+                <span class="planner-status volatile">CNF</span>
+            </span>
+            <span class="doc-part-text">
+                <b>One status at a time</b>
+                A Pokémon carries one non-volatile status, which is what makes pre-statusing your own
+                Pokémon a real tactic. Volatiles like confusion sit alongside it.
+            </span>
+        </li>
+        <li>
+            <span class="doc-part-demo">
+                <span class="planner-field cured" title="Cranidos used its Lum Berry to cure a status.">Lum Berry spent</span>
+            </span>
+            <span class="doc-part-text">
+                <b>Curing berries are spent once</b>
+                Roark's Cranidos holds a Lum Berry, so a plan built on poisoning it doesn't work
+                &mdash; but the second status sticks, and the planner tracks that the berry is gone.
+            </span>
+        </li>
+        <li>
+            <span class="doc-part-demo">
+                <span class="planner-field">Sand</span>
+                <span class="planner-field them">Their side: Spikes x2</span>
+            </span>
+            <span class="doc-part-text">
+                <b>Weather, hazards and screens</b>
+                These belong to the side, not the Pokémon, and persist down the branch. Weather set
+                by an ability on switch-in is applied too.
+            </span>
+        </li>
+        <li>
+            <span class="doc-part-demo">
+                <span class="planner-field ambiguous">mixed state</span>
+            </span>
+            <span class="doc-part-text">
+                <b>Mixed state</b>
+                This turn is reachable by more than one branch, and they don't all leave the same
+                boosts and hazards behind. The card shows the first; the flag is there so you know
+                not to trust it blindly.
+            </span>
+        </li>
+        <li>
+            <span class="doc-part-demo">
+                <span class="planner-status-block" style="margin:0">Status locked</span>
+            </span>
+            <span class="doc-part-text">
+                <b>Status locked</b>
+                Appears when your Pokémon already carries a status and the trainer's AI leads with
+                status and disruption. It means their harassment has nothing to land.
+            </span>
+        </li>
+    </ul>
+
+    <h3>Abilities</h3>
+
+    <p>
+        21 abilities are modelled: status protection (Limber, Insomnia, Immunity, Water Veil,
+        Magma Armor, Vital Spirit, Leaf Guard, Own Tempo), stat-drop protection (Clear Body,
+        White Smoke, Hyper Cutter, Keen Eye), weather setters (Drizzle, Drought, Sand Stream,
+        Snow Warning), trapping (Shadow Tag, Arena Trap, Magnet Pull), plus Intimidate and
+        Natural Cure. Those are underlined on the card.
+    </p>
+
+    <p>
+        Everything else &mdash; abilities that only change damage &mdash; is deliberately left out.
+        The damage calculator already implements them, and modelling them twice would only let the
+        two drift apart.
+    </p>
+
+
+    <!-- ============================================================= formats -->
+
+    <h2 id="formats">Battle formats</h2>
+
+    <p>
+        The format isn't something you configure &mdash; it's read from the game's own data for the
+        trainer you picked. 190 of the game's 495 trainer fights aren't plain singles.
+    </p>
+
+    <ul class="doc-formats">
+        <li>
+            <b>Single</b>
+            <em>one slot per side</em>
+            The ordinary case. Only the first slot is used, so the card stays narrow.
+        </li>
+        <li>
+            <b>True double</b>
+            <em>2v2, one trainer</em>
+            The card grows a second slot per side. Spread moves hit both opposing slots; everything
+            else hits across.
+        </li>
+        <li>
+            <b>Two trainers</b>
+            <em>2v2, two trainers</em>
+            Same shape, but the two opposing slots have separate parties and separate AI flags, so
+            both are labelled.
+        </li>
+        <li>
+            <b>Tag</b>
+            <em>you plus an AI ally</em>
+            Your second slot is somebody you don't command. It renders dimmed and marked
+            <b>(AI)</b>, and its move reads as <span class="planner-predicted">likely</span> &mdash;
+            a prediction, not an instruction.
+        </li>
+    </ul>
+
+    <div class="doc-row">
+        <div class="doc-scroll">
+        <div class="planner-node doubles">
+            <div class="planner-state-bar">
+                <span class="planner-field">Twins Liv &amp; Liz</span>
+            </div>
+            <div class="planner-node-head">
+                <span class="planner-slots">
+                    <span class="planner-slot">
+                        <img class="planner-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/makuhita.png" alt="">
+                        <span class="planner-slot-name">Bruiser</span>
+                        <span class="planner-chosen"><img class="planner-move-type" src="https://play.pokemonshowdown.com/sprites/types/Fighting.png" alt=""> <b>Vital Throw</b></span>
+                    </span>
+                    <span class="planner-slot ai">
+                        <img class="planner-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/chansey.png" alt="">
+                        <span class="planner-slot-name">Chansey <em>Lv.18</em></span>
+                        <span class="planner-chosen"><span class="planner-predicted">likely </span><img class="planner-move-type" src="https://play.pokemonshowdown.com/sprites/types/Normal.png" alt=""> <b>Soft-Boiled</b></span>
+                    </span>
+                </span>
+                <span class="planner-node-vs">vs</span>
+                <span class="planner-slots">
+                    <span class="planner-slot foe">
+                        <img class="planner-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/croagunk.png" alt="">
+                        <span class="planner-slot-name">Croagunk <em>Lv.18</em></span>
+                        <span class="planner-chosen"><img class="planner-move-type" src="https://play.pokemonshowdown.com/sprites/types/Normal.png" alt=""> <b>Fake Out</b></span>
+                    </span>
+                    <span class="planner-slot foe empty">
+                        <span class="planner-node-blank">?</span>
+                        <span class="planner-slot-name">any</span>
+                        <span class="planner-chosen"><span class="planner-node-blank">&mdash;</span></span>
+                    </span>
+                </span>
+            </div>
+            <div class="planner-moves collapsed"><button class="planner-moves-toggle">Moves</button></div>
+            <div class="planner-node-buttons">
+                <button class="btn planner-btn small">Edit</button>
+                <button class="btn planner-btn small">Remove</button>
+            </div>
+            <div class="planner-node-handle"></div>
+        </div>
+        </div>
+
+        <div class="doc-aside">
+            <p>
+                A wider card, everything else in the same place. The dashed slot is genuinely empty
+                &mdash; a real state, not a gap to fill in.
+            </p>
+            <p>
+                Three fights worth trying if you want to see each format:
+                <b>Twins Liv &amp; Liz</b> (true double), <b>Cyclist Axel</b> (two trainers),
+                <b>Galactic Luna #1</b> (tag, with Dawn as your partner).
+            </p>
+        </div>
+    </div>
+
+
+    <!-- ========================================================= cheat sheet -->
+
+    <h2 id="cheats">Easy to miss</h2>
+
+    <p>Everything on this page that isn't discoverable by looking at the screen.</p>
+
+    <ul class="doc-cheats">
+        <li>
+            <span class="doc-cheat-do">Drag a Pokémon onto empty canvas</span>
+            <span>Starts a new turn there, with it already in.</span>
+        </li>
+        <li>
+            <span class="doc-cheat-do">Drag the blue nub onto empty canvas</span>
+            <span>Creates the <em>next</em> turn there, already branched from this one.</span>
+        </li>
+        <li>
+            <span class="doc-cheat-do">Click an arrow's label</span>
+            <span>Edits the branch &mdash; and it's the only way to delete one.</span>
+        </li>
+        <li>
+            <span class="doc-cheat-do">Click one of their moves</span>
+            <span>Pins the threat you're planning around. Click it again to unpin.</span>
+        </li>
+        <li>
+            <span class="doc-cheat-do">Click the item on your own card</span>
+            <span>Changes what it holds, writing back to the Box.</span>
+        </li>
+        <li>
+            <span class="doc-cheat-do">Right-click a slot</span>
+            <span>Empties it, without opening the turn editor.</span>
+        </li>
+        <li>
+            <span class="doc-cheat-do">"Ends on this turn"</span>
+            <span>In the turn editor: how a sleep or freeze is closed out.</span>
+        </li>
+        <li>
+            <span class="doc-cheat-do">Fold</span>
+            <span>Hides only what's reachable <em>exclusively</em> through that turn.</span>
+        </li>
+        <li>
+            <span class="doc-cheat-do">Drag one of yours onto another</span>
+            <span>The two trade places in your team.</span>
+        </li>
+        <li>
+            <span class="doc-cheat-do">Drag a team member into the Box</span>
+            <span>Benches it. Drag it back out to bring it along.</span>
+        </li>
+    </ul>
+
+
+    <!-- ============================================================= not yet -->
+
+    <h2 id="notyet">Not built yet</h2>
+
+    <p>
+        So you know what's missing on purpose rather than reporting it:
+    </p>
+
+    <ul>
+        <li>
+            <b>Damage numbers.</b> No KO chances, rolls, HP bars or speed order yet &mdash; the cards
+            show base power and you judge the rest. This is the next thing being built.
+        </li>
+        <li>
+            <b>Renaming or duplicating a line</b>, and duplicating a turn. A line is named after its
+            trainer, so "Roark, safe" and "Roark, risky" both just read "Leader Roark" for now.
+        </li>
+        <li>
+            <b>Line notes</b>, export/import, and auto-layout. Folding hides mess; it doesn't
+            arrange it.
+        </li>
+        <li>
+            <b>History across attempts.</b> A line reads live from the Box, so it doesn't survive a
+            reset as a record of what you actually did.
+        </li>
+        <li>
+            <b>Type effectiveness on the card</b>, level-cap warnings, canvas zoom, keyboard
+            shortcuts.
+        </li>
+    </ul>
+
+    <div class="doc-note good">
+        Feedback is wanted on whether the <em>shape</em> of this is right &mdash; turns as a graph,
+        state derived rather than typed in, both movesets on the card. Those are the decisions that
+        are expensive to change later.
+    </div>
+
+    <p class="doc-foot">
+        The planner is an addition to the
+        <a class="links-lighten" href="./index.html">Platinum Kaizo Damage Calculator</a>.
+        Every card and badge on this page is the planner's own markup and stylesheet, so it stays
+        accurate as the tool changes.
+    </p>
+
+</div>
+
+<script>
+    // Writes the same key index.html reads, so the two stay in step.
+    document.getElementById('doc-theme').addEventListener('click', function() {
+        var on = localStorage.getItem('darkTheme') === 'true';
+        localStorage.setItem('darkTheme', on ? 'false' : 'true');
+        document.getElementById('dark-theme-styles').disabled = on;
+    });
+
+    /*
+     * The branch diagram's arrows are measured off the real cards rather than
+     * hand-placed, using the same route planner-controls.js uses. Hardcoded
+     * coordinates would silently drift the moment planner.css changed a card's
+     * padding; this can't.
+     *
+     * SVG children have to be created in the SVG namespace - building them from
+     * an HTML string yields unrenderable HTML elements that only share the tag
+     * name.
+     */
+    (function() {
+        var SVG_NS = "http://www.w3.org/2000/svg";
+        var stage = document.getElementById("doc-branch-stage");
+        if (!stage) return;
+        var svg = stage.querySelector(".doc-stage-edges");
+        var from = stage.querySelector("[data-doc-from]");
+
+        function svgEl(tag, attrs, text) {
+            var el = document.createElementNS(SVG_NS, tag);
+            for (var name in attrs) el.setAttribute(name, attrs[name]);
+            if (text !== undefined) el.textContent = text;
+            return el;
+        }
+
+        function drawEdges() {
+            var base = stage.getBoundingClientRect();
+            function box(el) {
+                var r = el.getBoundingClientRect();
+                return {x: r.left - base.left, y: r.top - base.top, w: r.width, h: r.height};
+            }
+
+            Array.prototype.forEach.call(svg.querySelectorAll("path.planner-edge, text.planner-edge-label"),
+                function(el) { el.parentNode.removeChild(el); });
+
+            var a = box(from);
+            var x1 = a.x + a.w / 2;
+            var y1 = a.y + a.h;
+
+            Array.prototype.forEach.call(stage.querySelectorAll("[data-doc-to]"), function(el) {
+                var b = box(el);
+                var colour = el.getAttribute("data-doc-to");
+                var x2 = b.x + b.w / 2;
+                var y2 = b.y;
+                var dy = Math.max(30, Math.abs(y2 - y1) / 2);
+
+                svg.appendChild(svgEl("path", {
+                    d: "M " + x1 + " " + y1 + " C " + x1 + " " + (y1 + dy) + ", " + x2 + " " + (y2 - dy) + ", " + x2 + " " + y2,
+                    "class": "planner-edge " + colour,
+                    "marker-end": "url(#doc-arrow-" + colour + ")"
+                }));
+
+                svg.appendChild(svgEl("text", {
+                    x: (x1 + x2) / 2,
+                    y: (y1 + y2) / 2,
+                    "class": "planner-edge-label " + colour
+                }, el.getAttribute("data-doc-label")));
+            });
+        }
+
+        drawEdges();
+        // Card height settles once the sprites are in, and changes again if the
+        // stage is resized.
+        window.addEventListener("load", drawEdges);
+        window.addEventListener("resize", drawEdges);
+    })();
+</script>
+
+</body>
+</html>

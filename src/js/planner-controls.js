@@ -12,6 +12,8 @@ var CONNECTING = null;
 var EDITING_NODE = "";
 // Pokémon being dragged out of one of the party strips into the canvas.
 var MON_DRAG = null;
+// A card drag finishes with a click, which would otherwise open the slot picker.
+var SUPPRESS_SLOT_CLICK = false;
 
 /*
  * The party strips take a good third of the panel, so they fold away when the
@@ -76,41 +78,77 @@ function selectLine(id) {
 
 /* -------------------------------------------------------------- foe display */
 
+/*
+ * Every party in the fight, not just the one whose name is on the line. A tag
+ * or two-trainer battle has two opposing trainers, and a tag battle adds an
+ * ally whose Pokémon fill your second slot - none of which can be planned
+ * around if they aren't shown.
+ */
 function renderFoeParty() {
     var strip = $(".planner-foe-party").empty();
     var line = currentLine();
     if (!line) return;
+    var format = battleFormat(line.trainer);
 
+    format.trainers.forEach(function(trainer, index) {
+        // Only worth naming when there is more than one of them.
+        if (format.trainers.length > 1) {
+            strip.append(`<span class="planner-party-owner">${trainer}</span>`);
+        }
+        renderTrainerParty(strip, trainer, "planner-foe", "data-foe", index);
+    });
+
+    var partnerBlock = $(".planner-partner-block");
+    if (format.partner) {
+        partnerBlock.removeClass("hide");
+        $(".planner-partner-name").text(format.partner);
+        renderTrainerParty($(".planner-partner-party").empty(), format.partner,
+            "planner-partner-mon", "data-partner", 0);
+    } else {
+        partnerBlock.addClass("hide");
+        $(".planner-partner-party").empty();
+    }
+
+    renderAiFlags(format);
+}
+
+function renderTrainerParty(strip, trainer, cls, attr, ownerIndex) {
     var setdex = GAME.setdex();
-    var party = GAME.partyOrder()[line.trainer] || [];
-    for (var i in party) {
-        var speciesName = party[i];
+    var party = GAME.partyOrder()[trainer] || [];
+    party.forEach(function(speciesName) {
         var species = GAME.species()[toID(speciesName)];
-        if (!species) continue;
-        var set = setdex[speciesName] && setdex[speciesName][line.trainer];
+        if (!species) return;
+        var set = setdex[speciesName] && setdex[speciesName][trainer];
         var item = set && set.item ? ITEMS[toID(set.item)] : null;
         strip.append(
-            `<span class="planner-foe planner-card" data-foe="${speciesName}" title="${speciesName}">
+            `<span class="${cls} planner-card" ${attr}="${speciesName}" data-owner="${ownerIndex}"
+                   title="${speciesName} - ${trainer}">
                 <img class="planner-card-sprite" src="${GAME.sprites.species(species)}" alt="${speciesName}">
                 <span class="planner-card-name">${species.name}</span>
                 <span class="planner-card-meta">${set ? `Lv. ${set.level}` : ""}</span>
+                ${renderCardAbility(set ? set.ability : "")}
                 ${renderCardItem(item)}
             </span>`);
-    }
+    });
+}
 
-    // AI flags decide how much branching a fight actually needs, so they belong
-    // next to the party rather than buried in a tooltip.
-    var flags = GAME.aiFlags()[line.trainer];
+/*
+ * AI flags decide how much branching a fight actually needs, so they sit beside
+ * the parties. With two opposing trainers each set is labelled, since they can
+ * differ.
+ */
+function renderAiFlags(format) {
     var badges = $(".planner-ai-flags").empty();
-    if (flags) {
+    format.trainers.forEach(function(trainer) {
+        var flags = GAME.aiFlags()[trainer];
+        if (!flags) return;
         var active = Object.keys(flags).filter(x => flags[x]);
-        if (active.length) {
-            badges.append(`<span class="planner-flag-label">AI:</span>`);
-            for (var j in active) {
-                badges.append(`<span class="planner-flag" title="${aiFlagHint(active[j])}">${active[j]}</span>`);
-            }
-        }
-    }
+        if (!active.length) return;
+        badges.append(`<span class="planner-flag-label">${format.trainers.length > 1 ? trainer : "AI"}:</span>`);
+        active.forEach(function(flag) {
+            badges.append(`<span class="planner-flag" title="${aiFlagHint(flag)}">${flag}</span>`);
+        });
+    });
 }
 
 /*
@@ -171,7 +209,7 @@ function renderBoxPage() {
         var level = entry.set.level ?? 100;
         strip.append(
             `<span class="planner-box-slot planner-mine compact${entry.dead ? " dead" : ""}"
-                   data-mon="${entry.key}"
+                   data-mon="${entry.ref}"
                    title="${entry.nickname || species.name} - ${species.name}, Lv. ${level}${entry.dead ? ", fainted" : ""}. Drag onto a team member to swap it in, or straight onto a turn">
                 <img class="planner-mine-icon" src="${GAME.sprites.speciesIcon(species)}" alt="${entry.species}">
             </span>`);
@@ -191,17 +229,18 @@ function renderMonStrip(strip, roster, hint, compact) {
         var title = `${entry.nickname || species.name} - ${species.name}, Lv. ${level}${entry.dead ? ", fainted" : ""}. ${hint}`;
         if (compact) {
             strip.append(
-                `<span class="planner-mine compact${entry.dead ? " dead" : ""}" data-mon="${entry.key}" title="${title}">
+                `<span class="planner-mine compact${entry.dead ? " dead" : ""}" data-mon="${entry.ref}" title="${title}">
                     <img class="planner-mine-icon" src="${GAME.sprites.speciesIcon(species)}" alt="${entry.species}">
                 </span>`);
             return;
         }
         var item = entry.set.item ? ITEMS[toID(entry.set.item)] : null;
         strip.append(
-            `<span class="planner-mine planner-card${entry.dead ? " dead" : ""}" data-mon="${entry.key}" title="${title}">
+            `<span class="planner-mine planner-card${entry.dead ? " dead" : ""}" data-mon="${entry.ref}" title="${title}">
                 <img class="planner-card-sprite" src="${GAME.sprites.species(species)}" alt="${entry.species}">
                 <span class="planner-card-name">${entry.nickname || species.name}</span>
                 <span class="planner-card-meta">Lv. ${level}</span>
+                ${renderCardAbility(entry.set.ability)}
                 ${renderCardItem(item, true)}
             </span>`);
     });
@@ -214,6 +253,20 @@ function renderMonStrip(strip, roster, hint, compact) {
  * Your own cards are editable; the opposing party comes from the game's own
  * trainer data, so there's nothing meaningful to change there.
  */
+/*
+ * Abilities decide plans constantly here - Rock Head means Head Smash costs
+ * Cranidos nothing, Hyper Cutter means Intimidate does nothing to your Luxio -
+ * so the name sits on the card with its full description behind a hover.
+ */
+function renderCardAbility(abilityName) {
+    if (!abilityName) return `<span class="planner-card-ability empty"></span>`;
+    var ability = ABILITIES[toID(abilityName)];
+    var name = ability ? ability.name : abilityName;
+    var text = ability && ability.desc ? String(ability.desc.battle || "") : "";
+    var known = abilityEffect(abilityName);
+    return `<span class="planner-card-ability${known ? " tracked" : ""}" title="${name}${text ? " - " + text.replace(/"/g, "'") : ""}">${name}</span>`;
+}
+
 function renderCardItem(item, editable) {
     var cls = `planner-card-item${editable ? " editable" : ""}`;
     if (!item) {
@@ -270,34 +323,26 @@ function renderLine() {
 
 function renderNode(node, line, visible) {
     line = line || currentLine();
-    var mon = node.mon ? boxEntry(node.mon) : null;
-    var monSpecies = mon ? GAME.species()[toID(mon.species)] : null;
-    var foeSpecies = node.foe ? GAME.species()[toID(node.foe)] : null;
-    var set = foeSet(line, node);
     var state = computeNodeState(line, node.id);
+    var slots = slotCount(line);
+    var format = battleFormat(line.trainer);
+    var anyDead = false;
+    for (var i = 0; i < slots; i++) {
+        var entry = monAt(node, "you", i) ? boxEntry(monAt(node, "you", i)) : null;
+        if (entry && entry.dead) anyDead = true;
+    }
 
     $(".planner-canvas-nodes").append(
-        `<div class="planner-node${mon && mon.dead ? " dead" : ""}${node.collapsed ? " has-folded" : ""}" data-node="${node.id}" style="left: ${node.x}px; top: ${node.y}px;">
+        `<div class="planner-node${slots > 1 ? " doubles" : ""}${anyDead ? " dead" : ""}${node.collapsed ? " has-folded" : ""}"
+              data-node="${node.id}" style="left: ${node.x}px; top: ${node.y}px;">
             ${renderStateBar(state)}
             <div class="planner-node-head">
-                <span class="planner-node-side">
-                    ${monSpecies ? `<img class="planner-sprite" src="${GAME.sprites.species(monSpecies)}" alt="">` : `<span class="planner-node-blank">?</span>`}
-                    <span>${mon ? (mon.nickname || mon.species) : "Pick a Pokémon"}</span>
-                    ${renderStatus(state.you)}
-                    ${renderBoosts(state.you.boosts)}
-                    <span class="planner-chosen">${nodeActionText(node)}</span>
-                </span>
+                <span class="planner-slots">${renderSlots(line, node, state, "you", slots, format)}</span>
                 <span class="planner-node-vs">vs</span>
-                <span class="planner-node-side foe">
-                    ${foeSpecies ? `<img class="planner-sprite" src="${GAME.sprites.species(foeSpecies)}" alt="">` : `<span class="planner-node-blank">?</span>`}
-                    <span>${foeSpecies ? foeSpecies.name : "any"}${set ? ` <em>Lv.${set.level}</em>` : ``}</span>
-                    ${renderStatus(state.them)}
-                    ${renderBoosts(state.them.boosts)}
-                    <span class="planner-chosen">${chosenMoveText(node.foeMove)}</span>
-                </span>
+                <span class="planner-slots">${renderSlots(line, node, state, "them", slots, format)}</span>
             </div>
-            ${renderStatusBlock(line, state)}
-            ${renderMovePickers(node, mon, set)}
+            ${renderStatusBlock(line, node, state)}
+            ${renderMovePickers(line, node, slots, format)}
             ${node.note ? `<div class="planner-node-note">${node.note}</div>` : ``}
             <div class="planner-node-buttons">
                 ${renderFoldControl(node, line, visible)}
@@ -306,6 +351,52 @@ function renderNode(node, line, visible) {
             </div>
             <div class="planner-node-handle" title="Drag onto another turn to branch to it, or onto empty space to make a new one"></div>
         </div>`);
+}
+
+/*
+ * One column per Pokemon out on a side. In a tag battle your second slot is the
+ * AI partner: still settable, since a plan has to assume something about it,
+ * but marked so it never reads as an instruction you control.
+ */
+function renderSlots(line, node, state, side, slots, format) {
+    var out = "";
+    for (var i = 0; i < slots; i++) {
+        var ref = monAt(node, side, i);
+        var isPartner = side === "you" && i === 1 && format.id === "tag";
+        var species = null;
+        var label = "";
+        var sub = "";
+
+        if (side === "you" && !isPartner) {
+            var entry = ref ? boxEntry(ref) : null;
+            species = entry ? GAME.species()[toID(entry.species)] : null;
+            label = entry ? (entry.nickname || entry.species) : "Pick a Pokémon";
+        } else if (isPartner) {
+            // The partner's Pokemon come from their party, not your Box.
+            species = ref ? GAME.species()[toID(ref)] : null;
+            var pset = trainerSet(trainerForSlot(line, "you", i), ref);
+            label = species ? species.name : "Partner";
+            sub = pset ? ` <em>Lv.${pset.level}</em>` : "";
+        } else {
+            species = ref ? GAME.species()[toID(ref)] : null;
+            var set = foeSetFor(line, node, ref);
+            label = species ? species.name : "any";
+            sub = set ? ` <em>Lv.${set.level}</em>` : "";
+        }
+
+        var mon = slotState(line, node, state, side, i);
+        out += `<span class="planner-slot${side === "them" ? " foe" : ""}${isPartner ? " ai" : ""}${!ref ? " empty" : ""}"
+                      data-side="${side}" data-slot="${i}">
+            ${species
+                ? `<img class="planner-sprite" src="${GAME.sprites.species(species)}" alt="">`
+                : `<span class="planner-node-blank">?</span>`}
+            <span class="planner-slot-name">${label}${sub}</span>
+            ${renderStatus(mon)}
+            ${renderBoosts(mon.boosts)}
+            <span class="planner-chosen">${slotActionText(line, node, side, i, isPartner)}</span>
+        </span>`;
+    }
+    return out;
 }
 
 /*
@@ -327,42 +418,71 @@ function renderFoldControl(node, line, visible) {
  * against what's coming back. Collapses once the turn is decided, which is what
  * keeps a long line readable.
  */
-function renderMovePickers(node, mon, set) {
-    var yourMoves = mon && mon.set.moves ? mon.set.moves : [];
-    var theirMoves = set && set.moves ? set.moves : [];
-    if (!yourMoves.length && !theirMoves.length) return "";
-
+function renderMovePickers(line, node, slots, format) {
     if (!node.movesOpen) {
-        return `<div class="planner-moves collapsed"><button class="planner-moves-toggle" title="Show both movesets">Moves</button></div>`;
+        return `<div class="planner-moves collapsed"><button class="planner-moves-toggle" title="Show the movesets">Moves</button></div>`;
     }
+
+    /*
+     * Yours on the left, theirs on the right, always - so a move is read across
+     * the middle against what it's up against. In a double each side stacks its
+     * two Pokémon vertically inside its own column, which keeps that left/right
+     * comparison intact instead of interleaving the two sides.
+     */
+    var columns = ["you", "them"].map(function(side) {
+        var stack = "";
+        for (var i = 0; i < slots; i++) stack += renderSlotPicker(line, node, side, i, format);
+        return `<div class="planner-move-side ${side}">${stack}</div>`;
+    }).join("");
 
     return `<div class="planner-moves">
         <button class="planner-moves-toggle open" title="Hide the movesets">Moves</button>
-        <div class="planner-move-columns">
-            <div class="planner-move-column">
-                <span class="planner-move-column-title">Yours</span>
-                ${renderMoveList(yourMoves, node.action && node.action.type === "move" ? node.action.value : "", "you")}
-            </div>
-            <div class="planner-move-column">
-                <span class="planner-move-column-title">Theirs</span>
-                ${renderMoveList(theirMoves, node.foeMove, "them")}
-            </div>
-        </div>
+        <div class="planner-move-columns">${columns}</div>
     </div>`;
 }
 
-function renderMoveList(moves, selected, side) {
+function renderSlotPicker(line, node, side, slot, format) {
+    var ref = monAt(node, side, slot);
+    var isPartner = side === "you" && slot === 1 && format.id === "tag";
+    var moves = [];
+    var title;
+
+    if (side === "you" && !isPartner) {
+        var entry = ref ? boxEntry(ref) : null;
+        moves = entry && entry.set.moves ? entry.set.moves : [];
+        title = entry ? (entry.nickname || entry.species) : "Yours";
+    } else if (isPartner) {
+        var pset = trainerSet(trainerForSlot(line, "you", slot), ref);
+        moves = pset && pset.moves ? pset.moves : [];
+        title = ref ? (GAME.species()[toID(ref)] || {}).name || ref : "Partner";
+    } else {
+        var set = foeSetFor(line, node, ref);
+        moves = set && set.moves ? set.moves : [];
+        title = ref ? (GAME.species()[toID(ref)] || {}).name || ref : "Theirs";
+    }
+
+    var switching = switchTargetAt(node, side, slot);
+    return `<div class="planner-move-column${isPartner ? " ai" : ""}" data-side="${side}" data-slot="${slot}">
+        <span class="planner-move-column-title">${title}${isPartner ? " (AI)" : ""}</span>
+        ${renderMoveList(moves, moveAt(node, side, slot), side, slot)}
+        <button class="planner-switch-btn${side === "them" ? " them" : ""}${switching ? " active" : ""}"
+                data-side="${side}" data-slot="${slot}"
+                title="Switch instead of attacking. The turn is given up, so whoever comes in takes the hit.">&#8646; Switch</button>
+    </div>`;
+}
+
+function renderMoveList(moves, selected, side, slot) {
     if (!moves.length) {
-        return `<span class="planner-move-empty">${side === "you" ? "Pick a Pokémon first" : "Pick an opponent first"}</span>`;
+        return `<span class="planner-move-empty">${side === "you" ? "Nobody here yet" : "No opponent yet"}</span>`;
     }
     return moves.map(function(name) {
         var move = findMove(name);
         var isSelected = selected === name;
         if (!move) {
-            return `<span class="planner-move ${side}${isSelected ? " selected" : ""}" data-move="${name}" data-side="${side}">${name}</span>`;
+            return `<span class="planner-move ${side}${isSelected ? " selected" : ""}" data-move="${name}" data-side="${side}" data-slot="${slot}">${name}</span>`;
         }
         var power = move.category === "status" ? "—" : move.basePower;
-        return `<span class="planner-move ${side}${isSelected ? " selected" : ""}" data-move="${name}" data-side="${side}"
+        return `<span class="planner-move ${side}${isSelected ? " selected" : ""}" data-move="${name}" data-side="${side}" data-slot="${slot}"
                       title="${move.name} — ${move.category}, ${move.basePower || 0} BP, ${move.accuracy || "—"}% acc">
             <img src="${GAME.sprites.type(move.type)}" alt="">
             <span class="planner-move-name">${move.name}</span>
@@ -387,7 +507,23 @@ const BOOST_LABELS = {atk: "Atk", def: "Def", spa: "SpA", spd: "SpD", spe: "Spe"
 function renderStatus(side) {
     var parts = [];
     if (side.status && STATUSES[side.status]) {
-        parts.push(`<span class="planner-status ${side.status}" title="${STATUSES[side.status].name}">${STATUSES[side.status].short}</span>`);
+        var turns = side.statusTurns || 0;
+        /*
+         * Sleep is the one worth counting: it runs 1-4 turns in this
+         * generation, so the number is a risk gauge rather than a countdown.
+         */
+        /*
+         * The count is turns elapsed, not a countdown. Sleep duration is random
+         * and isn't in the game data, so no number here is a promise - it can
+         * break on any turn, including the very first. Plan the early wake as a
+         * branch rather than trusting the count.
+         */
+        var hint = side.status === "slp"
+            ? (turns === 0
+                ? "Just fell asleep. It can wake on any turn, including the next one - branch on it, or mark it as ending when it breaks."
+                : `Asleep, ${turns} turn${turns === 1 ? "" : "s"} elapsed. It can wake on any turn - branch on it, or mark it as ending when it breaks.`)
+            : STATUSES[side.status].name + (turns > 0 ? `, ${turns} turn${turns === 1 ? "" : "s"} elapsed` : "");
+        parts.push(`<span class="planner-status ${side.status}" title="${hint}">${STATUSES[side.status].short}${turns > 0 ? ` ${turns}` : ""}</span>`);
     }
     for (var v in side.volatiles) {
         if (!side.volatiles[v]) continue;
@@ -427,6 +563,13 @@ function renderStateBar(state) {
             parts.push(`<span class="planner-field ${side}">${side === "you" ? "Your side" : "Their side"}: ${label}${layers}</span>`);
         }
     });
+    // A spent curing berry is easy to forget and changes whether a plan works.
+    ["you", "them"].forEach(function(side) {
+        var used = state.itemsUsed && state.itemsUsed[side];
+        for (var who in used) {
+            parts.push(`<span class="planner-field cured ${side}" title="${who} used its ${used[who]} to cure a status. It only works once, so anything later sticks.">${used[who]} spent</span>`);
+        }
+    });
     if (state.ambiguous) {
         parts.push(`<span class="planner-field ambiguous" title="This turn is reachable by more than one branch, and they don't all leave the same boosts and hazards behind. Showing the first; edit the turn to pin it.">mixed state</span>`);
     }
@@ -434,22 +577,37 @@ function renderStateBar(state) {
 }
 
 // The payoff of pre-statusing, called out where it applies.
-function renderStatusBlock(line, state) {
-    if (!statusBlockActive(line, state)) return "";
+function renderStatusBlock(line, node, state) {
+    var mine = slotState(line, node, state, "you", 0);
+    if (!mine.status) return "";
+    var flags = GAME.aiFlags()[line.trainer];
+    if (!flags || !flags.Harassment) return "";
     return `<div class="planner-status-block" title="A Pokémon can only carry one non-volatile status, so this one is immune to anything else they try. This trainer's AI leads with status and disruption.">
-        Status locked - ${STATUSES[state.you.status].name} blocks theirs
+        Status locked - ${STATUSES[mine.status].name} blocks theirs
     </div>`;
 }
 
-function nodeActionText(node) {
-    if (!node.action || !node.action.value) return `<span class="planner-node-blank">—</span>`;
-    if (node.action.type === "switch") {
-        var to = boxEntry(node.action.value);
-        return `<span class="planner-switch">Switch to <b>${to ? (to.nickname || to.species) : node.action.value}</b></span>`;
+/*
+ * What a slot is doing this turn, shown under its sprite. A switch names who is
+ * coming in; otherwise it is the chosen move.
+ */
+function slotActionText(line, node, side, slot, isPartner) {
+    var target = switchTargetAt(node, side, slot);
+    if (target) {
+        var name = target;
+        if (side === "you") {
+            var entry = boxEntry(target);
+            name = entry ? (entry.nickname || entry.species) : target;
+        } else {
+            var species = GAME.species()[toID(target)];
+            name = species ? species.name : target;
+        }
+        return `<span class="planner-switch" title="Switching gives up the turn - whoever comes in takes the hit.">&#8646; <b>${name}</b></span>`;
     }
-    // A set can name a move the game doesn't have (imports, or a hack that cut
-    // it), so chosenMoveText falls back to the bare name rather than an icon.
-    return chosenMoveText(node.action.value);
+    var move = moveAt(node, side, slot);
+    if (!move) return `<span class="planner-node-blank">—</span>`;
+    // A partner's move is a prediction, not an order, so it reads as one.
+    return (isPartner ? `<span class="planner-predicted">likely </span>` : "") + chosenMoveText(move);
 }
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -585,6 +743,249 @@ function renderEdges(visible) {
 // not the consequence of clicking the most obvious target on the arrow.
 function editEdgeFromLabel() {
     openEdgeEditor(this.getAttribute("data-edge"));
+}
+
+/* --------------------------------------------------------------- turn editor */
+
+/*
+ * Only what the card can't already do.
+ *
+ * Choosing Pokémon, moves and switches all happen on the card itself now - by
+ * dragging one in, clicking a move, or using its switch button - and none of
+ * that could be expressed for four slots through a pair of dropdowns anyway.
+ * What's left is the turn's note and any status carried into it.
+ */
+var nodeEditorPopup = `
+<fieldset class="planner-node-popup">
+    <legend align="center">Edit Turn</legend>
+    <p class="planner-hint">Pokémon and moves are set on the card itself: drag one in, click a move, or use its switch button. Right-click a slot to empty it.</p>
+    <hr />
+    <p class="planner-hint">Status carried into this turn - for walking in pre-slept or pre-poisoned so they can't land something worse. Carries down to later turns.</p>
+    <div class="planner-form">
+        <label>Your status</label><select class="planner-edit-status-you"></select>
+        <label>Their status</label><select class="planner-edit-status-them"></select>
+    </div>
+    <hr />
+    <div class="planner-form">
+        <label>Note</label><input class="planner-edit-note" type="text" placeholder="e.g. needs Sash intact" />
+    </div>
+    <hr />
+    <span class="buttons">
+        <button id="planner-cancel-node" class="btn planner-btn">Cancel</button>
+        <button id="planner-save-node" class="btn planner-btn">Save</button>
+    </span>
+</fieldset>`;
+
+function openNodeEditor(nodeId) {
+    var line = currentLine();
+    var node = line.nodes[nodeId];
+    if (!node) return;
+    EDITING_NODE = nodeId;
+
+    $("#planner-popup-container").html(nodeEditorPopup).removeClass("hide").show();
+
+    var seed = node.statusSeed || {you: "", them: ""};
+    [["you", ".planner-edit-status-you"], ["them", ".planner-edit-status-them"]].forEach(function(pair) {
+        var select = $(pair[1]).empty()
+            .append(`<option value="">(inherit)</option>`)
+            // Sleep and freeze end on their own schedule, so this is how you say
+            // when they broke rather than guessing a fixed number of turns.
+            .append(`<option value="${STATUS_CURED}">— ends on this turn —</option>`);
+        Object.keys(STATUSES).forEach(function(id) {
+            select.append(`<option value="${id}">${STATUSES[id].name}</option>`);
+        });
+        select.val(seed[pair[0]] || "");
+    });
+
+    $(".planner-edit-note").val(node.note || "");
+}
+
+function closeNodeEditor() {
+    $("#planner-popup-container").hide().empty();
+    EDITING_NODE = "";
+}
+
+/* ------------------------------------------------------------------- switch */
+
+var switchEditorPopup = `
+<fieldset class="planner-switch-popup">
+    <legend align="center">Switch</legend>
+    <p class="planner-hint">You give up the turn to do this, so whoever comes in takes their attack. Their boosts stay; yours reset.</p>
+    <div class="planner-switch-list"></div>
+    <hr />
+    <span class="buttons">
+        <button id="planner-clear-switch" class="btn planner-btn">Attack instead</button>
+        <button id="planner-cancel-switch" class="btn planner-btn">Cancel</button>
+    </span>
+</fieldset>`;
+
+var EDITING_SWITCH_NODE = "";
+var EDITING_SWITCH_SIDE = "you";
+var EDITING_SWITCH_SLOT = 0;
+
+/*
+ * Who can legally occupy a slot. Three different sources depending on whose
+ * slot it is - your Box, an opposing trainer's party, or the ally's party -
+ * which both the switch picker and the slot picker need, so it lives in one
+ * place rather than being spelled out per caller.
+ */
+function slotOptionsFor(line, node, side, slot, exclude) {
+    var setdex = GAME.setdex();
+    exclude = exclude || [];
+
+    function fromParty(trainer) {
+        return (GAME.partyOrder()[trainer] || [])
+            .filter(name => exclude.indexOf(name) < 0)
+            .map(function(name) {
+                var species = GAME.species()[toID(name)];
+                if (!species) return null;
+                var set = setdex[name] && setdex[name][trainer];
+                return {
+                    ref: name, label: species.name, species: species,
+                    level: set ? set.level : null, dead: false
+                };
+            })
+            .filter(x => x);
+    }
+
+    if (side === "them") return fromParty(trainerForSlot(line, "them", slot));
+    if (isPartnerSlot(line, "you", slot)) return fromParty(trainerForSlot(line, "you", slot));
+
+    /*
+     * Your party, not the whole Box. A Pokémon in storage isn't at the fight -
+     * it can't lead and it can't be switched to, so offering it would let a
+     * plan be built on something that could never happen.
+     */
+    return teamRoster()
+        .filter(entry => exclude.indexOf(entry.ref) < 0)
+        .map(function(entry) {
+            var species = GAME.species()[toID(entry.species)];
+            if (!species) return null;
+            return {
+                ref: entry.ref, label: entry.nickname || species.name, species: species,
+                level: entry.set.level ?? 100, dead: entry.dead
+            };
+        })
+        .filter(x => x);
+}
+
+function renderPickerOptions(list, options, current, emptyText) {
+    if (!options.length) {
+        list.append(`<span class="planner-party-empty">${emptyText}</span>`);
+        return;
+    }
+    options.forEach(function(option) {
+        list.append(
+            `<button class="planner-switch-option${current === option.ref ? " selected" : ""}${option.dead ? " dead" : ""}"
+                     data-mon="${option.ref}"${option.dead ? " disabled" : ""}
+                     title="${option.label}${option.level ? `, Lv. ${option.level}` : ""}${option.dead ? ", fainted" : ""}">
+                <img src="${GAME.sprites.speciesIcon(option.species)}" alt="">
+                <span>${option.label}</span>
+            </button>`);
+    });
+}
+
+function openSwitchEditor(nodeId, side, slot) {
+    var line = currentLine();
+    var node = line.nodes[nodeId];
+    if (!node) return;
+    EDITING_SWITCH_NODE = nodeId;
+    EDITING_SWITCH_SIDE = side;
+    EDITING_SWITCH_SLOT = slot || 0;
+
+    $("#planner-popup-container").html(switchEditorPopup).removeClass("hide").show();
+    $(".planner-switch-popup legend").text(side === "them" ? "They switch" : "Switch");
+    $(".planner-switch-popup .planner-hint").text(side === "them"
+        ? "They give up the turn to do this, so whoever comes in takes your attack. Your boosts stay; theirs reset."
+        : "You give up the turn to do this, so whoever comes in takes their attack. Their boosts stay; yours reset.");
+    $("#planner-clear-switch").text(side === "them" ? "They attack instead" : "Attack instead");
+
+    // Whoever is already out can't also be the one switching in.
+    var onField = [monAt(node, side, 0), monAt(node, side, 1)].filter(x => x);
+    renderPickerOptions($(".planner-switch-list"),
+        slotOptionsFor(line, node, side, EDITING_SWITCH_SLOT, onField),
+        switchTargetAt(node, side, EDITING_SWITCH_SLOT),
+        side === "them" ? "Nobody else on their team." : "Nobody else on your team to switch to.");
+}
+
+/* -------------------------------------------------------------- slot picker */
+
+var slotPickerPopup = `
+<fieldset class="planner-switch-popup planner-slot-popup">
+    <legend align="center">Choose a Pokémon</legend>
+    <p class="planner-hint"></p>
+    <div class="planner-switch-list"></div>
+    <hr />
+    <span class="buttons">
+        <button id="planner-clear-slot" class="btn planner-btn">Leave empty</button>
+        <button id="planner-cancel-slot" class="btn planner-btn">Cancel</button>
+    </span>
+</fieldset>`;
+
+var EDITING_SLOT_NODE = "";
+var EDITING_SLOT_SIDE = "you";
+var EDITING_SLOT_INDEX = 0;
+
+/*
+ * Filling a slot without dragging. Dragging from a party strip is quicker when
+ * the strips are open, but they fold away - and then there would be no way to
+ * fill a slot at all.
+ */
+function openSlotPicker(nodeId, side, slot) {
+    var line = currentLine();
+    var node = line.nodes[nodeId];
+    if (!node) return;
+    EDITING_SLOT_NODE = nodeId;
+    EDITING_SLOT_SIDE = side;
+    EDITING_SLOT_INDEX = slot;
+
+    $("#planner-popup-container").html(slotPickerPopup).removeClass("hide").show();
+    $(".planner-slot-popup .planner-hint").text(
+        side === "them" ? "Which of theirs is out for this turn?"
+            : isPartnerSlot(line, "you", slot) ? "Which of your partner's Pokémon is out? They act on their own, so this is what you expect to be there."
+            : "Which of yours is out for this turn?");
+
+    // The other slot on the same side is already taken.
+    var other = monAt(node, side, slot === 0 ? 1 : 0);
+    renderPickerOptions($(".planner-slot-popup .planner-switch-list"),
+        slotOptionsFor(line, node, side, slot, other ? [other] : []),
+        monAt(node, side, slot),
+        side === "them" ? "This trainer has no Pokémon listed." : "Nothing on your team yet - add one from the box.");
+}
+
+function closeSlotPicker() {
+    $("#planner-popup-container").hide().empty();
+    EDITING_SLOT_NODE = "";
+}
+
+function setSlotMon(ref) {
+    var line = currentLine();
+    var node = line.nodes[EDITING_SLOT_NODE];
+    if (!node) return;
+    var slot = EDITING_SLOT_INDEX;
+    if (EDITING_SLOT_SIDE === "you") {
+        node.mons[slot] = ref;
+        // Whatever it was doing probably isn't in the new Pokémon's set.
+        node.actions[slot] = {type: "move", value: ""};
+    } else {
+        node.foes[slot] = ref;
+        node.foeActions[slot] = {type: "move", value: ""};
+    }
+    saveLines();
+    renderLine();
+}
+
+function closeSwitchEditor() {
+    $("#planner-popup-container").hide().empty();
+    EDITING_SWITCH_NODE = "";
+    EDITING_SWITCH_SIDE = "you";
+    EDITING_SWITCH_SLOT = 0;
+}
+
+// Writes to whichever side's action the picker was opened for.
+function setSideAction(node, side, action) {
+    var list = side === "them" ? node.foeActions : node.actions;
+    list[EDITING_SWITCH_SLOT] = action;
 }
 
 /* ---------------------------------------------------------------- held item */
@@ -742,6 +1143,12 @@ function openEdgeEditor(edgeId) {
     $(".planner-edit-edge-label").val(edge.label || "");
 }
 
+function closeEdgeEditor() {
+    $("#planner-popup-container").hide().empty();
+    EDITING_EDGE = "";
+    EDITING_CONDITION = "";
+}
+
 // Grouped by who caused the fork, since that's how you think about it.
 function renderConditionGrid() {
     var groups = [
@@ -766,115 +1173,6 @@ function renderConditionGrid() {
 
 /* -------------------------------------------------------------- node editor */
 
-var nodeEditorPopup = `
-<fieldset class="planner-node-popup">
-    <legend align="center">Edit Turn</legend>
-    <div class="planner-form">
-        <label>Your Pokémon</label><select class="planner-edit-mon"></select>
-        <label>Their Pokémon</label><select class="planner-edit-foe"></select>
-    </div>
-    <hr />
-    <div class="planner-form">
-        <label>Action</label><select class="planner-edit-action-type">
-            <option value="move">Use move</option>
-            <option value="switch">Switch to</option>
-        </select>
-        <label>Which</label><select class="planner-edit-action-value"></select>
-    </div>
-    <hr />
-    <p class="planner-hint">Status carried into this turn - for walking in pre-slept or pre-poisoned so they can't land something worse. Carries down to later turns.</p>
-    <div class="planner-form">
-        <label>Your status</label><select class="planner-edit-status-you"></select>
-        <label>Their status</label><select class="planner-edit-status-them"></select>
-    </div>
-    <hr />
-    <div class="planner-form">
-        <label>Note</label><input class="planner-edit-note" type="text" placeholder="e.g. needs Sash intact" />
-    </div>
-    <hr />
-    <span class="buttons">
-        <button id="planner-cancel-node" class="btn planner-btn">Cancel</button>
-        <button id="planner-save-node" class="btn planner-btn">Save</button>
-    </span>
-</fieldset>`;
-
-/*
- * The Box tab owns #popup-container and binds its buttons directly, so reusing
- * it here would tear those handlers off the moment a turn is edited. The
- * planner gets its own overlay instead.
- *
- * The markup is rebuilt on each open and the selects are filled in place:
- * serialising them to an HTML string would drop the current selection, since
- * .val() sets a property rather than the selected attribute.
- */
-function openNodeEditor(nodeId) {
-    var line = currentLine();
-    var node = line.nodes[nodeId];
-    EDITING_NODE = nodeId;
-
-    $("#planner-popup-container").html(nodeEditorPopup).removeClass("hide").show();
-
-    var roster = boxRoster();
-    var monSelect = $(".planner-edit-mon").empty().append(`<option value="">(none)</option>`);
-    for (var i in roster) {
-        monSelect.append(`<option value="${roster[i].key}"${roster[i].dead ? " disabled" : ""}>${roster[i].nickname || roster[i].species}${roster[i].dead ? " (dead)" : ""}</option>`);
-    }
-    monSelect.val(node.mon);
-
-    var party = GAME.partyOrder()[line.trainer] || [];
-    var foeSelect = $(".planner-edit-foe").empty().append(`<option value="">(any)</option>`);
-    for (var j in party) foeSelect.append(`<option value="${party[j]}">${party[j]}</option>`);
-    foeSelect.val(node.foe);
-
-    $(".planner-edit-action-type").val(node.action ? node.action.type : "move");
-    refreshActionValues(node.action ? node.action.value : "");
-
-    var seed = node.statusSeed || {you: "", them: ""};
-    [["you", ".planner-edit-status-you"], ["them", ".planner-edit-status-them"]].forEach(function(pair) {
-        var select = $(pair[1]).empty().append(`<option value="">(inherit)</option>`);
-        Object.keys(STATUSES).forEach(function(id) {
-            select.append(`<option value="${id}">${STATUSES[id].name}</option>`);
-        });
-        select.val(seed[pair[0]] || "");
-    });
-
-    $(".planner-edit-note").val(node.note || "");
-}
-
-function closeNodeEditor() {
-    $("#planner-popup-container").hide().empty();
-    EDITING_NODE = "";
-}
-
-function closeEdgeEditor() {
-    $("#planner-popup-container").hide().empty();
-    EDITING_EDGE = "";
-    EDITING_CONDITION = "";
-}
-
-// The "which" dropdown is either the active Pokémon's moves or the rest of the box.
-function refreshActionValues(selected) {
-    var line = currentLine();
-    var node = line.nodes[EDITING_NODE];
-    var type = $(".planner-edit-action-type").val();
-    var select = $(".planner-edit-action-value").empty();
-
-    if (type === "switch") {
-        var roster = boxRoster();
-        select.append(`<option value="">(pick one)</option>`);
-        for (var i in roster) {
-            if (roster[i].key === $(".planner-edit-mon").val()) continue;
-            select.append(`<option value="${roster[i].key}"${roster[i].dead ? " disabled" : ""}>${roster[i].nickname || roster[i].species}</option>`);
-        }
-    } else {
-        var monKey = $(".planner-edit-mon").val() || (node && node.mon);
-        var mon = monKey ? boxEntry(monKey) : null;
-        select.append(`<option value="">(pick one)</option>`);
-        var moves = mon && mon.set.moves ? mon.set.moves : [];
-        for (var j in moves) select.append(`<option value="${moves[j]}">${moves[j]}</option>`);
-    }
-    select.val(selected || "");
-}
 
 /* --------------------------------------------------------------- drag/drop */
 
@@ -897,8 +1195,8 @@ function beginDrag(e, nodeId) {
  * hand. Dropping on a turn fills that side of it; dropping on empty canvas
  * starts a new turn already holding the Pokémon.
  */
-function beginMonDrag(e, key, side, sprite) {
-    MON_DRAG = {key: key, side: side};
+function beginMonDrag(e, key, side, sprite, owner) {
+    MON_DRAG = {ref: key, side: side, owner: owner || 0};
     $("<img class='planner-drag-ghost'>").attr("src", sprite).appendTo("body");
     moveMonGhost(e);
     $(".planner-canvas").addClass("assigning");
@@ -916,32 +1214,81 @@ function endMonDrag() {
 
 // Puts the dragged Pokémon on the right side of a turn, clearing anything that
 // no longer applies to it.
-function assignDraggedMon(node) {
+function assignDraggedMon(node, slot) {
+    slot = slot || 0;
+    /*
+     * A partner only ever occupies the second slot, and in a two-trainer fight
+     * each trainer owns one slot - so dropping one of their Pokemon anywhere on
+     * the card puts it where it actually belongs.
+     */
+    if (MON_DRAG.side === "partner") {
+        node.mons[1] = MON_DRAG.ref;
+        node.actions[1] = {type: "move", value: ""};
+        return;
+    }
+    /*
+     * With two opposing trainers, a Pokémon can only stand in its own trainer's
+     * slot, so the owner decides where it lands regardless of where it was
+     * dropped. Checked against undefined rather than truthiness - the first
+     * trainer's index is 0. A single trainer fielding two Pokémon is free to
+     * use either slot, so this doesn't apply there.
+     */
+    if (MON_DRAG.side === "them" && MON_DRAG.owner !== undefined &&
+        battleFormat(currentLine().trainer).trainers.length > 1) {
+        slot = MON_DRAG.owner;
+    }
     if (MON_DRAG.side === "you") {
-        node.mon = MON_DRAG.key;
+        node.mons[slot] = MON_DRAG.ref;
         // The previous move probably isn't in this Pokémon's set.
-        if (node.action && node.action.type === "move") {
-            var entry = boxEntry(MON_DRAG.key);
+        // The previous move probably isn't in this Pokemon's set.
+        if (node.actions[slot] && node.actions[slot].type === "move") {
+            var entry = boxEntry(MON_DRAG.ref);
             var moves = entry && entry.set.moves ? entry.set.moves : [];
-            if (moves.indexOf(node.action.value) < 0) node.action = {type: "move", value: ""};
+            if (moves.indexOf(node.actions[slot].value) < 0) node.actions[slot] = {type: "move", value: ""};
         }
     } else {
-        node.foe = MON_DRAG.key;
-        node.foeMove = "";
+        node.foes[slot] = MON_DRAG.ref;
+        node.foeActions[slot] = {type: "move", value: ""};
     }
 }
 
-function dropMonOnNode(nodeId) {
+/*
+ * Which slot the cursor was over when a Pokemon was dropped. Dropping on the
+ * card but not on a particular slot falls back to the first.
+ */
+/*
+ * Storage isn't the battlefield. Refusing this out loud beats letting a plan be
+ * built on a Pokemon that could never actually be there.
+ */
+function rejectBoxedDrop() {
+    if (!MON_DRAG || !MON_DRAG.fromBox) return false;
+    var entry = boxEntry(MON_DRAG.ref);
+    var name = entry ? (entry.nickname || entry.species) : "That Pokémon";
+    endMonDrag();
+    alert(`${name} is in the box, so it isn't at this fight.
+
+Drag it onto your team first, then it can take a turn.`);
+    return true;
+}
+
+function slotUnder(e) {
+    var slot = $(e.target).closest(".planner-slot");
+    return slot.length ? parseInt(slot.attr("data-slot"), 10) || 0 : 0;
+}
+
+function dropMonOnNode(nodeId, slot) {
     var line = currentLine();
     var node = line.nodes[nodeId];
     if (!node) return endMonDrag();
-    assignDraggedMon(node);
+    if (rejectBoxedDrop()) return;
+    assignDraggedMon(node, slot);
     endMonDrag();
     saveLines();
     renderLine();
 }
 
 function dropMonOnEmpty(e) {
+    if (rejectBoxedDrop()) return;
     var line = currentLine();
     var canvas = $(".planner-canvas")[0];
     var rect = canvas.getBoundingClientRect();
@@ -1089,8 +1436,8 @@ function initPlanner() {
         beginDrag(e, $(this).attr("data-node"));
     });
 
-    $(".planner-canvas").on("mouseup", ".planner-node", function() {
-        if (MON_DRAG) return dropMonOnNode($(this).attr("data-node"));
+    $(".planner-canvas").on("mouseup", ".planner-node", function(e) {
+        if (MON_DRAG) return dropMonOnNode($(this).attr("data-node"), slotUnder(e));
         if (CONNECTING) finishConnect($(this).attr("data-node"));
     });
 
@@ -1108,6 +1455,7 @@ function initPlanner() {
         var line = currentLine();
         var node = line.nodes[DRAG.node];
         var canvas = $(".planner-canvas")[0].getBoundingClientRect();
+        DRAG.moved = true;
         node.x = Math.max(0, e.clientX - canvas.left - DRAG.offsetX);
         node.y = Math.max(0, e.clientY - canvas.top - DRAG.offsetY);
         $(`.planner-node[data-node="${node.id}"]`).css({left: `${node.x}px`, top: `${node.y}px`});
@@ -1116,6 +1464,7 @@ function initPlanner() {
 
     $(document).on("mouseup", function() {
         if (DRAG) {
+            if (DRAG.moved) SUPPRESS_SLOT_CLICK = true;
             saveLines();
             DRAG = null;
         }
@@ -1191,21 +1540,37 @@ function initPlanner() {
     });
 
     // Drag a Pokémon out of any strip and drop it on a turn.
-    $(".planner-your-party, .planner-box-party").on("mousedown", ".planner-mine", function(e) {
+    $(".planner-your-party").on("mousedown", ".planner-mine", function(e) {
         e.preventDefault();
         beginMonDrag(e, $(this).attr("data-mon"), "you", $(this).find("img").attr("src"));
     });
 
+    /*
+     * A boxed Pokemon can be dragged, but only to reorganise the party - it is
+     * in storage, so it can't be put straight into a turn.
+     */
+    $(".planner-box-party").on("mousedown", ".planner-mine", function(e) {
+        e.preventDefault();
+        beginMonDrag(e, $(this).attr("data-mon"), "you", $(this).find("img").attr("src"));
+        MON_DRAG.fromBox = true;
+    });
+
     $(".planner-foe-party").on("mousedown", ".planner-foe", function(e) {
         e.preventDefault();
-        beginMonDrag(e, $(this).attr("data-foe"), "them", $(this).find("img").attr("src"));
+        beginMonDrag(e, $(this).attr("data-foe"), "them", $(this).find("img").attr("src"),
+            parseInt($(this).attr("data-owner"), 10) || 0);
+    });
+
+    $(".planner-partner-party").on("mousedown", ".planner-partner-mon", function(e) {
+        e.preventDefault();
+        beginMonDrag(e, $(this).attr("data-partner"), "partner", $(this).find("img").attr("src"));
     });
 
     // Dropped onto a specific team member: the two trade places.
     $(".planner-your-party").on("mouseup", ".planner-mine", function(e) {
         if (!MON_DRAG || MON_DRAG.side !== "you") return;
         e.stopPropagation();
-        swapIntoTeam(MON_DRAG.key, $(this).attr("data-mon"));
+        swapIntoTeam(MON_DRAG.ref, $(this).attr("data-mon"));
         endMonDrag();
         renderLine();
     });
@@ -1213,7 +1578,7 @@ function initPlanner() {
     // Dropped on the strip's empty space: just join the team if there's room.
     $(".planner-your-party").on("mouseup", function() {
         if (!MON_DRAG || MON_DRAG.side !== "you") return;
-        var result = addToTeam(MON_DRAG.key);
+        var result = addToTeam(MON_DRAG.ref);
         endMonDrag();
         if (!result.ok) return alert(result.reason);
         renderLine();
@@ -1221,9 +1586,102 @@ function initPlanner() {
 
     $(".planner-box-party").on("mouseup", function() {
         if (!MON_DRAG || MON_DRAG.side !== "you") return;
-        removeFromTeam(MON_DRAG.key);
+        removeFromTeam(MON_DRAG.ref);
         endMonDrag();
         renderLine();
+    });
+
+    $(".planner-canvas").on("mousedown", ".planner-switch-btn", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    /*
+     * Left-click fills a slot, right-click empties it. Suppressed when the card
+     * was actually dragged, since a drag ends in a click too.
+     */
+    $(".planner-canvas").on("click", ".planner-slot", function(e) {
+        if (SUPPRESS_SLOT_CLICK) { SUPPRESS_SLOT_CLICK = false; return; }
+        if ($(e.target).is("button")) return;
+        e.stopPropagation();
+        openSlotPicker($(this).closest(".planner-node").attr("data-node"),
+            $(this).attr("data-side"), parseInt($(this).attr("data-slot"), 10) || 0);
+    });
+
+    $(document).on("click", ".planner-slot-popup .planner-switch-option", function(e) {
+        e.stopPropagation();
+        setSlotMon($(this).attr("data-mon"));
+        closeSlotPicker();
+    });
+
+    $(document).on("click", "#planner-clear-slot", function() {
+        setSlotMon("");
+        closeSlotPicker();
+    });
+
+    $(document).on("click", "#planner-cancel-slot", function() {
+        closeSlotPicker();
+    });
+
+    /*
+     * Right-click empties a slot. Clearing is common enough while reshuffling a
+     * plan that routing it through the turn editor was busywork, and there is
+     * no other use for the context menu on a card.
+     */
+    $(".planner-canvas").on("contextmenu", ".planner-slot", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var line = currentLine();
+        var node = line.nodes[$(this).closest(".planner-node").attr("data-node")];
+        var side = $(this).attr("data-side");
+        var slot = parseInt($(this).attr("data-slot"), 10) || 0;
+        if (!monAt(node, side, slot)) return;
+
+        if (side === "you") {
+            node.mons[slot] = "";
+            node.actions[slot] = {type: "move", value: ""};
+        } else {
+            node.foes[slot] = "";
+            node.foeActions[slot] = {type: "move", value: ""};
+        }
+        saveLines();
+        // Emptying a slot changes what every later turn inherits.
+        renderLine();
+    });
+
+    $(".planner-canvas").on("click", ".planner-switch-btn", function(e) {
+        e.stopPropagation();
+        openSwitchEditor($(this).closest(".planner-node").attr("data-node"),
+            $(this).attr("data-side") || "you",
+            parseInt($(this).attr("data-slot"), 10) || 0);
+    });
+
+    $(document).on("click", ".planner-switch-option", function() {
+        // The slot picker reuses this markup and has its own handler.
+        if ($(this).closest(".planner-slot-popup").length) return;
+        var line = currentLine();
+        var node = line.nodes[EDITING_SWITCH_NODE];
+        if (!node) return closeSwitchEditor();
+        setSideAction(node, EDITING_SWITCH_SIDE, {type: "switch", value: $(this).attr("data-mon")});
+        saveLines();
+        closeSwitchEditor();
+        // Switching changes who is out for every turn after this one.
+        renderLine();
+    });
+
+    $(document).on("click", "#planner-clear-switch", function() {
+        var line = currentLine();
+        var node = line.nodes[EDITING_SWITCH_NODE];
+        if (node) {
+            setSideAction(node, EDITING_SWITCH_SIDE, {type: "move", value: ""});
+            saveLines();
+        }
+        closeSwitchEditor();
+        renderLine();
+    });
+
+    $(document).on("click", "#planner-cancel-switch", function() {
+        closeSwitchEditor();
     });
 
     // Choosing either side's move for the turn, straight from the card.
@@ -1232,13 +1690,14 @@ function initPlanner() {
         var line = currentLine();
         var node = line.nodes[$(this).closest(".planner-node").attr("data-node")];
         var move = $(this).attr("data-move");
+        var slot = parseInt($(this).attr("data-slot"), 10) || 0;
 
         if ($(this).attr("data-side") === "you") {
             // Clicking the chosen move again clears it.
-            var current = node.action && node.action.type === "move" ? node.action.value : "";
-            node.action = {type: "move", value: current === move ? "" : move};
+            var current = moveAt(node, "you", slot);
+            node.actions[slot] = {type: "move", value: current === move ? "" : move};
         } else {
-            node.foeMove = node.foeMove === move ? "" : move;
+            node.foeActions[slot] = {type: "move", value: moveAt(node, "them", slot) === move ? "" : move};
         }
         saveLines();
         // Both sides feed the state of every turn below this one.
@@ -1275,10 +1734,6 @@ function initPlanner() {
     });
 
     // Delegated, since the editor markup is rebuilt on every open.
-    $(document).on("change", ".planner-edit-action-type, .planner-edit-mon", function() {
-        refreshActionValues("");
-    });
-
     $(document).on("click", ".planner-condition", function() {
         EDITING_CONDITION = $(this).attr("data-condition");
         renderConditionGrid();
@@ -1326,16 +1781,6 @@ function initPlanner() {
     $(document).on("click", "#planner-save-node", function() {
         var line = currentLine();
         var node = line.nodes[EDITING_NODE];
-        node.mon = $(".planner-edit-mon").val();
-        var foe = $(".planner-edit-foe").val();
-        // A pinned move belongs to the Pokémon it came from; swapping the
-        // opponent would otherwise leave a move they don't have.
-        if (foe !== node.foe) node.foeMove = "";
-        node.foe = foe;
-        node.action = {
-            type: $(".planner-edit-action-type").val(),
-            value: $(".planner-edit-action-value").val()
-        };
         node.statusSeed = {
             you: $(".planner-edit-status-you").val() || "",
             them: $(".planner-edit-status-them").val() || ""

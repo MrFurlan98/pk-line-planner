@@ -19,3 +19,4 @@ src/img/.gitignore
 # (*.bat above already covers start-planner.bat)
 src/testdata.json
 src/seed.html
+src/doubles-mockup.html
