@@ -64,11 +64,23 @@ const MOVE_EFFECTS = {
         ],
         "name": "Supersonic"
     },
+    "disable": {
+        "targetVolatiles": [
+            "disable"
+        ],
+        "name": "Disable"
+    },
     "submission": {
         "trapsTarget": {
             "expires": true
         },
         "name": "Submission"
+    },
+    "leechseed": {
+        "targetVolatiles": [
+            "leechseed"
+        ],
+        "name": "Leech Seed"
     },
     "growth": {
         "self": {
@@ -237,6 +249,12 @@ const MOVE_EFFECTS = {
         },
         "name": "Sharpen"
     },
+    "substitute": {
+        "selfVolatiles": [
+            "substitute"
+        ],
+        "name": "Substitute"
+    },
     "spiderweb": {
         "trapsTarget": {
             "expires": false
@@ -322,6 +340,13 @@ const MOVE_EFFECTS = {
         },
         "name": "Mean Look"
     },
+    "attract": {
+        "targetVolatiles": [
+            "attract"
+        ],
+        "conditional": "Only lands if the two are of opposite genders.",
+        "name": "Attract"
+    },
     "bulldoze": {
         "target": {
             "spe": -1
@@ -333,6 +358,12 @@ const MOVE_EFFECTS = {
             "confusion"
         ],
         "name": "DynamicPunch"
+    },
+    "encore": {
+        "targetVolatiles": [
+            "encore"
+        ],
+        "name": "Encore"
     },
     "sweetscent": {
         "target": {
@@ -376,6 +407,12 @@ const MOVE_EFFECTS = {
     "hail": {
         "weather": "Hail",
         "name": "Hail"
+    },
+    "torment": {
+        "targetVolatiles": [
+            "torment"
+        ],
+        "name": "Torment"
     },
     "flatter": {
         "target": {

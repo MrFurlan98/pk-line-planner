@@ -514,6 +514,13 @@ function applyMoveEffect(moveName, state, actor, from, targets, line, node) {
         user.statusTurns = 0;
     }
 
+    // Substitute is the one volatile a move puts on its own user.
+    if (fx.selfVolatiles) {
+        fx.selfVolatiles.forEach(function(v) {
+            if (VOLATILES[v]) user.volatiles[v] = true;
+        });
+    }
+
     // Hazards and screens are the side's, not any one Pokémon's.
     if (fx.hazard) {
         var field = fx.hazard.field;

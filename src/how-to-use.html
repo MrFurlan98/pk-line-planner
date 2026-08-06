@@ -837,40 +837,53 @@
     <h3>The turn editor</h3>
 
     <p>
-        <b>Edit</b> opens a small dialog holding only what the card can't: the turn's note, and
-        status carried <em>into</em> the turn. Pokémon, moves and switches are all set on the card
-        itself.
+        <b>Edit</b> opens a dialog holding only what the card can't. Pokémon, moves and switches are
+        all set on the card itself; this is for the state behind them.
     </p>
 
     <p>
-        Carried-in status is for walking in pre-slept or pre-poisoned &mdash; a Pokémon can only
-        carry one non-volatile status at a time, so giving yours a harmless one is real protection
-        against a trainer who leads with status. It carries down to every later turn.
-        <b>&mdash; ends on this turn &mdash;</b> is how you close a sleep out.
+        It has <b>one tab per Pokémon on the turn</b> &mdash; both sides, and both slots each in a
+        double &mdash; because everything in it belongs to one Pokémon rather than to the turn.
+        Yours carry a blue underline, theirs red. The turn's <b>note</b> sits below the tabs, since
+        that one really is the turn's.
     </p>
 
     <p>
-        <b>Stat stages</b> let you correct the boosts by hand, per side. They're added on top of
-        whatever the turn inherited rather than replacing it, so <em>+1 Atk</em> after a Swords
-        Dance reads as <em>+3</em>. Use it when a move's secondary-effect drop actually landed
-        &mdash; the planner only models effects that are guaranteed &mdash; or when a line starts
-        mid-fight with boosts already up.
+        <b>Status</b> is what that Pokémon carries <em>into</em> the turn &mdash; for walking in
+        pre-slept or pre-poisoned. A Pokémon holds one non-volatile status at a time, so giving
+        yours a harmless one is real protection against a trainer who leads with status. It carries
+        down to every later turn, and <b>&mdash; ends on this turn &mdash;</b> is how you close a
+        sleep out. It affects only the status; volatiles end on their own.
     </p>
 
     <p>
-        <b>Didn't act</b> is how you say a move never went off &mdash; you KO'd them first, they
-        flinched, they were fully paralysed, or they missed. That slot's effects are skipped, so
-        outspeeding a lead genuinely denies the Stealth Rock instead of the planner laying it
-        anyway. The move stays on the card, struck through, so the plan still records what they
-        were going to do.
+        <b>Move didn't go off</b> says that Pokémon never got to act &mdash; you KO'd it first, it
+        flinched, it was fully paralysed, or it missed. Its effects are skipped, so outspeeding a
+        lead genuinely denies the Stealth Rock instead of the planner laying it anyway. The move
+        stays on the card, struck through, so the plan still records what it was going to do.
     </p>
 
     <p>
-        Below it, <b>volatiles</b> toggle on and off &mdash; confusion, Encore, Leech Seed, Disable,
-        Torment, infatuation, Substitute. These sit <em>alongside</em> the status rather than
-        replacing it, so a Pokémon can be poisoned and seeded at once, and they clear when it
-        switches out. Taunt isn't offered because Platinum Kaizo removes the move entirely.
+        <b>Stat stages</b> correct the boosts by hand. They're added on top of whatever the turn
+        inherited rather than replacing it, so <em>+1 Atk</em> after a Swords Dance reads as
+        <em>+3</em>. Use it when a move's secondary-effect drop actually landed &mdash; the planner
+        only models effects that are guaranteed &mdash; or when a line starts mid-fight with boosts
+        already up.
     </p>
+
+    <p>
+        <b>Volatiles</b> toggle on and off: confusion, Encore, Leech Seed, Disable, Torment,
+        infatuation, Substitute. These sit <em>alongside</em> the status rather than replacing it,
+        so a Pokémon can be poisoned and seeded at once, and they clear when it switches out. Taunt
+        isn't offered because Platinum Kaizo removes the move entirely.
+    </p>
+
+    <div class="doc-note">
+        Moves apply these, but nothing ends them on a schedule. Encore runs 4&ndash;8 turns
+        <em>or</em> until the encored move runs out of PP, Disable 4&ndash;7 &mdash; none of that is
+        predictable, so the planner won't guess. Switch out, toggle it off on the turn it broke, or
+        branch the early end, exactly as with sleep.
+    </div>
 
 
     <!-- ====================================================== filling a turn -->

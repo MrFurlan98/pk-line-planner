@@ -97,10 +97,16 @@ graph, so editing one turn updates everything after it.
   Roark's gym is in sand, which is the whole story of his Gible's Sand Veil.
 - **One non-volatile status at a time**, which is what makes pre-statusing your
   own Pokémon a real tactic.
-- **Volatiles sit alongside it** and are set per turn in the turn editor:
-  confusion, Encore, Leech Seed, Disable, Torment, infatuation, Substitute. Taunt
-  is deliberately absent — Platinum Kaizo deletes the move, along with Nightmare
-  and Heal Block, so offering it would only invite plans that can't happen.
+- **Volatiles sit alongside it**: confusion, Encore, Leech Seed, Disable,
+  Torment, infatuation, Substitute. Moves apply them and they can also be set by
+  hand. Taunt is deliberately absent — Platinum Kaizo deletes the move, along
+  with Nightmare and Heal Block, so offering it would only invite plans that
+  can't happen.
+- **Nothing ends a volatile on a schedule.** Encore runs 4–8 turns *or* until
+  the encored move runs out of PP, Disable 4–7; Leech Seed and Torment last
+  until the target switches out. Two of those exits aren't predictable and PP
+  isn't tracked, so — as with sleep — the planner never guesses. Switching out
+  clears them, and the turn editor toggles them off individually.
 - **Curing berries** are modelled and spent once — Roark's Cranidos holds a Lum
   Berry, so a plan built on poisoning it doesn't work.
 - **Sleep is counted, not predicted.** Its duration is random and isn't in the

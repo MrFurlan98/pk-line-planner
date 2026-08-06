@@ -93,10 +93,32 @@ function parseStatus(effect) {
 }
 
 // Volatiles sit alongside a non-volatile status rather than replacing it.
+/*
+ * Volatiles a move lands on its target.
+ *
+ * Encore and Disable name a random duration (4-8 and 4-7 turns), and Encore also
+ * ends early if the encored move runs out of PP - two independent exits, neither
+ * of them predictable, since PP isn't tracked either. Leech Seed and Torment run
+ * until the target switches out.
+ *
+ * So none of these are auto-expired downstream: a random duration is the sleep
+ * problem again, and switching out already clears volatiles. They are plain
+ * flags here, ended by hand or by leaving the field.
+ */
 function parseVolatiles(effect) {
     var volatiles = [];
     if (/Confuses the target|and confuses it/i.test(effect)) volatiles.push("confusion");
+    if (/forces the target to use the last move/i.test(effect)) volatiles.push("encore");
+    if (/prevents the target from using the last move/i.test(effect)) volatiles.push("disable");
+    if (/prevents the target from using the same move twice/i.test(effect)) volatiles.push("torment");
+    if (/heals the user by that amount, until the target switches out/i.test(effect)) volatiles.push("leechseed");
+    if (/infatuates the target/i.test(effect)) volatiles.push("attract");
     return volatiles.length ? volatiles : null;
+}
+
+// Substitute is the one volatile a move puts on its own user.
+function parseSelfVolatiles(effect) {
+    return /a Substitute is created/i.test(effect) ? ["substitute"] : null;
 }
 
 function parseBoosts(effect, who) {
@@ -184,6 +206,16 @@ Object.values(MOVES).forEach(function(move) {
     if (status) entry.targetStatus = status;
     var volatiles = parseVolatiles(effect);
     if (volatiles) entry.targetVolatiles = volatiles;
+    var selfVolatiles = parseSelfVolatiles(effect);
+    if (selfVolatiles) entry.selfVolatiles = selfVolatiles;
+    /*
+     * Attract only lands between opposite genders. That is knowable rather than
+     * random, so it is modelled - but the planner doesn't check it, so the
+     * condition is carried as text the way Curse and Rest already do.
+     */
+    if (volatiles && volatiles.indexOf("attract") >= 0) {
+        entry.conditional = "Only lands if the two are of opposite genders.";
+    }
 
     /*
      * Hazard removal. Defog is the only route in this game - Rapid Spin is one
