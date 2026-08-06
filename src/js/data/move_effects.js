@@ -6,6 +6,12 @@
  * tools/gen-move-effects.js if the move data changes.
  */
 const MOVE_EFFECTS = {
+    "vicegrip": {
+        "trapsTarget": {
+            "expires": true
+        },
+        "name": "ViceGrip"
+    },
     "swordsdance": {
         "self": {
             "atk": 2
@@ -23,6 +29,12 @@ const MOVE_EFFECTS = {
             "acc": -1
         },
         "name": "Sand-Attack"
+    },
+    "wrap": {
+        "trapsTarget": {
+            "expires": true
+        },
+        "name": "Wrap"
     },
     "tailwhip": {
         "target": {
@@ -52,6 +64,12 @@ const MOVE_EFFECTS = {
         ],
         "name": "Supersonic"
     },
+    "submission": {
+        "trapsTarget": {
+            "expires": true
+        },
+        "name": "Submission"
+    },
     "growth": {
         "self": {
             "spa": 1
@@ -75,6 +93,12 @@ const MOVE_EFFECTS = {
             "spe": -1
         },
         "name": "String Shot"
+    },
+    "firespin": {
+        "trapsTarget": {
+            "expires": true
+        },
+        "name": "Fire Spin"
     },
     "thunderwave": {
         "targetStatus": "par",
@@ -156,6 +180,12 @@ const MOVE_EFFECTS = {
         "screen": "isReflect",
         "name": "Reflect"
     },
+    "clamp": {
+        "trapsTarget": {
+            "expires": true
+        },
+        "name": "Clamp"
+    },
     "amnesia": {
         "self": {
             "spd": 2
@@ -207,6 +237,12 @@ const MOVE_EFFECTS = {
         },
         "name": "Sharpen"
     },
+    "spiderweb": {
+        "trapsTarget": {
+            "expires": false
+        },
+        "name": "Spider Web"
+    },
     "curse": {
         "self": {
             "atk": 1,
@@ -251,6 +287,10 @@ const MOVE_EFFECTS = {
         "targetStatus": "par",
         "name": "Zap Cannon"
     },
+    "perishsong": {
+        "perish": 3,
+        "name": "Perish Song"
+    },
     "icywind": {
         "target": {
             "spe": -1
@@ -276,6 +316,12 @@ const MOVE_EFFECTS = {
         ],
         "name": "Swagger"
     },
+    "meanlook": {
+        "trapsTarget": {
+            "expires": false
+        },
+        "name": "Mean Look"
+    },
     "bulldoze": {
         "target": {
             "spe": -1
@@ -294,6 +340,12 @@ const MOVE_EFFECTS = {
         },
         "name": "Sweet Scent"
     },
+    "twister": {
+        "trapsTarget": {
+            "expires": true
+        },
+        "name": "Twister"
+    },
     "raindance": {
         "weather": "Rain",
         "name": "Rain Dance"
@@ -302,12 +354,24 @@ const MOVE_EFFECTS = {
         "weather": "Sun",
         "name": "Sunny Day"
     },
+    "whirlpool": {
+        "trapsTarget": {
+            "expires": true
+        },
+        "name": "Whirlpool"
+    },
     "stockpile": {
         "self": {
             "def": 1,
             "spd": 1
         },
         "name": "Stockpile"
+    },
+    "swallow": {
+        "trapsTarget": {
+            "expires": true
+        },
+        "name": "Swallow"
     },
     "hail": {
         "weather": "Hail",
@@ -331,6 +395,10 @@ const MOVE_EFFECTS = {
             "spd": 1
         },
         "name": "Charge"
+    },
+    "brickbreak": {
+        "clearsScreens": true,
+        "name": "Brick Break"
     },
     "yawn": {
         "targetStatus": "slp",
@@ -390,6 +458,12 @@ const MOVE_EFFECTS = {
         },
         "name": "Cosmic Power"
     },
+    "sandtomb": {
+        "trapsTarget": {
+            "expires": true
+        },
+        "name": "Sand Tomb"
+    },
     "sheercold": {
         "targetStatus": "frz",
         "name": "Sheer Cold"
@@ -399,6 +473,12 @@ const MOVE_EFFECTS = {
             "def": 2
         },
         "name": "Iron Defense"
+    },
+    "block": {
+        "trapsTarget": {
+            "expires": false
+        },
+        "name": "Block"
     },
     "howl": {
         "self": {
@@ -462,6 +542,7 @@ const MOVE_EFFECTS = {
         "target": {
             "eva": -1
         },
+        "clearsTarget": true,
         "name": "Defog"
     },
     "captivate": {
@@ -489,6 +570,18 @@ const MOVE_EFFECTS = {
             "spd": 1
         },
         "name": "Defend Order"
+    },
+    "crushgrip": {
+        "trapsTarget": {
+            "expires": true
+        },
+        "name": "Crush Grip"
+    },
+    "magmastorm": {
+        "trapsTarget": {
+            "expires": true
+        },
+        "name": "Magma Storm"
     },
     "darkvoid": {
         "targetStatus": "slp",

@@ -185,6 +185,47 @@ Object.values(MOVES).forEach(function(move) {
     var volatiles = parseVolatiles(effect);
     if (volatiles) entry.targetVolatiles = volatiles;
 
+    /*
+     * Hazard removal. Defog is the only route in this game - Rapid Spin is one
+     * of the moves Platinum Kaizo deletes - and its own text says it takes the
+     * screens with them, which is the gen 4 behaviour.
+     */
+    if (/clears screens and hazards|removes? (?:all )?(?:screens and )?hazards/i.test(effect)) {
+        entry.clearsTarget = true;
+    }
+
+    /*
+     * Brick Break takes the screens and leaves the hazards standing, so it is a
+     * separate effect from Defog's clean sweep - and it is an attack, which
+     * makes it the cheap way through a Reflect if you have one.
+     */
+    if (/breaks? any reflect or light screen|breaks? (?:any |the )?screens?/i.test(effect)) {
+        entry.clearsScreens = true;
+    }
+
+    /*
+     * Perish Song is the only move that counts down to a faint, and it hits
+     * everything on the field including its own user - so it is neither a
+     * target effect nor a self effect, and gets its own field.
+     */
+    var perish = /faint in (\d+) turns?/i.exec(effect);
+    if (perish) entry.perish = parseInt(perish[1], 10);
+
+    /*
+     * Trapping, in two kinds that plan very differently.
+     *
+     * Mean Look and friends never wear off, so a plan can rely on being stuck.
+     * The binding moves run 2-5 turns at random, which is the sleep problem
+     * again - no number is a promise - unless a Grip Claw pins it to exactly 5.
+     * `expires` is what tells the two apart downstream. Ingrain traps its own
+     * user, not the target, so it deliberately doesn't match here.
+     */
+    if (/prevents the target from switching out or fleeing/i.test(effect)) {
+        entry.trapsTarget = {expires: false};
+    } else if (/traps the target/i.test(effect)) {
+        entry.trapsTarget = {expires: true};
+    }
+
     if (HAZARD_FIELDS[move.id]) entry.hazard = HAZARD_FIELDS[move.id];
     if (WEATHER[move.id]) entry.weather = WEATHER[move.id];
     if (SCREENS[move.id]) entry.screen = SCREENS[move.id];

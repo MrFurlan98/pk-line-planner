@@ -144,6 +144,34 @@ function battleFormat(trainerName) {
     return {id: "single", slots: 1, trainers: [trainerName]};
 }
 
+/*
+ * Weather already up when the fight starts, from the route or the room rather
+ * than from anything either side did. 235 of 495 trainers are in one, so like
+ * the battle format it is read from the game's own data rather than configured.
+ *
+ * Fog is gen 4's own weather and is the odd one out: no move sets it, so a fight
+ * in fog is the only way to see it.
+ */
+const BATTLE_WEATHER = {
+    sun: "Sun",
+    rain: "Rain",
+    sand: "Sand",
+    hail: "Hail",
+    fog: "Fog"
+};
+
+function battleWeather(trainerName) {
+    var flags = GAME.fieldFlags();
+    var groups = (flags && flags.weather) || {};
+    for (var key in BATTLE_WEATHER) {
+        var list = groups[key] || [];
+        for (var i = 0; i < list.length; i++) {
+            if (resolveTrainerName(list[i]) === trainerName) return BATTLE_WEATHER[key];
+        }
+    }
+    return "";
+}
+
 // Substitutes any {PLACEHOLDER} in a trainer key for its current value.
 function resolveTrainerName(name) {
     var resolved = name;

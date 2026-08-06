@@ -36,8 +36,58 @@ graph, so editing one turn updates everything after it.
   switching fall out for free: a Pokémon keeps its own record, loses its boosts
   and volatiles on leaving the field, and keeps its status.
 - **Hazards, screens and weather** belong to the side.
+- **Hazards and screens can be removed**, by three different routes:
+  **Defog** clears the target's side of hazards *and* screens; **Brick Break**
+  takes only the screens, which makes it the one way through a Reflect that
+  doesn't cost you the turn; and a **grounded Poison type soaks up Toxic Spikes**
+  as it lands, the only removal nobody spends a turn on. Flying types and
+  Levitate never touch them. Rapid Spin isn't a route — Kaizo deletes it.
+- **Stat stages can be corrected by hand**, per side, in the turn editor. A
+  *delta* on top of what the turn inherited, not an override, so it composes
+  with derived boosts and still respects the ±6 ceiling. This is the escape
+  hatch for everything the move table deliberately won't promise — a
+  secondary-effect drop that actually landed, a move whose text didn't parse, or
+  a line that starts mid-fight already set up. No ability guard is applied: you
+  are stating what happened, not an opponent trying to inflict it, so a Clear
+  Body doesn't get to refuse your own correction.
+- **A move can be denied.** Per-slot *didn't act* toggles in the turn editor
+  skip that slot's effects when the turn folds in, so outspeeding a lead really
+  does deny the Stealth Rock. It covers KO'd-before-acting, flinch, full
+  paralysis, confusion self-hit and a plain miss — all the same thing to the
+  model. The card still shows the move, struck through, so the plan records what
+  they were *going* to do. The planner can't infer this itself: with no speed or
+  damage data it has no way to know who moved first, so it's stated rather than
+  derived. Worth revisiting once damage lands.
+- **Trapping is enforced, not just displayed.** A trapped slot's Switch button
+  reads *Trapped* and refuses, so a plan can't be built on a switch the game
+  won't allow. Two sources, modelled differently: **abilities** (Shadow Tag,
+  Arena Trap, Magnet Pull — all three are fielded in this game) are *derived*
+  from whoever is opposite, because they stop the instant that Pokémon leaves;
+  **moves** are recorded on the Pokémon, because they follow it. Mean Look,
+  Block and Spider Web never wear off. The binding moves run 2–5 turns at
+  random, so they get the sleep treatment — turns elapsed, never a floor —
+  except with a **Grip Claw**, which pins them to exactly 5 and is the one case
+  a plan can rely on. Switching out clears any of it.
+- **Perish Song is counted down**, on both sides at once — it catches the singer
+  too, which is the whole reason 14 trainer sets carrying it are dangerous to
+  *them*. Switching out is the only escape and clears the count. At zero the
+  slot reads FAINTS rather than emptying itself, so the plan still records who
+  was out when it happened.
+- **Screens expire.** Reflect and Light Screen run 5 turns, or 8 if the Pokémon
+  that *set* them held a Light Clay, and the badge counts down. Both live in the
+  side's `hazards` map, but a hazard's value counts layers while a screen's
+  counts turns left — the `SCREENS` list is what tells the two apart.
+- **Standing weather is detected, not configured.** 235 of 495 fights start in
+  sun, rain, sand, hail or fog, from `flags.js weather`. It is applied before the
+  leads, so a Drizzle or Sand Stream Pokémon still overrides it, and the card
+  labels it "(battle)" so it doesn't read as the planner inventing a sandstorm.
+  Roark's gym is in sand, which is the whole story of his Gible's Sand Veil.
 - **One non-volatile status at a time**, which is what makes pre-statusing your
   own Pokémon a real tactic.
+- **Volatiles sit alongside it** and are set per turn in the turn editor:
+  confusion, Encore, Leech Seed, Disable, Torment, infatuation, Substitute. Taunt
+  is deliberately absent — Platinum Kaizo deletes the move, along with Nightmare
+  and Heal Block, so offering it would only invite plans that can't happen.
 - **Curing berries** are modelled and spent once — Roark's Cranidos holds a Lum
   Berry, so a plan built on poisoning it doesn't work.
 - **Sleep is counted, not predicted.** Its duration is random and isn't in the
@@ -110,17 +160,17 @@ Two things worth knowing before editing it:
 
 ---
 
-## Next
+## Next: damage integration
 
-Model correctness is finished; what remains is either polish or additive.
+Model correctness is finished; what remains is either polish or additive. Damage
+is the one to take first — it needs no further model work, and everything below
+reads better with real numbers on the cards.
 
-The two big ones — **damage integration** and **auto-generated lines** — are
-both unblocked now. Damage wants abilities and the slot shape, and it has both.
-Auto-generation emits the same structures the manual builder uses, and the model
-can now express switching, status that ends, and multi-battle formats.
-
-Damage is the one to take first: it needs no further model work, and everything
-below reads better with real numbers on the cards.
+KO chance, damage rolls, HP bars, speed order. `@smogon/calc` takes abilities,
+items, boosts, status and weather natively, and the planner already derives all
+of those, so this is mostly a matter of assembling a `Pokemon` and a `Field` per
+slot and reading the result back. Abilities and the slot shape were the
+prerequisites; both are done.
 
 ---
 
@@ -173,15 +223,18 @@ Each of these wants a line in the "How to use" page once it lands.
 
 ---
 
-## The two big features
+## Not doing: auto-generated lines
 
-Both were held back until the model could carry them. It can now.
+Dropped after feedback, not for want of a way to build it — the model can express
+everything a generated line would need, and damage would have supplied the
+scoring.
 
-- **Damage integration** — KO chance, damage rolls, HP bars, speed order.
-  `@smogon/calc` takes abilities, items, boosts, status and weather natively, and
-  the planner already derives all of those, so this is mostly a matter of
-  assembling a `Pokemon` and a `Field` per slot and reading the result back.
-- **Auto-generated lines** ("risky" / "safe"). Emits the same structures the
-  manual builder uses, so it inherits whatever the model can express — which now
-  includes switching, status that ends, and the multi-battle formats. Wants
-  damage first, since scoring a line means comparing outcomes.
+**It spoils the game.** A tool that hands you the answer to a fight removes the
+part of a Nuzlocke that is actually the game: working the fight out yourself,
+being wrong, and losing something for it. The planner is worth having because it
+makes *your* reasoning explicit and keeps it around — not because it reasons for
+you.
+
+That line is worth holding elsewhere too. Damage numbers, type matchups and
+validation warnings all inform a decision you still make. Anything that ranks
+whole plans and picks one is the thing this section rules out.

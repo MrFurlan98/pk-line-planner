@@ -20,3 +20,8 @@ src/img/.gitignore
 src/testdata.json
 src/seed.html
 src/doubles-mockup.html
+
+# Agent tooling, kept local for the same reason as .vscode/ above: a working
+# setup and a set of notes-to-self, not part of the app.
+.claude/
+CLAUDE.md

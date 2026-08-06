@@ -64,6 +64,28 @@ const NO_DROP_MOVES = ["superpower", "overheat", "psychoboost", "dracometeor", "
 
 const MAX_BOOST = 6;
 
+/*
+ * Screens run out; entry hazards don't. Both live in the side's `hazards` map,
+ * but a hazard's value counts layers while a screen's counts the turns it has
+ * left - so the two are told apart by this list rather than by their value.
+ *
+ * Five turns, or eight if whoever set it was holding a Light Clay. Straight from
+ * the game's own move text; a plan resting on a screen that quietly expired two
+ * turns ago is worse than one that never assumed a screen at all.
+ */
+const SCREENS = {
+    isReflect: "Reflect",
+    isLightScreen: "Light Screen"
+};
+
+const SCREEN_TURNS = 5;
+const SCREEN_TURNS_LIGHT_CLAY = 8;
+const LIGHT_CLAY = "lightclay";
+
+// Binding moves run 2-5 turns unless a Grip Claw fixes them at 5.
+const GRIP_CLAW = "gripclaw";
+const TRAP_TURNS_GRIP_CLAW = 5;
+
 function newLineId() {
     return `line-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 }
@@ -113,6 +135,34 @@ function newNode(x, y) {
          * down the whole line.
          */
         statusSeed: {you: "", them: ""},
+        /*
+         * Volatiles carried into this turn, alongside the status above. Kept as
+         * its own field rather than folded into statusSeed so lines saved before
+         * it existed still load - a missing one simply reads as none.
+         */
+        volatileSeed: {you: [], them: []},
+        // The other half of the toggle: volatiles this turn ends, as opposed to
+        // ones it starts. Only the ones actually switched off are listed.
+        volatileClear: {you: [], them: []},
+        /*
+         * Slots that never got their move off - KO'd before acting, flinched,
+         * fully paralysed, confused into itself, or simply missed. The planner
+         * has no speed or damage data, so it cannot work this out; you say it,
+         * and the effects of that slot's move are skipped when the turn folds
+         * in. Outspeeding a lead to deny Stealth Rock is the usual reason.
+         */
+        skipped: {you: [false, false], them: [false, false]},
+        /*
+         * Stat stages this turn applies on top of what it inherited. A delta
+         * rather than an absolute, so it composes with the boosts derived from
+         * earlier turns instead of pinning them.
+         *
+         * This is the escape hatch for everything the move table deliberately
+         * won't promise: a secondary-effect drop that actually landed, a move
+         * whose text didn't parse, or a line that starts mid-fight already set
+         * up.
+         */
+        boostSeed: {you: {}, them: {}},
         stateOverride: null,
         // Move pickers start open so a fresh turn can be filled in, then get
         // collapsed away once it's decided.
@@ -178,8 +228,23 @@ const STATUSES = {
     frz: {id: "frz", name: "Frozen", short: "FRZ"}
 };
 
+/*
+ * Volatiles sit alongside the non-volatile status rather than competing with it,
+ * and they clear when the Pokemon leaves the field.
+ *
+ * Only conditions that actually exist in this game are listed. Platinum Kaizo
+ * deletes Taunt, Nightmare and Heal Block outright (see the deletes in
+ * calc/src/data/moves.ts), so there is no way to be taunted here and offering it
+ * would only invite plans that can't happen.
+ */
 const VOLATILES = {
-    confusion: {id: "confusion", name: "Confused", short: "CNF"}
+    confusion: {id: "confusion", name: "Confused", short: "CNF"},
+    encore: {id: "encore", name: "Encored - locked into its last move", short: "ENC"},
+    leechseed: {id: "leechseed", name: "Seeded - loses HP each turn to the other side", short: "SEED"},
+    disable: {id: "disable", name: "Disabled - its last move is unusable", short: "DIS"},
+    torment: {id: "torment", name: "Tormented - cannot use the same move twice in a row", short: "TOR"},
+    attract: {id: "attract", name: "Infatuated - may not act", short: "ATT"},
+    substitute: {id: "substitute", name: "Behind a Substitute", short: "SUB"}
 };
 
 /*
@@ -217,7 +282,17 @@ const STATUS_CURED = "cured";
 function emptyMonState() {
     // statusTurns counts how long the current status has been sitting there,
     // which is what tells you whether a sleep is about to run out.
-    return {boosts: {}, status: "", statusTurns: 0, volatiles: {}};
+    // `perish` is turns left on a Perish Song before this Pokemon faints, 0 for
+    // no song. A counter rather than a volatile, because the number is the plan.
+    /*
+     * `trapped` is {expires, turns, fixed} or null. `turns` counts turns
+     * elapsed, not remaining - a binding move runs 2-5 turns at random, so like
+     * sleep the number is a gauge rather than a promise. `fixed` is set only
+     * when a Grip Claw pins it to exactly 5, which is the one case a plan can
+     * actually rely on.
+     */
+    return {boosts: {}, status: "", statusTurns: 0, volatiles: {},
+            perish: 0, perishDone: false, trapped: null};
 }
 
 function emptySide() {
@@ -246,6 +321,12 @@ function emptyState() {
         // Per-Pokémon boosts, status and volatiles, keyed by slot reference.
         mons: {you: {}, them: {}},
         weather: "",
+        /*
+         * Where the weather came from: "battle" for weather the fight starts in,
+         * otherwise whichever move or ability set it. Only the card reads this,
+         * to say why there is sand on a turn nobody asked for sand on.
+         */
+        weatherSource: "",
         ambiguous: false,
         // A curing berry only works once, so spent ones are remembered per Pokémon.
         itemsUsed: {you: {}, them: {}}
@@ -404,6 +485,19 @@ function applyMoveEffect(moveName, state, actor, from, targets, line, node) {
             target.status = fx.targetStatus;
             target.statusTurns = 0;
         }
+        /*
+         * A Grip Claw pins a binding move to exactly 5 turns; without one it is
+         * 2-5 and nothing here should pretend otherwise. Re-trapping an already
+         * trapped Pokemon restarts the count.
+         */
+        if (fx.trapsTarget) {
+            target.trapped = {
+                expires: fx.trapsTarget.expires,
+                turns: 0,
+                fixed: fx.trapsTarget.expires && userHolder &&
+                    toID(userHolder.item || "") === GRIP_CLAW ? TRAP_TURNS_GRIP_CLAW : null
+            };
+        }
         if (fx.targetVolatiles) {
             fx.targetVolatiles.forEach(function(v) {
                 if (abilityBlocksStatus(holder, "", v, state)) return;
@@ -426,8 +520,45 @@ function applyMoveEffect(moveName, state, actor, from, targets, line, node) {
         state[otherSide].hazards[field] =
             Math.min((state[otherSide].hazards[field] || 0) + 1, fx.hazard.max);
     }
-    if (fx.screen) state[actor].hazards[fx.screen] = 1;
-    if (fx.weather) state.weather = fx.weather;
+    /*
+     * Defog takes the target's side back to nothing - hazards and screens alike,
+     * which is what its text says and what gen 4 does. It is the only move that
+     * removes hazards here: Platinum Kaizo deletes Rapid Spin.
+     */
+    /*
+     * Perish Song is heard by everything on the field, the user included, so it
+     * is applied to both sides rather than to `targets`. An existing count is
+     * never raised - hearing the song twice doesn't buy anybody time.
+     */
+    if (fx.perish) {
+        ["you", "them"].forEach(function(side) {
+            var refs = (side === "you" ? node.mons : node.foes) || [];
+            refs.forEach(function(ref) {
+                if (!ref) return;
+                var heard = monState(state, side, ref);
+                if (!heard.perish || fx.perish < heard.perish) heard.perish = fx.perish;
+            });
+        });
+    }
+
+    if (fx.clearsTarget) state[otherSide].hazards = {};
+
+    // Brick Break only breaks the screens; hazards on that side stay put.
+    if (fx.clearsScreens) {
+        for (var screen in SCREENS) delete state[otherSide].hazards[screen];
+    }
+
+    // Light Clay is checked on the setter, not on whoever is out later.
+    if (fx.screen) {
+        state[actor].hazards[fx.screen] =
+            userHolder && toID(userHolder.item || "") === LIGHT_CLAY
+                ? SCREEN_TURNS_LIGHT_CLAY
+                : SCREEN_TURNS;
+    }
+    if (fx.weather) {
+        state.weather = fx.weather;
+        state.weatherSource = "move";
+    }
 }
 
 function parentEdges(line, nodeId) {
@@ -522,6 +653,15 @@ function switchTargetAt(node, side, slot) {
     return action.type === "switch" ? action.value : "";
 }
 
+/*
+ * Whether a slot's move actually went off. False means it was denied - KO'd
+ * first, flinched, missed - and the turn folds in without its effects.
+ */
+function actedAt(node, side, slot) {
+    var skipped = node && node.skipped && node.skipped[side];
+    return !(skipped && skipped[slot]);
+}
+
 function moveAt(node, side, slot) {
     var action = actionAt(node, side, slot);
     return action.type === "move" ? action.value : "";
@@ -582,23 +722,115 @@ function foeSetFor(line, node, speciesName) {
  * Applied to slot one, which is the Pokemon a seed is nearly always about.
  */
 function applyStatusSeed(node, state) {
-    if (!node || !node.statusSeed) return state;
+    if (!node) return state;
     ["you", "them"].forEach(function(side) {
-        var seed = node.statusSeed[side];
         var who = monAt(node, side, 0);
-        if (!seed || !who) return;
+        if (!who) return;
+        var seed = node.statusSeed && node.statusSeed[side];
+        var add = (node.volatileSeed && node.volatileSeed[side]) || [];
+        var clear = (node.volatileClear && node.volatileClear[side]) || [];
+        var boosts = (node.boostSeed && node.boostSeed[side]) || {};
+        var hasBoosts = Object.keys(boosts).some(function(s) { return boosts[s]; });
+        if (!seed && !add.length && !clear.length && !hasBoosts) return;
         var mon = monState(state, side, who);
 
+        /*
+         * Through addBoosts so the +-6 ceiling still applies. No ability guard
+         * passed: this is you stating what happened, not an opponent trying to
+         * inflict it, so a Clear Body shouldn't refuse your own correction.
+         */
+        if (hasBoosts) addBoosts(mon.boosts, boosts);
+
+        /*
+         * "Ends on this turn" is about the non-volatile status and nothing else.
+         * Volatiles run on their own schedules - an Encore expiring has nothing
+         * to do with a sleep breaking - so each is turned off individually
+         * rather than being swept away alongside the status.
+         */
         if (seed === STATUS_CURED) {
             mon.status = "";
             mon.statusTurns = 0;
-            mon.volatiles = {};
-            return;
+        } else if (seed) {
+            mon.status = seed;
+            mon.statusTurns = 0;
         }
-        mon.status = seed;
-        mon.statusTurns = 0;
+
+        clear.forEach(function(id) { delete mon.volatiles[id]; });
+        add.forEach(function(id) {
+            if (VOLATILES[id]) mon.volatiles[id] = true;
+        });
     });
     return state;
+}
+
+// The species in a slot, whichever roster it came from.
+function speciesAt(line, node, side, slot) {
+    var ref = monAt(node, side, slot);
+    if (!ref) return null;
+    if (side === "you" && !isPartnerSlot(line, side, slot)) {
+        var entry = boxEntry(ref);
+        return entry ? GAME.species()[toID(entry.species)] : null;
+    }
+    return GAME.species()[toID(ref)] || null;
+}
+
+/*
+ * A grounded Poison type soaks Toxic Spikes up as it lands, clearing them for
+ * good. Worth modelling because it is the only hazard removal in this game that
+ * isn't a move - Rapid Spin doesn't exist here and Defog costs a turn - so it is
+ * easy to plan around a layer that your own switch quietly deleted.
+ *
+ * Flying types and Levitate never touch the ground, so they neither absorb the
+ * spikes nor are poisoned by them.
+ */
+function absorbToxicSpikes(line, node, state, side, slot) {
+    if (!state[side].hazards.toxicSpikes) return;
+    var species = speciesAt(line, node, side, slot);
+    if (!species || !species.types) return;
+    if (species.types.indexOf("poison") < 0) return;
+
+    var holder = activeHolder(line, node, side, slot);
+    var grounded = species.types.indexOf("flying") < 0 &&
+        toID(holder && holder.ability || "") !== "levitate";
+    if (grounded) delete state[side].hazards.toxicSpikes;
+}
+
+/*
+ * Why a slot can't switch out, or null if it can.
+ *
+ * Move-trapping is recorded on the Pokemon, because it follows it. Ability
+ * trapping is derived from whoever is standing opposite instead of stored,
+ * because it ends the instant that Pokemon leaves the field - storing it would
+ * mean remembering to unstore it in every path that changes a slot.
+ */
+function trapReason(line, node, state, side, slot) {
+    var ref = monAt(node, side, slot);
+    if (!ref) return null;
+
+    var mon = monState(state, side, ref);
+    if (mon.trapped) {
+        return mon.trapped.expires
+            ? {kind: "move", expires: true, turns: mon.trapped.turns || 0, fixed: mon.trapped.fixed}
+            : {kind: "move", expires: false};
+    }
+
+    var species = speciesAt(line, node, side, slot);
+    if (!species || !species.types) return null;
+    var holderAbility = activeHolder(line, node, side, slot);
+    var levitates = toID(holderAbility && holderAbility.ability || "") === "levitate";
+
+    var other = side === "you" ? "them" : "you";
+    for (var i = 0; i < slotCount(line); i++) {
+        var opponent = activeHolder(line, node, other, i);
+        var fx = abilityEffect(opponent && opponent.ability);
+        if (!fx || !fx.traps) continue;
+
+        var caught = fx.traps === "all" ||
+            (fx.traps === "steel" && species.types.indexOf("steel") >= 0) ||
+            (fx.traps === "grounded" && species.types.indexOf("flying") < 0 && !levitates);
+        if (caught) return {kind: "ability", by: fx.name, expires: false};
+    }
+    return null;
 }
 
 /*
@@ -606,10 +838,14 @@ function applyStatusSeed(node, state) {
  * Attack of everything opposite it, the weather abilities set the field.
  */
 function applySwitchInAbility(line, node, state, side, slot) {
+    absorbToxicSpikes(line, node, state, side, slot);
     var holder = activeHolder(line, node, side, slot);
     var fx = abilityEffect(holder && holder.ability);
     if (!fx || !fx.onSwitchIn) return;
-    if (fx.onSwitchIn.weather) state.weather = fx.onSwitchIn.weather;
+    if (fx.onSwitchIn.weather) {
+        state.weather = fx.onSwitchIn.weather;
+        state.weatherSource = "ability";
+    }
     if (!fx.onSwitchIn.opponentBoosts) return;
 
     // Intimidate hits every opposing slot, not just the one across from it.
@@ -646,6 +882,11 @@ function leaveField(line, parent, state, side, slot) {
     var mon = monState(state, side, ref);
     mon.boosts = {};
     mon.volatiles = {};
+    // "unless they switch out" - leaving the field is the whole counterplay.
+    mon.perish = 0;
+    mon.perishDone = false;
+    // Whatever was holding it isn't holding it any more.
+    mon.trapped = null;
     var holder = activeHolder(line, parent, side, slot);
     var fx = abilityEffect(holder && holder.ability);
     if (fx && fx.curesOnSwitchOut) {
@@ -690,6 +931,39 @@ function applyTurn(line, parent, node, state) {
     });
 
     /*
+     * Perish ticks *before* the moves, unlike the screens below, because the two
+     * count differently. A screen's five turns include the one it was cast on,
+     * so that turn consumes a tick. Perish Song instead sets its count at the
+     * end of the turn it is sung - the count still reads 3 on the turn after -
+     * so the singing turn must not consume one.
+     *
+     * At zero the Pokemon faints. The slot is left filled rather than emptied,
+     * so the plan still records what was out when it happened.
+     */
+    eachSlot(function(side, i) {
+        var ref = monAt(parent, side, i);
+        if (!ref) return;
+        var mon = monState(state, side, ref);
+        if (mon.perish > 0) {
+            mon.perish -= 1;
+            // Tells "never heard the song" apart from "the count just ran out".
+            if (mon.perish === 0) mon.perishDone = true;
+        }
+
+        /*
+         * A binding move that survived the turn has held one turn longer. Only
+         * a Grip Claw's fixed 5 is released automatically; a 2-5 trap is never
+         * ended on the planner's say-so, for the same reason a sleep isn't -
+         * branch the early break instead of inventing a floor.
+         */
+        if (mon.trapped && mon.trapped.expires) {
+            mon.trapped.turns = (mon.trapped.turns || 0) + 1;
+            if (mon.trapped.fixed && mon.trapped.turns >= mon.trapped.fixed) mon.trapped = null;
+        }
+    });
+
+
+    /*
      * Who is actually standing in each slot when the moves land. A slot that
      * switched has already been replaced, so anything aimed at it hits the
      * Pokemon that just came in - which is the free hit a switch pays for.
@@ -707,13 +981,31 @@ function applyTurn(line, parent, node, state) {
         })
     };
 
-    // Then the moves of whichever slots did not switch.
+    // Then the moves of whichever slots did not switch - and did get to act.
     eachSlot(function(side, i) {
         if (switchTargetAt(parent, side, i)) return;
+        if (!actedAt(parent, side, i)) return;
         var move = moveAt(parent, side, i);
         if (!move) return;
         applyMoveEffect(move, state, side, i, targetsOf(onField, side, i, move), line, onField);
     });
+
+    /*
+     * Screens burn a turn each time one passes, and vanish at zero.
+     *
+     * After the moves, not before: the five turns include the one the screen was
+     * set on, so putting Reflect up on turn 1 covers turns 1-5 and it is gone by
+     * turn 6. Ticking first would have quietly bought an extra turn of it.
+     */
+    ["you", "them"].forEach(function(side) {
+        var hazards = state[side].hazards;
+        for (var field in SCREENS) {
+            if (!hazards[field]) continue;
+            hazards[field] -= 1;
+            if (hazards[field] <= 0) delete hazards[field];
+        }
+    });
+
 
     // Anything that changed without being declared a switch happens between turns.
     eachSlot(function(side, i) {
@@ -727,11 +1019,17 @@ function applyTurn(line, parent, node, state) {
     return state;
 }
 
-function computeNodeState(line, nodeId, seen) {
+/*
+ * The state a turn inherits, before its own carried-in status and volatiles are
+ * folded in. Split out because the turn editor has to tell a volatile that
+ * arrived from an earlier turn apart from one this turn adds - which is what
+ * lets its toggles turn something off as well as on.
+ */
+function inheritedState(line, nodeId, seen) {
     var node = line.nodes[nodeId];
     if (!node) return emptyState();
     if (node.stateOverride) {
-        return applyStatusSeed(node, normalizeState(cloneState(node.stateOverride)));
+        return normalizeState(cloneState(node.stateOverride));
     }
 
     seen = seen || {};
@@ -741,19 +1039,33 @@ function computeNodeState(line, nodeId, seen) {
     var parents = parentEdges(line, nodeId);
     if (!parents.length) {
         var fresh = emptyState();
+        /*
+         * Weather the route or the room already had. Applied before the leads,
+         * so a Drizzle or Sand Stream Pokemon still overrides it the moment it
+         * comes out - which is what happens in game.
+         */
+        var standing = battleWeather(line.trainer);
+        if (standing) {
+            fresh.weather = standing;
+            fresh.weatherSource = "battle";
+        }
         // Whoever leads brings their switch-in ability with them.
         for (var i = 0; i < slotCount(line); i++) {
             applySwitchInAbility(line, node, fresh, "you", i);
             applySwitchInAbility(line, node, fresh, "them", i);
         }
-        return applyStatusSeed(node, fresh);
+        return fresh;
     }
 
     var parent = line.nodes[parents[0].from];
     var state = computeNodeState(line, parents[0].from, seen);
     if (parents.length > 1) state.ambiguous = true;
     applyTurn(line, parent, node, state);
-    return applyStatusSeed(node, state);
+    return state;
+}
+
+function computeNodeState(line, nodeId, seen) {
+    return applyStatusSeed(line.nodes[nodeId], inheritedState(line, nodeId, seen));
 }
 
 /*

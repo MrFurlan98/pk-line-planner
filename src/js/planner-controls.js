@@ -385,13 +385,14 @@ function renderSlots(line, node, state, side, slots, format) {
         }
 
         var mon = slotState(line, node, state, side, i);
+        var trapped = trapReason(line, node, state, side, i);
         out += `<span class="planner-slot${side === "them" ? " foe" : ""}${isPartner ? " ai" : ""}${!ref ? " empty" : ""}"
                       data-side="${side}" data-slot="${i}">
             ${species
                 ? `<img class="planner-sprite" src="${GAME.sprites.species(species)}" alt="">`
                 : `<span class="planner-node-blank">?</span>`}
             <span class="planner-slot-name">${label}${sub}</span>
-            ${renderStatus(mon)}
+            ${renderStatus(mon, trapped)}
             ${renderBoosts(mon.boosts)}
             <span class="planner-chosen">${slotActionText(line, node, side, i, isPartner)}</span>
         </span>`;
@@ -462,12 +463,18 @@ function renderSlotPicker(line, node, side, slot, format) {
     }
 
     var switching = switchTargetAt(node, side, slot);
+    /*
+     * A trapped slot cannot switch, so the button says so rather than letting a
+     * plan be built on a move the game will refuse. Still clickable when a
+     * switch is already set there, so an now-illegal one can be cleared.
+     */
+    var trap = trapReason(line, node, computeNodeState(line, node.id), side, slot);
     return `<div class="planner-move-column${isPartner ? " ai" : ""}" data-side="${side}" data-slot="${slot}">
         <span class="planner-move-column-title">${title}${isPartner ? " (AI)" : ""}</span>
         ${renderMoveList(moves, moveAt(node, side, slot), side, slot)}
-        <button class="planner-switch-btn${side === "them" ? " them" : ""}${switching ? " active" : ""}"
+        <button class="planner-switch-btn${side === "them" ? " them" : ""}${switching ? " active" : ""}${trap && !switching ? " trapped" : ""}"
                 data-side="${side}" data-slot="${slot}"
-                title="Switch instead of attacking. The turn is given up, so whoever comes in takes the hit.">&#8646; Switch</button>
+                title="${trap ? trapHint(trap) : "Switch instead of attacking. The turn is given up, so whoever comes in takes the hit."}">&#8646; ${trap ? "Trapped" : "Switch"}</button>
     </div>`;
 }
 
@@ -492,6 +499,24 @@ function renderMoveList(moves, selected, side, slot) {
     }).join("");
 }
 
+/*
+ * Why a slot is stuck, in the terms a plan cares about. A 2-5 binding move gets
+ * the same treatment as sleep: turns elapsed, and never a promise about when it
+ * lets go.
+ */
+function trapHint(trap) {
+    if (trap.kind === "ability") {
+        return `Trapped by ${trap.by} - it can't switch out while that Pokémon is opposite it.`;
+    }
+    if (!trap.expires) {
+        return "Trapped for the rest of the fight - Mean Look and friends don't wear off.";
+    }
+    if (trap.fixed) {
+        return `Bound for exactly ${trap.fixed} turns by a Grip Claw, ${trap.turns} elapsed.`;
+    }
+    return `Bound by a binding move, ${trap.turns} turn${trap.turns === 1 ? "" : "s"} elapsed. These run 2-5 turns at random, so it can let go on any turn - branch it rather than counting on a number.`;
+}
+
 // The move shown under a sprite once it's been chosen.
 function chosenMoveText(name) {
     if (!name) return `<span class="planner-node-blank">—</span>`;
@@ -504,8 +529,12 @@ function chosenMoveText(name) {
 const BOOST_LABELS = {atk: "Atk", def: "Def", spa: "SpA", spd: "SpD", spe: "Spe", acc: "Acc", eva: "Eva"};
 
 // Non-volatile status plus any volatiles, shown against the Pokémon carrying it.
-function renderStatus(side) {
+function renderStatus(side, trapped) {
     var parts = [];
+    if (trapped) {
+        var count = trapped.expires && trapped.turns ? ` ${trapped.turns}` : "";
+        parts.push(`<span class="planner-status trapped" title="${trapHint(trapped)}">TRAP${count}</span>`);
+    }
     if (side.status && STATUSES[side.status]) {
         var turns = side.statusTurns || 0;
         /*
@@ -524,6 +553,15 @@ function renderStatus(side) {
                 : `Asleep, ${turns} turn${turns === 1 ? "" : "s"} elapsed. It can wake on any turn - branch on it, or mark it as ending when it breaks.`)
             : STATUSES[side.status].name + (turns > 0 ? `, ${turns} turn${turns === 1 ? "" : "s"} elapsed` : "");
         parts.push(`<span class="planner-status ${side.status}" title="${hint}">${STATUSES[side.status].short}${turns > 0 ? ` ${turns}` : ""}</span>`);
+    }
+    /*
+     * Perish leads, because it outranks everything else on the card: at zero the
+     * Pokemon is gone regardless of what the rest of the plan says.
+     */
+    if (side.perish > 0) {
+        parts.push(`<span class="planner-status perish" title="Perish Song: faints in ${side.perish} turn${side.perish === 1 ? "" : "s"}, counting this one. Switching out is the only way off it.">PERISH ${side.perish}</span>`);
+    } else if (side.perish === 0 && side.perishDone) {
+        parts.push(`<span class="planner-status perish-done" title="The Perish Song count ran out - this Pokémon faints here.">FAINTS</span>`);
     }
     for (var v in side.volatiles) {
         if (!side.volatiles[v]) continue;
@@ -553,14 +591,34 @@ const HAZARD_LABELS = {
 // Field state that persists across turns, shown above the matchup it affects.
 function renderStateBar(state) {
     var parts = [];
-    if (state.weather) parts.push(`<span class="planner-field">${state.weather}</span>`);
+    if (state.weather) {
+        /*
+         * Standing weather is nobody's doing, so it needs saying - otherwise the
+         * first turn of a fight on Route 228 looks like the planner inventing a
+         * sandstorm.
+         */
+        var fromBattle = state.weatherSource === "battle";
+        parts.push(`<span class="planner-field${fromBattle ? " standing" : ""}"${
+            fromBattle ? ` title="This fight takes place in ${state.weather.toLowerCase()} - it is up before either side moves. A weather move or ability still overrides it."` : ``
+        }>${state.weather}${fromBattle ? " (battle)" : ""}</span>`);
+    }
     ["you", "them"].forEach(function(side) {
         var hazards = state[side].hazards;
         for (var field in hazards) {
             if (!hazards[field]) continue;
             var label = HAZARD_LABELS[field] || field;
+            var whose = side === "you" ? "Your side" : "Their side";
+            /*
+             * A screen's value is the turns it has left, not a layer count, so
+             * it reads as a countdown rather than "Reflect x5".
+             */
+            if (SCREENS[field]) {
+                var left = hazards[field];
+                parts.push(`<span class="planner-field ${side} screen" title="${label} lasts 5 turns from when it was set, or 8 if that Pokémon held a Light Clay. ${left} left, counting this one.">${whose}: ${label} &middot; ${left}</span>`);
+                continue;
+            }
             var layers = hazards[field] > 1 ? ` x${hazards[field]}` : "";
-            parts.push(`<span class="planner-field ${side}">${side === "you" ? "Your side" : "Their side"}: ${label}${layers}</span>`);
+            parts.push(`<span class="planner-field ${side}">${whose}: ${label}${layers}</span>`);
         }
     });
     // A spent curing berry is easy to forget and changes whether a plan works.
@@ -606,6 +664,14 @@ function slotActionText(line, node, side, slot, isPartner) {
     }
     var move = moveAt(node, side, slot);
     if (!move) return `<span class="planner-node-blank">—</span>`;
+    /*
+     * A move that never went off is still worth showing - it says what they
+     * were going to do - but struck through, so the card doesn't read as though
+     * its effects landed.
+     */
+    if (!actedAt(node, side, slot)) {
+        return `<span class="planner-denied" title="This move never went off, so none of its effects apply.">${chosenMoveText(move)}</span>`;
+    }
     // A partner's move is a prediction, not an order, so it reads as one.
     return (isPartner ? `<span class="planner-predicted">likely </span>` : "") + chosenMoveText(move);
 }
@@ -766,6 +832,25 @@ var nodeEditorPopup = `
         <label>Their status</label><select class="planner-edit-status-them"></select>
     </div>
     <hr />
+    <p class="planner-hint">Stat stages this turn adds on top of what it inherited - for a secondary-effect drop that actually landed, or a line that starts mid-fight. Leave at 0 to change nothing.</p>
+    <div class="planner-stages">
+        <span class="planner-stage-side">Yours</span>
+        <span class="planner-boost-edit" data-side="you"></span>
+        <span class="planner-stage-side">Theirs</span>
+        <span class="planner-boost-edit" data-side="them"></span>
+    </div>
+    <hr />
+    <p class="planner-hint">Whose move didn't go off - KO'd before acting, flinched, fully paralysed, or missed. Its effects are skipped, so outspeeding a lead really does deny the Stealth Rock.</p>
+    <div class="planner-form">
+        <label>Didn't act</label><span class="planner-skipped"></span>
+    </div>
+    <hr />
+    <p class="planner-hint">Volatiles sit alongside that status rather than replacing it, and clear when the Pokémon switches out. Click to toggle.</p>
+    <div class="planner-form">
+        <label>Yours</label><span class="planner-volatiles" data-side="you"></span>
+        <label>Theirs</label><span class="planner-volatiles" data-side="them"></span>
+    </div>
+    <hr />
     <div class="planner-form">
         <label>Note</label><input class="planner-edit-note" type="text" placeholder="e.g. needs Sash intact" />
     </div>
@@ -797,7 +882,83 @@ function openNodeEditor(nodeId) {
         select.val(seed[pair[0]] || "");
     });
 
+    /*
+     * The toggles show what is actually true on this turn - inherited volatiles
+     * included - so switching one off is how you say it ended here. What gets
+     * saved is only the difference from what was inherited, which keeps the turn
+     * responsive to edits further up the line.
+     */
+    var boostSeed = node.boostSeed || {you: {}, them: {}};
+    $(".planner-boost-edit").each(function() {
+        var side = $(this).attr("data-side");
+        var seeded = boostSeed[side] || {};
+        $(this).html(Object.keys(BOOST_LABELS).map(function(stat) {
+            return `<label class="planner-boost-field" title="${BOOST_LABELS[stat]} stages this turn adds">
+                <span>${BOOST_LABELS[stat]}</span>
+                <input type="number" min="-6" max="6" step="1" data-stat="${stat}" value="${seeded[stat] || 0}">
+            </label>`;
+        }).join(""));
+    });
+
+    /*
+     * One toggle per slot that actually exists in this format, named after
+     * whoever is standing there so a double doesn't read as "you 0 / you 1".
+     */
+    var slots = slotCount(line);
+    var skipped = node.skipped || {you: [], them: []};
+    var buttons = "";
+    ["you", "them"].forEach(function(side) {
+        for (var i = 0; i < slots; i++) {
+            var ref = monAt(node, side, i);
+            var label = ref
+                ? (side === "you" && !isPartnerSlot(line, side, i)
+                    ? ((boxEntry(ref) || {}).nickname || ref)
+                    : ((GAME.species()[toID(ref)] || {}).name || ref))
+                : (side === "you" ? "Yours" : "Theirs") + (slots > 1 ? ` ${i + 1}` : "");
+            buttons += `<button type="button" class="planner-condition planner-skip${(skipped[side] || [])[i] ? " bad selected" : ""}"
+                                data-side="${side}" data-slot="${i}"
+                                title="${side === "you" ? "Your" : "Their"} slot never got its move off this turn">${label}</button>`;
+        }
+    });
+    $(".planner-skipped").html(buttons || `<span class="planner-party-empty">Nobody on this turn yet.</span>`);
+
+    EDITING_INHERITED = {};
+    var inherited = inheritedState(line, nodeId);
+    $(".planner-volatiles").each(function() {
+        var side = $(this).attr("data-side");
+        var who = monAt(node, side, 0);
+        var was = who ? monState(inherited, side, who).volatiles : {};
+
+        var on = {};
+        for (var v in was) if (was[v]) on[v] = true;
+        EDITING_INHERITED[side] = Object.keys(on);
+        (((node.volatileClear || {})[side]) || []).forEach(function(id) { delete on[id]; });
+        (((node.volatileSeed || {})[side]) || []).forEach(function(id) { on[id] = true; });
+
+        $(this).empty();
+        for (var id in VOLATILES) {
+            $(this).append(
+                `<button type="button" class="planner-condition planner-volatile${on[id] ? " neutral selected" : ""}"
+                         data-volatile="${id}" title="${VOLATILES[id].name}">${VOLATILES[id].short}</button>`);
+        }
+    });
+
     $(".planner-edit-note").val(node.note || "");
+}
+
+// What each side had coming into the turn being edited, so saving can record
+// only what this turn changes rather than pinning the whole set.
+var EDITING_INHERITED = {};
+
+// Which volatiles this turn switches on, and which it switches off.
+function volatileEdits(side) {
+    var selected = $(`.planner-volatiles[data-side="${side}"] .planner-volatile.selected`)
+        .map(function() { return $(this).attr("data-volatile"); }).get();
+    var was = EDITING_INHERITED[side] || [];
+    return {
+        add: selected.filter(id => was.indexOf(id) < 0),
+        clear: was.filter(id => selected.indexOf(id) < 0)
+    };
 }
 
 function closeNodeEditor() {
@@ -1313,12 +1474,14 @@ function beginConnect(e, nodeId) {
 
 /*
  * Dropping a branch on empty canvas means "a new turn follows this one", so
- * make it rather than throwing the drag away. The turn editor opens straight
- * after, and backing out of it removes both the node and the arrow so a
- * cancelled drag leaves nothing behind.
+ * make it rather than throwing the drag away.
+ *
+ * The turn is left empty and the branch unlabelled rather than opening an editor
+ * for each: filling a card in is the fast part, and being handed two dialogs
+ * before you have even seen where the turn landed is a lot to read through for
+ * something you are usually about to do on the card anyway. Both are reachable
+ * when wanted - Edit on the card, and the arrow's own label.
  */
-var PENDING_NEW = null;
-
 function finishConnectToEmpty(e) {
     var line = currentLine();
     var canvas = $(".planner-canvas")[0];
@@ -1339,19 +1502,6 @@ function finishConnectToEmpty(e) {
     $(".planner-canvas").removeClass("connecting");
     saveLines();
     renderLine();
-
-    PENDING_NEW = {node: node.id, edge: edge.id};
-    openNodeEditor(node.id);
-}
-
-function discardPendingNew() {
-    if (!PENDING_NEW) return;
-    var line = currentLine();
-    delete line.nodes[PENDING_NEW.node];
-    delete line.edges[PENDING_NEW.edge];
-    PENDING_NEW = null;
-    saveLines();
-    renderLine();
 }
 
 function finishConnect(toNodeId) {
@@ -1362,19 +1512,16 @@ function finishConnect(toNodeId) {
         return;
     }
     // A fresh branch starts unlabelled, so repeating the drag before naming the
-    // last one would just stack identical arrows. Reopen that one instead.
-    var existing = findDuplicateEdge(line, CONNECTING.from, toNodeId, "always", "");
-    var edge = existing;
-    if (!edge) {
-        edge = newEdge(CONNECTING.from, toNodeId, "always");
+    // last one would just stack identical arrows on top of each other. Keep the
+    // first instead of adding a second saying exactly the same nothing.
+    if (!findDuplicateEdge(line, CONNECTING.from, toNodeId, "always", "")) {
+        var edge = newEdge(CONNECTING.from, toNodeId, "always");
         line.edges[edge.id] = edge;
         saveLines();
     }
     CONNECTING = null;
     $(".planner-canvas").removeClass("connecting");
     renderEdges();
-    // A new branch has no meaning yet, so go straight to naming it.
-    openEdgeEditor(edge.id);
 }
 
 /* ---------------------------------------------------------------- bootstrap */
@@ -1651,6 +1798,8 @@ function initPlanner() {
 
     $(".planner-canvas").on("click", ".planner-switch-btn", function(e) {
         e.stopPropagation();
+        // Trapped and not already switching: there is nothing legal to pick.
+        if ($(this).hasClass("trapped")) return;
         openSwitchEditor($(this).closest(".planner-node").attr("data-node"),
             $(this).attr("data-side") || "you",
             parseInt($(this).attr("data-slot"), 10) || 0);
@@ -1774,8 +1923,6 @@ function initPlanner() {
 
     $(document).on("click", "#planner-cancel-node", function() {
         closeNodeEditor();
-        // Backing out of a turn that only existed because of the drag undoes it.
-        discardPendingNew();
     });
 
     $(document).on("click", "#planner-save-node", function() {
@@ -1785,18 +1932,37 @@ function initPlanner() {
             you: $(".planner-edit-status-you").val() || "",
             them: $(".planner-edit-status-them").val() || ""
         };
+        // Only non-zero stages are kept, so an untouched turn stores nothing.
+        node.boostSeed = {you: {}, them: {}};
+        $(".planner-boost-edit").each(function() {
+            var side = $(this).attr("data-side");
+            $(this).find("input[data-stat]").each(function() {
+                var value = parseInt($(this).val(), 10) || 0;
+                if (value) node.boostSeed[side][$(this).attr("data-stat")] = value;
+            });
+        });
+
+        node.skipped = {you: [false, false], them: [false, false]};
+        $(".planner-skip.selected").each(function() {
+            node.skipped[$(this).attr("data-side")][parseInt($(this).attr("data-slot"), 10) || 0] = true;
+        });
+
+        var mine = volatileEdits("you");
+        var theirs = volatileEdits("them");
+        node.volatileSeed = {you: mine.add, them: theirs.add};
+        node.volatileClear = {you: mine.clear, them: theirs.clear};
         node.note = $(".planner-edit-note").val();
         saveLines();
         closeNodeEditor();
         renderLine();
+    });
 
-        // A turn made by dragging still needs to say when that path is taken,
-        // so go straight on to naming the branch.
-        if (PENDING_NEW) {
-            var edgeId = PENDING_NEW.edge;
-            PENDING_NEW = null;
-            openEdgeEditor(edgeId);
-        }
+    $(document).on("click", ".planner-volatile", function() {
+        $(this).toggleClass("selected neutral");
+    });
+
+    $(document).on("click", ".planner-skip", function() {
+        $(this).toggleClass("selected bad");
     });
 }
 

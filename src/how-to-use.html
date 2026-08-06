@@ -849,6 +849,29 @@
         <b>&mdash; ends on this turn &mdash;</b> is how you close a sleep out.
     </p>
 
+    <p>
+        <b>Stat stages</b> let you correct the boosts by hand, per side. They're added on top of
+        whatever the turn inherited rather than replacing it, so <em>+1 Atk</em> after a Swords
+        Dance reads as <em>+3</em>. Use it when a move's secondary-effect drop actually landed
+        &mdash; the planner only models effects that are guaranteed &mdash; or when a line starts
+        mid-fight with boosts already up.
+    </p>
+
+    <p>
+        <b>Didn't act</b> is how you say a move never went off &mdash; you KO'd them first, they
+        flinched, they were fully paralysed, or they missed. That slot's effects are skipped, so
+        outspeeding a lead genuinely denies the Stealth Rock instead of the planner laying it
+        anyway. The move stays on the card, struck through, so the plan still records what they
+        were going to do.
+    </p>
+
+    <p>
+        Below it, <b>volatiles</b> toggle on and off &mdash; confusion, Encore, Leech Seed, Disable,
+        Torment, infatuation, Substitute. These sit <em>alongside</em> the status rather than
+        replacing it, so a Pokémon can be poisoned and seeded at once, and they clear when it
+        switches out. Taunt isn't offered because Platinum Kaizo removes the move entirely.
+    </p>
+
 
     <!-- ====================================================== filling a turn -->
 
@@ -890,6 +913,12 @@
         <li>Drop it <b>on another turn</b> to branch to that turn.</li>
         <li>Drop it <b>on empty canvas</b> to create the next turn right there.</li>
     </ul>
+
+    <p>
+        Nothing opens when you do. The new turn arrives empty and the branch starts as
+        <b>Then</b> &mdash; "no condition" &mdash; so you can lay out the shape of a plan first and
+        say what each path depends on afterwards. Click the arrow's label when you want to name it.
+    </p>
 
     <div class="doc-row">
         <div class="doc-stage" id="doc-branch-stage">
@@ -1122,6 +1151,18 @@
                 <b>Weather, hazards and screens</b>
                 These belong to the side, not the Pokémon, and persist down the branch. Weather set
                 by an ability on switch-in is applied too.
+            </span>
+        </li>
+        <li>
+            <span class="doc-part-demo">
+                <span class="planner-field standing">Sand (battle)</span>
+            </span>
+            <span class="doc-part-text">
+                <b>Standing weather</b>
+                235 of the game's fights already have weather up before anyone moves — sun, rain,
+                sand, hail or fog — taken from the game's own data rather than set by you. Roark's
+                gym is in sand, which is the entire point of his Gible's Sand Veil. A weather move
+                or ability still overrides it.
             </span>
         </li>
         <li>
