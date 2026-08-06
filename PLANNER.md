@@ -42,7 +42,20 @@ graph, so editing one turn updates everything after it.
   doesn't cost you the turn; and a **grounded Poison type soaks up Toxic Spikes**
   as it lands, the only removal nobody spends a turn on. Flying types and
   Levitate never touch them. Rapid Spin isn't a route — Kaizo deletes it.
-- **Stat stages can be corrected by hand**, per side, in the turn editor. A
+- **The turn editor is tabbed, one tab per Pokémon on the turn.** Everything in
+  a panel belongs to that one Pokémon — status, stat stages, volatiles, whether
+  it got to act — which is how you think about a turn anyway. A four-slot double
+  would otherwise stack four of each down one column and run off the screen; the
+  dialog is a flat 332px instead. Panels stay in the DOM and are toggled with
+  `.active` rather than `.hide` (which loses to any element's own `display`
+  rule), so saving reads every slot whichever tab is on top.
+- **Every seed is per slot, not per side.** Status, stat stages and volatiles
+  were originally per side and applied to slot one only, so in a double the
+  second Pokémon on each side could never be edited. The turn editor now shows a
+  row per occupied slot, named after who is standing in it. Lines saved in the
+  old shape migrate on load, with the old value becoming slot one — which is
+  where it was being applied anyway.
+- **Stat stages can be corrected by hand**, per slot, in the turn editor. A
   *delta* on top of what the turn inherited, not an override, so it composes
   with derived boosts and still respects the ±6 ceiling. This is the escape
   hatch for everything the move table deliberately won't promise — a

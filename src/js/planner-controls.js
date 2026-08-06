@@ -826,30 +826,8 @@ var nodeEditorPopup = `
     <legend align="center">Edit Turn</legend>
     <p class="planner-hint">Pokémon and moves are set on the card itself: drag one in, click a move, or use its switch button. Right-click a slot to empty it.</p>
     <hr />
-    <p class="planner-hint">Status carried into this turn - for walking in pre-slept or pre-poisoned so they can't land something worse. Carries down to later turns.</p>
-    <div class="planner-form">
-        <label>Your status</label><select class="planner-edit-status-you"></select>
-        <label>Their status</label><select class="planner-edit-status-them"></select>
-    </div>
-    <hr />
-    <p class="planner-hint">Stat stages this turn adds on top of what it inherited - for a secondary-effect drop that actually landed, or a line that starts mid-fight. Leave at 0 to change nothing.</p>
-    <div class="planner-stages">
-        <span class="planner-stage-side">Yours</span>
-        <span class="planner-boost-edit" data-side="you"></span>
-        <span class="planner-stage-side">Theirs</span>
-        <span class="planner-boost-edit" data-side="them"></span>
-    </div>
-    <hr />
-    <p class="planner-hint">Whose move didn't go off - KO'd before acting, flinched, fully paralysed, or missed. Its effects are skipped, so outspeeding a lead really does deny the Stealth Rock.</p>
-    <div class="planner-form">
-        <label>Didn't act</label><span class="planner-skipped"></span>
-    </div>
-    <hr />
-    <p class="planner-hint">Volatiles sit alongside that status rather than replacing it, and clear when the Pokémon switches out. Click to toggle.</p>
-    <div class="planner-form">
-        <label>Yours</label><span class="planner-volatiles" data-side="you"></span>
-        <label>Theirs</label><span class="planner-volatiles" data-side="them"></span>
-    </div>
+    <div class="planner-tabs"></div>
+    <div class="planner-tab-panels"></div>
     <hr />
     <div class="planner-form">
         <label>Note</label><input class="planner-edit-note" type="text" placeholder="e.g. needs Sash intact" />
@@ -869,80 +847,90 @@ function openNodeEditor(nodeId) {
 
     $("#planner-popup-container").html(nodeEditorPopup).removeClass("hide").show();
 
-    var seed = node.statusSeed || {you: "", them: ""};
-    [["you", ".planner-edit-status-you"], ["them", ".planner-edit-status-them"]].forEach(function(pair) {
-        var select = $(pair[1]).empty()
-            .append(`<option value="">(inherit)</option>`)
-            // Sleep and freeze end on their own schedule, so this is how you say
-            // when they broke rather than guessing a fixed number of turns.
-            .append(`<option value="${STATUS_CURED}">— ends on this turn —</option>`);
-        Object.keys(STATUSES).forEach(function(id) {
-            select.append(`<option value="${id}">${STATUSES[id].name}</option>`);
-        });
-        select.val(seed[pair[0]] || "");
-    });
-
     /*
-     * The toggles show what is actually true on this turn - inherited volatiles
-     * included - so switching one off is how you say it ended here. What gets
-     * saved is only the difference from what was inherited, which keeps the turn
-     * responsive to edits further up the line.
-     */
-    var boostSeed = node.boostSeed || {you: {}, them: {}};
-    $(".planner-boost-edit").each(function() {
-        var side = $(this).attr("data-side");
-        var seeded = boostSeed[side] || {};
-        $(this).html(Object.keys(BOOST_LABELS).map(function(stat) {
-            return `<label class="planner-boost-field" title="${BOOST_LABELS[stat]} stages this turn adds">
-                <span>${BOOST_LABELS[stat]}</span>
-                <input type="number" min="-6" max="6" step="1" data-stat="${stat}" value="${seeded[stat] || 0}">
-            </label>`;
-        }).join(""));
-    });
-
-    /*
-     * One toggle per slot that actually exists in this format, named after
-     * whoever is standing there so a double doesn't read as "you 0 / you 1".
+     * One tab per occupied slot, because everything below belongs to a single
+     * Pokemon: its status, its stages, its volatiles, whether it got to act.
+     * A double would otherwise stack four of each down one column and run off
+     * the screen. All panels stay in the DOM so saving reads them regardless of
+     * which is on top.
      */
     var slots = slotCount(line);
-    var skipped = node.skipped || {you: [], them: []};
-    var buttons = "";
+    var filled = [];
     ["you", "them"].forEach(function(side) {
         for (var i = 0; i < slots; i++) {
             var ref = monAt(node, side, i);
-            var label = ref
-                ? (side === "you" && !isPartnerSlot(line, side, i)
+            if (!ref) continue;
+            filled.push({
+                side: side, slot: i, ref: ref,
+                label: side === "you" && !isPartnerSlot(line, side, i)
                     ? ((boxEntry(ref) || {}).nickname || ref)
-                    : ((GAME.species()[toID(ref)] || {}).name || ref))
-                : (side === "you" ? "Yours" : "Theirs") + (slots > 1 ? ` ${i + 1}` : "");
-            buttons += `<button type="button" class="planner-condition planner-skip${(skipped[side] || [])[i] ? " bad selected" : ""}"
-                                data-side="${side}" data-slot="${i}"
-                                title="${side === "you" ? "Your" : "Their"} slot never got its move off this turn">${label}</button>`;
+                    : ((GAME.species()[toID(ref)] || {}).name || ref)
+            });
         }
     });
-    $(".planner-skipped").html(buttons || `<span class="planner-party-empty">Nobody on this turn yet.</span>`);
+
+    if (!filled.length) {
+        $(".planner-tabs").empty();
+        $(".planner-tab-panels").html(
+            `<p class="planner-hint">Nobody is on this turn yet. Drag a Pokémon onto the card, or click a slot.</p>`);
+    }
 
     EDITING_INHERITED = {};
     var inherited = inheritedState(line, nodeId);
-    $(".planner-volatiles").each(function() {
-        var side = $(this).attr("data-side");
-        var who = monAt(node, side, 0);
-        var was = who ? monState(inherited, side, who).volatiles : {};
+    var skipped = node.skipped || {you: [], them: []};
 
+    $(".planner-tabs").html(filled.map(function(s, i) {
+        return `<button type="button" class="planner-tab ${s.side}${i === 0 ? " active" : ""}"
+                        data-side="${s.side}" data-slot="${s.slot}">${s.label}</button>`;
+    }).join(""));
+
+    $(".planner-tab-panels").html(filled.map(function(s, i) {
+        var status = seedFor(node, "statusSeed", s.side, s.slot, "");
+        var stages = seedFor(node, "boostSeed", s.side, s.slot, {});
+
+        var was = monState(inherited, s.side, s.ref).volatiles;
         var on = {};
         for (var v in was) if (was[v]) on[v] = true;
-        EDITING_INHERITED[side] = Object.keys(on);
-        (((node.volatileClear || {})[side]) || []).forEach(function(id) { delete on[id]; });
-        (((node.volatileSeed || {})[side]) || []).forEach(function(id) { on[id] = true; });
+        EDITING_INHERITED[s.side + s.slot] = Object.keys(on);
+        seedFor(node, "volatileClear", s.side, s.slot, []).forEach(function(id) { delete on[id]; });
+        seedFor(node, "volatileSeed", s.side, s.slot, []).forEach(function(id) { on[id] = true; });
 
-        $(this).empty();
-        for (var id in VOLATILES) {
-            $(this).append(
-                `<button type="button" class="planner-condition planner-volatile${on[id] ? " neutral selected" : ""}"
-                         data-volatile="${id}" title="${VOLATILES[id].name}">${VOLATILES[id].short}</button>`);
-        }
-    });
+        var statusOptions = [`<option value="">(inherit)</option>`,
+            // Sleep and freeze end on their own schedule, so this is how you say
+            // when they broke rather than guessing a fixed number of turns.
+            `<option value="${STATUS_CURED}"${status === STATUS_CURED ? " selected" : ""}>— ends on this turn —</option>`]
+            .concat(Object.keys(STATUSES).map(function(id) {
+                return `<option value="${id}"${status === id ? " selected" : ""}>${STATUSES[id].name}</option>`;
+            })).join("");
 
+        return `<div class="planner-tab-panel${i === 0 ? " active" : ""}" data-side="${s.side}" data-slot="${s.slot}">
+            <div class="planner-form">
+                <label>Status</label>
+                <select class="planner-edit-status" data-side="${s.side}" data-slot="${s.slot}"
+                        title="Status carried into this turn - for walking in pre-slept or pre-poisoned so nothing worse can land. Carries down to later turns.">${statusOptions}</select>
+                <label>Didn't act</label>
+                <span><button type="button" class="planner-condition planner-skip${(skipped[s.side] || [])[s.slot] ? " bad selected" : ""}"
+                        data-side="${s.side}" data-slot="${s.slot}"
+                        title="Its move never went off - KO'd before acting, flinched, fully paralysed, or missed. The move's effects are skipped.">Move didn't go off</button></span>
+            </div>
+            <span class="planner-panel-label" title="Added on top of what this turn inherited. Leave at 0 to change nothing.">Stat stages</span>
+            <span class="planner-boost-edit" data-side="${s.side}" data-slot="${s.slot}">${
+                Object.keys(BOOST_LABELS).map(function(stat) {
+                    return `<label class="planner-boost-field" title="${BOOST_LABELS[stat]} stages this turn adds">
+                        <span>${BOOST_LABELS[stat]}</span>
+                        <input type="number" min="-6" max="6" step="1" data-stat="${stat}" value="${stages[stat] || 0}">
+                    </label>`;
+                }).join("")
+            }</span>
+            <span class="planner-panel-label" title="These sit alongside the status rather than replacing it, and clear when the Pokémon switches out.">Volatiles</span>
+            <span class="planner-volatiles" data-side="${s.side}" data-slot="${s.slot}">${
+                Object.keys(VOLATILES).map(function(id) {
+                    return `<button type="button" class="planner-condition planner-volatile${on[id] ? " neutral selected" : ""}"
+                                    data-volatile="${id}" title="${VOLATILES[id].name}">${VOLATILES[id].short}</button>`;
+                }).join("")
+            }</span>
+        </div>`;
+    }).join(""));
     $(".planner-edit-note").val(node.note || "");
 }
 
@@ -950,11 +938,11 @@ function openNodeEditor(nodeId) {
 // only what this turn changes rather than pinning the whole set.
 var EDITING_INHERITED = {};
 
-// Which volatiles this turn switches on, and which it switches off.
-function volatileEdits(side) {
-    var selected = $(`.planner-volatiles[data-side="${side}"] .planner-volatile.selected`)
+// Which volatiles this turn switches on, and which it switches off, per slot.
+function volatileEdits(side, slot) {
+    var selected = $(`.planner-volatiles[data-side="${side}"][data-slot="${slot}"] .planner-volatile.selected`)
         .map(function() { return $(this).attr("data-volatile"); }).get();
-    var was = EDITING_INHERITED[side] || [];
+    var was = EDITING_INHERITED[side + slot] || [];
     return {
         add: selected.filter(id => was.indexOf(id) < 0),
         clear: was.filter(id => selected.indexOf(id) < 0)
@@ -1928,17 +1916,21 @@ function initPlanner() {
     $(document).on("click", "#planner-save-node", function() {
         var line = currentLine();
         var node = line.nodes[EDITING_NODE];
-        node.statusSeed = {
-            you: $(".planner-edit-status-you").val() || "",
-            them: $(".planner-edit-status-them").val() || ""
-        };
+        // Everything writes per slot; the dialog only rendered occupied ones,
+        // so anything it didn't show keeps its empty default.
+        node.statusSeed = {you: ["", ""], them: ["", ""]};
+        $("select.planner-edit-status").each(function() {
+            node.statusSeed[$(this).attr("data-side")][parseInt($(this).attr("data-slot"), 10) || 0] =
+                $(this).val() || "";
+        });
+
         // Only non-zero stages are kept, so an untouched turn stores nothing.
-        node.boostSeed = {you: {}, them: {}};
+        node.boostSeed = {you: [{}, {}], them: [{}, {}]};
         $(".planner-boost-edit").each(function() {
-            var side = $(this).attr("data-side");
+            var target = node.boostSeed[$(this).attr("data-side")][parseInt($(this).attr("data-slot"), 10) || 0];
             $(this).find("input[data-stat]").each(function() {
                 var value = parseInt($(this).val(), 10) || 0;
-                if (value) node.boostSeed[side][$(this).attr("data-stat")] = value;
+                if (value) target[$(this).attr("data-stat")] = value;
             });
         });
 
@@ -1947,10 +1939,15 @@ function initPlanner() {
             node.skipped[$(this).attr("data-side")][parseInt($(this).attr("data-slot"), 10) || 0] = true;
         });
 
-        var mine = volatileEdits("you");
-        var theirs = volatileEdits("them");
-        node.volatileSeed = {you: mine.add, them: theirs.add};
-        node.volatileClear = {you: mine.clear, them: theirs.clear};
+        node.volatileSeed = {you: [[], []], them: [[], []]};
+        node.volatileClear = {you: [[], []], them: [[], []]};
+        $(".planner-volatiles").each(function() {
+            var side = $(this).attr("data-side");
+            var slot = parseInt($(this).attr("data-slot"), 10) || 0;
+            var edits = volatileEdits(side, slot);
+            node.volatileSeed[side][slot] = edits.add;
+            node.volatileClear[side][slot] = edits.clear;
+        });
         node.note = $(".planner-edit-note").val();
         saveLines();
         closeNodeEditor();
@@ -1963,6 +1960,17 @@ function initPlanner() {
 
     $(document).on("click", ".planner-skip", function() {
         $(this).toggleClass("selected bad");
+    });
+
+    // Panels all stay in the DOM; only which one is on top changes, so saving
+    // still reads every slot whichever tab happens to be open.
+    $(document).on("click", ".planner-tab", function() {
+        var side = $(this).attr("data-side");
+        var slot = $(this).attr("data-slot");
+        $(".planner-tab").removeClass("active");
+        $(this).addClass("active");
+        $(".planner-tab-panel").removeClass("active")
+            .filter(`[data-side="${side}"][data-slot="${slot}"]`).addClass("active");
     });
 }
 

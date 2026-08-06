@@ -854,6 +854,67 @@
 }
 
 /*
+ * One tab per Pokemon on the turn. Panels are toggled with .active rather than
+ * .hide: .hide lives in main.css, which loads first, so any element with its own
+ * display rule beats it.
+ */
+.planner-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    padding-bottom: 6px;
+}
+
+.planner-tab {
+    font-size: 11px;
+    padding: 3px 9px;
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    border-bottom-width: 2px;
+    border-radius: 5px 5px 0 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.65;
+}
+
+.planner-tab:hover {
+    opacity: 1;
+    background: rgba(128, 128, 128, 0.15);
+}
+
+/* Yours and theirs keep the blue/red split used everywhere else. */
+.planner-tab.you.active {
+    opacity: 1;
+    font-weight: bold;
+    border-bottom-color: #5a8cdc;
+    background: rgba(90, 140, 220, 0.2);
+}
+
+.planner-tab.them.active {
+    opacity: 1;
+    font-weight: bold;
+    border-bottom-color: #c0392b;
+    background: rgba(200, 60, 50, 0.18);
+}
+
+.planner-tab-panel {
+    display: none;
+}
+
+.planner-tab-panel.active {
+    display: block;
+}
+
+.planner-panel-label {
+    display: block;
+    font-size: 11px;
+    margin: 8px 0 2px;
+    cursor: help;
+}
+
+/*
  * Full dialog width rather than the form grid's control column: seven steppers
  * need more than the ~270px left beside a 108px label, and wrapping them to two
  * rows per side is what pushed this dialog off the bottom of the screen.

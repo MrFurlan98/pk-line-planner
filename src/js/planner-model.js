@@ -134,16 +134,16 @@ function newNode(x, y) {
          * Applied after inheritance, so setting it on the first turn carries it
          * down the whole line.
          */
-        statusSeed: {you: "", them: ""},
+        statusSeed: {you: ["", ""], them: ["", ""]},
         /*
          * Volatiles carried into this turn, alongside the status above. Kept as
          * its own field rather than folded into statusSeed so lines saved before
          * it existed still load - a missing one simply reads as none.
          */
-        volatileSeed: {you: [], them: []},
+        volatileSeed: {you: [[], []], them: [[], []]},
         // The other half of the toggle: volatiles this turn ends, as opposed to
         // ones it starts. Only the ones actually switched off are listed.
-        volatileClear: {you: [], them: []},
+        volatileClear: {you: [[], []], them: [[], []]},
         /*
          * Slots that never got their move off - KO'd before acting, flinched,
          * fully paralysed, confused into itself, or simply missed. The planner
@@ -162,7 +162,7 @@ function newNode(x, y) {
          * whose text didn't parse, or a line that starts mid-fight already set
          * up.
          */
-        boostSeed: {you: {}, them: {}},
+        boostSeed: {you: [{}, {}], them: [{}, {}]},
         stateOverride: null,
         // Move pickers start open so a fresh turn can be filled in, then get
         // collapsed away once it's decided.
@@ -724,14 +724,17 @@ function foeSetFor(line, node, speciesName) {
 function applyStatusSeed(node, state) {
     if (!node) return state;
     ["you", "them"].forEach(function(side) {
-        var who = monAt(node, side, 0);
-        if (!who) return;
-        var seed = node.statusSeed && node.statusSeed[side];
-        var add = (node.volatileSeed && node.volatileSeed[side]) || [];
-        var clear = (node.volatileClear && node.volatileClear[side]) || [];
-        var boosts = (node.boostSeed && node.boostSeed[side]) || {};
+    // Every slot, not just the first - a double has two Pokemon out per side
+    // and both can walk in statused, boosted or confused.
+    for (var slot = 0; slot < 2; slot++) {
+        var who = monAt(node, side, slot);
+        if (!who) continue;
+        var seed = seedFor(node, "statusSeed", side, slot, "");
+        var add = seedFor(node, "volatileSeed", side, slot, []);
+        var clear = seedFor(node, "volatileClear", side, slot, []);
+        var boosts = seedFor(node, "boostSeed", side, slot, {});
         var hasBoosts = Object.keys(boosts).some(function(s) { return boosts[s]; });
-        if (!seed && !add.length && !clear.length && !hasBoosts) return;
+        if (!seed && !add.length && !clear.length && !hasBoosts) continue;
         var mon = monState(state, side, who);
 
         /*
@@ -759,8 +762,25 @@ function applyStatusSeed(node, state) {
         add.forEach(function(id) {
             if (VOLATILES[id]) mon.volatiles[id] = true;
         });
+    }
     });
     return state;
+}
+
+/*
+ * One slot's entry out of a per-slot seed. Tolerates the old per-side shape so
+ * a line saved before the doubles fix still reads, in case one arrives from an
+ * export rather than through loadLines' migration.
+ */
+function seedFor(node, field, side, slot, fallback) {
+    var seed = node[field] && node[field][side];
+    if (seed === undefined || seed === null) return fallback;
+    if (!Array.isArray(seed)) return slot === 0 ? seed : fallback;
+    // Per-slot arrays hold one entry per slot; the legacy volatile shape held ids.
+    if (field === "statusSeed" || field === "boostSeed") return seed[slot] || fallback;
+    return Array.isArray(seed[0]) || seed.length === 0
+        ? (seed[slot] || fallback)
+        : (slot === 0 ? seed : fallback);
 }
 
 // The species in a slot, whichever roster it came from.
@@ -1122,6 +1142,33 @@ function loadLines() {
             if (!node.foes) {
                 node.foes = [node.foe || "", ""];
                 delete node.foe;
+            }
+            /*
+             * Status, stat stages and volatiles were per side, so in a double
+             * only the first slot could ever be edited. They are now per slot,
+             * in the shape `skipped` already used. The old value becomes slot
+             * one, which is where it was being applied anyway.
+             */
+            if (node.statusSeed && !Array.isArray(node.statusSeed.you)) {
+                node.statusSeed = {
+                    you: [node.statusSeed.you || "", ""],
+                    them: [node.statusSeed.them || "", ""]
+                };
+            }
+            ["volatileSeed", "volatileClear"].forEach(function(field) {
+                var seed = node[field];
+                // Per-slot shape is an array of arrays; the old one held ids.
+                if (!seed || Array.isArray(seed.you && seed.you[0])) return;
+                node[field] = {
+                    you: [(seed.you || []).slice(), []],
+                    them: [(seed.them || []).slice(), []]
+                };
+            });
+            if (node.boostSeed && !Array.isArray(node.boostSeed.you)) {
+                node.boostSeed = {
+                    you: [node.boostSeed.you || {}, {}],
+                    them: [node.boostSeed.them || {}, {}]
+                };
             }
             if (!node.actions) {
                 node.actions = [node.action || {type: "move", value: ""}, {type: "move", value: ""}];
