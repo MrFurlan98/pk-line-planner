@@ -77,10 +77,10 @@ graph, so editing one turn updates everything after it.
   Arena Trap, Magnet Pull — all three are fielded in this game) are *derived*
   from whoever is opposite, because they stop the instant that Pokémon leaves;
   **moves** are recorded on the Pokémon, because they follow it. Mean Look,
-  Block and Spider Web never wear off. The binding moves run 2–5 turns at
-  random, so they get the sleep treatment — turns elapsed, never a floor —
-  except with a **Grip Claw**, which pins them to exactly 5 and is the one case
-  a plan can rely on. Switching out clears any of it.
+  Block and Spider Web never wear off. The binding moves run 2–5 turns, so 5 is
+  a ceiling like confusion's and the grip ends there either way; a **Grip Claw**
+  doesn't extend that in this game, it removes the early release, so the hold is
+  exactly 5 rather than anywhere from 2. Switching out clears any of it.
 - **Perish Song is counted down**, on both sides at once — it catches the singer
   too, which is the whole reason 14 trainer sets carrying it are dangerous to
   *them*. Switching out is the only escape and clears the count. At zero the
@@ -102,16 +102,25 @@ graph, so editing one turn updates everything after it.
   hand. Taunt is deliberately absent — Platinum Kaizo deletes the move, along
   with Nightmare and Heal Block, so offering it would only invite plans that
   can't happen.
-- **Nothing ends a volatile on a schedule.** Encore runs 4–8 turns *or* until
-  the encored move runs out of PP, Disable 4–7; Leech Seed and Torment last
-  until the target switches out. Two of those exits aren't predictable and PP
-  isn't tracked, so — as with sleep — the planner never guesses. Switching out
-  clears them, and the turn editor toggles them off individually.
+- **Volatiles with a ceiling end at it; the rest never expire.** Confusion runs
+  2–5, Encore 4–8, Disable 4–7 — random in the middle, certain at the end — so
+  the planner ends them there and the badge counts up to it. Encore can also
+  break early on PP, which isn't tracked, so only its ceiling is relied on.
+  Leech Seed, Torment, infatuation and Substitute have no turn limit and are
+  cleared only by leaving the field or by hand.
+- **Freeze is the one condition with no ceiling at all** — a flat 20% a turn, so
+  it can outlast a whole fight. Branch the thaw; don't count on it.
+- **Badly poisoned resets its counter on a switch, but not the status.** The
+  damage ramps with that count, so it matters that coming back in resumes at
+  1/16 rather than where it left off.
 - **Curing berries** are modelled and spent once — Roark's Cranidos holds a Lum
   Berry, so a plan built on poisoning it doesn't work.
-- **Sleep is counted, not predicted.** Its duration is random and isn't in the
-  game data, so the badge shows turns elapsed and never implies a floor. An
-  early wake is planned as a branch; "ends on this turn" closes it out.
+- **Sleep is pinned at both ends and random in between.** A Pokémon cannot wake
+  on the turn it falls asleep, and after **4 turns** it is awake regardless —
+  both guaranteed, so the planner models the wake rather than making you branch
+  it. The turns between are a real coin flip and stay one: the badge counts up,
+  and an early wake is still a branch. The duration isn't in the game data, so
+  the 4 comes from the mechanic itself.
 - Turns reachable by more than one branch are flagged "mixed state".
 
 ### Pokémon and slots

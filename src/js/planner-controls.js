@@ -511,10 +511,10 @@ function trapHint(trap) {
     if (!trap.expires) {
         return "Trapped for the rest of the fight - Mean Look and friends don't wear off.";
     }
-    if (trap.fixed) {
-        return `Bound for exactly ${trap.fixed} turns by a Grip Claw, ${trap.turns} elapsed.`;
+    if (trap.guaranteed) {
+        return `Bound for exactly ${TRAP_MAX_TURNS} turns - the Grip Claw takes away the early release - with ${trap.turns} elapsed.`;
     }
-    return `Bound by a binding move, ${trap.turns} turn${trap.turns === 1 ? "" : "s"} elapsed. These run 2-5 turns at random, so it can let go on any turn - branch it rather than counting on a number.`;
+    return `Bound by a binding move, ${trap.turns} of at most ${TRAP_MAX_TURNS} turns elapsed. These run 2-5 turns, so it can let go on any turn from here and is free after ${TRAP_MAX_TURNS} - branch the early release rather than counting on it.`;
 }
 
 // The move shown under a sprite once it's been chosen.
@@ -547,11 +547,29 @@ function renderStatus(side, trapped) {
          * break on any turn, including the very first. Plan the early wake as a
          * branch rather than trusting the count.
          */
+        /*
+         * Sleep is pinned at both ends and random in between, so the hint says
+         * which of the three a turn is in rather than implying it is all luck.
+         */
+        var left = SLEEP_MAX_TURNS - turns;
         var hint = side.status === "slp"
             ? (turns === 0
-                ? "Just fell asleep. It can wake on any turn, including the next one - branch on it, or mark it as ending when it breaks."
-                : `Asleep, ${turns} turn${turns === 1 ? "" : "s"} elapsed. It can wake on any turn - branch on it, or mark it as ending when it breaks.`)
-            : STATUSES[side.status].name + (turns > 0 ? `, ${turns} turn${turns === 1 ? "" : "s"} elapsed` : "");
+                ? `Just fell asleep, and cannot wake on this turn - that much is guaranteed. Awake by turn ${SLEEP_MAX_TURNS} at the latest.`
+                : `Asleep, ${turns} turn${turns === 1 ? "" : "s"} elapsed. ${
+                    left <= 1
+                        ? "It wakes at the end of this one whatever happens."
+                        : `It can wake on any turn from here, and is awake after ${left} more at the latest - branch the early wake, or mark it as ending when it breaks.`
+                }`)
+            : side.status === "frz"
+                /*
+                 * Freeze is the one status with no ceiling at all: a flat 20% a
+                 * turn, so it can outlast the whole fight. Saying so stops the
+                 * count reading like a countdown the way sleep's does.
+                 */
+                ? `Frozen${turns > 0 ? `, ${turns} turn${turns === 1 ? "" : "s"} elapsed` : ""}. A flat 20% chance to thaw each turn and no limit on how long it lasts, so branch the thaw rather than counting on it. Any Fire move that hits also thaws it.`
+                : side.status === "tox"
+                    ? `Badly poisoned, ${turns} turn${turns === 1 ? "" : "s"} elapsed - the damage ramps with this count. Switching out resets the count but not the poison.`
+                    : STATUSES[side.status].name + (turns > 0 ? `, ${turns} turn${turns === 1 ? "" : "s"} elapsed` : "");
         parts.push(`<span class="planner-status ${side.status}" title="${hint}">${STATUSES[side.status].short}${turns > 0 ? ` ${turns}` : ""}</span>`);
     }
     /*
@@ -566,7 +584,15 @@ function renderStatus(side, trapped) {
     for (var v in side.volatiles) {
         if (!side.volatiles[v]) continue;
         var info = VOLATILES[v];
-        parts.push(`<span class="planner-status volatile" title="${info ? info.name : v}">${info ? info.short : v}</span>`);
+        var elapsed = (side.volatileTurns || {})[v] || 0;
+        // Only the ones that run out on their own carry a number.
+        var vHint = info
+            ? (info.maxTurns
+                ? `${info.name}. ${elapsed} of at most ${info.maxTurns} turns elapsed - it can end on any turn from here and is gone after ${info.maxTurns}.`
+                : `${info.name}. No turn limit; it lasts until the Pokémon leaves the field.`)
+            : v;
+        parts.push(`<span class="planner-status volatile" title="${vHint}">${info ? info.short : v}${
+            info && info.maxTurns && elapsed ? ` ${elapsed}` : ""}</span>`);
     }
     return parts.length ? `<span class="planner-statuses">${parts.join("")}</span>` : "";
 }

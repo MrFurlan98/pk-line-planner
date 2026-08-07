@@ -65,6 +65,17 @@ const NO_DROP_MOVES = ["superpower", "overheat", "psychoboost", "dracometeor", "
 const MAX_BOOST = 6;
 
 /*
+ * Sleep is random in the middle but pinned at both ends: a Pokemon cannot wake
+ * on the turn it falls asleep, and after four turns it is awake no matter what.
+ * Those two are guaranteed, so a plan can rest on them - which is why the wake
+ * is modelled rather than left entirely to a branch.
+ *
+ * The turns in between are a genuine coin flip and stay one: the badge counts
+ * up, and an early wake is still a branch.
+ */
+const SLEEP_MAX_TURNS = 4;
+
+/*
  * Screens run out; entry hazards don't. Both live in the side's `hazards` map,
  * but a hazard's value counts layers while a screen's counts the turns it has
  * left - so the two are told apart by this list rather than by their value.
@@ -82,9 +93,14 @@ const SCREEN_TURNS = 5;
 const SCREEN_TURNS_LIGHT_CLAY = 8;
 const LIGHT_CLAY = "lightclay";
 
-// Binding moves run 2-5 turns unless a Grip Claw fixes them at 5.
+/*
+ * Binding moves run 2-5 turns, so 5 is a ceiling as much as confusion's is: the
+ * grip is gone after it either way. A Grip Claw doesn't extend that in this game
+ * - its own text says "last for 5 turns" - it removes the early release, so the
+ * hold is exactly 5 rather than anywhere from 2.
+ */
 const GRIP_CLAW = "gripclaw";
-const TRAP_TURNS_GRIP_CLAW = 5;
+const TRAP_MAX_TURNS = 5;
 
 function newLineId() {
     return `line-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
@@ -237,11 +253,23 @@ const STATUSES = {
  * calc/src/data/moves.ts), so there is no way to be taunted here and offering it
  * would only invite plans that can't happen.
  */
+/*
+ * `maxTurns` is the point at which the condition is guaranteed gone, the way
+ * sleep is after four. Confusion runs 2-5, Encore 4-8, Disable 4-7 - random in
+ * the middle, certain at the end - so the planner ends them there rather than
+ * carrying them down a line forever. Encore can also break early when the
+ * encored move runs out of PP, which isn't tracked, so its ceiling is the only
+ * half of it worth relying on.
+ *
+ * The rest have no turn limit at all: Leech Seed and Torment last until the
+ * target switches out, Attract until either side leaves, and a Substitute until
+ * something breaks it. Leaving the field already clears all of them.
+ */
 const VOLATILES = {
-    confusion: {id: "confusion", name: "Confused", short: "CNF"},
-    encore: {id: "encore", name: "Encored - locked into its last move", short: "ENC"},
+    confusion: {id: "confusion", name: "Confused", short: "CNF", maxTurns: 5},
+    encore: {id: "encore", name: "Encored - locked into its last move", short: "ENC", maxTurns: 8},
     leechseed: {id: "leechseed", name: "Seeded - loses HP each turn to the other side", short: "SEED"},
-    disable: {id: "disable", name: "Disabled - its last move is unusable", short: "DIS"},
+    disable: {id: "disable", name: "Disabled - its last move is unusable", short: "DIS", maxTurns: 7},
     torment: {id: "torment", name: "Tormented - cannot use the same move twice in a row", short: "TOR"},
     attract: {id: "attract", name: "Infatuated - may not act", short: "ATT"},
     substitute: {id: "substitute", name: "Behind a Substitute", short: "SUB"}
@@ -292,6 +320,8 @@ function emptyMonState() {
      * actually rely on.
      */
     return {boosts: {}, status: "", statusTurns: 0, volatiles: {},
+            // Turns elapsed per volatile, for the three that run out on their own.
+            volatileTurns: {},
             perish: 0, perishDone: false, trapped: null};
 }
 
@@ -494,8 +524,9 @@ function applyMoveEffect(moveName, state, actor, from, targets, line, node) {
             target.trapped = {
                 expires: fx.trapsTarget.expires,
                 turns: 0,
-                fixed: fx.trapsTarget.expires && userHolder &&
-                    toID(userHolder.item || "") === GRIP_CLAW ? TRAP_TURNS_GRIP_CLAW : null
+                // Grip Claw removes the early release rather than extending it.
+                guaranteed: !!(fx.trapsTarget.expires && userHolder &&
+                    toID(userHolder.item || "") === GRIP_CLAW)
             };
         }
         if (fx.targetVolatiles) {
@@ -837,7 +868,7 @@ function trapReason(line, node, state, side, slot) {
     var mon = monState(state, side, ref);
     if (mon.trapped) {
         return mon.trapped.expires
-            ? {kind: "move", expires: true, turns: mon.trapped.turns || 0, fixed: mon.trapped.fixed}
+            ? {kind: "move", expires: true, turns: mon.trapped.turns || 0, guaranteed: mon.trapped.guaranteed}
             : {kind: "move", expires: false};
     }
 
@@ -909,11 +940,19 @@ function leaveField(line, parent, state, side, slot) {
     var mon = monState(state, side, ref);
     mon.boosts = {};
     mon.volatiles = {};
+    mon.volatileTurns = {};
     // "unless they switch out" - leaving the field is the whole counterplay.
     mon.perish = 0;
     mon.perishDone = false;
     // Whatever was holding it isn't holding it any more.
     mon.trapped = null;
+    /*
+     * Badly poisoned damage ramps with a counter, and that counter - unlike the
+     * status - resets when the Pokemon leaves the field, resuming at 1/16 when
+     * it comes back. Sleep's count deliberately does not reset here: it carries
+     * across a switch in this generation.
+     */
+    if (mon.status === "tox") mon.statusTurns = 0;
     var holder = activeHolder(line, parent, side, slot);
     var fx = abilityEffect(holder && holder.ability);
     if (fx && fx.curesOnSwitchOut) {
@@ -954,7 +993,32 @@ function applyTurn(line, parent, node, state) {
         var ref = monAt(parent, side, i);
         if (!ref) return;
         var mon = monState(state, side, ref);
-        if (mon.status) mon.statusTurns = (mon.statusTurns || 0) + 1;
+        if (!mon.status) return;
+        mon.statusTurns = (mon.statusTurns || 0) + 1;
+        // Four turns is the ceiling, so this wake needs no branch to express.
+        if (mon.status === "slp" && mon.statusTurns >= SLEEP_MAX_TURNS) {
+            mon.status = "";
+            mon.statusTurns = 0;
+        }
+    });
+
+    /*
+     * Volatiles with a known ceiling age the same way and end when they hit it.
+     * The ones without simply never tick, so nothing here can expire them.
+     */
+    eachSlot(function(side, i) {
+        var ref = monAt(parent, side, i);
+        if (!ref) return;
+        var mon = monState(state, side, ref);
+        if (!mon.volatileTurns) mon.volatileTurns = {};
+        for (var id in mon.volatiles) {
+            if (!mon.volatiles[id] || !VOLATILES[id] || !VOLATILES[id].maxTurns) continue;
+            mon.volatileTurns[id] = (mon.volatileTurns[id] || 0) + 1;
+            if (mon.volatileTurns[id] >= VOLATILES[id].maxTurns) {
+                delete mon.volatiles[id];
+                delete mon.volatileTurns[id];
+            }
+        }
     });
 
     /*
@@ -985,7 +1049,8 @@ function applyTurn(line, parent, node, state) {
          */
         if (mon.trapped && mon.trapped.expires) {
             mon.trapped.turns = (mon.trapped.turns || 0) + 1;
-            if (mon.trapped.fixed && mon.trapped.turns >= mon.trapped.fixed) mon.trapped = null;
+            // Five turns is the ceiling with or without a Grip Claw.
+            if (mon.trapped.turns >= TRAP_MAX_TURNS) mon.trapped = null;
         }
     });
 

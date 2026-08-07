@@ -1127,11 +1127,12 @@
                 <span class="planner-status slp" title="Asleep, 2 turns elapsed">SLP 2</span>
             </span>
             <span class="doc-part-text">
-                <b>Sleep is counted, not predicted</b>
-                The number is turns <em>elapsed</em>, not a countdown. Sleep duration is random and
-                isn't in the game data, so no number here promises anything &mdash; it can break on
-                any turn, including the first. Plan the early wake as a branch, and use
-                "ends on this turn" to close it out.
+                <b>Sleep counts up to a guaranteed wake</b>
+                The number is turns <em>elapsed</em>, not a countdown. Sleep is pinned at both ends:
+                a Pokémon can't wake on the turn it falls asleep, and after <b>4 turns</b> it is
+                awake whatever happens &mdash; the planner wakes it for you, so that doesn't need a
+                branch. The turns in between are a genuine coin flip, so plan an <em>early</em> wake
+                as a branch, or use "ends on this turn" to say it broke there.
             </span>
         </li>
         <li>
