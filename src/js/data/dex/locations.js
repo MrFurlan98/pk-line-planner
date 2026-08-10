@@ -848,7 +848,7 @@ const LOCATIONS = {
             {'species': 'aron', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
             {'species': 'bonsly', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
             {'species': 'ledyba', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
-            {'species': 'magcargo', 'chance': 0, 'minLevel': 0, 'maxLevel': 0, 'method': 'trade', 'trade': {'nickname': 'Chestnut', 'ability': 'vitalspirit', 'nature': 'quiet'}}
+            {'species': 'magcargo', 'chance': 0, 'minLevel': 0, 'maxLevel': 0, 'method': 'trade', 'trade': {'nickname': 'Chestnut', 'ability': 'vitalspirit', 'nature': 'quiet', 'traded': 'any'}}
         ],
         metLocationId: 8,
         search: true,
@@ -1576,7 +1576,7 @@ const LOCATIONS = {
             {'species': 'bonsly', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
             {'species': 'ledyba', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
             {'species': 'happiny', 'chance': 100, 'minLevel': 1, 'maxLevel': 1, 'method': 'egg'},
-            {'species': 'numel', 'chance': 0, 'minLevel': 0, 'maxLevel': 0, 'method': 'trade', 'trade': {'nickname': 'Nomu', 'ability': 'simple', 'nature': 'brave'}}
+            {'species': 'numel', 'chance': 0, 'minLevel': 0, 'maxLevel': 0, 'method': 'trade', 'trade': {'nickname': 'Nomu', 'ability': 'simple', 'nature': 'brave', 'traded': 'nomuTrade'}}
         ],
         metLocationId: 9,
         search: true,
@@ -5205,7 +5205,7 @@ const LOCATIONS = {
             {'species': 'lapras', 'chance': 10, 'minLevel': 75, 'maxLevel': 85, 'method': 'superrod'},
             {'species': 'dewgong', 'chance': 10, 'minLevel': 25, 'maxLevel': 65, 'method': 'superrod'},
             {'species': 'wailmer', 'chance': 10, 'minLevel': 65, 'maxLevel': 90, 'method': 'superrod'},
-            {'species': 'snover', 'chance': 0, 'minLevel': 0, 'maxLevel': 0, 'method': 'trade', 'trade': {'nickname': 'Haunter', 'ability': 'adaptability', 'nature': 'hasty'}}
+            {'species': 'snover', 'chance': 0, 'minLevel': 0, 'maxLevel': 0, 'method': 'trade', 'trade': {'nickname': 'Haunter', 'ability': 'adaptability', 'nature': 'hasty', 'traded': 'any'}}
         ],
         metLocationId: 14,
         search: true,
@@ -6278,7 +6278,7 @@ const LOCATIONS = {
             {'species': 'aron', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
             {'species': 'bonsly', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
             {'species': 'ledyba', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
-            {'species': 'trapinch', 'chance': 0, 'minLevel': 0, 'maxLevel': 0, 'method': 'trade', 'trade': {'nickname': 'Mr.Crunchy', 'ability': 'arenatrap', 'nature': 'jolly'}}
+            {'species': 'trapinch', 'chance': 0, 'minLevel': 0, 'maxLevel': 0, 'method': 'trade', 'trade': {'nickname': 'Mr.Crunchy', 'ability': 'arenatrap', 'nature': 'jolly', 'traded': 'any'}}
         ],
         metLocationId: -1,
         search: true,

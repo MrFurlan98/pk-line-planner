@@ -475,14 +475,21 @@ function loadDexEntry(entryID) {
                     ${location.encounters.some(x => x.method == "trade") ? function() {
                         var encounter = location.encounters.find(x => x.method == "trade");
                         var species = SPECIES[encounter.species];
+                        var tradedMon;
+                        if (encounter.trade.traded == "any") tradedMon = "Any Pokémon";
+                        else if (encounter.trade.traded == "nomuTrade") tradedMon = "Almost any Pokémon";
+                        else tradedMon = `<span data-target="species/${encounter.trade.traded}">${SPECIES[encounter.trade.traded].name}</span>`;
                         return `
                         Trade Pokémon:<br />
                         <span class="trade-info">
-                            Any Pokémon -> <span data-target="species/${species.id}">${species.name}</span><br />
+                            ${tradedMon} -> <span data-target="species/${species.id}">${species.name}</span><br />
                             Nickname: ${encounter.trade.nickname}<br />
                             Nature: <span data-target="nature/${encounter.trade.nature}">${NATURES[encounter.trade.nature].name}</span><br />
                             Ability: <span data-target="ability/${encounter.trade.ability}">${ABILITIES[encounter.trade.ability].name}</span><br />
                             Level: Same as traded Pokémon
+                            ${encounter.trade.traded == "nomuTrade" ?
+                                "<br />Notes: Cannot trade <span data-target=\"type/fire\">Fire</span> types, <span data-target=\"type/poison\">Poison</span> types, <span data-target=\"species/voltorb\">Voltorb</span>, or <span data-target=\"species/electrode\">Electrode</span>"
+                                : ""}
                         </span>`
                     }() : ``}
                     </span>
