@@ -9,6 +9,18 @@ const selfKoMoves = ["selfdestruct", "explosion", "memento"];
 const recoilMoves = ["doubleedge", "hyperbeam", "takedown", "thrash", "skyattack", "outrage", "overheat", "volttackle", "blastburn", "eruption", "hydrocannon", "superpower", "waterspout", "bravebird", "flareblitz", "headsmash", "woodhammer", "dracometeor", "roaroftime", "closecombat", "gigaimpact", "wildcharge", "solidplant"];
 const trappingMoves = ["wrap", "submission", "firespin", "meanlook", "twister", "whirlpool", "swallow", "sandtomb", "block"];
 
+function getLevelLearnset(species, level) {
+    var levelLearnset = [];
+    var learnset = SPECIES[species].learnset.filter(x => x.method == "level")
+    for (var i in learnset) {
+        if (learnset[i].level > level) break;
+        if (levelLearnset.includes(learnset[i].move)) continue;
+        levelLearnset.push(learnset[i].move);
+        if (levelLearnset.length > 4) levelLearnset.splice(0, 1);
+    }
+    return levelLearnset;
+}
+
 function loadDexEntry(entryID) {
     var namespace = entryID.split("/")[0];
     var id = entryID.split("/")[1];
@@ -511,7 +523,7 @@ function loadDexEntry(entryID) {
                         var level;
                         if ([].includes(encounter.method)) level = "-";
                         else level = encounter.method == "trade" ? encounter.trade.nickname : minLevel == maxLevel ? `Lv. ${minLevel}` : `Lv. ${minLevel}-${maxLevel}`;
-                        var learnset = species.learnset.filter(x => x.method == "level" && x.level <= minLevel).slice(-4).map(x => x.move);
+                        var learnset = getLevelLearnset(species.id, minLevel);
                         if (minLevel !== maxLevel) learnset = learnset.concat(species.learnset.filter(x => x.method == "level" && x.level > minLevel && x.level <= maxLevel).map(x => x.move));
                         var danger = [];
                         for (var j in learnset) {
@@ -569,7 +581,7 @@ function loadDexEntry(entryID) {
                             var level = $(this).find(".level").html().split(" ")[1];
                             if (level > 0) {
                                 if (level.includes("-")) level = level.split("-")[1];
-                                var moves = species.learnset.filter(x => x.method == "level" && x.level <= level).slice(-4).map(x => x.move);
+                                var moves = getLevelLearnset(species.id, level);
                                 loadSet(`${species.name} (Blank Set)`, "p2", { level: level, moves: moves });
                                 window.location = `#/calc`;
                             } else {
