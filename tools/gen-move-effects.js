@@ -116,9 +116,65 @@ function parseVolatiles(effect) {
     return volatiles.length ? volatiles : null;
 }
 
-// Substitute is the one volatile a move puts on its own user.
-function parseSelfVolatiles(effect) {
-    return /a Substitute is created/i.test(effect) ? ["substitute"] : null;
+/*
+ * Volatiles a move puts on its own user. Substitute, and the two that quietly
+ * hand back a sixteenth of the user's health every turn - which over a long
+ * fight is worth more than it looks.
+ */
+function parseSelfVolatiles(effect, id) {
+    var volatiles = [];
+    if (/a Substitute is created/i.test(effect)) volatiles.push("substitute");
+    if (id === "aquaring") volatiles.push("aquaring");
+    if (id === "ingrain") volatiles.push("ingrain");
+    return volatiles.length ? volatiles : null;
+}
+
+/*
+ * Roost is the only move that changes what its user *is* for the rest of the
+ * turn: a Flying type stops being one, which is what makes it possible to Roost
+ * into a Rock or Electric move and survive it.
+ */
+function parseSelfLosesType(effect) {
+    var m = /it loses that type for the rest of the turn/i.test(effect)
+        ? /If the user is a ([A-Za-z]+) type/i.exec(effect)
+        : null;
+    return m ? m[1].toLowerCase() : null;
+}
+
+/*
+ * Wish belongs to the *slot* rather than to the Pokemon that used it: it lands
+ * at the end of the following turn on whoever is standing there by then, which
+ * is the whole trick - Wish, switch, and the arrival is healed on the way in.
+ * The amount is half of the *user's* max HP, not the receiver's, so it has to be
+ * worked out when the move is used and carried.
+ */
+const WISH = {
+    wish: {delay: 2, fraction: [1, 2]}
+};
+
+/*
+ * Moves that land on a slot some turns after they are used. Future Sight and
+ * Doom Desire are Wish's mirror image - the damage is worked out now, against
+ * whoever is standing there now, and arrives two turns later on whatever is
+ * standing there by then. Their own text says exactly that.
+ *
+ * The stored number is *ticks*, not the wording's "turns later", and the two
+ * differ by one: the turn the move is used on ends with a tick of its own, which
+ * the countdown has to absorb before any of the waiting starts. Wish says "at
+ * the end of the next turn" - one turn later - and takes 2 ticks; these say two
+ * turns later and take 3.
+ */
+function parseDelayed(effect) {
+    var m = /deals this damage (\d+) turns later to the target's slot/i.exec(effect);
+    return m ? {turns: parseInt(m[1], 10) + 1} : null;
+}
+
+/*
+ * Pain Split levels the two health bars rather than dealing damage, so it is
+ * neither an attack nor a heal - it can be either, depending on who is worse off.
+ */
+function parsePainSplit(effect) {
+    return /Sets both the user's and the target's HP to the average/i.test(effect);
 }
 
 function parseBoosts(effect, who) {
@@ -164,6 +220,47 @@ const SCREENS = {
 };
 
 /*
+ * Side conditions that run on a timer but aren't screens - meaning Brick Break
+ * doesn't take them and Defog doesn't sweep them away. Tailwind is the only one
+ * this game has; it doubles the side's Speed for three turns, which is the base
+ * game's duration. Its +5 priority is Kaizo's own change and lives in the move
+ * table rather than here.
+ */
+const SIDE_CONDITIONS = {
+    tailwind: {field: "isTailwind", turns: 3}
+};
+
+/*
+ * Healing a move gives its own user, as a fraction of max HP.
+ *
+ * "of its total HP" is what separates these from the drain moves, which say "of
+ * the damage dealt" - those are worked out from the damage itself and are
+ * @smogon/calc's job rather than a fixed number here.
+ *
+ * Synthesis, Moonlight and Morning Sun are the same 50% except in weather, where
+ * they swing to 2/3 in sun and collapse to 1/4 in anything else. That is a real
+ * planning decision in a fight that starts in sand, so the weather dependence is
+ * flagged rather than flattened to the middle value.
+ */
+/*
+ * Fractions are emitted as [numerator, denominator] rather than a decimal so the
+ * arithmetic downstream stays in integers. Two thirds as a double is a hair under
+ * two thirds, and `floor(maxHP * 0.666...)` is a rounding bug waiting for the
+ * right max HP to come along; `floor(maxHP * 2 / 3)` simply cannot be wrong.
+ */
+function parseHeal(effect) {
+    var m = /Heals the user by (\d+)% of its total HP/i.exec(effect);
+    if (!m) return null;
+    var percent = parseInt(m[1], 10);
+    var heal = {fraction: percent === 100 ? [1, 1] : [percent, 100]};
+    if (/Heals 2\/3 in Sun, and 1\/4 in any other weather/i.test(effect)) {
+        heal.sun = [2, 3];
+        heal.otherWeather = [1, 4];
+    }
+    return heal;
+}
+
+/*
  * Moves whose effect text doesn't reduce to a fixed boost table. Curse is the
  * one that matters in practice - it's conditional on the user's type, and the
  * non-Ghost branch is a real setup move (Roark's Shuckle runs it).
@@ -206,8 +303,10 @@ Object.values(MOVES).forEach(function(move) {
     if (status) entry.targetStatus = status;
     var volatiles = parseVolatiles(effect);
     if (volatiles) entry.targetVolatiles = volatiles;
-    var selfVolatiles = parseSelfVolatiles(effect);
+    var selfVolatiles = parseSelfVolatiles(effect, move.id);
     if (selfVolatiles) entry.selfVolatiles = selfVolatiles;
+    var losesType = parseSelfLosesType(effect);
+    if (losesType) entry.selfLosesType = losesType;
     /*
      * Attract only lands between opposite genders. That is knowable rather than
      * random, so it is modelled - but the planner doesn't check it, so the
@@ -258,9 +357,28 @@ Object.values(MOVES).forEach(function(move) {
         entry.trapsTarget = {expires: true};
     }
 
+    // Ingrain roots its own user down instead, and never lets go.
+    if (/^Traps the user/i.test(effect)) entry.trapsSelf = {expires: false};
+
+    /*
+     * A type the move simply doesn't work on. Leech Seed against a Grass type is
+     * the only one in this game, and its own text says so - which the planner was
+     * happily ignoring, letting a plan rest on seeding something that can't be.
+     */
+    var immune = /Fails if the target is an? ([A-Za-z]+) type/i.exec(effect);
+    if (immune) entry.failsAgainstType = immune[1].toLowerCase();
+
+    var heal = parseHeal(effect);
+    if (heal) entry.selfHeal = heal;
+
     if (HAZARD_FIELDS[move.id]) entry.hazard = HAZARD_FIELDS[move.id];
     if (WEATHER[move.id]) entry.weather = WEATHER[move.id];
     if (SCREENS[move.id]) entry.screen = SCREENS[move.id];
+    if (SIDE_CONDITIONS[move.id]) entry.sideCondition = SIDE_CONDITIONS[move.id];
+    if (WISH[move.id]) entry.wish = WISH[move.id];
+    var delayed = parseDelayed(effect);
+    if (delayed) entry.delayed = delayed;
+    if (parsePainSplit(effect)) entry.painSplit = true;
     if (MANUAL[move.id]) Object.assign(entry, MANUAL[move.id]);
 
     if (Object.keys(entry).length) {
@@ -290,5 +408,8 @@ console.log("  with self boosts:", Object.values(effects).filter(e => e.self).le
 console.log("  with target drops:", Object.values(effects).filter(e => e.target).length);
 console.log("  hazards:", Object.values(effects).filter(e => e.hazard).length);
 console.log("  weather:", Object.values(effects).filter(e => e.weather).length);
+console.log("  self-heal:", Object.values(effects).filter(e => e.selfHeal).length,
+    "(weather-dependent:", Object.values(effects).filter(e => e.selfHeal && e.selfHeal.sun).length + ")");
+console.log("  side conditions:", Object.values(effects).filter(e => e.sideCondition).length);
 console.log("\nunparsed but stage-related (" + unparsedSetup.length + "):");
 unparsedSetup.slice(0, 25).forEach(x => console.log("  " + x.slice(0, 110)));

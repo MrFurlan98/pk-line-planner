@@ -35,6 +35,21 @@ function applyPartiesFold() {
             : "Show the teams and box");
 }
 
+/*
+ * Blind mode's button. Marked `active` rather than `folded` because it is a way
+ * of working rather than something collapsed away, and it is worth being obvious:
+ * a card with no numbers on it should never leave you wondering whether the
+ * planner is being coy or simply hasn't worked them out.
+ */
+function applyBlindMode() {
+    var blind = blindMode();
+    $("#planner-toggle-blind")
+        .toggleClass("active", blind)
+        .attr("title", blind
+            ? "Blind mode is on: base power instead of damage, no health bars, no speed. Click to show the numbers again."
+            : "Blind mode: hide damage, health and speed, and work the fight out yourself. Moves go back to showing base power.");
+}
+
 function currentLine() {
     return LINES[CURRENT_LINE];
 }
@@ -314,6 +329,12 @@ function renderLine() {
     // Re-applied because both strips are rebuilt above.
     applyPartiesFold();
 
+    /*
+     * Every turn's state, computed once and parents-first. Cleared and rebuilt on
+     * every render, so nothing here can outlive the plan it came from.
+     */
+    warmNodeStates(line);
+
     var visible = visibleNodes(line);
     for (var id in line.nodes) {
         if (visible[id]) renderNode(line.nodes[id], line, visible);
@@ -326,6 +347,12 @@ function renderNode(node, line, visible) {
     var state = computeNodeState(line, node.id);
     var slots = slotCount(line);
     var format = battleFormat(line.trainer);
+    /*
+     * Slots that lose their move this turn to being outsped and killed outright.
+     * Worked out by running the turn against a throwaway copy of the state, so
+     * the card can't claim something the fold won't do.
+     */
+    var denied = deniedByOrder(line, node, state);
     var anyDead = false;
     for (var i = 0; i < slots; i++) {
         var entry = monAt(node, "you", i) ? boxEntry(monAt(node, "you", i)) : null;
@@ -342,7 +369,7 @@ function renderNode(node, line, visible) {
                 <span class="planner-slots">${renderSlots(line, node, state, "them", slots, format)}</span>
             </div>
             ${renderStatusBlock(line, node, state)}
-            ${renderMovePickers(line, node, slots, format)}
+            ${renderMovePickers(line, node, state, slots, format, denied)}
             ${node.note ? `<div class="planner-node-note">${node.note}</div>` : ``}
             <div class="planner-node-buttons">
                 ${renderFoldControl(node, line, visible)}
@@ -358,6 +385,47 @@ function renderNode(node, line, visible) {
  * AI partner: still settable, since a plan has to assume something about it,
  * but marked so it never reads as an instruction you control.
  */
+/*
+ * Who moves first, shown against the slot.
+ *
+ * Priority bracket beats speed, and Platinum Kaizo rebalanced the brackets, so a
+ * slot can be first while being slower - which is worth saying rather than
+ * leaving to be inferred from two numbers. A tie is called a tie: it is genuinely
+ * random, and no plan should rest on it.
+ */
+function renderSpeed(line, node, state, side, slot, slots) {
+    if (typeof speedFor !== "function" || blindMode()) return "";
+    if (!monAt(node, side, slot)) return "";
+
+    var other = side === "you" ? "them" : "you";
+    var against = monAt(node, other, slot) ? slot : (monAt(node, other, 0) ? 0 : 1);
+    if (!monAt(node, other, against)) return "";
+
+    var mine = speedFor(line, node, state, side, slot);
+    var theirs = speedFor(line, node, state, other, against);
+    if (!mine || !theirs) return "";
+
+    var myPrio = movePriority(moveAt(node, side, slot));
+    var theirPrio = movePriority(moveAt(node, other, against));
+
+    // Under Trick Room the slower one goes first - but only within a bracket.
+    var reversed = !!state.trickRoom;
+    var faster = myPrio !== theirPrio
+        ? myPrio > theirPrio
+        : (reversed ? mine < theirs : mine > theirs);
+    var tied = myPrio === theirPrio && mine === theirs;
+    var byPriority = myPrio !== theirPrio;
+
+    var hint = `Speed ${mine} against ${theirs}` +
+        (byPriority ? `, but the brackets decide it: priority ${myPrio > 0 ? "+" : ""}${myPrio} against ${theirPrio > 0 ? "+" : ""}${theirPrio}.` : ".") +
+        (reversed && !byPriority ? " Trick Room is up, so the slower one moves first." : "") +
+        (tied ? " A tie is settled at random, so don't build the plan on it." : "");
+
+    if (tied) return `<span class="planner-speed tie" title="${escapeAttr(hint)}">= SPD</span>`;
+    return `<span class="planner-speed ${faster ? "fast" : "slow"}" title="${escapeAttr(hint)}">${
+        faster ? "&#9650;" : "&#9660;"} ${byPriority ? "PRI" : "SPD"}</span>`;
+}
+
 function renderSlots(line, node, state, side, slots, format) {
     var out = "";
     for (var i = 0; i < slots; i++) {
@@ -392,6 +460,8 @@ function renderSlots(line, node, state, side, slots, format) {
                 ? `<img class="planner-sprite" src="${GAME.sprites.species(species)}" alt="">`
                 : `<span class="planner-node-blank">?</span>`}
             <span class="planner-slot-name">${label}${sub}</span>
+            ${ref ? renderHp(mon) : ``}
+            ${ref ? renderSpeed(line, node, state, side, i, slots) : ``}
             ${renderStatus(mon, trapped)}
             ${renderBoosts(mon.boosts)}
             <span class="planner-chosen">${slotActionText(line, node, side, i, isPartner)}</span>
@@ -419,7 +489,7 @@ function renderFoldControl(node, line, visible) {
  * against what's coming back. Collapses once the turn is decided, which is what
  * keeps a long line readable.
  */
-function renderMovePickers(line, node, slots, format) {
+function renderMovePickers(line, node, state, slots, format, denied) {
     if (!node.movesOpen) {
         return `<div class="planner-moves collapsed"><button class="planner-moves-toggle" title="Show the movesets">Moves</button></div>`;
     }
@@ -432,7 +502,7 @@ function renderMovePickers(line, node, slots, format) {
      */
     var columns = ["you", "them"].map(function(side) {
         var stack = "";
-        for (var i = 0; i < slots; i++) stack += renderSlotPicker(line, node, side, i, format);
+        for (var i = 0; i < slots; i++) stack += renderSlotPicker(line, node, state, side, i, format, denied);
         return `<div class="planner-move-side ${side}">${stack}</div>`;
     }).join("");
 
@@ -442,7 +512,7 @@ function renderMovePickers(line, node, slots, format) {
     </div>`;
 }
 
-function renderSlotPicker(line, node, side, slot, format) {
+function renderSlotPicker(line, node, state, side, slot, format, denied) {
     var ref = monAt(node, side, slot);
     var isPartner = side === "you" && slot === 1 && format.id === "tag";
     var moves = [];
@@ -468,35 +538,134 @@ function renderSlotPicker(line, node, side, slot, format) {
      * plan be built on a move the game will refuse. Still clickable when a
      * switch is already set there, so an now-illegal one can be cleared.
      */
-    var trap = trapReason(line, node, computeNodeState(line, node.id), side, slot);
+    var trap = trapReason(line, node, state, side, slot);
     return `<div class="planner-move-column${isPartner ? " ai" : ""}" data-side="${side}" data-slot="${slot}">
         <span class="planner-move-column-title">${title}${isPartner ? " (AI)" : ""}</span>
-        ${renderMoveList(moves, moveAt(node, side, slot), side, slot)}
+        ${renderMoveList(line, node, state, moves, moveAt(node, side, slot), side, slot, denied)}
+        ${renderAimPicker(line, node, side, slot, format)}
         <button class="planner-switch-btn${side === "them" ? " them" : ""}${switching ? " active" : ""}${trap && !switching ? " trapped" : ""}"
                 data-side="${side}" data-slot="${slot}"
                 title="${trap ? trapHint(trap) : "Switch instead of attacking. The turn is given up, so whoever comes in takes the hit."}">&#8646; ${trap ? "Trapped" : "Switch"}</button>
     </div>`;
 }
 
-function renderMoveList(moves, selected, side, slot) {
+/*
+ * Which of the two opposing Pokémon this slot is attacking.
+ *
+ * Only ever shown in a double, because it is the only place the question exists:
+ * with one Pokémon a side there is nothing to choose. Both of theirs are within
+ * reach of both of yours - a 2v2 has no far slot - so focusing two attackers
+ * onto one target is a real option and has to be sayable.
+ *
+ * A spread move has no choice to make and says so instead of offering one.
+ */
+function renderAimPicker(line, node, side, slot, format) {
+    if (slotCount(line) < 2) return "";
+    if (!monAt(node, side, slot)) return "";
+    if (switchTargetAt(node, side, slot)) return "";
+
+    var move = findMove(moveAt(node, side, slot));
+    if (move && /allAdjacentFoes|allAdjacent/i.test(move.target || "")) {
+        return `<span class="planner-aim spread" title="${escapeAttr(
+            move.name + " hits both of them, so there is nothing to aim.")}">&#8594; both</span>`;
+    }
+
+    var otherSide = side === "you" ? "them" : "you";
+    var chosen = aimAt(node, side, slot);
+    // What it actually lands on right now, aim or fallback, so the highlight
+    // always matches the damage figures above it.
+    var landing = targetsOf(node, side, slot, moveAt(node, side, slot), chosen)[0];
+
+    var buttons = [0, 1].map(function(i) {
+        var ref = monAt(node, otherSide, i);
+        if (!ref) return "";
+        var name = otherSide === "them" || isPartnerSlot(line, otherSide, i)
+            ? ((GAME.species()[toID(ref)] || {}).name || ref)
+            : (function() { var e = boxEntry(ref); return e ? (e.nickname || e.species) : ref; })();
+        return `<button class="planner-aim-btn${landing === i ? " active" : ""}"
+                        data-side="${side}" data-slot="${slot}" data-aim="${i}"
+                        title="${escapeAttr(`Attack ${name}.` + (chosen === null
+                            ? " Nothing is stated yet, so this is just whoever is across."
+                            : ""))}">${name}</button>`;
+    }).join("");
+
+    if (!buttons) return "";
+    return `<span class="planner-aim" title="Which of them this Pokémon attacks. Both are in reach of both of yours.">&#8594;${buttons}</span>`;
+}
+
+function renderMoveList(line, node, state, moves, selected, side, slot, denied) {
     if (!moves.length) {
         return `<span class="planner-move-empty">${side === "you" ? "Nobody here yet" : "No opponent yet"}</span>`;
     }
+    /*
+     * A slot whose move never lands takes nothing off anybody, so its damage
+     * figures are struck through - the same treatment the chosen move above gets.
+     * They stay visible rather than blanking, because what it *would* have done
+     * is exactly why it matters that it didn't.
+     *
+     * Two ways to get here, and they read differently: you said so, or it was
+     * outsped and killed before it could move.
+     */
+    var saidSo = !actedAt(node, side, slot);
+    var reason = (denied && denied[side + slot]) || "";
+    var stopped = saidSo || !!reason;
+
+    var WHY = {
+        outsped: `Outsped and knocked out before it can move, on every roll — so none of this lands.\n\nOnly a certain KO does this. If the kill depends on the roll, the move still goes off and the fork belongs on a branch instead.`,
+        flinched: `Flinched by Fake Out before it could move, so none of this lands.\n\nFake Out's flinch is the one in this game that always happens rather than rolling for it.`,
+        failed: `Fake Out only works on the user's first turn out. This isn't it, so the move fails outright — no damage, no flinch — and the turn is spent.`
+    };
+
     return moves.map(function(name) {
         var move = findMove(name);
         var isSelected = selected === name;
         if (!move) {
             return `<span class="planner-move ${side}${isSelected ? " selected" : ""}" data-move="${name}" data-side="${side}" data-slot="${slot}">${name}</span>`;
         }
-        var power = move.category === "status" ? "—" : move.basePower;
+
+        /*
+         * The damage replaces base power rather than sitting beside it: the row
+         * has no room for both, and the tooltip carries the base power anyway.
+         * Anything without an honest number - a status move, an empty slot
+         * opposite, a move this game has deleted - keeps showing power, so a
+         * blank never reads as an immunity.
+         */
+        var damage = plannerDamage(line, node, state, side, slot, name);
+        var figure = damage
+            ? `<span class="planner-move-dmg${damageClass(damage)}${stopped ? " denied" : ""}">${damageText(damage)}</span>`
+            : `<span class="planner-move-bp">${move.category === "status" ? "—" : move.basePower}</span>`;
+
+        var tooltip = `${move.name} — ${move.category}, ${move.basePower || 0} BP, ${move.accuracy || "—"}% acc`;
+        /*
+         * The calculator's own sentence, which names every modifier it applied -
+         * and already ends with the KO chance, so that isn't repeated here.
+         */
+        if (damage) tooltip = `${damage.desc}\n\n${tooltip}`;
+        if (saidSo) {
+            tooltip = `This move never goes off on this turn, so none of it lands — the turn is marked "didn't act".\n\n${tooltip}`;
+        } else if (WHY[reason]) {
+            tooltip = `${WHY[reason]}\n\n${tooltip}`;
+        }
+
         return `<span class="planner-move ${side}${isSelected ? " selected" : ""}" data-move="${name}" data-side="${side}" data-slot="${slot}"
-                      title="${move.name} — ${move.category}, ${move.basePower || 0} BP, ${move.accuracy || "—"}% acc">
+                      title="${escapeAttr(tooltip)}">
             <img src="${GAME.sprites.type(move.type)}" alt="">
             <span class="planner-move-name">${move.name}</span>
-            <span class="planner-move-bp">${power}</span>
+            ${figure}
             ${NO_DROP_MOVES.indexOf(move.id) >= 0 ? `<span class="planner-nodrop" title="Platinum Kaizo removes this move's stat drop - it has no drawback here.">nd</span>` : ``}
         </span>`;
     }).join("");
+}
+
+/*
+ * calc's descriptions carry quotes and angle brackets ("252+ Atk Cranidos Head
+ * Smash vs. ..."), and these go into a title attribute built by string
+ * concatenation, so they have to be escaped rather than trusted.
+ */
+function escapeAttr(text) {
+    return String(text)
+        .replace(/&/g, "&amp;").replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 /*
@@ -509,7 +678,9 @@ function trapHint(trap) {
         return `Trapped by ${trap.by} - it can't switch out while that Pokémon is opposite it.`;
     }
     if (!trap.expires) {
-        return "Trapped for the rest of the fight - Mean Look and friends don't wear off.";
+        return trap.self
+            ? "Rooted by its own Ingrain, which is the price of the healing - it recovers 1/16 each turn and cannot switch out for the rest of the fight."
+            : "Trapped for the rest of the fight - Mean Look and friends don't wear off.";
     }
     if (trap.guaranteed) {
         return `Bound for exactly ${TRAP_MAX_TURNS} turns - the Grip Claw takes away the early release - with ${trap.turns} elapsed.`;
@@ -524,6 +695,50 @@ function chosenMoveText(name) {
     if (!move) return `<b>${name}</b> <span class="planner-node-warn" title="This game has no move by that name.">?</span>`;
     return `<img class="planner-move-type" src="${GAME.sprites.type(move.type)}" alt=""> <b>${move.name}</b>` +
         (NO_DROP_MOVES.indexOf(move.id) >= 0 ? ` <span class="planner-nodrop" title="Platinum Kaizo removes this move's stat drop - it has no drawback here.">nd</span>` : ``);
+}
+
+/*
+ * The health bar for one slot.
+ *
+ * Two segments, because HP down a line is a range and not a number: the solid
+ * part is what the Pokémon has for certain even on the worst run of rolls, and
+ * the paler part on top is the rest of the band, the health it has only if the
+ * rolls went its way. Reading the solid edge alone is reading the plan
+ * pessimistically, which is the way a Nuzlocke wants to be read.
+ *
+ * Colour follows that same worst case. A slot nothing has touched yet still gets
+ * a full bar rather than nothing, so a row of cards can be scanned down.
+ */
+function renderHp(mon) {
+    if (blindMode()) return "";
+    var hp = hpOf(mon);
+    if (!hp) {
+        return `<span class="planner-hp" title="Undamaged so far on this branch.">
+            <span class="planner-hp-bar"><span class="planner-hp-min good" style="width: 100%"></span></span>
+        </span>`;
+    }
+    if (hp.max <= 0) {
+        return `<span class="planner-hp fainted" title="Nothing left on this branch - it faints here.">
+            <span class="planner-hp-bar"></span>
+            <span class="planner-hp-text">FAINTED</span>
+        </span>`;
+    }
+
+    var lowPct = Math.max(0, hp.min) * 100 / hp.full;
+    var highPct = Math.max(0, hp.max) * 100 / hp.full;
+    // The worst case decides the colour, the same way it decides the reading.
+    var health = lowPct > 50 ? "good" : lowPct > 20 ? "warn" : "bad";
+    var lo = Math.round(lowPct);
+    var hi = Math.round(highPct);
+
+    return `<span class="planner-hp" title="${escapeAttr(
+        `${hp.min}-${hp.max} of ${hp.full} HP.\n\nA damage roll is 85-100%, so what it has left is a range rather than a number, and it widens with every hit. A branch out of a turn - You KO, You don't KO - narrows it again.`)}">
+        <span class="planner-hp-bar">
+            <span class="planner-hp-min ${health}" style="width: ${lowPct}%"></span>
+            <span class="planner-hp-band ${health}" style="width: ${highPct - lowPct}%"></span>
+        </span>
+        <span class="planner-hp-text ${health}">${lo === hi ? `${lo}%` : `${lo}–${hi}%`}</span>
+    </span>`;
 }
 
 const BOOST_LABELS = {atk: "Atk", def: "Def", spa: "SpA", spd: "SpD", spe: "Spe", acc: "Acc", eva: "Eva"};
@@ -611,7 +826,8 @@ const HAZARD_LABELS = {
     spikes: "Spikes",
     toxicSpikes: "Toxic Spikes",
     isReflect: "Reflect",
-    isLightScreen: "Light Screen"
+    isLightScreen: "Light Screen",
+    isTailwind: "Tailwind"
 };
 
 // Field state that persists across turns, shown above the matchup it affects.
@@ -628,6 +844,33 @@ function renderStateBar(state) {
             fromBattle ? ` title="This fight takes place in ${state.weather.toLowerCase()} - it is up before either side moves. A weather move or ability still overrides it."` : ``
         }>${state.weather}${fromBattle ? " (battle)" : ""}</span>`);
     }
+    /*
+     * Trick Room reorders the whole fight, so it belongs up here with the weather
+     * rather than against either side.
+     */
+    if (state.trickRoom) {
+        parts.push(`<span class="planner-field trickroom" title="${escapeAttr(
+            "Trick Room: the slower Pokémon moves first inside each priority bracket. A Quick Attack still goes before a Tackle - only the speed comparison is flipped.\n\nIn this game it lasts until the move is used again rather than running out after five turns."
+        )}">Trick Room</span>`);
+    }
+    /*
+     * A Wish in the air. Shown against the side because it belongs to the slot
+     * rather than to whoever made it - which is the point: switch, and the
+     * arrival collects it.
+     */
+    ["you", "them"].forEach(function(side) {
+        ((state[side] || {}).pending || []).forEach(function(list, slot) {
+            (list || []).forEach(function(item) {
+                var heals = item.kind === "heal";
+                var hint = heals
+                    ? `${item.name} lands on this slot at the end of ${item.turns > 1 ? "next turn" : "this turn"}, healing whoever is standing in it by ${item.amount} HP.\n\nThe amount was fixed when it was used — half of that Pokémon's max HP, not the receiver's — so switching something frailer in still collects the same number.`
+                    : `${item.name} lands on this slot at the end of ${item.turns > 1 ? "next turn" : "this turn"}, hitting whoever is standing in it for ${item.amount} HP.\n\nThe damage was worked out when the move was used, against whoever was standing there then — switching doesn't dodge it, and the Pokémon that takes it may not be the one it was aimed at.`;
+                parts.push(`<span class="planner-field ${side} pending ${heals ? "heal" : "hurt"}" title="${escapeAttr(hint)}">${
+                    side === "you" ? "Your" : "Their"} slot ${slot + 1}: ${item.name} &middot; ${item.turns}</span>`);
+            });
+        });
+    });
+
     ["you", "them"].forEach(function(side) {
         var hazards = state[side].hazards;
         for (var field in hazards) {
@@ -638,9 +881,12 @@ function renderStateBar(state) {
              * A screen's value is the turns it has left, not a layer count, so
              * it reads as a countdown rather than "Reflect x5".
              */
-            if (SCREENS[field]) {
+            if (TIMED_SIDE[field]) {
                 var left = hazards[field];
-                parts.push(`<span class="planner-field ${side} screen" title="${label} lasts 5 turns from when it was set, or 8 if that Pokémon held a Light Clay. ${left} left, counting this one.">${whose}: ${label} &middot; ${left}</span>`);
+                var hint = SCREENS[field]
+                    ? `${label} lasts 5 turns from when it was set, or 8 if that Pokémon held a Light Clay. ${left} left, counting this one.`
+                    : `Tailwind doubles this side's Speed for 3 turns. ${left} left, counting this one. Defog doesn't clear it and Brick Break doesn't break it.`;
+                parts.push(`<span class="planner-field ${side} screen" title="${escapeAttr(hint)}">${whose}: ${label} &middot; ${left}</span>`);
                 continue;
             }
             var layers = hazards[field] > 1 ? ` x${hazards[field]}` : "";
@@ -938,6 +1184,11 @@ function openNodeEditor(nodeId) {
                 <span><button type="button" class="planner-condition planner-skip${(skipped[s.side] || [])[s.slot] ? " bad selected" : ""}"
                         data-side="${s.side}" data-slot="${s.slot}"
                         title="Its move never went off - KO'd before acting, flinched, fully paralysed, or missed. The move's effects are skipped.">Move didn't go off</button></span>
+                <label>Health</label>
+                <span><input type="number" min="0" max="100" step="1" class="planner-edit-hp"
+                        data-side="${s.side}" data-slot="${s.slot}" placeholder="inherit"
+                        value="${seedFor(node, "hpSeed", s.side, s.slot, null) === null ? "" : seedFor(node, "hpSeed", s.side, s.slot, null)}"
+                        title="Health carried into this turn, as a percentage. Leave blank to use what the plan works out.&#10;&#10;Stating it pins the range to a single number, which is what you want for a line that starts mid-fight, or when the band has widened past being useful and you know what actually happened."> %</span>
             </div>
             <span class="planner-panel-label" title="Added on top of what this turn inherited. Leave at 0 to change nothing.">Stat stages</span>
             <span class="planner-boost-edit" data-side="${s.side}" data-slot="${s.slot}">${
@@ -1543,6 +1794,7 @@ function finishConnect(toNodeId) {
 function initPlanner() {
     loadLines();
     applyPartiesFold();
+    applyBlindMode();
     // Open the first line rather than landing on an empty placeholder when
     // there's an obvious one to show.
     var first = Object.keys(LINES)[0];
@@ -1867,6 +2119,20 @@ function initPlanner() {
         renderLine();
     });
 
+    $(".planner-canvas").on("click", ".planner-aim-btn", function(e) {
+        e.stopPropagation();
+        var line = currentLine();
+        var node = line.nodes[$(this).closest(".planner-node").attr("data-node")];
+        var side = $(this).attr("data-side");
+        var slot = parseInt($(this).attr("data-slot"), 10) || 0;
+        var aim = parseInt($(this).attr("data-aim"), 10) || 0;
+        if (!node.aimedAt) node.aimedAt = {you: [null, null], them: [null, null]};
+        // Clicking the current target again goes back to "whoever is across".
+        node.aimedAt[side][slot] = aimAt(node, side, slot) === aim ? null : aim;
+        saveLines();
+        renderLine();
+    });
+
     $(".planner-canvas").on("click", ".planner-moves-toggle", function(e) {
         e.stopPropagation();
         var line = currentLine();
@@ -1879,6 +2145,13 @@ function initPlanner() {
     $("#planner-toggle-parties").on("click", function() {
         localStorage.plannerPartiesOpen = partiesOpen() ? "false" : "true";
         applyPartiesFold();
+    });
+
+    $("#planner-toggle-blind").on("click", function() {
+        setBlindMode(!blindMode());
+        applyBlindMode();
+        // Every card changes: the whole point is that the derivation changes too.
+        renderLine();
     });
 
     $("#planner-toggle-moves").on("click", function() {
@@ -1958,6 +2231,19 @@ function initPlanner() {
                 var value = parseInt($(this).val(), 10) || 0;
                 if (value) target[$(this).attr("data-stat")] = value;
             });
+        });
+
+        /*
+         * A blank field means "inherit", which is a different thing from 0 - so
+         * this checks for an empty string rather than leaning on falsiness.
+         */
+        node.hpSeed = {you: [null, null], them: [null, null]};
+        $(".planner-edit-hp").each(function() {
+            var raw = $(this).val();
+            if (raw === "" || raw === null) return;
+            var pct = Math.max(0, Math.min(100, parseInt(raw, 10)));
+            if (isNaN(pct)) return;
+            node.hpSeed[$(this).attr("data-side")][parseInt($(this).attr("data-slot"), 10) || 0] = pct;
         });
 
         node.skipped = {you: [false, false], them: [false, false]};

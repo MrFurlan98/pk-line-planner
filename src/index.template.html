@@ -1492,6 +1492,8 @@
         <script type="text/javascript" src="./js/box-controls.js?"></script>
         <script type="text/javascript" src="./js/map-controls.js?"></script>
         <script type="text/javascript" src="./js/planner-model.js?"></script>
+        <!-- After planner-model.js: it builds calc objects out of that file's state. -->
+        <script type="text/javascript" src="./js/planner-calc.js?"></script>
         <script type="text/javascript" src="./js/planner-controls.js?"></script>
     </div>
     
@@ -1561,6 +1563,7 @@
                         <button id="planner-add-node" class="btn planner-btn">Add turn</button>
                         <button id="planner-toggle-moves" class="btn planner-btn" title="Expand or collapse the move pickers on every turn">All moves</button>
                         <button id="planner-toggle-parties" class="btn planner-btn" title="Show or hide the teams and box, to give the canvas more room">Teams</button>
+                        <button id="planner-toggle-blind" class="btn planner-btn" title="Blind mode: hide damage, health and speed, and work the fight out yourself. Moves go back to showing base power.">Blind</button>
                     </div>
                     <div class="planner-ai-flags"></div>
                     <div class="planner-party-row">

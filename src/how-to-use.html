@@ -532,6 +532,7 @@
             <button class="btn planner-btn">Add turn</button>
             <button class="btn planner-btn">All moves</button>
             <button class="btn planner-btn" id="planner-toggle-parties">Teams</button>
+            <button class="btn planner-btn active">Blind</button>
         </div>
     </div>
 
@@ -539,6 +540,18 @@
         <li><b>Add turn</b> drops an empty turn onto the canvas. New turns are staggered so they don't land on top of each other.</li>
         <li><b>All moves</b> expands or collapses the move lists on <em>every</em> turn at once. Collapsing them is what keeps a long line readable.</li>
         <li><b>Teams</b> folds the party strips and the Box away to give the canvas more room. The choice is remembered.</li>
+        <li>
+            <b>Blind</b> puts the numbers away: base power back on the moves, no health bars, no
+            speed markers, and nothing struck through for being outsped. Working the fight out
+            yourself is the part of a Nuzlocke that's actually the game, so the damage is there when
+            you want it and gone when you don't.
+            <br><br>
+            It switches the calculation <em>off</em> rather than hiding it, which matters &mdash;
+            otherwise a move struck through would tell you it was a guaranteed KO just as plainly as
+            the number would have. Everything that comes from the rules stays: hazards, screens,
+            weather, status, trapping, Perish Song, and Fake Out both flinching and failing. The
+            setting is remembered, and it's on until you turn it off.
+        </li>
     </ul>
 
     <h3>AI flags</h3>
@@ -670,6 +683,14 @@
                     <span class="planner-slot" data-side="you" data-slot="0">
                         <img class="planner-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/makuhita.png" alt="">
                         <span class="planner-slot-name">Bruiser</span>
+                        <span class="planner-hp" title="41-47 of 63 HP.">
+                            <span class="planner-hp-bar">
+                                <span class="planner-hp-min good" style="width: 65%"></span>
+                                <span class="planner-hp-band good" style="width: 10%"></span>
+                            </span>
+                            <span class="planner-hp-text good">65–75%</span>
+                        </span>
+                        <span class="planner-speed slow" title="Speed 21 against 28.">&#9660; SPD</span>
                         <span class="planner-statuses">
                             <span class="planner-status brn" title="Burned, 2 turns elapsed">BRN 2</span>
                         </span>
@@ -686,6 +707,14 @@
                     <span class="planner-slot foe" data-side="them" data-slot="0">
                         <img class="planner-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/cranidos.png" alt="">
                         <span class="planner-slot-name">Cranidos <em>Lv.16</em></span>
+                        <span class="planner-hp" title="4-11 of 42 HP.">
+                            <span class="planner-hp-bar">
+                                <span class="planner-hp-min bad" style="width: 10%"></span>
+                                <span class="planner-hp-band bad" style="width: 16%"></span>
+                            </span>
+                            <span class="planner-hp-text bad">10–26%</span>
+                        </span>
+                        <span class="planner-speed fast" title="Speed 28 against 21.">&#9650; SPD</span>
                         <span class="planner-boosts">
                             <span class="planner-boost up">+2 Spe</span>
                         </span>
@@ -701,20 +730,20 @@
                     <div class="planner-move-side you">
                         <div class="planner-move-column" data-side="you" data-slot="0">
                             <span class="planner-move-column-title">Bruiser</span>
-                            <span class="planner-move you selected" title="Vital Throw — Physical, 70 BP, —% acc">
+                            <span class="planner-move you selected" title="Lvl 20 22 Atk Makuhita Vital Throw vs. Lvl 16 30 HP / 30 Def Cranidos: 44-52 (104.7 - 123.8%) -- guaranteed OHKO&#10;&#10;Vital Throw — Physical, 70 BP, —% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Fighting.png" alt="">
                                 <span class="planner-move-name">Vital Throw</span>
-                                <span class="planner-move-bp">70</span>
+                                <span class="planner-move-dmg kills">KO</span>
                             </span>
-                            <span class="planner-move you" title="Brick Break — Physical, 75 BP, 100% acc">
+                            <span class="planner-move you" title="Lvl 20 22 Atk Makuhita Brick Break vs. Lvl 16 30 HP / 30 Def Cranidos: 40-50 (95.2 - 119%) -- 93.8% chance to OHKO&#10;&#10;Brick Break — Physical, 75 BP, 100% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Fighting.png" alt="">
                                 <span class="planner-move-name">Brick Break</span>
-                                <span class="planner-move-bp">75</span>
+                                <span class="planner-move-dmg maykill">96–119</span>
                             </span>
-                            <span class="planner-move you" title="Fake Out — Physical, 40 BP, 100% acc">
+                            <span class="planner-move you" title="Lvl 20 22 Atk Silk Scarf Makuhita Fake Out vs. Lvl 16 30 HP / 30 Def Cranidos: 4-5 (9.5 - 11.9%) -- possible 8HKO&#10;&#10;Fake Out — Physical, 40 BP, 100% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Normal.png" alt="">
                                 <span class="planner-move-name">Fake Out</span>
-                                <span class="planner-move-bp">40</span>
+                                <span class="planner-move-dmg">10–13</span>
                             </span>
                             <span class="planner-move you" title="Bulk Up — status, 0 BP, —% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Fighting.png" alt="">
@@ -727,20 +756,20 @@
                     <div class="planner-move-side them">
                         <div class="planner-move-column" data-side="them" data-slot="0">
                             <span class="planner-move-column-title">Cranidos</span>
-                            <span class="planner-move them selected" title="Head Smash — Physical, 150 BP, 80% acc">
+                            <span class="planner-move them selected" title="Lvl 16 30 Atk Cranidos Head Smash vs. Lvl 20 21 HP / 24 Def Makuhita: 39-46 (61.9 - 73%) -- guaranteed 2HKO after sandstorm damage&#10;&#10;Head Smash — Physical, 150 BP, 80% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Rock.png" alt="">
                                 <span class="planner-move-name">Head Smash</span>
-                                <span class="planner-move-bp">150</span>
+                                <span class="planner-move-dmg">62–73</span>
                             </span>
-                            <span class="planner-move them" title="Zen Headbutt — Physical, 80 BP, 90% acc">
+                            <span class="planner-move them" title="Lvl 16 30 Atk Cranidos Zen Headbutt vs. Lvl 20 21 HP / 24 Def Makuhita: 56-68 (88.8 - 107.9%) -- 37.5% chance to OHKO (75% chance to OHKO after sandstorm damage)&#10;&#10;Zen Headbutt — Physical, 80 BP, 90% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Psychic.png" alt="">
                                 <span class="planner-move-name">Zen Headbutt</span>
-                                <span class="planner-move-bp">80</span>
+                                <span class="planner-move-dmg maykill">89–108</span>
                             </span>
-                            <span class="planner-move them" title="Crunch — Physical, 80 BP, 100% acc">
+                            <span class="planner-move them" title="Lvl 16 30 Atk Cranidos Crunch vs. Lvl 20 21 HP / 24 Def Makuhita: 17-20 (26.9 - 31.7%) -- 69.5% chance to 3HKO after sandstorm damage&#10;&#10;Crunch — Physical, 80 BP, 100% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Dark.png" alt="">
                                 <span class="planner-move-name">Crunch</span>
-                                <span class="planner-move-bp">80</span>
+                                <span class="planner-move-dmg">27–32</span>
                             </span>
                             <span class="planner-move them" title="Rock Polish — status, 0 BP, —% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Rock.png" alt="">
@@ -801,6 +830,94 @@
                     </span>
                 </li>
                 <li>
+                    <span class="doc-part-demo">
+                        <span class="planner-hp" title="41-47 of 63 HP.">
+                            <span class="planner-hp-bar">
+                                <span class="planner-hp-min good" style="width: 65%"></span>
+                                <span class="planner-hp-band good" style="width: 10%"></span>
+                            </span>
+                            <span class="planner-hp-text good">65–75%</span>
+                        </span>
+                    </span>
+                    <span class="doc-part-text">
+                        <b>Health</b>
+                        What it has left, worked down from full by everything the plan does to it
+                        &mdash; moves, weather, poison, burn, Leech Seed, and whatever its item
+                        gives back.
+                        <br><br>
+                        It's a <em>range</em>, because a damage roll is 85&ndash;100%: the solid part
+                        of the bar is what it holds even on the worst run of rolls, and the pale part
+                        is health it only has if the rolls went its way. Reading the solid edge alone
+                        is reading the plan pessimistically, which in a Nuzlocke is the right way to
+                        read it. The band widens with every hit &mdash; and narrows again at every
+                        branch, because a branch says which way the roll went.
+                        <br><br>
+                        Know better? Put the real number in <b>Health</b> in the turn editor and the
+                        range collapses to it. That's also how you start a line mid-fight.
+                        <br><br>
+                        End-of-turn effects resolve in this game's own order, and the order can decide
+                        a fight: <em>Wish &rarr; weather &rarr; Ingrain and Aqua Ring &rarr; Leftovers
+                        &rarr; Leech Seed &rarr; poison and burn &rarr; Future Sight</em>. A Pokémon
+                        that faints partway down that list never reaches the rest of it &mdash; so a
+                        sandstorm can finish something its Leftovers would have saved, and a Wish
+                        landing first can save something the sandstorm would have finished.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo">
+                        <span class="planner-speed fast" title="Speed 84 against 28.">&#9650; SPD</span>
+                        <span class="planner-speed slow" title="Speed 28 against 84.">&#9660; SPD</span>
+                        <span class="planner-speed tie" title="A tie is settled at random.">= SPD</span>
+                    </span>
+                    <span class="doc-part-text">
+                        <b>Who moves first</b>
+                        Priority bracket first, then speed &mdash; after stat stages, paralysis,
+                        Choice Scarf and the weather abilities. It reads <b>PRI</b> instead of
+                        <b>SPD</b> when the bracket is what decided it, which in Kaizo is more often
+                        than you'd expect: this game moved a lot of moves into brackets they aren't in
+                        elsewhere.
+                        <br><br>
+                        <b>= SPD</b> is a genuine tie, settled at random in game. The planner won't
+                        resolve one, and won't let either side deny the other's move.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo">
+                        <span class="planner-move you" style="display:inline-flex"><span class="planner-move-dmg maykill">96–119</span></span>
+                        <span class="planner-move them" style="display:inline-flex"><span class="planner-move-dmg kills">KO</span></span>
+                    </span>
+                    <span class="doc-part-text">
+                        <b>What the move does</b>
+                        The damage range, as a percentage of the target's <em>maximum</em> health, so
+                        the number means the same thing on turn one and turn ten. Worked out against
+                        everything the turn already knows &mdash; boosts, status, items, abilities,
+                        screens and the weather the fight is standing in. Hover for the full
+                        calculation and the KO chance.
+                        <br><br>
+                        Whether it says <b>KO</b> is measured against what the target has
+                        <em>left</em>, not against full &mdash; so it means "this finishes it here",
+                        and it means so even on the roll that treated the target best. A range
+                        straddling the kill, like the one on the left, is the interesting case: it's
+                        a coin flip on the roll, and exactly what a
+                        <span class="planner-condition good selected">You KO</span> /
+                        <span class="planner-condition bad selected">You don't KO</span> branch is for.
+                        Colour reads from your side: green is your KO, red is theirs.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo">
+                        <span class="planner-aim" style="max-width:110px">&#8594;<button class="planner-aim-btn active">Shroomish</button><button class="planner-aim-btn">Pachirisu</button></span>
+                    </span>
+                    <span class="doc-part-text">
+                        <b>Who it attacks</b> <em>(doubles only)</em>
+                        Both of theirs are in reach of both of yours &mdash; a 2v2 has no far slot
+                        &mdash; so pointing both your attackers at one of their Pokémon is a real
+                        option, and often the whole plan. Click to aim; click the same one again to
+                        go back to whoever happens to be across. A spread move says
+                        <em>&#8594; both</em> instead, since it has no choice to make.
+                    </span>
+                </li>
+                <li>
                     <span class="doc-part-demo"><button class="planner-switch-btn" style="width:auto">&#8646; Switch</button></span>
                     <span class="doc-part-text">
                         <b>Switch</b>
@@ -858,9 +975,30 @@
 
     <p>
         <b>Move didn't go off</b> says that Pokémon never got to act &mdash; you KO'd it first, it
-        flinched, it was fully paralysed, or it missed. Its effects are skipped, so outspeeding a
-        lead genuinely denies the Stealth Rock instead of the planner laying it anyway. The move
-        stays on the card, struck through, so the plan still records what it was going to do.
+        flinched, it was fully paralysed, or it missed. Its effects are skipped and its damage isn't
+        taken off anybody, so outspeeding a lead genuinely denies the Stealth Rock instead of the
+        planner laying it anyway. The move stays on the card and its damage figures stay visible,
+        both struck through, so the plan still records what it was going to do.
+    </p>
+
+    <p>
+        You won't always need it. The planner works out turn order itself &mdash; priority bracket
+        first, then speed &mdash; so if you outspeed something and your move kills it on
+        <em>every</em> roll, it loses its move without you saying so. The same goes for a Fake Out
+        flinch. What it will never do is guess: a kill that depends on the roll leaves the move
+        landing, because that fork belongs on a
+        <span class="planner-condition good selected">You KO</span> /
+        <span class="planner-condition bad selected">You don't KO</span> branch instead. Speed ties,
+        Quick Claw holders are left alone for the same reason.
+    </p>
+
+    <p>
+        <b>Trick Room</b> is handled: while it's up, the slower Pokémon moves first inside each
+        priority bracket &mdash; a Quick Attack still beats a Tackle, since only the speed comparison
+        flips. It shows in the state bar at the top of the card. Two things about it are specific to
+        this game: it lasts <em>until the move is used again</em> rather than running out after five
+        turns, and it doesn't change the order of the turn it's cast on &mdash; this generation fixes
+        turn order before anything moves, so the reversal starts on the turn after.
     </p>
 
     <p>
@@ -1371,8 +1509,9 @@
 
     <ul>
         <li>
-            <b>Damage numbers.</b> No KO chances, rolls, HP bars or speed order yet &mdash; the cards
-            show base power and you judge the rest. This is the next thing being built.
+            <b>Two-turn charging moves</b> &mdash; Solar Beam, Fly, Dig and the like. They're shown
+            and can be planned, but the planner treats them as landing on the turn you pick them
+            rather than spending a turn charging first.
         </li>
         <li>
             <b>Renaming or duplicating a line</b>, and duplicating a turn. A line is named after its

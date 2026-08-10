@@ -12,6 +12,17 @@
     border-radius: 6px;
 }
 
+/*
+ * A toolbar toggle that is currently on. Blind mode uses it: a card with no
+ * numbers should never leave you wondering whether the planner is being coy or
+ * simply hasn't worked them out.
+ */
+.planner-btn.active {
+    background: rgba(90, 140, 220, 0.35);
+    box-shadow: inset 0 0 0 1px #5a8cdc;
+    font-weight: bold;
+}
+
 .planner-btn.small {
     padding: 1px 8px;
     font-size: 10px;
@@ -774,10 +785,13 @@
     opacity: 0.5;
 }
 
+/* The gap and the type icon are a notch tighter than they look like they need to
+   be: the damage range is wider than the base power it replaced, and this is
+   what buys the longest move names back off the ellipsis. */
 .planner-move {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
     padding: 1px 3px;
     border-radius: 3px;
     cursor: pointer;
@@ -802,7 +816,7 @@
 }
 
 .planner-move img {
-    height: 10px;
+    height: 9px;
     flex: 0 0 auto;
 }
 
@@ -817,6 +831,179 @@
     flex: 0 0 auto;
     opacity: 0.6;
     font-variant-numeric: tabular-nums;
+}
+
+/*
+ * The damage roll, in the space base power had. Tabular figures so the ranges
+ * line up down a column, which is what makes two moves comparable at a glance.
+ */
+.planner-move-dmg {
+    flex: 0 0 auto;
+    font-variant-numeric: tabular-nums;
+    font-size: 9px;
+    letter-spacing: -0.02em;
+}
+
+/* The slot never got its move off, so none of this lands. Same treatment as the
+   struck-through move under the sprite. */
+.planner-move-dmg.denied {
+    text-decoration: line-through;
+    opacity: 0.45;
+    font-weight: normal;
+}
+
+/*
+ * A KO is good news or bad news depending on who is throwing it, so lethality is
+ * coloured by side - the same directional reading the branch conditions use.
+ * `kills` is a KO on every roll; `maykill` only on some, which is exactly the
+ * fork a "You KO / You don't KO" branch is for.
+ */
+.planner-move.you .planner-move-dmg.kills {
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+.planner-move.you .planner-move-dmg.maykill {
+    color: #b8860b;
+    font-weight: bold;
+}
+
+.planner-move.them .planner-move-dmg.kills {
+    color: #c0392b;
+    font-weight: bold;
+}
+
+.planner-move.them .planner-move-dmg.maykill {
+    color: #cc6600;
+    font-weight: bold;
+}
+
+/* These are the light-theme values; dark-theme.css loads after this file and
+   overrides all four, since they are too dark to read on its cards. */
+
+/*
+ * Which of the two opponents a slot is attacking. Doubles only - it is the one
+ * place the question exists.
+ */
+.planner-aim {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 8px;
+    opacity: 0.75;
+    margin-top: 1px;
+}
+
+.planner-aim.spread {
+    display: block;
+    font-style: italic;
+    cursor: help;
+}
+
+.planner-aim-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 8px;
+    padding: 0 2px;
+    border: 1px solid rgba(128, 128, 128, 0.45);
+    border-radius: 2px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    /* The shared .btn is built for segmented radio groups and carries a fixed
+       width and a negative margin; neither belongs here. */
+    margin: 0;
+    width: auto;
+}
+
+.planner-aim-btn:hover {
+    background: rgba(128, 128, 128, 0.2);
+}
+
+.planner-aim-btn.active {
+    border-color: #5a8cdc;
+    background: rgba(90, 140, 220, 0.25);
+    font-weight: bold;
+}
+
+.planner-move-column[data-side="them"] .planner-aim-btn.active {
+    border-color: #c0392b;
+    background: rgba(192, 57, 43, 0.22);
+}
+
+/*
+ * Who moves first. Deliberately quiet - it is context for reading the card, not
+ * a decision in its own right - and a tie says so rather than picking a winner.
+ */
+.planner-speed {
+    display: inline-block;
+    font-size: 8px;
+    letter-spacing: 0.02em;
+    padding: 0 2px;
+    border-radius: 2px;
+    cursor: help;
+    opacity: 0.85;
+}
+
+.planner-speed.fast { color: #2f9e44; }
+.planner-speed.slow { color: #c0392b; }
+.planner-speed.tie  { color: #8a8a8a; }
+
+/* A percentage never needs more than three digits, and the form column is wide. */
+.planner-edit-hp {
+    width: 4.5em;
+    text-align: right;
+}
+
+/*
+ * Health, as a two-part bar: solid for what it holds even on the worst rolls,
+ * pale on top for the rest of the band. See renderHp.
+ */
+.planner-hp {
+    display: block;
+    margin: 2px 0 1px;
+    line-height: 1;
+}
+
+.planner-hp-bar {
+    display: flex;
+    height: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+    background: rgba(128, 128, 128, 0.3);
+}
+
+.planner-hp-min,
+.planner-hp-band {
+    display: block;
+    height: 100%;
+}
+
+.planner-hp-min.good { background: #2f9e44; }
+.planner-hp-min.warn { background: #c77800; }
+.planner-hp-min.bad  { background: #c0392b; }
+
+/* The uncertain part reads as the same colour, weakened - it is the same health,
+   only not guaranteed. */
+.planner-hp-band.good { background: rgba(47, 158, 68, 0.4); }
+.planner-hp-band.warn { background: rgba(199, 120, 0, 0.4); }
+.planner-hp-band.bad  { background: rgba(192, 57, 43, 0.4); }
+
+.planner-hp-text {
+    display: block;
+    font-size: 8px;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.75;
+}
+
+.planner-hp.fainted .planner-hp-text {
+    color: #c0392b;
+    font-weight: bold;
+    opacity: 1;
 }
 
 .planner-move-empty {
@@ -1097,6 +1284,13 @@
 .planner-field.screen {
     cursor: help;
     font-variant-numeric: tabular-nums;
+}
+
+/* Reorders the whole fight, so it reads as its own kind of thing. */
+.planner-field.trickroom {
+    background: rgba(150, 90, 200, 0.25);
+    border-color: rgba(150, 90, 200, 0.55);
+    cursor: help;
 }
 
 /* Weather the fight starts in, rather than anything either side did. */
@@ -1461,4 +1655,20 @@
     display: flex;
     justify-content: flex-end;
     gap: 8px;
+}
+
+/* Already on its way to a slot: a Wish to heal, or a Future Sight to land. */
+.planner-field.pending {
+    cursor: help;
+    font-variant-numeric: tabular-nums;
+}
+
+.planner-field.pending.heal {
+    background: rgba(90, 190, 200, 0.25);
+    border-color: rgba(90, 190, 200, 0.55);
+}
+
+.planner-field.pending.hurt {
+    background: rgba(150, 90, 200, 0.25);
+    border-color: rgba(150, 90, 200, 0.55);
 }
