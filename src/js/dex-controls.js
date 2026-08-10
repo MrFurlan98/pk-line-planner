@@ -749,7 +749,7 @@ function loadDexEntry(entryID) {
             $(".dex-info").removeClass(classes).addClass("type").html(html);
             function listTypePokemon() {
                 $(".dex-info .results").empty();
-                var speciesList = Object.values(SPECIES).filter(x => x.types.includes(type.id));
+                var speciesList = Object.values(SPECIES).filter(x => x.types && x.types.includes(type.id));
                 if (!speciesList.length) {
                     $(".dex-info .results").append("There are no Pokémon with this type.");
                 }
