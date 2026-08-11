@@ -5205,7 +5205,7 @@ const LOCATIONS = {
             {'species': 'lapras', 'chance': 15, 'minLevel': 75, 'maxLevel': 85, 'method': 'superrod'},
             {'species': 'dewgong', 'chance': 4, 'minLevel': 25, 'maxLevel': 65, 'method': 'superrod'},
             {'species': 'wailmer', 'chance': 1, 'minLevel': 65, 'maxLevel': 90, 'method': 'superrod'},
-            {'species': 'snover', 'chance': 0, 'minLevel': 0, 'maxLevel': 0, 'method': 'trade', 'trade': {'nickname': 'Haunter', 'ability': 'adaptability', 'nature': 'hasty', 'traded': 'any'}}
+            {'species': 'snover', 'chance': 0, 'minLevel': 0, 'maxLevel': 0, 'method': 'trade', 'trade': {'nickname': 'HAUNTER', 'ability': 'adaptability', 'nature': 'hasty', 'traded': 'any'}}
         ],
         metLocationId: 14,
         search: true,
