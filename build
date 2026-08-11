@@ -7,10 +7,10 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.49";
+const VERSION = "1.7.50";
 const CHANGELOG = `
-- Added Nomu's trade restrictions to the dex.
-- Fixed level-learnsets using suppressed moves.
+- Fixed incorrect Good Rod/Super Rod encounter odds.
+- Fixed incorrect Snowpoint City encounter odds.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, in order for the calculator to navigate to the correct rival sets. Good luck, have fun!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
