@@ -7,9 +7,10 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.51";
+const VERSION = "1.7.52";
 const CHANGELOG = `
 - Added search and filters to the box tab.
+- Added support for syncing with Emi's vs-link-ersatz.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, in order for the calculator to navigate to the correct rival sets. Good luck, have fun!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
