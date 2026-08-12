@@ -1520,6 +1520,17 @@
         <span class="update-text hide" title="Reload the page to get the latest changes!" onclick="location.reload()">(Update available!)</span>
         <div class="settings" aria-label="Settings" role="region"></div>
         <hr />
+        <input class="visually-hidden" type="checkbox" id="box-filters" />
+        <label class="btn box-filters" for="box-filters">Filters</label>
+        <input class="box-searchbar" type="text" placeholder="Search...">
+        <div class="filters hide">
+            <label class="apply-filter">canLearn</label><select class="filter-canLearn"></select>
+            <label class="apply-filter">hasMove</label><select class="filter-hasMove"></select>
+            <label class="apply-filter">hasAbility</label><select class="filter-hasAbility"></select>
+            <label class="apply-filter">hasItem</label><select class="filter-hasItem"></select>
+            <label>(Click on the filter name to apply)</label>
+        </div>
+    <hr />
         <div class="encounter-list"></div>
     </div>
     
