@@ -3,7 +3,8 @@ SETTINGS = {
     starter: "Turtwig",
     dupeTracker: true,
     showAIFlags: true,
-    dupes: []
+    dupes: [],
+    luaScript: "PK_Script"
 };
 
 function saveSettings() {
@@ -25,6 +26,7 @@ $(document).ready(function() {
     $(`#dupeTracker`).prop("checked", SETTINGS.dupeTracker).change();
     $(`#showAIFlags`).prop("checked", SETTINGS.showAIFlags).change();
     $("#dupes").val(SETTINGS.dupes.join("\n")).change().prop("disabled", !SETTINGS.dupeTracker);
+    $(`#${SETTINGS.luaScript.toLowerCase()}:radio[name='luaScript']`).prop("checked", true).change();
 
     $("input:radio[name='gender']").change(function () {
     	SETTINGS.gender = $(this).val();
@@ -70,6 +72,10 @@ $(document).ready(function() {
             }
         }
         SETTINGS.dupes = dupes;
+        saveSettings();
+    });
+    $("input:radio[name='luaScript']").change(function () {
+    	SETTINGS.luaScript = $(this).val();
         saveSettings();
     });
 });
