@@ -9,6 +9,18 @@ const selfKoMoves = ["selfdestruct", "explosion", "memento"];
 const recoilMoves = ["doubleedge", "hyperbeam", "takedown", "thrash", "skyattack", "outrage", "overheat", "volttackle", "blastburn", "eruption", "hydrocannon", "superpower", "waterspout", "bravebird", "flareblitz", "headsmash", "woodhammer", "dracometeor", "roaroftime", "closecombat", "gigaimpact", "wildcharge", "solidplant"];
 const trappingMoves = ["wrap", "submission", "firespin", "meanlook", "twister", "whirlpool", "swallow", "sandtomb", "block"];
 
+function getLevelLearnset(species, level) {
+    var levelLearnset = [];
+    var learnset = SPECIES[species].learnset.filter(x => x.method == "level")
+    for (var i in learnset) {
+        if (learnset[i].level > level) break;
+        if (levelLearnset.includes(learnset[i].move)) continue;
+        levelLearnset.push(learnset[i].move);
+        if (levelLearnset.length > 4) levelLearnset.splice(0, 1);
+    }
+    return levelLearnset;
+}
+
 function loadDexEntry(entryID) {
     var namespace = entryID.split("/")[0];
     var id = entryID.split("/")[1];
@@ -463,14 +475,21 @@ function loadDexEntry(entryID) {
                     ${location.encounters.some(x => x.method == "trade") ? function() {
                         var encounter = location.encounters.find(x => x.method == "trade");
                         var species = SPECIES[encounter.species];
+                        var tradedMon;
+                        if (encounter.trade.traded == "any") tradedMon = "Any Pokémon";
+                        else if (encounter.trade.traded == "nomuTrade") tradedMon = "Almost any Pokémon";
+                        else tradedMon = `<span data-target="species/${encounter.trade.traded}">${SPECIES[encounter.trade.traded].name}</span>`;
                         return `
                         Trade Pokémon:<br />
                         <span class="trade-info">
-                            Any Pokémon -> <span data-target="species/${species.id}">${species.name}</span><br />
+                            ${tradedMon} -> <span data-target="species/${species.id}">${species.name}</span><br />
                             Nickname: ${encounter.trade.nickname}<br />
                             Nature: <span data-target="nature/${encounter.trade.nature}">${NATURES[encounter.trade.nature].name}</span><br />
                             Ability: <span data-target="ability/${encounter.trade.ability}">${ABILITIES[encounter.trade.ability].name}</span><br />
                             Level: Same as traded Pokémon
+                            ${encounter.trade.traded == "nomuTrade" ?
+                                "<br />Notes: Cannot trade <span data-target=\"type/fire\">Fire</span> types, <span data-target=\"type/poison\">Poison</span> types, <span data-target=\"species/voltorb\">Voltorb</span>, or <span data-target=\"species/electrode\">Electrode</span>"
+                                : ""}
                         </span>`
                     }() : ``}
                     </span>
@@ -511,7 +530,7 @@ function loadDexEntry(entryID) {
                         var level;
                         if ([].includes(encounter.method)) level = "-";
                         else level = encounter.method == "trade" ? encounter.trade.nickname : minLevel == maxLevel ? `Lv. ${minLevel}` : `Lv. ${minLevel}-${maxLevel}`;
-                        var learnset = species.learnset.filter(x => x.method == "level" && x.level <= minLevel).slice(-4).map(x => x.move);
+                        var learnset = getLevelLearnset(species.id, minLevel);
                         if (minLevel !== maxLevel) learnset = learnset.concat(species.learnset.filter(x => x.method == "level" && x.level > minLevel && x.level <= maxLevel).map(x => x.move));
                         var danger = [];
                         for (var j in learnset) {
@@ -569,7 +588,7 @@ function loadDexEntry(entryID) {
                             var level = $(this).find(".level").html().split(" ")[1];
                             if (level > 0) {
                                 if (level.includes("-")) level = level.split("-")[1];
-                                var moves = species.learnset.filter(x => x.method == "level" && x.level <= level).slice(-4).map(x => x.move);
+                                var moves = getLevelLearnset(species.id, level);
                                 loadSet(`${species.name} (Blank Set)`, "p2", { level: level, moves: moves });
                                 window.location = `#/calc`;
                             } else {
@@ -733,9 +752,6 @@ function loadDexEntry(entryID) {
             $(".dex-info").removeClass(classes).addClass("type").html(html);
             function listTypePokemon() {
                 $(".dex-info .results").empty();
-                // SPECIES.none is the "-----" placeholder and carries no types
-                // at all, so an unguarded .includes() threw and took the whole
-                // page with it.
                 var speciesList = Object.values(SPECIES).filter(x => x.types && x.types.includes(type.id));
                 if (!speciesList.length) {
                     $(".dex-info .results").append("There are no Pokémon with this type.");

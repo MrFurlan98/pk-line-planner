@@ -272,4 +272,60 @@ $(document).ready(function() {
         addToDex(currentPoke);
         $("#popup-container").hide();
     });
+    
+    $(".filter-canLearn").append(moveOptions).find("option:first").remove();
+    $(".filter-hasMove").append(moveOptions).find("option:first").remove();
+    $(".filter-hasAbility").append(abilityOptions);
+    $(".filter-hasItem").append(itemOptions);
+    
+    $(".box-searchbar").val("").on("input", function() {
+        $(".encounter").show();
+        var terms = $(this).val().split(" ");
+        if ($(this).val()) {
+            $(".new-encounter").hide();
+            $(".encounter:not(.new-encounter)").each(function() {
+                var mon = $(this).attr("data-set-name").substring(0, $(this).attr("data-set-name").indexOf(" ("));
+                var setName = $(this).attr("data-set-name").substring($(this).attr("data-set-name").indexOf("(") + 1, $(this).attr("data-set-name").lastIndexOf(")"));
+                for (var i in terms) {
+                    var term = terms[i];
+                    if (term.split(":").length > 1) {
+                        switch (term.split(":")[0]) {
+                            case "canLearn":
+                                term = term.split(":")[1].toLowerCase();
+                                if (!SPECIES[toID(mon)].learnset.map(x => x.move).includes(term)) $(this).hide();
+                                break;
+                            case "hasMove":
+                                term = term.split(":")[1].toLowerCase();
+                                if (!setdex[mon][setName].moves.map(x => toID(x)).includes(term)) $(this).hide();
+                                break;
+                            case "hasAbility":
+                                term = term.split(":")[1].toLowerCase();
+                                if (!(toID(setdex[mon][setName].ability) == term)) $(this).hide();
+                                break;
+                            case "hasItem":
+                                term = term.split(":")[1].toLowerCase();
+                                if (!(setdex[mon][setName].item && toID(setdex[mon][setName].item) == term)) $(this).hide();
+                                break;
+                        }
+                    } else {
+                        term = term.toLowerCase();
+                        if (!$(this).attr("data-set-name").toLowerCase().includes(term)) $(this).hide();
+                    }
+                }
+            });
+        } else {
+            $(".encounter").show();
+        }
+    });
+
+    $("#box-filters").prop("checked", false).on("change", function() {
+        if ($(this).prop("checked")) $("#box-wrapper .filters").show();
+        else $("#box-wrapper .filters").hide();
+    });
+
+    $(".apply-filter").on("click", function() {
+        var filterType = $(this).text();
+        var filterValue = toID($(this).next().val());
+        $(".box-searchbar").val(($(".box-searchbar").val() + ` ${filterType}:${filterValue}`).trim()).trigger("input");
+    });
 });
