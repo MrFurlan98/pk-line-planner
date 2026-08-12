@@ -1520,6 +1520,35 @@
     font-variant-numeric: tabular-nums;
 }
 
+/*
+ * The count of things worth checking on a turn. Deliberately quiet: it sits with
+ * the other buttons rather than over the card, because it is a note and not an
+ * error, and a plan is allowed to be odd on purpose.
+ */
+.planner-warn-badge {
+    font-size: 10px;
+    padding: 1px 6px;
+    margin: 0;
+    width: auto;
+    border: 1px solid rgba(208, 138, 32, 0.65);
+    border-radius: 5px;
+    background: rgba(208, 138, 32, 0.2);
+    color: inherit;
+    cursor: help;
+    font-variant-numeric: tabular-nums;
+}
+
+.planner-warn-badge:hover {
+    background: rgba(208, 138, 32, 0.35);
+}
+
+/* A branch the numbers say cannot happen. */
+.planner-edge-label.impossible {
+    font-weight: bold;
+    text-decoration: underline dotted;
+    text-underline-offset: 2px;
+}
+
 .planner-node-warn {
     display: inline-block;
     width: 13px;

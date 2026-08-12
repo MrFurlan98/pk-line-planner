@@ -896,7 +896,10 @@
                         <br><br>
                         Whether it says <b>KO</b> is measured against what the target has
                         <em>left</em>, not against full &mdash; so it means "this finishes it here",
-                        and it means so even on the roll that treated the target best. A range
+                        and it means so even on the roll that treated the target best. For a move
+                        that hits 2&ndash;5 times it also means the <em>fewest</em> hits would do it,
+                        which is why those moves show such a wide range: two uncertainties stacked,
+                        the roll and the hit count. A range
                         straddling the kill, like the one on the left, is the interesting case: it's
                         a coin flip on the roll, and exactly what a
                         <span class="planner-condition good selected">You KO</span> /
@@ -923,6 +926,23 @@
                         <b>Switch</b>
                         A real action for either side, and it costs that slot its turn &mdash; whoever
                         comes in takes the hit. Switches resolve before moves.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo"><button class="planner-warn-badge">&#9888; 2</button></span>
+                    <span class="doc-part-text">
+                        <b>Things worth checking</b>
+                        Appears only when a turn has something odd about it, and hovering lists what.
+                        A Pokémon that's dead in the Box or already fainted on this branch, a move it
+                        no longer knows, a move that will simply fail &mdash; Leech Seed into a Grass
+                        type, or a Fake Out that isn't its user's first turn &mdash; a slot with no
+                        move chosen, or a branch the numbers say can't happen.
+                        <br><br>
+                        Everything it flags is a <em>certainty</em>, never a hunch. <b>You KO</b> is
+                        only questioned when nothing on that side kills on any roll; anything in
+                        between is exactly what a branch is for and passes without comment. Nothing
+                        is corrected for you, and nothing is blocked &mdash; a plan is allowed to be
+                        odd on purpose.
                     </span>
                 </li>
                 <li>

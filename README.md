@@ -62,6 +62,9 @@ worked out in advance rather than found on the fly.
   - Only one non-volatile status at a time — which is what makes deliberately
     statusing your own Pokémon (Rest, Magic Guard + poison) a real tactic for
     locking the AI out of something worse.
+- **Warnings for what can't work** — a Pokémon that's dead, a move it no longer
+  knows, a Leech Seed into a Grass type, a branch the numbers say can't happen.
+  Only certainties are flagged, and nothing is corrected for you.
 - **Blind mode**, a toolbar toggle that puts the numbers away — base power back
   on the moves, no health bars, no speed. Working the fight out yourself is the
   part of a Nuzlocke that's actually the game, so the damage is there when you

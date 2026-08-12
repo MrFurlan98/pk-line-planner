@@ -214,7 +214,7 @@ function calcFieldFor(line, state, attacker) {
  * it exists, since Platinum Kaizo deletes a good number of moves outright and a
  * stale plan can still name one.
  */
-function calcMoveFor(moveName, holder, isCrit) {
+function calcMoveFor(moveName, holder, isCrit, hits) {
     var move = findMove(moveName);
     if (!move || move.category === "status") return null;
 
@@ -222,11 +222,38 @@ function calcMoveFor(moveName, holder, isCrit) {
     var table = calc.MOVES[calcGen()];
     if (!table || !table[name]) return null;
 
-    return new calc.Move(calcGen(), name, {
+    var options = {
         ability: holder ? holder.ability : "",
         item: holder ? holder.item : "",
         isCrit: !!isCrit
-    });
+    };
+    if (hits) options.hits = hits;
+    return new calc.Move(calcGen(), name, options);
+}
+
+/*
+ * How many times a move can land.
+ *
+ * The 2-5 hit moves are the reason this exists. calc settles them at three - the
+ * average - and a KO worked out from three hits is a lie when the move can stop
+ * at two. That is a different kind of uncertainty from the damage roll and it
+ * compounds with it, so both ends have to be taken from the right end.
+ *
+ * The game's own table is preferred over calc's, because the two disagree:
+ * Triple Kick is 1-3 here and a flat 3 in calc.
+ */
+function hitSpanFor(moveName) {
+    var move = findMove(moveName);
+    var hits = move && move.hits;
+    if (Array.isArray(hits) && hits.length === 2) return {min: hits[0], max: hits[1]};
+    if (hits > 1) return {min: hits, max: hits};
+
+    var name = move && (move.calcName || move.name);
+    var data = name && calc.MOVES[calcGen()] && calc.MOVES[calcGen()][name];
+    var multi = data && data.multihit;
+    if (Array.isArray(multi) && multi.length === 2) return {min: multi[0], max: multi[1]};
+    if (multi > 1) return {min: multi, max: multi};
+    return {min: 1, max: 1};
 }
 
 /*
@@ -244,7 +271,9 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
     var defender = calcPokemonFor(line, node, state, other, targetSlot);
     if (!defender) return null;
 
-    var move = calcMoveFor(moveName, activeHolder(line, node, side, slot), isCrit);
+    var holder = activeHolder(line, node, side, slot);
+    var span = hitSpanFor(moveName);
+    var move = calcMoveFor(moveName, holder, isCrit, span.min > 1 ? span.min : 0);
     if (!move) return null;
 
     /*
@@ -253,9 +282,27 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
      * it, so it simply goes back to showing base power.
      */
     try {
-        var result = calc.calculate(calcGen(), attacker, defender, move, calcFieldFor(line, state, side));
+        var field = calcFieldFor(line, state, side);
+        var result = calc.calculate(calcGen(), attacker, defender, move, field);
         var range = result.range();
         if (!range || !range[1]) return null;
+
+        /*
+         * A move that can land a varying number of times is really two questions
+         * at once, and they have to be answered separately: the fewest hits on
+         * the worst roll, and the most hits on the best. Averaging them - which
+         * is what calc does on its own, settling 2-5 at three - produces a KO
+         * that isn't one whenever the move can stop short.
+         */
+        var top = result;
+        if (span.max > span.min) {
+            var wide = calcMoveFor(moveName, holder, isCrit, span.max);
+            if (wide) {
+                top = calc.calculate(calcGen(), attacker, defender, wide, field);
+                var topRange = top.range();
+                if (topRange && topRange[1] > range[1]) range = [range[0], topRange[1]];
+            }
+        }
 
         var full = defender.maxHP();
         /*
@@ -271,7 +318,10 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
          * hit, which then compounds down the line. The move carries its own
          * fraction, and the damage is already exact, so the honest sum is short.
          */
-        var recovery = result.recovery().recovery || [0, 0];
+        // Both ends again: least drain at the fewest hits, most at the most.
+        var lowRecovery = result.recovery().recovery || [0, 0];
+        var highRecovery = top.recovery().recovery || [0, 0];
+        var recovery = [lowRecovery[0] || 0, highRecovery[1] || 0];
         var recoil = [0, 0];
         if (move.recoil && !attacker.hasAbility("Rock Head") && !attacker.hasAbility("Magic Guard")) {
             var left = Math.max(0, defender.curHP());
@@ -302,16 +352,23 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
             full: full,
             loPct: range[0] * 100 / full,
             hiPct: range[1] * 100 / full,
-            // Dead even on the roll that treated it best, versus dead on some.
+            /*
+             * Dead even on the roll that treated it best, versus dead on some.
+             * For a 2-5 hit move `kills` is therefore a claim about *two* hits
+             * on the worst roll, which is the only version of it that is safe.
+             */
             kills: range[0] >= left.max,
             mayKill: range[1] >= left.min,
             // What the move does to its own user: [min, max] in real HP.
             recoil: recoil,
-            recovery: [recovery[0] || 0, recovery[1] || 0],
+            recovery: recovery,
+            // {min, max} times it lands; equal for everything that isn't 2-5.
+            hits: span,
             /*
              * The calculator's own full sentence, which already ends with the KO
              * chance - so that isn't pulled out separately until something needs
-             * it structured rather than as prose.
+             * it structured rather than as prose. Taken from the fewest-hits
+             * calculation, so nothing in it can overstate.
              */
             desc: result.fullDesc("%", false)
         };
@@ -402,9 +459,9 @@ function foldDamage(line, node, state, side, slot, targets, moveName, crits) {
  * cache key short of the whole turn would eventually serve a stale number, and a
  * stale number here is worse than a slow one.
  */
-function plannerDamage(line, node, state, side, slot, moveName) {
+function plannerDamage(line, node, state, side, slot, moveName, isCrit) {
     if (!moveName || typeof calc === "undefined" || blindMode()) return null;
-    return damageFor(line, node, state, side, slot, moveName);
+    return damageFor(line, node, state, side, slot, moveName, isCrit);
 }
 
 /*

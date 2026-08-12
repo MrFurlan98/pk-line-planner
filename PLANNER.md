@@ -166,6 +166,18 @@ graph, so editing one turn updates everything after it.
   `calc.calculate(4, ...)` returns Kaizo numbers, and nothing here re-implements
   them. `GAME.gen` is read rather than the global `gen`, which follows the
   calculator tab's dropdown and must not change what the planner says.
+- **A move that lands a varying number of times is two uncertainties, not one.**
+  The 2–5 hit moves — Bullet Seed, Rock Blast, Fury Swipes and five others — are
+  settled by calc at three hits, the average, and a KO worked out from three is
+  a lie the moment the move stops at two. Each end of the band is taken from the
+  matching end of the hit span instead: fewest hits on the worst roll, most hits
+  on the best. A `KO` therefore means *two* hits would already do it.
+  - Against a Bonsly with 26 HP left, calc alone reads 30–36 and calls it a KO.
+    Two hits is 20–24 and doesn't. The planner now says 45–136 and no KO.
+  - Hit counts come from **this game's** table rather than calc's, because the
+    two disagree: Triple Kick is 1–3 here and a flat 3 in calc.
+  - Fixed multi-hit moves (Double Kick, Bonemerang, Twineedle) carry no extra
+    uncertainty and are unaffected.
 - **A guaranteed KO says `KO` rather than a number.** Past the kill the range
   informs nothing — Kaizo overkill runs to "222–265" — and it is the one case
   wide enough to push a long move name into an ellipsis. The range that *does*
@@ -465,11 +477,35 @@ Two things worth knowing before editing it:
 
 ---
 
-## Next: validation warnings
+### Validation warnings
 
-Damage makes several of these real for the first time — a branch whose condition
-the arithmetic says is impossible, a turn where a fainted Pokémon is still given
-a move, a plan that keeps attacking something already dead.
+A count on the card, with the list on hover, and nothing louder. Absent entirely
+when a turn is fine, so a clean line stays clean.
+
+**Every check is a certainty, never a suspicion.** A warning that fires on a
+maybe is worse than none at all — it trains you to ignore the ones that matter,
+and half of what this planner tracks is deliberately uncertain. So nothing fires
+on a roll going one way or the other, only on what can't be true however the
+rolls fall. Nothing is ever corrected either: these are notes on your plan, which
+is the same line the roadmap draws around generated lines.
+
+- A Pokémon **dead in the Box**, or one **already fainted** on this branch still
+  being given a move, or a move aimed at something that has already fainted.
+- A move the Pokémon **no longer knows**, usually because the Box was edited.
+  Compared by move *identity*, not by name: a set carries the game's own
+  spelling and the dex carries its display name, so `Self-Destruct` and
+  `Selfdestruct` are the same move. Matching on text reported every one of those
+  as forgotten — a false positive found by running it against the sample line.
+- A move that **fails outright**: Leech Seed into a Grass type, or a Fake Out
+  that isn't its user's first turn. Both were already refused by the model and
+  said nothing about it.
+- An **occupied slot with no move chosen**, and the same Pokémon in both slots.
+- A **branch the arithmetic rules out** — *You KO* where nothing on that side
+  kills on any roll, or *You don't KO* where it kills on every one. Anything
+  between the two is exactly what a branch is for, so it passes silently. Marked
+  on the arrow as well as on the card, since the arrow is where you'd fix it.
+- **Blind mode silences the damage-derived ones** and keeps the rest, so the
+  warnings can't smuggle back the numbers the mode is there to hide.
 
 ### Worth knowing about Roost
 
@@ -489,7 +525,7 @@ costs is the Flying resistances and the Ground immunity.
 
 ---
 
-## Then: history across attempts
+## Next: history across attempts
 
 Resetting is the normal loop in a Nuzlocke, not an edge case. A planner that
 forgets everything on reset throws away exactly the knowledge that makes the
@@ -531,9 +567,9 @@ Each of these wants a line in the "How to use" page once it lands.
 
 - **Type effectiveness per move** on the card. The type chart is already loaded,
   so this is nearly free, and it isn't damage calc — just the matchup.
-- **Validation warnings**: no move set on a turn, the Pokémon is dead, the move
-  is no longer in its set.
-- **Level-cap awareness** — flag a Pokémon over the cap for that badge.
+- **Level-cap awareness** — flag a Pokémon over the cap for that badge. This one
+  is a validation warning too, and only left out because it needs badge data the
+  planner doesn't read yet.
 - **Canvas zoom** and keyboard shortcuts (add turn, delete, Esc to close).
 
 ---

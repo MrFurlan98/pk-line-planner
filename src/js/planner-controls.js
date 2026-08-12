@@ -372,6 +372,7 @@ function renderNode(node, line, visible) {
             ${renderMovePickers(line, node, state, slots, format, denied)}
             ${node.note ? `<div class="planner-node-note">${node.note}</div>` : ``}
             <div class="planner-node-buttons">
+                ${renderWarnings(line, node, state)}
                 ${renderFoldControl(node, line, visible)}
                 <button class="planner-edit-node btn planner-btn small">Edit</button>
                 <button class="planner-remove-node btn planner-btn small">Remove</button>
@@ -468,6 +469,33 @@ function renderSlots(line, node, state, side, slots, format) {
         </span>`;
     }
     return out;
+}
+
+/*
+ * What is wrong with this turn, if anything.
+ *
+ * A count and a list on hover rather than anything louder: these are notes on
+ * your plan, and every one of them is something you may have meant. Nothing is
+ * corrected and nothing is blocked - the card simply says what it noticed.
+ *
+ * Absent entirely when the turn is fine, so a clean line stays clean.
+ */
+function renderWarnings(line, node, state) {
+    var warnings = validateNode(line, node, state);
+
+    // A branch out of this turn that the arithmetic rules out belongs here too:
+    // it is this turn's moves that make the condition impossible.
+    childEdges(line, node.id).forEach(function(edge) {
+        var problem = validateEdge(line, edge);
+        if (problem) warnings.push({text: problem});
+    });
+
+    if (!warnings.length) return "";
+    var list = warnings.map(function(w) { return "• " + w.text; }).join("\n");
+    return `<button class="planner-warn-badge" title="${escapeAttr(
+        (warnings.length === 1 ? "One thing worth checking on this turn:" : warnings.length + " things worth checking on this turn:")
+        + "\n\n" + list)
+    }">&#9888; ${warnings.length}</button>`;
 }
 
 /*
@@ -641,6 +669,14 @@ function renderMoveList(line, node, state, moves, selected, side, slot, denied) 
          * and already ends with the KO chance, so that isn't repeated here.
          */
         if (damage) tooltip = `${damage.desc}\n\n${tooltip}`;
+        /*
+         * A move that lands a varying number of times has two uncertainties
+         * stacked on each other, which is why its range looks so wide. Worth
+         * saying, along with the fact that a KO here means the fewest hits.
+         */
+        if (damage && damage.hits && damage.hits.max > damage.hits.min) {
+            tooltip = `Hits ${damage.hits.min}-${damage.hits.max} times, so the range covers ${damage.hits.min} hits on the worst roll up to ${damage.hits.max} on the best. A KO is only claimed if ${damage.hits.min} hits would do it.\n\n${tooltip}`;
+        }
         if (saidSo) {
             tooltip = `This move never goes off on this turn, so none of it lands — the turn is marked "didn't act".\n\n${tooltip}`;
         } else if (WHY[reason]) {
@@ -1065,13 +1101,22 @@ function renderEdges(visible) {
             "marker-end": `url(#planner-arrow-${condition.color})`
         }));
 
+        /*
+         * A branch the arithmetic rules out is marked on the arrow itself, since
+         * that is the thing that would have to change. The turn's own badge says
+         * the same, but the label is where you would go to fix it.
+         */
+        var impossible = validateEdge(line, edge);
         var label = svgEl("text", {
             x: route.labelX,
             y: route.labelY,
-            class: `planner-edge-label ${condition.color}`,
+            class: `planner-edge-label ${condition.color}${impossible ? " impossible" : ""}`,
             "data-edge": edge.id
-        }, edge.label || condition.name);
-        label.appendChild(svgEl("title", {}, "Click to change or delete this branch"));
+        }, (impossible ? "⚠ " : "") + (edge.label || condition.name));
+        label.appendChild(svgEl("title", {},
+            impossible
+                ? impossible + "\n\nClick to change or delete this branch."
+                : "Click to change or delete this branch"));
         label.addEventListener("click", editEdgeFromLabel);
         svg.appendChild(label);
     }

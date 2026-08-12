@@ -865,6 +865,149 @@ function applyResiduals(line, node, state) {
     drainPending("damage");
 }
 
+/* ------------------------------------------------------------- validation */
+
+/*
+ * Things wrong with a turn, in the terms a plan cares about.
+ *
+ * Every one of these is a *certainty* rather than a suspicion. A warning that
+ * fires on a maybe is worse than none at all: it trains you to ignore the ones
+ * that matter, and half of what this planner tracks is deliberately uncertain.
+ * So nothing here fires on a damage roll going one way or the other, only on
+ * something that cannot be true however the rolls fall.
+ *
+ * Nothing is ever corrected. These are notes on your plan, not a plan of their
+ * own - the line the roadmap draws around auto-generated lines applies here too.
+ */
+function validateNode(line, node, state) {
+    var warnings = [];
+    var slots = slotCount(line);
+    var seen = {};
+
+    ["you", "them"].forEach(function(side) {
+        var other = side === "you" ? "them" : "you";
+        for (var slot = 0; slot < slots; slot++) {
+            var ref = monAt(node, side, slot);
+            if (!ref) continue;
+
+            function warn(text) { warnings.push({side: side, slot: slot, text: text}); }
+            var who = speciesAt(line, node, side, slot);
+            var name = (who && who.name) || ref;
+
+            // The same Pokemon cannot be in both slots at once.
+            if (seen[side + ref]) warn(`${name} is on this turn twice - it can only be in one slot`);
+            seen[side + ref] = true;
+
+            // Something you have already lost for good.
+            if (side === "you" && !isPartnerSlot(line, side, slot)) {
+                var entry = boxEntry(ref);
+                if (entry && entry.dead) warn(`${name} is dead in the Box, so it can't be in this fight`);
+            }
+
+            var mon = monState(state, side, ref);
+            var move = moveAt(node, side, slot);
+            var switching = switchTargetAt(node, side, slot);
+
+            /*
+             * Dead coming into the turn. Only ever true once HP is being
+             * carried, so this stays quiet in blind mode of its own accord.
+             */
+            if (isFainted(mon)) {
+                if (move) warn(`${name} has already fainted, so it can't use ${move}`);
+                continue;
+            }
+
+            if (!move && !switching) {
+                warn(`${name} has no move chosen`);
+                continue;
+            }
+            if (!move) continue;
+
+            /*
+             * A move it no longer has - usually because the Box was edited.
+             *
+             * Compared by identity rather than by string, because the same move
+             * has two spellings here: a set carries the game's own name while the
+             * dex carries its display name, and "Self-Destruct" and "Selfdestruct"
+             * are the same move. Matching on text would report every one of those
+             * as forgotten, which is exactly the false positive this whole block
+             * is supposed to avoid.
+             */
+            var entrySet = slotSet(line, node, side, slot);
+            var known = entrySet && entrySet.set && entrySet.set.moves;
+            var chosen = findMove(move);
+            if (known && chosen) {
+                var hasIt = known.some(function(m) {
+                    var known_ = findMove(m);
+                    return known_ && known_.id === chosen.id;
+                });
+                if (!hasIt) warn(`${name} doesn't know ${chosen.name} any more`);
+            }
+
+            // Attacking something that is already gone.
+            var aimed = targetsOf(node, side, slot, move, aimAt(node, side, slot));
+            var allDead = aimed.length && aimed.every(function(t) {
+                var target = monAt(node, other, t);
+                return target && isFainted(monState(state, other, target));
+            });
+            if (allDead) warn(`${name} is attacking something that has already fainted`);
+        }
+    });
+    return warnings;
+}
+
+/*
+ * Whether a branch says something the arithmetic rules out.
+ *
+ * Only the impossible is flagged, never the unlikely: "You KO" is wrong only if
+ * the move cannot kill on *any* roll, and "You don't KO" only if it kills on
+ * every one. Anything in between is exactly what a branch is for.
+ */
+const OUTCOME_NEEDS_KILL = {youko: "you", youcritko: "you", theyko: "them", theycritko: "them"};
+const OUTCOME_NEEDS_SURVIVAL = {younoko: "you", yousurvive: "them"};
+
+function validateEdge(line, edge) {
+    if (typeof plannerDamage !== "function") return null;
+    var node = line.nodes[edge.from];
+    if (!node) return null;
+
+    var condition = conditionFor(edge);
+    var killer = OUTCOME_NEEDS_KILL[condition.id] || OUTCOME_NEEDS_SURVIVAL[condition.id];
+    if (!killer) return null;
+    var needsKill = !!OUTCOME_NEEDS_KILL[condition.id];
+
+    var state = computeNodeState(line, edge.from);
+    var slots = slotCount(line);
+    /*
+     * In a double any of the attacking side's slots could be the one the branch
+     * is about, so it is only a contradiction when *none* of them can manage it.
+     */
+    var anyPossible = false;
+    var anyChecked = false;
+
+    for (var slot = 0; slot < slots; slot++) {
+        var move = moveAt(node, killer, slot);
+        if (!move || !actedAt(node, killer, slot)) continue;
+        if (switchTargetAt(node, killer, slot)) continue;
+        var damage = plannerDamage(line, node, state, killer, slot, move,
+            condition.id === "youcritko" || condition.id === "theycritko" ||
+            condition.id === "youcrit" || condition.id === "theycrit");
+        if (!damage) continue;
+        anyChecked = true;
+        if (needsKill ? damage.mayKill : !damage.kills) anyPossible = true;
+    }
+
+    /*
+     * Worded around the move that was actually picked, because that is all this
+     * looks at. Something on that side may well have another move that kills;
+     * the branch is only impossible for the one the plan commits to.
+     */
+    if (!anyChecked || anyPossible) return null;
+    return needsKill
+        ? `"${condition.name}" can't happen here: the move selected on that side does not kill on any roll.`
+        : `"${condition.name}" can't happen here: the attack kills on every roll.`;
+}
+
 /*
  * A branch condition is a statement about which way a roll went, so it is also
  * the thing that narrows the HP range back down. That is what stops the band
