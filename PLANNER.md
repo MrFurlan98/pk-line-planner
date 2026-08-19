@@ -7,8 +7,12 @@ Lives in the **Planner** tab. Source: `src/js/planner-model.js` (state and
 persistence), `src/js/planner-calc.js` (damage, the only file that touches
 `@smogon/calc`), `src/js/planner-controls.js` (UI), `src/css/planner.css`,
 `src/js/data/games.js` (per-game adapter), and two generated data files:
-`src/js/data/move_effects.js` and `src/js/data/ability_effects.js` — regenerate
-with `node tools/gen-move-effects.js` / `node tools/gen-ability-effects.js`.
+`src/js/data/move_effects.js`, `src/js/data/ability_effects.js` and
+`src/js/data/item_effects.js` — regenerate with `node tools/gen-move-effects.js`,
+`node tools/gen-ability-effects.js` and `node tools/gen-item-effects.js`. Plus
+`src/js/data/splits.js`, which is the odd one out: it comes from a community
+spreadsheet rather than the game's own data, so `tools/gen-splits.js` fetches
+over the network. See **Setting up a split**.
 
 ---
 
@@ -17,7 +21,18 @@ with `node tools/gen-move-effects.js` / `node tools/gen-ability-effects.js`.
 ### The plan itself
 
 - **Turns as nodes**, dragged into place, joined by labelled arrows. Drop an
-  arrow on empty canvas to start the next turn there.
+  arrow on empty canvas and the next turn arrives as a **copy** of the one it
+  came from — who is out, what they do, who they aim at, and the note. A branch
+  is nearly always a near-copy of its parent, and rebuilding four slots and four
+  moves by hand was the most tedious thing in the tool.
+  - What it leaves behind is everything that *states* something rather than
+    arranging it: the status, stat-stage, volatile and health seeds, and the
+    "didn't act" flags. Those are corrections applied on top of what a turn
+    inherits, so copying them would apply them twice — a carried +2 Attack would
+    quietly become +4. The new turn inherits all of it from its parent anyway.
+  - A slot that **switched** copies as the Pokémon who came in, with the switch
+    dropped, since sending in something already standing there is the one thing
+    a copied turn must not do.
 - **Directional branch conditions** — You KO / They KO you, You miss / They miss,
   crit, crit KO, wake/thaw, sacrifice, they switch, they set up, plus custom
   labels. Several branches can converge on the same turn; ids are per-edge, so
@@ -116,6 +131,8 @@ graph, so editing one turn updates everything after it.
   1/16 rather than where it left off.
 - **Curing berries** are modelled and spent once — Roark's Cranidos holds a Lum
   Berry, so a plan built on poisoning it doesn't work.
+- **Held items that heal or boost go off too**, and can be spent by hand. See
+  below.
 - **Sleep is pinned at both ends and random in between.** A Pokémon cannot wake
   on the turn it falls asleep, and after **4 turns** it is awake regardless —
   both guaranteed, so the planner models the wake rather than making you branch
@@ -186,6 +203,34 @@ graph, so editing one turn updates everything after it.
 - **Colour reads from your side**, like the branch conditions: green is your KO,
   red is theirs. The tooltip carries the calculator's own full sentence, which
   names every modifier it applied.
+- **A move that can't touch its target says `0`**, and one that *heals* it says
+  `+25`. Both used to fall back to base power, which read as an ordinary move
+  nobody had worked out yet — the worst possible reading, since the point of both
+  is "don't pick this".
+  - The zero was a deliberate old choice, and the wrong one: the code returned
+    null "rather than a zero that reads like an immunity", when an immunity is
+    exactly what it is. In this generation a move that connects takes at least one
+    point, so a flat zero from calc *means* immunity — the type chart's (Shadow
+    Ball into a Normal type, Poison into a Steel) or an ability's (Levitate,
+    Flash Fire, Wonder Guard). A dash still means "no number here", which is what
+    a status move shows, so the two no longer collide.
+  - **The absorb abilities are the case worth catching.** `@smogon/calc` returns
+    zero for Volt Absorb, Water Absorb and Dry Skin and stops there, because it
+    treats them as immunities and what happens *instead* is state. So the heal is
+    the planner's half: a quarter of the target's maximum, applied where the hit
+    would have gone in. Motor Drive is the same shape paid out in a stat stage,
+    and it lands too.
+  - Generated into `ability_effects.js` as `whenHitBy`, anchored on the phrase
+    "when hit by" so Dry Skin's *other* clause — an eighth every turn in rain —
+    can't be mistaken for it.
+  - **Nothing comes back off the user.** A move that dealt nothing recoils
+    nothing and drains nothing, and a Life Orb doesn't take its tenth. Verified:
+    an immune Earthquake leaves a Life Orb holder untouched where a Steel move
+    from the same Pokémon costs it 6 HP.
+  - Free consequence: *You KO* into an immunity is now flagged as impossible,
+    because the figure is a real zero rather than a missing number.
+  - Also fixed a live oddity nobody had chased — Aipom's Water Gun on the sample
+    doubles card read `40`, its base power, because the target had Dry Skin.
 ### HP, carried down the line
 
 - **HP is a range, not a number.** A damage roll is 85–100%, so what a Pokémon
@@ -201,6 +246,11 @@ graph, so editing one turn updates everything after it.
   This is what stops the band widening forever — every fork prunes it. A miss is
   deliberately not in the list: `skipped` already means "its move never went
   off", and two mechanisms for one fact would double-count.
+- **A crit changes the health it leaves behind, not the figure on the card.**
+  The card shows what a move does; a crit is something a *branch* says happened,
+  and a turn can fork several ways at once. One figure can't mean the ordinary
+  hit down one arm and a crit down another, so it stays the ordinary hit and the
+  crit shows up where it is unambiguous — in the HP each branch carries away.
 - **A branch that disagrees with the arithmetic still wins.** If nothing's range
   straddles zero, the statement is applied anyway, to one slot only — you are
   recording what happened, not asking to be second-guessed, exactly as with every
@@ -294,6 +344,278 @@ So both halves are code:
 - **A flinch can only take the turn from something strictly slower**, held back
   until the speed group finishes — two Pokémon moving at the same instant can't
   flinch each other out of a move, exactly as with a KO.
+
+### Refusing the turn: Protect, Detect, Endure and Follow Me
+
+The other four moves that had to be code rather than data. None of them is in the
+generated table — "Protects the user from incoming moves" and "Forces all
+single-target moves to target the user" aren't effects `gen-move-effects.js`
+extracts, and none of them is a volatile the planner tracks, because they last one
+turn rather than turns. **63 trainer sets carry Protect, 29 Follow Me, 16 Endure
+and 2 Detect**, and the two fights the notes use for doubles are both on the list:
+Twins Liv & Liz have a Follow Me, and Galactic Luna #1 carries Follow Me *and*
+Protect on the same Pokémon.
+
+All four are **+3 priority** here, which is the whole reason they work — and the
+turn order already knows that, so none of it is special-cased.
+
+- **Protect and Detect stop the move outright**: no damage, no status, no stat
+  drop, no Leech Seed. **Endure is the other shape** — the hit lands in full and
+  only the faint is refused, so it holds on at 1 HP. Kept apart rather than
+  collapsed into one flag, because they change different things.
+- **What Protect stops is read from the move's own flags**, not from a list kept
+  in the planner. The dex carries a `Protect` flag on exactly the moves the game
+  lets it block, so Stealth Rock, Swords Dance, Perish Song and Rain Dance all go
+  straight through without anything having to say so. Verified one by one.
+- **Follow Me redirects every single-target move**, whatever it was aimed at. The
+  dex decides what counts: `target: "normal"` is one adjacent Pokémon, and
+  everything else — a spread move, a self-target, a hazard, Counter's scripted
+  target — has no single victim to move. So an Earthquake still hits both.
+  - It moves the *card's* figures too, not only the health carried away. A move
+    pulled onto a different Pokémon is being calculated against different typing
+    and different defences, and a card quoting the number against the target you
+    picked would be quoting one that never happens. The aim row follows it, marks
+    the drawing slot, and says why the aim isn't deciding this turn.
+- **The first use is guaranteed; a repeat is a coin flip**, because that is the
+  mechanic — each successive Protect halves the chance. **The guard is applied
+  either way and the card warns you.** A repeat is a *fork*, and this tool already
+  has a fork: draw the branch, and on the arm where it failed mark the slot
+  *didn't act*, which makes the attack land. Hedging the health instead would be a
+  second mechanism for a fact `skipped` already states — the same double-count
+  that keeps a miss out of the branch conditions.
+  - Verified end to end: three Protects in a row hold at `54–54` throughout, with
+    the second and third warning; marking the second *didn't act* lands the Head
+    Smash for `38–41` **and resets the streak**, so the third is guaranteed again
+    and drops its warning. An attack in between does the same.
+  - Protect, Detect and Endure share the one streak. Leaving the field resets it,
+    and so does the guard not going off.
+- **This is the one warning that fires on something possible.** Every other one
+  here fires on the impossible, and the roadmap is emphatic about why. It earns
+  the exception by being rare, by being *invisible otherwise* — a blocked move
+  looks identical whether the block was guaranteed or a gamble — and by naming the
+  branch it wants to become rather than just expressing doubt.
+- **A guard only refuses something strictly slower**, held back to the end of the
+  speed group exactly as a flinch is, and the same for a Follow Me. Two Pokémon
+  moving at the same instant move in an order nothing here can know. Verified on
+  the real thing: with Pachirisu at 50, Aipom at 42 and Croagunk at 28 and all
+  three at +3, the Follow Me lands first and pulls Aipom's Fake Out off the
+  Protecting Croagunk entirely.
+- **They stay on in blind mode.** Both are rules rather than answers — they belong
+  with the hazards and the weather, not with the numbers — and the fold applies
+  them there either way, so the card is told about them too. Nothing
+  damage-derived leaks in with them: no HP is carried in blind mode, so nothing is
+  ever fainted and nothing is ever outsped.
+- **A guard makes a branch unjudgeable, so validation abstains.** The check that
+  rules out an impossible *You KO* knows what a move does and nothing else, and a
+  guard breaks that in both directions at once: a Protect makes the KO impossible,
+  a repeat one makes it a coin flip, and an Endure holds the faint off the move
+  while leaving the sandstorm free to finish the job a moment later. So the branch
+  is left alone rather than contradicted. Fixing this caught a genuine false
+  positive — *You don't KO* into a Protect was being called impossible, on a turn
+  where it is exactly what happens.
+
+### Catching something on the way out: Pursuit and Rage
+
+**In this game Rage is a second Pursuit.** Its text is word for word identical —
+*"If the target attempts to switch out, this move hits before the switch, and
+deals double the damage"* — where the base game's Rage raises Attack when hit and
+has nothing to do with switching at all. Between them that is **198 trainer sets**,
+Pursuit on 124 and Rage on 74, and this is the strongest argument yet for
+generating these tables: a hand-written list built from memory would have carried
+74 sets' worth of the wrong move.
+
+The planner had neither half, and both were wrong in the same direction — a
+declared switch resolves before any move does, so the planner was sending the
+Pursuit at *whoever came in*, at *normal* power. That is precisely backwards from
+what the move is for: switching away is how you dodge a hit, and this is the move
+that punishes it.
+
+- **It hits whoever is leaving.** The damage is worked out against the turn's
+  parent, where that Pokémon is still standing, rather than against the field the
+  switch has already changed.
+- **Double base power, not double damage.** Doubling the finished range would
+  drift a point or two on the rounding and compound down the line, so the doubling
+  goes through calc's own `basePower` override and calc does the arithmetic.
+- **Only against a stated switch**, which is a certainty rather than a guess about
+  intent. Measured: 4–5 HP against a Pokémon that stays, 8–10 against the same one
+  leaving, and the card shows whichever applies.
+
+### Moves that switch their own user
+
+**U-turn (66 sets) and Baton Pass (42) land their damage and then take their user
+off the field**, which is the move rather than an option attached to it.
+
+The switch itself can't be inferred, because the game asks the same question: who
+comes in is a choice, and nothing in the plan implies it. So it is stated, in
+`node.switchAfter`, and the card grows an arrow button under the moves whenever
+the chosen move is one of these. Until it is answered the button is flagged and a
+warning fires — the move isn't optional about switching, so a plan that keeps its
+user out is one the game refuses.
+
+- **The switch happens inside the turn order, between speed groups**, which is the
+  whole point of the move: a faster U-turn leaves before the reply, and whoever it
+  brought in takes that reply. `onField` is mutated as the groups run, so every
+  slower slot resolves against the newcomer's typing, defences and health — and
+  its hazards and its Intimidate land in time to matter to the moves still to
+  come. Measured on Barry's Aipom: at 25 Speed against a 21, the Aipom U-turns,
+  brings Taillow in, and **the attack aimed at Aipom kills Taillow instead**,
+  with Aipom untouched at 31/31.
+- **Held to the end of its speed group**, like the flinches and the guards, so
+  only something *strictly slower* meets the newcomer. Two Pokémon moving at the
+  same instant move in an order nothing here can know.
+- **Turn order is settled once and never revisited**, so the arrival gets no place
+  in it — correctly, since it hasn't moved. That is this generation's rule and the
+  same reason Trick Room only bites from the following turn.
+- **The newcomer is the one standing in the sandstorm**, and it walks into the
+  hazards on the way in. Verified — a U-turn into a Stealth Rock takes the rocks,
+  and the departing Pokémon keeps the health it left with.
+- **The arrival never moved**, so its `turnsActive` stays at zero and it can Fake
+  Out next turn. The credit for the turn goes to whoever used the move.
+- **A U-turn that never went off switches nobody**, so being outsped and killed,
+  flinched or Protected against leaves the user standing there. The denials
+  `resolveMoves` already reports are what this reads.
+- **Switching in is done once, not twice.** The end-of-turn sweep that catches an
+  undeclared change has to skip these slots, or the newcomer's boosts get cleared
+  a second time and its Intimidate fires twice. Verified at −1, not −2.
+- **Branching off a U-turn carries the newcomer through**, the same way a declared
+  switch does, and drops the move with it.
+- **Volt Switch isn't in this game at all**, so there is nothing to model.
+- **Baton Pass hands its work over rather than dropping it**, which is the whole
+  reason 42 sets carry it: stat changes, Substitute and the volatiles all move to
+  whoever comes in. Taken before the slot is cleared and put back after, because
+  `leaveField` does the clearing and has no business knowing which move caused the
+  switch. Measured: a +2 Attack survives a Baton Pass and is dropped by a U-turn.
+  - **The Perish Song count goes too**, which is the trap worth knowing — passing
+    a count to a teammate hands them the faint rather than escaping it, where an
+    ordinary switch shakes it off.
+  - **A trap goes across, but only the kind that never wears off.** The table's
+    own `expires` flag turns out to be exactly the right line: Mean Look, Block
+    and Spider Web are `false` and do follow the Pass; every binding move is
+    `true` and simply ends when its victim leaves. That is the generation's rule,
+    and it fell out of data that was already there rather than needing a list.
+    - **Ingrain's self-root passes with it**, being on the `false` side, which is
+      what keeps the recipient coherent — it already inherits the volatile doing
+      the healing, so inheriting the root that pays for it is the consistent half.
+    - **The ability traps aren't involved.** Shadow Tag, Arena Trap and Magnet
+      Pull are derived from whoever is standing opposite rather than stored, so
+      they re-derive against the newcomer on their own and copying them would be
+      wrong.
+    - It carries through to enforcement, not just display: the Pokémon that
+      receives a Mean Look finds its own Switch button reading **Trapped**.
+      Verified, along with a Wrap correctly *not* passing and a U-turn passing
+      nothing at all.
+  - **The non-volatile status doesn't**, and shouldn't: it belongs to the Pokémon
+    that caught it and stays with it on the bench.
+
+### Roar and Whirlwind
+
+They drag the *target* out. Which Pokémon arrives is explicitly random, so the
+planner never picks one — it is stated, in the same `switchAfter` field a U-turn
+writes to, against the slot being dragged out, since the question is identical:
+who is standing here after this turn's switch. The card puts the button on that
+slot's column and marks it italic, because it is the one switch on a card that
+nobody chose.
+
+What *is* certain is everything the departing Pokémon takes with it — its boosts,
+its volatiles — and that is now derived rather than left to the player.
+
+- **The interrupted move is denied when the Roar genuinely resolves first**, held
+  to the end of its speed group exactly as a flinch is. But **Roar and Whirlwind
+  are −6 priority here**, so they almost always go last and the attack has already
+  happened: in practice this fires only against another −6 move. Implemented
+  because it is free and correct, not because it will come up.
+- Three sets each, so little rests on any of it.
+
+### Held items that go off
+
+A Berry Juice quietly restoring 20 HP is the difference between a plan that works
+and one that doesn't, and until now the planner tracked only the *curing* berries
+— so a Sitrus, an Oran or a Berry Juice simply never happened.
+
+The table is **generated from the items' own descriptions**, like the move and
+ability tables, by `tools/gen-item-effects.js`. 17 items, and the same narrow
+scope the ability table draws: **HP and stat stages, which is what the planner
+tracks**. Damage-only items — Life Orb, the Choice set, Expert Belt, the
+type-resist berries — stay `@smogon/calc`'s job, and modelling them twice would
+only let the two drift.
+
+Generating rather than assuming earned its keep immediately: **this game's Ganlon
+and Apicot berries have no health threshold at all**, where the base game gates
+both at 25%. Their text says "immediately", so they fire on arrival. The same
+lesson Lunar Dance taught.
+
+- **Trigger shapes.** A threshold (Sitrus, Oran, Berry Juice at half; the pinch
+  stat berries at a quarter), on arrival (Ganlon, Apicot, Berserk Gene), or a
+  condition of its own — White Herb waits for a stat drop to exist and is not
+  spent on a turn with none.
+- **The orbs status their own holder at the end of the turn**, and are the last
+  thing a turn does. That ordering is the point: a Toxic Orb lands the poison
+  *now* and it starts costing health on the *next* turn, where firing it any
+  earlier would have the holder taking a tick of its own poison immediately.
+  Neither orb is consumed, which is exactly why a Guts or Poison Heal set carries
+  one — 26 sets hold a Toxic Orb and 17 a Flame Orb. Verified against Poison Heal
+  (the damage becomes healing), against Immunity and Water Veil (both refuse it),
+  and against a Pokémon already statused (an orb can't override).
+- **Only a health threshold gets the button.** It is the only trigger the planner
+  refuses to guess at. Everything else fires on its own and has no decision in
+  it — a Focus Sash catches a particular hit as it lands, a resist berry is spent
+  by whoever attacks into it, an orb goes off whether anyone wants it to — so
+  those are shown rather than offered.
+- **Both of a berry's chances are taken**: once the turn's moves have landed, and
+  again after the end-of-turn chip. The second is not the rare case it looks —
+  235 fights start in weather, and a sandstorm is what puts most things under
+  half. Doing it only at the back would let something die on the way there.
+- **A threshold is only claimed when the whole band is under the line.** While it
+  straddles, whether the berry went off is a coin flip — and unlike a damage
+  roll, an item firing changes *what happens next* rather than only how much is
+  left, so there is no honest way to carry both. Measured: a 20–28 band out of 57
+  fires; 20–32 does not.
+- **So there is a button.** A small pip under the health bar, per slot, naming
+  the item. One click states that it went off on this turn, and the plan is
+  derived from there; clicking again takes it back. It is a seed like every other
+  one — the statement wins over the arithmetic — which is why stating it works
+  even from full health.
+  - It sits against the HP bar rather than in the turn editor because that is
+    where you are looking when the question comes up, and the answer appears an
+    inch to its left.
+  - Once spent it stays visible, struck through. A berry that is gone is exactly
+    the reason a later turn doesn't work.
+- **Focus Sash is modelled; Focus Band is not.** "Survive a fatal attack **from
+  full HP**" is a certainty when the condition is met, so it is applied inside
+  the hit it refuses, next to Endure's floor. A Focus Band is a flat 10% to live,
+  which is the same class of thing as a 10% burn and stays out. And "from full"
+  is load-bearing: a Sash on something already chipped does nothing, and a band
+  that has widened at all fails the test — verified both ways.
+- **The Figy family keep their sting.** They heal an eighth and confuse anything
+  whose nature dislikes the flavour, which is a fact about the holder rather than
+  about the fight, so it is read off the set.
+- **A spent consumable stops reaching `@smogon/calc`.** calc applies whatever item
+  it is given, every single calculation, with no notion of one being used up — so
+  a **type-resist berry halved every hit for the rest of the fight**. A Yache
+  Berry gets one super-effective Ice hit and is then gone; the planner was letting
+  a plan rest on a resistance that only ever existed once.
+  - The reduction itself is still calc's, and the table deliberately records only
+    the berry's *type* and never its fraction: applying the halving here as well
+    would halve it twice. What the planner adds is knowing when it has been spent.
+  - Spending it needs the type chart, since the berry only triggers on a
+    super-effective hit of its own type — read from `calc.TYPE_CHART`, the same
+    one Stealth Rock's Rock multiplier comes from.
+  - Measured on Croagunk's Payapa Berry against a Psybeam: `72–88%` on the first
+    hit and `KO` on the second, where both used to read `72–88%`.
+  - The healing and curing berries had the same hole; it simply never showed,
+    because none of those changes a damage figure.
+- **Deliberately out, and the generator prints each one** so the omission is
+  checked rather than assumed: Custap, Micle, Lansat and Starf, Leppa (PP),
+  Enigma Berry, Chilan Berry (this game's data has an empty type for it), and
+  everything probabilistic. What each of those would actually take is written up
+  under **Later → The four items left out**; Custap is the one worth doing.
+- **Three false matches were caught this way** and fixed in the rules rather than
+  in the output: bag items like Potion and Lemonade matching the healing rule,
+  the Choice items read as a +1 stage because the rule shrugged at "by 50%", and
+  Enigma Berry stripped of its condition into an unconditional quarter-heal.
+
+### Back to health
+
 - **`hpSeed` states health outright**, per slot, as a percentage. An absolute
   rather than a delta, because its job is to collapse the range back to a point:
   for a line that opens mid-fight, or when the band has widened past being useful
@@ -434,13 +756,88 @@ game, and a damage figure is useful without always being wanted.
 - Both movesets, **yours left and theirs right**, always — a double stacks its
   two Pokémon inside each side's column.
 - **Abilities**, with the full description on hover, underlined when the planner
-  acts on them. 21 are modelled: status and stat-drop protection, Intimidate,
-  weather setters, trapping, Natural Cure. Damage-only abilities are left to
+  acts on them. 27 are modelled: status and stat-drop protection, Intimidate,
+  weather setters, trapping, Natural Cure, the absorb abilities, and the two that
+  bill whoever touches their holder. Damage-only abilities are left to
   `@smogon/calc`, which already implements them.
+  - **Rough Skin and Aftermath** come off the *attacker*, which is why neither was
+    happening: everything else in the fold moves health on the target's side.
+    Rough Skin takes an eighth for **every hit that made contact**, so a 2–5 hit
+    move pays between two and five times — read across the same span the damage
+    is. Aftermath takes a quarter, but only if the hit was fatal: certain when the
+    whole band is gone, and on a band that straddles zero only the attacker's low
+    end pays, since that is the run of rolls where anybody died.
+    - Contact comes from the move's own `Contact` flag, the same way Protect's
+      does — 150 of the 295 damaging moves carry it.
+    - **Magic Guard pays neither**, as it pays no other indirect damage.
+    - Charged **per target**, unlike recoil: a spread move into two Rough Skins is
+      billed by both, which is the whole point of the ability.
+    - Aftermath is called off by a **Damp** anywhere on the field. No trainer set
+      in this game carries Damp, but a Box Pokémon can, so it is checked rather
+      than assumed away.
+    - The 30% contact abilities — Static, Effect Spore, Poison Point, Flame Body,
+      Cute Charm — stay out, and land in the generator's unmatched report. A 30%
+      paralysis is not something a plan may rest on.
 - **Held items**, editable in place, writing straight back to the Box.
 - **Trainer AI flags** in plain language, labelled per trainer when there are two.
 - Platinum Kaizo's removal of self-inflicted stat drops (Superpower, Overheat,
   Psycho Boost, Draco Meteor, Leaf Storm) is flagged.
+
+### Setting up a split
+
+A fold-away panel in the sidebar with a button per split — the stretch of the
+game between one gym leader and the next. One click makes a blank line for every
+trainer in it, in the order they are fought.
+
+Building those by hand is the tedious part of starting a run: the Byron split
+alone is **69 fights**, and none of them can be planned until the line exists.
+The button makes the shells; the thinking is still yours, which is the same line
+the roadmap draws around generated lines.
+
+- **Trainers you already have a line for are skipped**, so it is safe to press
+  twice, and useful when you come back to a split you only half-planned. The
+  count on each button is how many it would still make, and a split that is
+  fully laid out shows a tick instead.
+- **`newLineId()` had to be made genuinely unique**, not merely unlikely to
+  collide. Timestamp plus four random digits was fine one line at a time; seventy
+  inside a millisecond is a birthday problem with about a **one in four** chance
+  of two landing on the same id — which wouldn't error, it would silently
+  overwrite one line with another. Verified by making 71 in one click and
+  checking every id came out distinct.
+
+**The split grouping is not in the game's data.** Nothing in `sets.js`,
+`flags.js` or `party_order.js` knows what order trainers come in or where the
+badges fall. It comes from the community's Platinum Kaizo reference sheet, which
+`tools/gen-splits.js` reads — the one generator here that reaches across the
+network rather than to a local file, so run it deliberately and check its report.
+
+Getting the two to agree was the actual work. The sheet writes names for a person
+reading them, and a raw match against `sets.js` was **24%**. Normalising gets it
+to **420 fights with nothing unresolved**:
+
+- Everything in brackets is a note to the reader — `(Right)`, `(DOUBLE)`,
+  `(MULTI BATTLE WITH …)`, `(Gauntlet Start)*` — and none of it is the name.
+- A find-and-replace in the sheet ate spaces, leaving `Galacticf Venus`,
+  `CyclistFMegan`, `School KidfChristine`. Repaired by pattern rather than by a
+  hand-written list, since it is regular.
+- Class names it spells its own way: `Pkmn Breeder`, `Blackbelt`, `BirdKeeper`,
+  `Pokekid`, `Picknicker`, `Leader CrasherWake`.
+- **The two suffixes in `sets.js` mean opposite things**, which is the subtle
+  one. `Galactic Mercury #1/#2/#3` are three separate fights and are consumed one
+  per sighting as the splits are walked in order; `Pokémon Trainer Barry #2
+  [Chimchar]` is one fight with three ways it can go, so all three are kept.
+  Expanding both alike gave 591 fights for a game with 485 trainers.
+- **Cyrus is the one the rules can't reach.** The sheet calls him "Leader Cyrus"
+  throughout while the game data has four numbered teams. Byron's is #1; the
+  Galactic split's is #2, settled by matching its party — Deoxys-Defense,
+  Rampardos, Heatran, Registeel, Dusknoir, Regigigas — rather than by trusting
+  the sheet's "(Trick Room)" label, which turns out to be a nickname for the team
+  rather than a move any of them carries.
+- **Tag partners are deliberately absent**: Dawn/Lucas, Cheryl, Marley, Riley and
+  Mira are allies, not fights, and the planner already reads them from `flags.js`.
+- **School Kid Harrison and Christine are in the sheet and not in the game data** —
+  there are no School Kid trainers in `sets.js` at all. Listed as a known omission
+  so the generator's report stays empty and a genuinely new mismatch stands out.
 
 ### Filling a turn
 
@@ -551,8 +948,9 @@ exist, and freezes when they don't.**
 
 - **Rename and duplicate a line** — "Roark, safe" vs "Roark, risky" is how you
   compare plans; today both would just read "Leader Roark".
-- **Duplicate a turn** — branches are usually near-copies of their parent, and
-  rebuilding one by hand is the most tedious thing in the tool.
+- **Duplicate a turn onto the canvas**, rather than only out of its parent —
+  dragging the nub already copies, but there is no way to copy a turn that isn't
+  becoming a branch of it.
 - **Line notes** — `line.notes` exists in the model and is never read or written.
 - **Export / import a line as JSON** — backup and sharing; everything is already
   plain JSON.
@@ -571,6 +969,90 @@ Each of these wants a line in the "How to use" page once it lands.
   is a validation warning too, and only left out because it needs badge data the
   planner doesn't read yet.
 - **Canvas zoom** and keyboard shortcuts (add turn, delete, Esc to close).
+
+### The charge turn, and the semi-invulnerable one
+
+Not previously in this file at all — it lived only in the "How to use" page's
+*not built yet* list, and the version there was **wrong about which moves it
+covers**, which is the whole reason it belongs here now. Read off the game's own
+move text rather than the base game's rules:
+
+- **Only four moves charge**: SolarBeam (and it *skips the charge in sun*), Fly,
+  Razor Wind and Shadow Force. The planner lands all four on the turn they are
+  picked.
+- **Platinum Kaizo rewrote the rest into one-turn moves**, so they need nothing:
+  Dig is a plain 60 BP with "No additional effect", Dive 80, Sky Attack 120 with
+  recoil, Bounce 85 with a paralysis chance. Hyper Beam and Giga Impact recoil
+  instead of recharging. Skull Bash is deleted outright.
+  - The old note named **Dig** as one of its three examples. It also wrote
+    "Solar Beam" where this game spells it `SolarBeam` — the two-spellings trap,
+    caught again.
+- **Focus Punch is not one of these.** It charges at the start of the turn and
+  attacks at the end of the *same* turn, failing if the user is hit first. One
+  turn, at −3 priority. What it wants is the fail condition, not a charge turn.
+- **The semi-invulnerable turn is the other half, and arguably the better half.**
+  Fly and Shadow Force spend a turn out of reach, and **eleven moves carry text
+  that exists solely to carve out the exception** — "Never misses, except if the
+  target is in a semi-invulnerable turn": Swift, Aerial Ace, Aura Sphere, Shock
+  Wave, Magical Leaf, Faint Attack, Vital Throw, Aurora Beam, Shadow Punch,
+  Magnet Bomb and Dragon Pulse. A turn nothing lands on changes a plan more than
+  a turn spent charging does.
+
+Both halves are certainties, so both are modellable. The charge turn wants the
+`pending` machinery Wish and Future Sight already use.
+
+### The four items left out, and what each would need
+
+All four are in the dex and all four are printed by `gen-item-effects.js` as
+unmatched, so nothing here is a data problem — each one needs a subsystem the
+planner doesn't have yet. Ordered by how much they'd be worth.
+
+- **Custap Berry** — 32 trainer sets, easily the one worth doing. Below 25% HP
+  the holder moves **first in its priority bracket** on its next move, which is a
+  guaranteed Quick Claw. Two pieces: `turnOrder` already sorts a `last` flag for
+  Stall, Lagging Tail and Full Incense, so the symmetric `first` is small; the
+  awkward half is that the berry triggers at the *end* of a turn and pays out on
+  the *next* one, so it wants the `pending` machinery Wish and Future Sight use
+  rather than the two firing points the other items share. Note it would deny a
+  move rather than merely reorder one, so it has to be a certainty — which it is,
+  once the band is wholly under a quarter, exactly like the rest.
+- **Micle Berry** — accuracy isn't tracked at all. Nothing in the planner reads
+  or derives it, and a +20% on the next move only matters through a miss, which
+  the planner deliberately leaves to the `skipped` toggle. Probably the one to
+  leave alone: it would be the first thing to make an accuracy subsystem exist,
+  for an effect the plan can't rest on anyway.
+- **Lansat Berry** — crit ratio isn't tracked either. Crits are a *branch* here,
+  not a probability, so a raised ratio has nothing to change: `You crit` already
+  says it happened. It would be a card annotation at most.
+- **Starf Berry** — a **random** stat by two stages, which the roadmap's own rule
+  rules out. It could only ever be a hand-stated boost, and `boostSeed` already
+  does that. Worth a line in the docs rather than any code.
+
+Also worth remembering: **Enigma Berry** heals a quarter when hit by a
+super-effective move. That is a real condition and a deterministic one — it is
+out only because the item firing points ask "is the band under a threshold", and
+this asks about the move that just landed. It would fit in `foldDamage` beside
+the Focus Sash, which already works that way. No trainer carries it.
+
+### What is still missing around switching
+
+- **Nothing enforces that a phazed Pokémon is a legal choice**, beyond the picker
+  offering the trainer's party — a fainted one is greyed out, but the planner
+  won't stop a plan naming the same Pokémon twice across a fight.
+
+### Lightning Rod and Storm Drain
+
+Left for later, but they are now nearly free and worth doing before the list
+above. This game's text for both is **"Forces \<type\> type single-target moves to
+redirect to the user"** — which is Follow Me's mechanic, not an absorb, and Follow
+Me's redirection already exists and already understands what "single-target"
+means.
+
+What it needs: a redirect keyed on the move's *type* rather than on a move having
+been used, sourced from the ability instead of from `state.redirect`. The awkward
+part is precedence — an ability redirect is passive and permanent while a Follow
+Me is a turn's action, so the two can be up at once and one has to win. Worth
+checking against the game before guessing which.
 
 ---
 

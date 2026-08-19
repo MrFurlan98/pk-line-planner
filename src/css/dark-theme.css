@@ -186,6 +186,15 @@ input.select2-input {
     color: #ffa04d;
 }
 
+/* A move that heals its target, in the same two directional colours. */
+.planner-move.you .planner-move-dmg.absorbed {
+    color: #ff7b6b;
+}
+
+.planner-move.them .planner-move-dmg.absorbed {
+    color: #7ddc84;
+}
+
 /* Planner health bars: the light-theme greens and reds are too dark to read
    against a dark card. */
 .planner-hp-min.good { background: #4caf50; }

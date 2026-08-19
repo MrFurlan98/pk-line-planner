@@ -61,6 +61,70 @@
     margin-bottom: 6px;
 }
 
+/*
+ * Quick setup. Folded away by default: it is something you reach for at the
+ * start of a split and then not again for hours, so it has no business taking
+ * space from the line list, which is what you actually work in.
+ */
+.planner-splits {
+    margin-bottom: 6px;
+    font-size: 11px;
+}
+
+.planner-splits > summary {
+    cursor: pointer;
+    padding: 2px 0;
+    opacity: 0.85;
+}
+
+.planner-splits > summary:hover {
+    opacity: 1;
+}
+
+.planner-split-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 4px 0 2px;
+}
+
+.planner-split-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    width: 100%;
+    padding: 3px 6px;
+    font: inherit;
+    font-size: 11px;
+    text-align: left;
+    border: 1px solid rgba(128, 128, 128, 0.4);
+    border-radius: 3px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.planner-split-btn:hover {
+    background: rgba(128, 128, 128, 0.2);
+}
+
+/* How many lines it would still make. A tick means the split is fully laid out. */
+.planner-split-count {
+    flex: 0 0 auto;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.7;
+}
+
+.planner-split-btn.done {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.planner-split-btn.done:hover {
+    background: transparent;
+}
+
 .planner-line-list {
     list-style: none;
     margin: 0;
@@ -878,6 +942,31 @@
     font-weight: bold;
 }
 
+/*
+ * A move that can't touch its target. Deliberately not coloured by side: a zero
+ * is the same fact whoever throws it, and it is dimmed rather than flagged
+ * because the useful signal is "stop looking at this move", not alarm.
+ */
+.planner-move-dmg.immune {
+    opacity: 0.5;
+    font-weight: normal;
+}
+
+/*
+ * Worse than a zero: the move heals what it hits. This one *is* alarming - it is
+ * the only figure on the card that runs the wrong way - so it keeps full weight
+ * and takes the colour of whoever is being helped by it.
+ */
+.planner-move.you .planner-move-dmg.absorbed {
+    color: #c0392b;
+    font-weight: bold;
+}
+
+.planner-move.them .planner-move-dmg.absorbed {
+    color: #2e7d32;
+    font-weight: bold;
+}
+
 /* These are the light-theme values; dark-theme.css loads after this file and
    overrides all four, since they are too dark to read on its cards. */
 
@@ -935,6 +1024,24 @@
 }
 
 /*
+ * A Follow Me has taken the choice away, so the row says so rather than leaving
+ * a highlight that looks like something you picked. The buttons still work - the
+ * aim is worth recording even on a turn it doesn't decide, because the branch
+ * where they don't use Follow Me reads it.
+ */
+.planner-aim.redirected {
+    opacity: 1;
+}
+
+.planner-aim-btn.drawn,
+.planner-move-column[data-side="them"] .planner-aim-btn.drawn {
+    border-style: dashed;
+    border-color: #b08b2e;
+    background: rgba(176, 139, 46, 0.2);
+    font-weight: bold;
+}
+
+/*
  * Who moves first. Deliberately quiet - it is context for reading the card, not
  * a decision in its own right - and a tie says so rather than picking a winner.
  */
@@ -951,6 +1058,53 @@
 .planner-speed.fast { color: #2f9e44; }
 .planner-speed.slow { color: #c0392b; }
 .planner-speed.tie  { color: #8a8a8a; }
+
+/*
+ * The held item, sitting under the health bar it acts on. Quiet by default - it
+ * is context, not a decision - and only the ones you can actually spend look
+ * like a button.
+ */
+.planner-item-pip {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 8px;
+    line-height: 1.4;
+    padding: 0 3px;
+    margin-top: 1px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    background: transparent;
+    color: inherit;
+    opacity: 0.7;
+    cursor: help;
+}
+
+button.planner-item-pip.use {
+    border-color: rgba(128, 128, 128, 0.45);
+    cursor: pointer;
+}
+
+button.planner-item-pip.use:hover {
+    background: rgba(128, 128, 128, 0.2);
+    opacity: 1;
+}
+
+/* Stated: you said this one went off on this turn. */
+button.planner-item-pip.use.stated {
+    border-color: #b08b2e;
+    background: rgba(176, 139, 46, 0.22);
+    font-weight: bold;
+    opacity: 1;
+}
+
+/* Gone. Kept visible, because a spent berry is the reason a later plan fails. */
+.planner-item-pip.spent {
+    text-decoration: line-through;
+    opacity: 0.45;
+}
 
 /* A percentage never needs more than three digits, and the form column is wide. */
 .planner-edit-hp {
@@ -1183,6 +1337,63 @@
 .planner-switch-btn:hover {
     opacity: 1;
     background: rgba(128, 128, 128, 0.2);
+}
+
+/*
+ * Who comes in after a U-turn. Built on the Switch button because it asks the
+ * same question of the same roster - but it is never a choice about whether to
+ * switch, only about who, so an unanswered one is flagged rather than left quiet.
+ */
+.planner-selfswitch-btn {
+    margin-top: 2px;
+    width: 100%;
+    padding: 1px 4px;
+    font: inherit;
+    font-size: 10px;
+    text-align: left;
+    border: 1px dashed rgba(128, 128, 128, 0.5);
+    border-radius: 3px;
+    background: transparent;
+    color: inherit;
+    opacity: 0.7;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.planner-selfswitch-btn:hover {
+    opacity: 1;
+    background: rgba(128, 128, 128, 0.2);
+}
+
+.planner-selfswitch-btn.active {
+    opacity: 1;
+    font-weight: bold;
+    border-style: solid;
+    border-color: #5a8cdc;
+    background: rgba(90, 140, 220, 0.25);
+}
+
+.planner-selfswitch-btn.them.active {
+    border-color: #c0392b;
+    background: rgba(192, 57, 43, 0.22);
+}
+
+/* Nobody named yet, and the move doesn't make it optional. */
+.planner-selfswitch-btn.unset {
+    opacity: 1;
+    border-color: #b08b2e;
+    background: rgba(176, 139, 46, 0.18);
+}
+
+/*
+ * Dragged out by the other side's Roar rather than leaving under its own move.
+ * Italic because it is the one switch on the card nobody chose - not the plan,
+ * and not even the game deciding predictably: which Pokemon arrives is random.
+ */
+.planner-selfswitch-btn.forced {
+    font-style: italic;
 }
 
 .planner-switch-btn.active {

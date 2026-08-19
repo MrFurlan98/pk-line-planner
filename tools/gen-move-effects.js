@@ -368,6 +368,43 @@ Object.values(MOVES).forEach(function(move) {
     var immune = /Fails if the target is an? ([A-Za-z]+) type/i.exec(effect);
     if (immune) entry.failsAgainstType = immune[1].toLowerCase();
 
+    /*
+     * Pursuit, and - in this game - Rage, which has been rewritten into a second
+     * one of them. Both catch a Pokemon on the way out: the move resolves before
+     * the switch, so it hits whoever is *leaving* rather than whoever arrives,
+     * and at double power.
+     *
+     * Worth generating rather than hardcoding precisely because of Rage. The base
+     * game's Rage raises Attack when hit and has nothing to do with switching, so
+     * a hand-written list built from memory would have carried 74 sets' worth of
+     * the wrong move.
+     */
+    var pursues = /If the target attempts to switch out, this move hits before the switch, and deals (double|triple) the damage/i.exec(effect);
+    if (pursues) entry.pursues = {power: /triple/i.test(pursues[1]) ? 3 : 2};
+
+    /*
+     * U-turn and Baton Pass, which leave the field as part of their own effect.
+     * The switch itself is already expressible - put the newcomer in the next
+     * turn and the planner treats it as one - so what this records is that the
+     * move *forces* it, which is what lets a plan leaving the same Pokemon out be
+     * called impossible rather than merely unusual.
+     *
+     * Baton Pass additionally passes its boosts, which is not modelled: see the
+     * roadmap. It is recorded here so the two can't be confused for each other.
+     */
+    if (/^Switches the user out into a selected Pok.mon/i.test(effect)) {
+        entry.switchesUser = {passesBoosts: /passes any stat changes/i.test(effect)};
+    }
+
+    /*
+     * Roar and Whirlwind, which drag the *target* out instead. Which Pokemon
+     * arrives is explicitly random, so the planner never picks one - but the
+     * Pokemon leaving is certain, and so is everything it takes with it.
+     */
+    if (/forces the target to switch to a random Pok.mon/i.test(effect)) {
+        entry.phazes = true;
+    }
+
     var heal = parseHeal(effect);
     if (heal) entry.selfHeal = heal;
 

@@ -1489,6 +1489,8 @@
         <script type="text/javascript" src="./js/sprite-fallback.js?"></script>
         <script type="text/javascript" src="./js/data/move_effects.js?"></script>
         <script type="text/javascript" src="./js/data/ability_effects.js?"></script>
+        <script type="text/javascript" src="./js/data/item_effects.js?"></script>
+        <script type="text/javascript" src="./js/data/splits.js?"></script>
         <script type="text/javascript" src="./js/box-controls.js?"></script>
         <script type="text/javascript" src="./js/map-controls.js?"></script>
         <script type="text/javascript" src="./js/planner-model.js?"></script>
@@ -1561,6 +1563,10 @@
             <fieldset class="planner-sidebar">
                 <legend align="center">Lines</legend>
                 <button id="planner-new-line" class="btn planner-btn">New line</button>
+                <details class="planner-splits">
+                    <summary title="Create a blank line for every trainer in a stretch of the game">Set up a split</summary>
+                    <div class="planner-split-list"></div>
+                </details>
                 <ul class="planner-line-list"></ul>
                 <a class="planner-help-link" href="./how-to-use.html" target="_blank" rel="noopener"
                    title="Opens in a new tab">How to use &rarr;</a>

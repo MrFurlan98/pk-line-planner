@@ -18,6 +18,10 @@ const MOVE_EFFECTS = {
         },
         "name": "Swords Dance"
     },
+    "whirlwind": {
+        "phazes": true,
+        "name": "Whirlwind"
+    },
     "mysticalfire": {
         "target": {
             "spa": -1
@@ -53,6 +57,10 @@ const MOVE_EFFECTS = {
             "atk": -1
         },
         "name": "Growl"
+    },
+    "roar": {
+        "phazes": true,
+        "name": "Roar"
     },
     "sing": {
         "targetStatus": "slp",
@@ -136,6 +144,12 @@ const MOVE_EFFECTS = {
             "spe": 2
         },
         "name": "Agility"
+    },
+    "rage": {
+        "pursues": {
+            "power": 2
+        },
+        "name": "Rage"
     },
     "screech": {
         "target": {
@@ -397,11 +411,23 @@ const MOVE_EFFECTS = {
         ],
         "name": "DynamicPunch"
     },
+    "batonpass": {
+        "switchesUser": {
+            "passesBoosts": true
+        },
+        "name": "Baton Pass"
+    },
     "encore": {
         "targetVolatiles": [
             "encore"
         ],
         "name": "Encore"
+    },
+    "pursuit": {
+        "pursues": {
+            "power": 2
+        },
+        "name": "Pursuit"
     },
     "sweetscent": {
         "target": {
@@ -701,6 +727,12 @@ const MOVE_EFFECTS = {
             "turns": 3
         },
         "name": "Tailwind"
+    },
+    "uturn": {
+        "switchesUser": {
+            "passesBoosts": false
+        },
+        "name": "U-turn"
     },
     "toxicspikes": {
         "hazard": {

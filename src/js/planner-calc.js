@@ -79,13 +79,27 @@ function calcPokemonFor(line, node, state, side, slot) {
     var set = entry.set;
     var mon = monState(state, side, monAt(node, side, slot));
 
+    /*
+     * A consumable that has already gone is not held any more, and calc has to be
+     * told - it applies an item on every calculation it is given one for, with no
+     * notion of the thing being used up.
+     *
+     * The type-resist berries are why this matters. A Yache Berry halves the first
+     * super-effective Ice hit and is then gone, but calc halved every one of them
+     * for the rest of the fight, so a plan could rest on a resistance that only
+     * ever existed once. The curing and healing berries have the same hole; it
+     * simply doesn't show, because none of those changes a damage figure.
+     */
+    var ref = monAt(node, side, slot);
+    var held = itemSpent(state, side, ref) ? "" : (set.item || "");
+
     var options = {
         // 100 to match what the Box and createPokemon assume for a set with none.
         level: numberOr(set.level, 0) || 100,
         gender: getGender(set.gender),
         ability: set.ability,
         abilityOn: true,
-        item: set.item || "",
+        item: held,
         nature: set.nature,
         ivs: calcStatsOf(set.ivs, 31),
         evs: calcStatsOf(set.evs, 0),
@@ -214,7 +228,7 @@ function calcFieldFor(line, state, attacker) {
  * it exists, since Platinum Kaizo deletes a good number of moves outright and a
  * stale plan can still name one.
  */
-function calcMoveFor(moveName, holder, isCrit, hits) {
+function calcMoveFor(moveName, holder, isCrit, hits, power) {
     var move = findMove(moveName);
     if (!move || move.category === "status") return null;
 
@@ -228,6 +242,14 @@ function calcMoveFor(moveName, holder, isCrit, hits) {
         isCrit: !!isCrit
     };
     if (hits) options.hits = hits;
+    /*
+     * A Pursuit catching something on the way out doubles its *base power*, not
+     * its damage. Doubling the finished range instead would drift by a point or
+     * two on the rounding, and compound down the line.
+     */
+    if (power && power !== 1) {
+        options.overrides = {basePower: (table[name].bp || move.basePower || 0) * power};
+    }
     return new calc.Move(calcGen(), name, options);
 }
 
@@ -257,13 +279,42 @@ function hitSpanFor(moveName) {
 }
 
 /*
+ * What the defender's ability gets out of being hit by this particular move -
+ * healing for the absorb abilities, a stat stage for Motor Drive.
+ *
+ * calc returns zero damage for all of these and stops there, because it treats
+ * them as immunities and what happens *instead* is state rather than damage. So
+ * the zero is right and simply isn't the whole story.
+ */
+function absorbedBy(line, node, state, side, slot, moveName, maxHP) {
+    var holder = activeHolder(line, node, side, slot);
+    var fx = abilityEffect(holder && holder.ability);
+    if (!fx || !fx.whenHitBy) return null;
+    var move = findMove(moveName);
+    if (!move || move.category === "status") return null;
+    if (String(move.type).toLowerCase() !== fx.whenHitBy.type) return null;
+
+    var out = {ability: fx.name || (holder && holder.ability)};
+    if (fx.whenHitBy.heal && maxHP) {
+        out.heal = Math.floor(maxHP * fx.whenHitBy.heal[0] / fx.whenHitBy.heal[1]);
+    }
+    if (fx.whenHitBy.boosts) out.boosts = fx.whenHitBy.boosts;
+    return out;
+}
+
+/*
  * What one move off one slot does to whoever it lands on.
  *
  * Returns null whenever there is no honest number to give - a status move, an
  * empty slot opposite, a move this game doesn't have - so callers can fall back
- * to showing base power rather than a zero that reads like an immunity.
+ * to showing base power.
+ *
+ * Zero is *not* one of those cases, and used to be. A Shadow Ball into a Normal
+ * type and an Earthquake into a Levitate are both a number the plan wants: they
+ * do nothing, which is worth saying outright rather than quietly falling back to
+ * base power and reading like an ordinary move nobody has worked out yet.
  */
-function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCrit) {
+function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCrit, power) {
     var attacker = calcPokemonFor(line, node, state, side, slot);
     if (!attacker) return null;
 
@@ -273,7 +324,7 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
 
     var holder = activeHolder(line, node, side, slot);
     var span = hitSpanFor(moveName);
-    var move = calcMoveFor(moveName, holder, isCrit, span.min > 1 ? span.min : 0);
+    var move = calcMoveFor(moveName, holder, isCrit, span.min > 1 ? span.min : 0, power);
     if (!move) return null;
 
     /*
@@ -285,7 +336,25 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
         var field = calcFieldFor(line, state, side);
         var result = calc.calculate(calcGen(), attacker, defender, move, field);
         var range = result.range();
-        if (!range || !range[1]) return null;
+        if (!range) return null;
+
+        /*
+         * Nothing gets through. In this generation a move that connects at all
+         * takes at least one point, so a flat zero means an immunity - the type
+         * chart's, or an ability's - and either way it is a fact rather than a
+         * gap. Reported as such, and the rest of the calculation skipped, since
+         * a move that dealt nothing recoils nothing and drains nothing.
+         */
+        if (!range[1]) {
+            var full0 = defender.maxHP();
+            return {
+                lo: 0, hi: 0, full: full0, loPct: 0, hiPct: 0,
+                immune: true, kills: false, mayKill: false,
+                recoil: [0, 0], recovery: [0, 0], hits: {min: 1, max: 1},
+                absorbed: absorbedBy(line, node, state, other, targetSlot, moveName, full0),
+                desc: result.fullDesc("%", false)
+            };
+        }
 
         /*
          * A move that can land a varying number of times is really two questions
@@ -296,7 +365,7 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
          */
         var top = result;
         if (span.max > span.min) {
-            var wide = calcMoveFor(moveName, holder, isCrit, span.max);
+            var wide = calcMoveFor(moveName, holder, isCrit, span.max, power);
             if (wide) {
                 top = calc.calculate(calcGen(), attacker, defender, wide, field);
                 var topRange = top.range();
@@ -382,9 +451,77 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
  * the one across from the user, which is the matchup the card is laid out to be
  * read across. The spread reduction still applies, from the game type.
  */
-function damageFor(line, node, state, side, slot, moveName, isCrit) {
-    var target = targetsOf(node, side, slot, moveName, aimAt(node, side, slot))[0];
-    return damageAgainst(line, node, state, side, slot, target, moveName, isCrit);
+function damageFor(line, node, state, side, slot, moveName, isCrit, drawnBy) {
+    var target = targetsOf(node, side, slot, moveName, aimAt(node, side, slot), drawnBy)[0];
+    var other = side === "you" ? "them" : "you";
+    /*
+     * A Pursuit aimed at a slot that is switching away this turn catches it on
+     * the way out, at double power - and against whoever is *leaving*, which on
+     * this card is who the slot still shows.
+     */
+    var power = pursuitPower(moveName, node, other, target);
+    return damageAgainst(line, node, state, side, slot, target, moveName, isCrit, power);
+}
+
+/*
+ * How a move's type fares against a Pokémon, read from calc's own type chart -
+ * the same one applyEntryHazards uses for Stealth Rock. Above 1 is
+ * super-effective, which is the only thing the resist berries care about.
+ */
+function effectivenessOf(moveName, defender) {
+    var move = findMove(moveName);
+    if (!move || move.category === "status" || !defender) return 1;
+    var chart = (typeof calc !== "undefined" && calc.TYPE_CHART && calc.TYPE_CHART[calcGen()]) || null;
+    var row = chart && chart[capitalise(move.type)];
+    if (!row) return 1;
+    return (defender.types || []).reduce(function(total, t) {
+        var mult = row[capitalise(t)];
+        return total * (mult === undefined ? 1 : mult);
+    }, 1);
+}
+
+// calc's type chart is keyed by capitalised names; the dex stores them lowercase.
+function capitalise(type) {
+    var t = String(type || "");
+    return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
+}
+
+/*
+ * Whether a type-resist berry is being spent on this hit. It only triggers on a
+ * super-effective move of its own type, and it is gone afterwards - which is the
+ * half calc has no way to tell anybody, since it applies the reduction and stops.
+ */
+function resistBerrySpent(line, node, state, side, slot, moveName, defender) {
+    var holder = activeHolder(line, node, side, slot);
+    if (!holder || !holder.item) return null;
+    var fx = itemEffect(holder.item);
+    if (!fx || !fx.resists) return null;
+    if (itemSpent(state, side, holder.id)) return null;
+    var move = findMove(moveName);
+    if (!move || String(move.type).toLowerCase() !== fx.resists.type) return null;
+    if (effectivenessOf(moveName, defender) <= 1) return null;
+    return {id: holder.id, name: fx.name};
+}
+
+/*
+ * Whether a Focus Sash is going to catch the hit about to land: the holder has
+ * one, hasn't spent it, and is on full health right now.
+ *
+ * "From full HP" is the whole condition and it is a certainty when it is met -
+ * which is why the Sash is modelled where a Focus Band, at a flat 10%, is not.
+ * A band that has already widened at all fails it, correctly: something that may
+ * or may not be on full health may or may not be saved, and that is a fork
+ * rather than a fact.
+ */
+function sashHolds(line, node, state, side, slot, mon) {
+    var holder = activeHolder(line, node, side, slot);
+    if (!holder || !holder.item) return null;
+    var fx = itemEffect(holder.item);
+    if (!fx || !fx.survives || !fx.survives.fromFull) return null;
+    if (itemSpent(state, side, holder.id)) return null;
+    var hp = mon && hpOf(mon);
+    if (hp && (hp.min < hp.full || hp.max < hp.full)) return null;
+    return {id: holder.id, name: fx.name};
 }
 
 /*
@@ -395,13 +532,15 @@ function damageFor(line, node, state, side, slot, moveName, isCrit) {
  * a double the two opposing slots are different Pokemon with different typing
  * and different defences, so one number would be wrong for at least one of them.
  */
-function foldDamage(line, node, state, side, slot, targets, moveName, crits) {
+function foldDamage(line, node, state, side, slot, targets, moveName, crits, parent) {
     // Nothing is subtracted in blind mode, so no HP is ever carried and no bar
     // can appear. The rest of the turn still folds in exactly as it did.
     if (blindMode()) return;
     var other = side === "you" ? "them" : "you";
     var isCrit = !!(crits && crits[side]);
     var backOnUser = null;
+    // Rough Skin and Aftermath, summed across every target that charges for them.
+    var contactBack = [0, 0];
 
     /*
      * Future Sight and Doom Desire work their damage out now, against whoever is
@@ -414,7 +553,15 @@ function foldDamage(line, node, state, side, slot, targets, moveName, crits) {
         MOVE_EFFECTS[move.id].delayed;
 
     targets.forEach(function(target) {
-        var damage = damageAgainst(line, node, state, side, slot, target, moveName, isCrit);
+        /*
+         * A Pursuit resolves *before* the switch, so it hits whoever is leaving
+         * rather than whoever arrives - which means reading the slot off `parent`,
+         * where that Pokemon is still standing, instead of off the post-switch
+         * field this function is otherwise given.
+         */
+        var power = parent ? pursuitPower(moveName, parent, other, target) : 0;
+        var against = power ? parent : node;
+        var damage = damageAgainst(line, against, state, side, slot, target, moveName, isCrit, power);
         if (!damage) return;
         if (delayed) {
             /*
@@ -431,26 +578,141 @@ function foldDamage(line, node, state, side, slot, targets, moveName, crits) {
             });
             return;
         }
-        var mon = ensureHp(line, node, state, other, target);
+        var mon = ensureHp(line, against, state, other, target);
+        /*
+         * Nothing lands, so nothing is taken off - but the ability that refused
+         * it may hand something back, and that is the half calc doesn't do.
+         */
+        if (damage.immune) {
+            if (damage.absorbed && mon && damage.absorbed.heal) {
+                healMon(mon, damage.absorbed.heal, damage.absorbed.heal);
+            }
+            if (damage.absorbed && damage.absorbed.boosts) {
+                addBoosts(monState(state, other, monAt(against, other, target)).boosts,
+                    damage.absorbed.boosts, null);
+            }
+            return;
+        }
+        /*
+         * A Focus Sash is checked before the hit, not after, because what it
+         * needs to know is whether the target was at full health *going in* - a
+         * Sash on something already chipped does nothing at all.
+         */
+        var sash = sashHolds(line, against, state, other, target, mon);
+        /*
+         * Likewise a type-resist berry, which has to be read before the damage
+         * lands and spent after it, so the hit it halves is the last one it does.
+         */
+        var berry = resistBerrySpent(line, against, state, other, target, moveName,
+            calcPokemonFor(line, against, state, other, target));
         if (mon) damageMon(mon, damage.lo, damage.hi, damage.full);
+        if (berry) spendItem(state, other, berry.id, berry.name, "resist");
+        /*
+         * Endure lets the hit land in full and refuses only the faint, so it is
+         * a floor applied afterwards rather than anything the damage knows about.
+         * A Protect never reaches here at all - resolveMoves took the target off
+         * the list before the move was applied.
+         */
+        var guard = guardAt(state, other, target);
+        if (mon && guard && guard.kind === "endure") endureMon(mon);
+        // Same floor, different reason - and the Sash is gone once it is used.
+        if (mon && sash && mon.hp.min < 1) {
+            endureMon(mon);
+            spendItem(state, other, sash.id, sash.name, "survive");
+        }
         /*
          * Recoil and drain are the user's, not the target's, so a spread move
          * doesn't pay them twice. The first target it actually connected with
          * settles it - which is the only one for every move that has either.
          */
         if (!backOnUser && !delayed) backOnUser = damage;
+
+        /*
+         * And what the target's own skin costs for touching it. Unlike recoil
+         * this is charged *per target*: a spread move into two Rough Skins is
+         * billed by both, which is exactly the point of the ability.
+         */
+        var touched = contactHarm(line, against, state, side, slot, other, target, moveName, damage, mon);
+        contactBack[0] += touched[0];
+        contactBack[1] += touched[1];
     });
 
-    if (!backOnUser) return;
-    var user = ensureHp(line, node, state, side, slot);
+    var user = (backOnUser || contactBack[1] > 0)
+        ? ensureHp(line, node, state, side, slot) : null;
     if (!user) return;
     /*
      * The bands cross over: the user is worst off when it drained least and
      * recoiled most, so the low end of its health takes the high end of the
      * recoil and the low end of the drain.
      */
-    if (backOnUser.recoil[1] > 0) damageMon(user, backOnUser.recoil[0], backOnUser.recoil[1], user.hp.full);
-    if (backOnUser.recovery[1] > 0) healMon(user, backOnUser.recovery[0], backOnUser.recovery[1]);
+    if (backOnUser && backOnUser.recoil[1] > 0) damageMon(user, backOnUser.recoil[0], backOnUser.recoil[1], user.hp.full);
+    if (contactBack[1] > 0) damageMon(user, contactBack[0], contactBack[1], user.hp.full);
+    if (backOnUser && backOnUser.recovery[1] > 0) healMon(user, backOnUser.recovery[0], backOnUser.recovery[1]);
+}
+
+/*
+ * What touching the target costs the attacker: Rough Skin's toll for every hit
+ * that made contact, and Aftermath's parting shot if the hit was fatal.
+ *
+ * Returned as a [least, most] pair, because both can be a range. Rough Skin
+ * charges once *per hit*, so a 2-5 hit move pays between two and five times - the
+ * same span the damage itself is read across. And Aftermath only fires if the
+ * target actually died, which is certain when the whole band is gone and a coin
+ * flip while it straddles zero: on a straddle only the attacker's low end pays,
+ * which is the same shape every other uncertainty here carries.
+ */
+function contactHarm(line, node, state, side, slot, other, target, moveName, damage, mon) {
+    if (!damage || damage.immune) return [0, 0];
+    var move = findMove(moveName);
+    if (!move || (move.flags || []).indexOf("Contact") < 0) return [0, 0];
+
+    var holder = activeHolder(line, node, side, slot);
+    // Magic Guard pays none of this, the same as it pays no residual damage.
+    if (toID((holder && holder.ability) || "") === "magicguard") return [0, 0];
+
+    var victim = activeHolder(line, node, other, target);
+    var fx = abilityEffect(victim && victim.ability);
+    if (!fx) return [0, 0];
+
+    var attacker = calcPokemonFor(line, node, state, side, slot);
+    if (!attacker) return [0, 0];
+    var full = attacker.maxHP();
+    var back = [0, 0];
+
+    if (fx.contactRecoil) {
+        var each = Math.floor(full * fx.contactRecoil.fraction[0] / fx.contactRecoil.fraction[1]);
+        var span = damage.hits || {min: 1, max: 1};
+        back[0] += each * span.min;
+        back[1] += each * span.max;
+    }
+
+    if (fx.onFaintRecoil && mon && hpOf(mon) && !dampOnField(line, node, fx.onFaintRecoil.blockedBy)) {
+        var hp = hpOf(mon);
+        // Dead on every roll, versus dead on some - the usual split.
+        if (hp.max <= 0 || hp.min <= 0) {
+            var toll = Math.floor(full * fx.onFaintRecoil.fraction[0] / fx.onFaintRecoil.fraction[1]);
+            if (hp.max <= 0) back[0] += toll;
+            back[1] += toll;
+        }
+    }
+    return back;
+}
+
+/*
+ * Aftermath is called off by a Damp anywhere on the field, either side. No
+ * trainer set in this game carries Damp, but a Box Pokémon can, so it is checked
+ * rather than assumed away.
+ */
+function dampOnField(line, node, blocker) {
+    if (!blocker) return false;
+    var found = false;
+    ["you", "them"].forEach(function(side) {
+        for (var i = 0; i < 2; i++) {
+            var holder = activeHolder(line, node, side, i);
+            if (holder && toID(holder.ability || "") === blocker) found = true;
+        }
+    });
+    return found;
 }
 
 /*
@@ -459,9 +721,9 @@ function foldDamage(line, node, state, side, slot, targets, moveName, crits) {
  * cache key short of the whole turn would eventually serve a stale number, and a
  * stale number here is worse than a slow one.
  */
-function plannerDamage(line, node, state, side, slot, moveName, isCrit) {
+function plannerDamage(line, node, state, side, slot, moveName, isCrit, drawnBy) {
     if (!moveName || typeof calc === "undefined" || blindMode()) return null;
-    return damageFor(line, node, state, side, slot, moveName, isCrit);
+    return damageFor(line, node, state, side, slot, moveName, isCrit, drawnBy);
 }
 
 /*
@@ -481,7 +743,20 @@ function plannerDamage(line, node, state, side, slot, moveName, isCrit) {
  * range with a dash in it never reads as the base power it replaced, and the
  * tooltip spells the unit out in full.
  */
+/*
+ * A move that heals what it hits is the one case where the figure has to change
+ * sign, so it is written with the plus: "+25" against a Water Absorb reads as
+ * quarter of a health bar going the wrong way, which is exactly what it is.
+ *
+ * A plain immunity is "0" rather than a dash. The dash already means "no number
+ * here" - it is what a status move shows - and the whole point of this is to
+ * tell a real zero apart from a missing one.
+ */
 function damageText(damage) {
+    if (damage.absorbed && damage.absorbed.heal) {
+        return `+${Math.round(damage.absorbed.heal * 100 / damage.full)}`;
+    }
+    if (damage.immune) return "0";
     if (damage.kills) return "KO";
     return `${Math.round(damage.loPct)}–${Math.round(damage.hiPct)}`;
 }
@@ -492,6 +767,9 @@ function damageText(damage) {
  * the branch conditions use.
  */
 function damageClass(damage) {
+    // Healing the target is worse than doing nothing to it, so it reads apart.
+    if (damage.absorbed && damage.absorbed.heal) return " absorbed";
+    if (damage.immune) return " immune";
     if (damage.kills) return " kills";
     if (damage.mayKill) return " maykill";
     return "";

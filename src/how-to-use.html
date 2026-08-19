@@ -458,6 +458,7 @@
         <a href="#start">Starting a line</a>
         <a href="#workspace">The workspace</a>
         <a href="#turn">Reading a turn</a>
+        <a href="#splits">Setting up a split</a>
         <a href="#filling">Filling a turn</a>
         <a href="#branching">Branching</a>
         <a href="#derived">What it works out for you</a>
@@ -787,7 +788,7 @@
                 <button class="btn planner-btn small">Edit</button>
                 <button class="btn planner-btn small">Remove</button>
             </div>
-            <div class="planner-node-handle" title="Drag onto another turn to branch to it, or onto empty space to make a new one"></div>
+            <div class="planner-node-handle" title="Drag onto another turn to branch to it, or onto empty space for a copy of this one"></div>
         </div>
 
         <div class="doc-aside">
@@ -905,6 +906,12 @@
                         <span class="planner-condition good selected">You KO</span> /
                         <span class="planner-condition bad selected">You don't KO</span> branch is for.
                         Colour reads from your side: green is your KO, red is theirs.
+                        <br><br>
+                        These are always the <em>ordinary</em> hit. A
+                        <span class="planner-condition good selected">You crit</span> branch doesn't
+                        change them &mdash; a turn can fork several ways at once, so one figure can't
+                        mean a normal hit down one arm and a crit down another. The crit shows up in
+                        the health bars further down that branch instead.
                     </span>
                 </li>
                 <li>
@@ -959,6 +966,12 @@
                         <b>The connector nub</b>
                         The blue dot under the card. Drag it to branch. This is the least obvious
                         control in the tool &mdash; see <a href="#branching">branching</a>.
+                        <br><br>
+                        Dropped on empty canvas it makes the next turn a <b>copy</b> of this one:
+                        the same Pokémon out, the same moves, the same targets and note. What it
+                        doesn't carry is anything you <em>stated</em> &mdash; carried status, stat
+                        stages, health, <em>didn't act</em> &mdash; because the new turn already
+                        inherits those, and copying them would apply them a second time.
                     </span>
                 </li>
             </ul>
@@ -1045,6 +1058,45 @@
 
 
     <!-- ====================================================== filling a turn -->
+
+    <h2 id="splits">Setting up a whole split</h2>
+
+    <p>
+        <b>Set up a split</b> in the sidebar makes a blank line for every trainer between one gym
+        leader and the next, in the order you fight them. That's the tedious part of starting a run
+        &mdash; the Byron split alone is 69 fights, and none of them can be planned until the line
+        exists. The button makes the shells; the thinking is still yours.
+    </p>
+
+    <div class="doc-scroll">
+        <div class="planner-split-list" style="max-width: 16em">
+            <button class="planner-split-btn" title="Create 23 blank lines.">
+                <span class="planner-split-name">Roark</span>
+                <span class="planner-split-count">23</span>
+            </button>
+            <button class="planner-split-btn" title="Create 69 blank lines.">
+                <span class="planner-split-name">Byron</span>
+                <span class="planner-split-count">69</span>
+            </button>
+            <button class="planner-split-btn done" title="Every trainer already has a line.">
+                <span class="planner-split-name">Volkner</span>
+                <span class="planner-split-count">&#10003;</span>
+            </button>
+        </div>
+    </div>
+
+    <p>
+        The number is how many lines it would still make &mdash; trainers you already have one for
+        are skipped, so it's safe to press twice, and useful when you come back to a split you only
+        half-planned. A tick means that split is fully laid out.
+    </p>
+
+    <div class="doc-note">
+        Which trainers belong to which split isn't in the game's own data &mdash; it comes from the
+        community's Platinum Kaizo reference sheet, with thanks. Tag partners like Dawn/Lucas and
+        Cheryl aren't included: they fight alongside you rather than against you, and the planner
+        already knows about them from the battle format.
+    </div>
 
     <h2 id="filling">Filling a turn</h2>
 
@@ -1363,18 +1415,294 @@
     <h3>Abilities</h3>
 
     <p>
-        21 abilities are modelled: status protection (Limber, Insomnia, Immunity, Water Veil,
+        27 abilities are modelled: status protection (Limber, Insomnia, Immunity, Water Veil,
         Magma Armor, Vital Spirit, Leaf Guard, Own Tempo), stat-drop protection (Clear Body,
         White Smoke, Hyper Cutter, Keen Eye), weather setters (Drizzle, Drought, Sand Stream,
-        Snow Warning), trapping (Shadow Tag, Arena Trap, Magnet Pull), plus Intimidate and
-        Natural Cure. Those are underlined on the card.
+        Snow Warning), trapping (Shadow Tag, Arena Trap, Magnet Pull), the absorb abilities
+        (Volt Absorb, Water Absorb, Dry Skin, Motor Drive), plus Intimidate, Natural Cure,
+        <b>Rough Skin</b> and <b>Aftermath</b>. Those are underlined on the card.
+    </p>
+
+    <p>
+        The last two are the ones that bill <em>you</em>. <b>Rough Skin</b> takes an eighth of your
+        health for every hit that made contact &mdash; so a 2&ndash;5 hit move pays between two and
+        five times. <b>Aftermath</b> takes a quarter, but only if your hit was the one that killed
+        it; if the roll decides whether it died, only the bad end of your health bar pays. Magic
+        Guard pays neither, and a non-contact move avoids both.
     </p>
 
     <p>
         Everything else &mdash; abilities that only change damage &mdash; is deliberately left out.
         The damage calculator already implements them, and modelling them twice would only let the
-        two drift apart.
+        two drift apart. So are the 30% contact abilities like <b>Static</b> and <b>Flame Body</b>,
+        for the same reason a 10% burn is: a plan can't rest on them.
     </p>
+
+    <h3>Switching, and the moves that punish it</h3>
+
+    <p>
+        <b>Pursuit</b> catches a Pokémon on the way out: if the slot it's aimed at is switching this
+        turn, the move resolves <em>before</em> the switch, so it hits whoever is leaving rather than
+        whoever arrives &mdash; at double power. Worth knowing that in Platinum Kaizo <b>Rage is a
+        second Pursuit</b>, word for word; it has nothing to do with the Attack-raising move of the
+        base game. Between them that's 198 of the game's trainer sets.
+    </p>
+
+    <p>
+        <b>U-turn</b> and <b>Baton Pass</b> land their damage and then take their user off the field.
+        That isn't optional, so the card asks who comes in: an arrow button appears under the moves
+        whenever you pick one of them, and it stays flagged until you answer.
+    </p>
+
+    <div class="doc-scroll">
+        <span class="planner-move-column" style="max-width: 14em">
+            <span class="planner-move-column-title">Bruiser</span>
+            <button class="planner-selfswitch-btn unset" title="U-turn switches its user out — it isn't optional.">&#8594; who comes in?</button>
+            <button class="planner-switch-btn" title="Switch instead of attacking.">&#8646; Switch</button>
+        </span>
+        <span class="planner-move-column" style="max-width: 14em">
+            <span class="planner-move-column-title">Bruiser</span>
+            <button class="planner-selfswitch-btn active" title="U-turn takes this Pokémon off the field and brings Tank in.">&#8594; Tank</button>
+            <button class="planner-switch-btn" title="Switch instead of attacking.">&#8646; Switch</button>
+        </span>
+    </div>
+
+    <p>
+        It's a different question from the <b>Switch</b> button beside it. That one is "switch
+        <em>instead</em> of attacking"; this one is "the move already happened, and it's taken this
+        Pokémon off the field".
+    </p>
+
+    <p>
+        <b>The switch happens inside the turn order</b>, which is the whole point of the move. If
+        your U-turn user is faster, it leaves before the reply comes &mdash; and whoever you brought
+        in is the one that takes it. A slower Karate Chop aimed at the Pokémon that U-turned away
+        lands on the newcomer instead, calculated against <em>its</em> typing and defences. Hazards
+        and abilities like Intimidate land at that moment too, in time to affect the moves still to
+        come. If the move never goes off &mdash; outsped and killed, flinched, Protected against
+        &mdash; nobody moves at all.
+    </p>
+
+    <p>
+        <b>Baton Pass</b> hands its work over instead of dropping it &mdash; stat changes,
+        Substitute and the volatiles all move to whoever comes in, which is the whole reason to use
+        it over a plain switch. Two things that catch people out: a <b>Perish Song count goes across
+        too</b> (you're handing a teammate the faint, not escaping it), and so does a
+        <b>Mean Look</b> &mdash; whoever you pass to arrives already trapped, and their Switch button
+        will say so. A <em>binding</em> move like Wrap doesn't pass; it just ends.
+    </p>
+
+    <p>
+        <b>Roar</b> and <b>Whirlwind</b> drag the <em>other</em> side out instead. Which Pokémon
+        arrives is random, so the planner won't pick &mdash; the same arrow button appears on
+        <em>their</em> column, in italic, for you to record which one it was. What's certain is what
+        the departing Pokémon takes with it: its boosts and its volatiles are gone.
+    </p>
+
+    <div class="doc-note">
+        Both are <b>&minus;6 priority</b> in this game, so they almost always go last and the
+        attack happens first. The planner does deny an interrupted move when a Roar genuinely
+        resolves before it, but in practice that only comes up against another &minus;6 move.
+    </div>
+
+    <h3>Moves that do nothing, and moves that help</h3>
+
+    <p>
+        A move that can't touch its target shows <b>0</b> rather than its base power &mdash; a Shadow
+        Ball into a Normal type, a Ground move into a <b>Levitate</b> Pokémon, Poison into a Steel
+        type. And a move the target <em>absorbs</em> shows what it heals instead: <b>Volt Absorb</b>,
+        <b>Water Absorb</b> and <b>Dry Skin</b> all take a quarter of their health back off the
+        matching type, so attacking into one is worse than doing nothing at all.
+    </p>
+
+    <div class="doc-scroll">
+        <span class="planner-move-column" style="max-width: 15em">
+            <span class="planner-move-column-title">Psyduck</span>
+            <span class="planner-move you" title="Dry Skin absorbs this: it deals no damage and heals 12 HP instead. Attacking into it is worse than doing nothing.">
+                <img src="https://play.pokemonshowdown.com/sprites/types/Water.png" alt="">
+                <span class="planner-move-name">Water Pulse</span>
+                <span class="planner-move-dmg absorbed">+24</span>
+            </span>
+            <span class="planner-move you" title="Does nothing at all — it can't touch this Pokémon.">
+                <img src="https://play.pokemonshowdown.com/sprites/types/Ghost.png" alt="">
+                <span class="planner-move-name">Shadow Ball</span>
+                <span class="planner-move-dmg immune">0</span>
+            </span>
+            <span class="planner-move you" title="Psybeam — special, 65 BP, 100% acc">
+                <img src="https://play.pokemonshowdown.com/sprites/types/Psychic.png" alt="">
+                <span class="planner-move-name">Psybeam</span>
+                <span class="planner-move-dmg">72–88</span>
+            </span>
+            <span class="planner-move you" title="Disable — status, 0 BP, —% acc">
+                <img src="https://play.pokemonshowdown.com/sprites/types/Normal.png" alt="">
+                <span class="planner-move-name">Disable</span>
+                <span class="planner-move-bp">&mdash;</span>
+            </span>
+        </span>
+    </div>
+
+    <p>
+        The dash still means something different: <em>no number here</em>, which is what a status
+        move shows. A <b>0</b> is a real zero, and a <b>+</b> figure is the only one on a card that
+        runs the wrong way &mdash; it keeps full weight and takes the colour of whoever it's helping.
+        Nothing comes back off the attacker either: a move that dealt nothing recoils nothing, drains
+        nothing, and doesn't pay a Life Orb.
+    </p>
+
+    <h3>Held items that go off</h3>
+
+    <p>
+        A <b>Sitrus Berry</b>, an <b>Oran Berry</b> or a <b>Berry Juice</b> heals its holder once its
+        health drops below half, and the pinch berries raise a stat below a quarter. The planner
+        applies those, and marks the item spent &mdash; a berry that's gone is exactly why a later
+        turn stops working. It only claims the trigger when the <em>whole</em> health bar is under
+        the line, though: while the bar straddles it, whether the berry fired is a coin flip.
+    </p>
+
+    <p>
+        So there's a button. Each Pokémon's item shows as a small pip under its health bar, and one
+        click says it went off on this turn.
+    </p>
+
+    <div class="doc-scroll">
+        <span class="planner-slot" style="max-width: 11em">
+            <span class="planner-slot-name">Pachirisu</span>
+            <span class="planner-hp" title="24-32 of 57 HP.">
+                <span class="planner-hp-bar">
+                    <span class="planner-hp-min warn" style="width: 42%"></span>
+                    <span class="planner-hp-band warn" style="width: 14%"></span>
+                </span>
+                <span class="planner-hp-text warn">42–56%</span>
+            </span>
+            <button class="planner-item-pip use" title="Berry Juice — restores 20 HP once it drops below 50%.">Berry Juice</button>
+        </span>
+        <span class="planner-slot" style="max-width: 11em">
+            <span class="planner-slot-name">Pachirisu</span>
+            <span class="planner-hp" title="44-52 of 57 HP.">
+                <span class="planner-hp-bar">
+                    <span class="planner-hp-min good" style="width: 77%"></span>
+                    <span class="planner-hp-band good" style="width: 14%"></span>
+                </span>
+                <span class="planner-hp-text good">77–91%</span>
+            </span>
+            <button class="planner-item-pip use stated" title="You've said it went off on this turn.">Berry Juice</button>
+        </span>
+        <span class="planner-slot" style="max-width: 11em">
+            <span class="planner-slot-name">Pachirisu</span>
+            <span class="planner-hp" title="44-52 of 57 HP.">
+                <span class="planner-hp-bar">
+                    <span class="planner-hp-min good" style="width: 77%"></span>
+                    <span class="planner-hp-band good" style="width: 14%"></span>
+                </span>
+                <span class="planner-hp-text good">77–91%</span>
+            </span>
+            <span class="planner-item-pip spent" title="Berry Juice is gone — it only works once.">Berry Juice</span>
+        </span>
+    </div>
+
+    <p>
+        Left, the bar straddles half so nothing is claimed. Middle, you've said the berry went off
+        and the plan is derived from there &mdash; it's a statement, like everything else you set on
+        a turn, so it works even from full health. Right, on a later turn, it's gone.
+    </p>
+
+    <p>
+        <b>Toxic Orb</b> and <b>Flame Orb</b> status their holder at the end of every turn, so the
+        status lands now and starts costing health next turn. They're never used up &mdash; that's
+        the whole point of a Guts or Poison Heal set. An ability that refuses the status still
+        refuses it, and a Pokémon already statused can't be given another.
+    </p>
+
+    <p>
+        The <b>type-resist berries</b> &mdash; Yache, Chople, Occa, Rindo and the rest &mdash; halve
+        one super-effective hit of their type and are then gone. The halving was always shown; what's
+        new is that they're now <em>spent</em>, so the second hit of that type lands in full instead
+        of being halved again for the rest of the fight.
+    </p>
+
+    <div class="doc-note">
+        Only a berry with a <em>health threshold</em> gets the button, because it's the only trigger
+        the planner won't guess at. Everything else fires on its own and has nothing to decide: a
+        <b>Focus Sash</b> catches a particular hit as it lands, a resist berry is spent by whoever
+        attacks into it, and an orb goes off whether you want it to or not. A <b>Focus Band</b> is a
+        flat 10% chance to live, so it's left out for the same reason a 10% burn is, and items that
+        only change damage &mdash; Life Orb, the Choice items &mdash; are the damage calculator's job.
+    </div>
+
+    <h3>Moves that refuse the turn</h3>
+
+    <p>
+        <b>Protect</b> and <b>Detect</b> stop a move outright &mdash; no damage, no status, no stat
+        drop. What they can stop comes from the game's own move data, so Stealth Rock, Swords Dance,
+        Perish Song and Rain Dance all go through them untouched. <b>Endure</b> is the other shape:
+        the hit lands in full and only the faint is refused, so it holds on at 1 HP &mdash; and
+        end-of-turn damage still finishes the job, which in Roark's sand it will.
+    </p>
+
+    <p>
+        A move stopped this way keeps its figure on the card, struck through, the same as one denied
+        any other way. Hovering it says who is doing the stopping.
+    </p>
+
+    <div class="doc-scroll">
+        <div class="planner-move-column" style="max-width: 15em">
+            <span class="planner-move-column-title">Aipom</span>
+            <span class="planner-move you selected" title="Croagunk is using Protect, so this doesn't land at all — no damage and no effect. The figure is what it would have done.&#10;&#10;Slash — physical, 70 BP, 100% acc">
+                <img src="https://play.pokemonshowdown.com/sprites/types/Normal.png" alt="">
+                <span class="planner-move-name">Slash</span>
+                <span class="planner-move-dmg denied">48–56</span>
+            </span>
+            <span class="planner-move you" title="Swift hits both of them, and only one is Protecting.&#10;&#10;Swift — special, 60 BP, —% acc">
+                <img src="https://play.pokemonshowdown.com/sprites/types/Normal.png" alt="">
+                <span class="planner-move-name">Swift</span>
+                <span class="planner-move-dmg">30–36</span>
+            </span>
+        </div>
+    </div>
+
+    <p>
+        <b>Follow Me</b> pulls every single-target move the other side throws onto the Pokémon using
+        it, whatever it was aimed at. Spread moves aren't affected &mdash; an Earthquake was always
+        hitting both. In a double the aim row shows where the move really lands rather than where you
+        pointed it, and the damage figures are recalculated against that Pokémon, since it has
+        different typing and different defences.
+    </p>
+
+    <div class="doc-scroll">
+        <span class="planner-aim redirected" style="max-width: 15em" title="This move is being pulled onto the Pokémon drawing it, so the aim doesn't decide where it lands.">&#8594;<button class="planner-aim-btn" title="Attack Croagunk.">Croagunk</button><button class="planner-aim-btn active drawn" title="Pachirisu is drawing this move onto itself, whatever the aim says.">Pachirisu</button></span>
+    </div>
+
+    <div class="doc-note">
+        All four are <b>+3 priority</b> in this game, which is why they work at all &mdash; they go
+        before nearly everything. The one thing that beats them is something faster in the same
+        bracket, and the planner reads that off the speeds rather than assuming.
+    </div>
+
+    <p>
+        The one uncertainty here is real. <b>The first Protect always works; each one straight after
+        it halves the chance.</b> The planner still applies it &mdash; that's what your plan says
+        happens &mdash; but it tells you that you're gambling, because a blocked move looks exactly
+        the same whether the block was guaranteed or a coin flip.
+    </p>
+
+    <div class="doc-scroll">
+        <button class="planner-warn-badge" title="One thing worth checking on this turn:&#10;&#10;• Aron's Protect is its second in a row, so it can fail — the plan assumes it holds. Branch it, and on the arm where it fails mark this slot &quot;didn't act&quot;.">&#9888; 1</button>
+    </div>
+
+    <p>
+        That's a fork, and forks belong on branches. Draw the branch, and on the arm where the
+        Protect failed set <b>Move didn't go off</b> on the Protecting slot &mdash; that's what
+        "its move never went off" means, and the attack lands normally. It also resets the counter,
+        so the next Protect is guaranteed again. Protect, Detect and Endure share the one counter,
+        switching out resets it, and alternating Protect with an attack keeps every one of them
+        guaranteed.
+    </p>
+
+    <div class="doc-note">
+        This is the only warning in the planner that fires on something <em>possible</em>. Every
+        other one fires on something that can't happen at all. It's here because there'd otherwise
+        be nothing on the card to tell you the difference.
+    </div>
 
 
     <!-- ============================================================= formats -->
@@ -1529,9 +1857,21 @@
 
     <ul>
         <li>
-            <b>Two-turn charging moves</b> &mdash; Solar Beam, Fly, Dig and the like. They're shown
-            and can be planned, but the planner treats them as landing on the turn you pick them
-            rather than spending a turn charging first.
+            <b>The four two-turn moves</b> &mdash; SolarBeam, Fly, Razor Wind and Shadow Force.
+            They're shown and can be planned, but the planner treats them as landing on the turn you
+            pick them rather than spending a turn charging first. Nor does it model the
+            <b>semi-invulnerable</b> turn Fly and Shadow Force spend out of reach, which eleven moves
+            in this game specifically say they can still hit.
+            <br><br>
+            Platinum Kaizo rewrote most of the rest: <b>Dig</b>, <b>Dive</b>, <b>Sky Attack</b> and
+            <b>Bounce</b> all land in one turn here, Hyper Beam and Giga Impact recoil instead of
+            recharging, and Skull Bash is gone. Those need nothing.
+        </li>
+        <li>
+            <b>Custap, Micle, Lansat and Starf berries.</b> The four pinch berries whose effect
+            lands somewhere the planner has no home for &mdash; moving first in the bracket on a
+            <em>later</em> turn, accuracy, critical hit ratio, and a random stat. Every other pinch
+            berry is modelled.
         </li>
         <li>
             <b>Renaming or duplicating a line</b>, and duplicating a turn. A line is named after its
