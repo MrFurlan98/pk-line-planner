@@ -496,6 +496,34 @@ function renderSpeed(line, node, state, side, slot, slots) {
         faster ? "&#9650;" : "&#9660;"} ${byPriority ? "PRI" : "SPD"}</span>`;
 }
 
+/*
+ * The level this Pokémon is fighting at, and a way to correct it.
+ *
+ * A long fight levels things up part-way through and the stats move the instant
+ * it happens, so a gym leader planned at the level you walked in with quietly
+ * stops being true around the fourth or fifth turn. Nothing here can derive
+ * that - it needs experience yields, who participated, and what the cap is - so
+ * it is stated, like every other correction on a turn.
+ *
+ * It carries down the line from the turn it is set on, because levelling up is
+ * not something that wears off.
+ */
+function renderLevel(line, node, state, side, slot) {
+    var shown = levelAt(line, node, state, side, slot);
+    if (!shown) return "";
+    var stated = !!(state.mons && state.mons[side][monAt(node, side, slot)] &&
+        state.mons[side][monAt(node, side, slot)].level);
+    var setLevel = (slotSet(line, node, side, slot) || {set: {}}).set.level;
+
+    var hint = stated
+        ? `Fighting at level ${shown}, which this plan says rather than the Box — its set says ${setLevel || "?"}. Carries down to every turn below. Click to change it, or clear it to go back.`
+        : `Level ${shown}, from its set. Click to say it levelled up on this turn — a long fight moves the numbers, and the change carries down the line.`;
+
+    return ` <button class="planner-slot-level${stated ? " stated" : ""}"
+                     data-side="${side}" data-slot="${slot}"
+                     title="${escapeAttr(hint)}">Lv.${shown}</button>`;
+}
+
 function renderSlots(line, node, state, side, slots, format) {
     var out = "";
     for (var i = 0; i < slots; i++) {
@@ -512,15 +540,13 @@ function renderSlots(line, node, state, side, slots, format) {
         } else if (isPartner) {
             // The partner's Pokemon come from their party, not your Box.
             species = ref ? GAME.species()[toID(ref)] : null;
-            var pset = trainerSet(trainerForSlot(line, "you", i), ref);
             label = species ? species.name : "Partner";
-            sub = pset ? ` <em>Lv.${pset.level}</em>` : "";
         } else {
             species = ref ? GAME.species()[toID(ref)] : null;
-            var set = foeSetFor(line, node, ref);
             label = species ? species.name : "any";
-            sub = set ? ` <em>Lv.${set.level}</em>` : "";
         }
+        // The level is its own control now, so every side gets one the same way.
+        sub = ref ? renderLevel(line, node, state, side, i) : "";
 
         var mon = slotState(line, node, state, side, i);
         var trapped = trapReason(line, node, state, side, i);
@@ -2523,6 +2549,45 @@ function initPlanner() {
     $(".planner-canvas").on("mousedown", ".planner-selfswitch-btn", function(e) {
         e.preventDefault();
         e.stopPropagation();
+    });
+
+    /*
+     * The slot underneath opens a Pokémon picker and the card itself is
+     * draggable, so both have to be headed off before either sees this.
+     */
+    $(".planner-canvas").on("mousedown", ".planner-slot-level", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    $(".planner-canvas").on("click", ".planner-slot-level", function(e) {
+        e.stopPropagation();
+        var line = currentLine();
+        var node = line.nodes[$(this).closest(".planner-node").attr("data-node")];
+        if (!node) return;
+        var side = $(this).attr("data-side");
+        var slot = parseInt($(this).attr("data-slot"), 10) || 0;
+        var state = computeNodeState(line, node.id);
+        var setLevel = (slotSet(line, node, side, slot) || {set: {}}).set.level || "";
+
+        var answer = prompt(
+            "Level from this turn on.\n\nLeave it empty to go back to its set" +
+            (setLevel ? ` (Lv.${setLevel})` : "") + ".",
+            levelAt(line, node, state, side, slot) || "");
+        if (answer === null) return;
+
+        if (!node.levelSeed) node.levelSeed = {you: [null, null], them: [null, null]};
+        var wanted = String(answer).trim();
+        if (!wanted) {
+            node.levelSeed[side][slot] = null;
+        } else {
+            var level = Math.max(1, Math.min(100, parseInt(wanted, 10) || 0));
+            if (!level) return;
+            node.levelSeed[side][slot] = level;
+        }
+        saveLines();
+        // Level moves every stat, so every turn below this one is re-derived.
+        renderLine();
     });
 
     $(".planner-canvas").on("click", ".planner-selfswitch-btn", function(e) {

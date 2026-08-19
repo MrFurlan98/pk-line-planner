@@ -733,6 +733,43 @@
     font-weight: bold;
 }
 
+/*
+ * The level, which is editable because a long fight changes it. Styled to read
+ * as the italic "Lv.9" it replaced rather than as a button - it is context most
+ * of the time, and only worth noticing once it has been corrected.
+ */
+.planner-slot-level {
+    padding: 0 2px;
+    font: inherit;
+    /* Relative, so it stays a step below the name whatever the card is set to. */
+    font-size: 0.8em;
+    font-style: italic;
+    font-weight: normal;
+    vertical-align: baseline;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.planner-slot-level:hover {
+    opacity: 1;
+    border-color: rgba(128, 128, 128, 0.5);
+}
+
+/*
+ * Stated by the plan rather than read off the set. Marked by colour rather than
+ * by weight, so a corrected level doesn't start competing with the name.
+ */
+.planner-slot-level.stated {
+    font-style: normal;
+    opacity: 1;
+    border-color: #b08b2e;
+    background: rgba(176, 139, 46, 0.2);
+}
+
 .planner-predicted {
     font-style: italic;
     opacity: 0.8;

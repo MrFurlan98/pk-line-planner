@@ -94,8 +94,15 @@ function calcPokemonFor(line, node, state, side, slot) {
     var held = itemSpent(state, side, ref) ? "" : (set.item || "");
 
     var options = {
-        // 100 to match what the Box and createPokemon assume for a set with none.
-        level: numberOr(set.level, 0) || 100,
+        /*
+         * A level the plan has stated wins over the one on the set, which is what
+         * lets a long fight be planned honestly: stats move the moment something
+         * levels up mid-battle, and calc is handed the level it is fighting at
+         * rather than the one it walked in with.
+         *
+         * 100 to match what the Box and createPokemon assume for a set with none.
+         */
+        level: (mon && mon.level) || numberOr(set.level, 0) || 100,
         gender: getGender(set.gender),
         ability: set.ability,
         abilityOn: true,

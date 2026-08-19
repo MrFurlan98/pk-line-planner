@@ -225,6 +225,17 @@ function newNode(x, y) {
          */
         hpSeed: {you: [null, null], them: [null, null]},
         /*
+         * The level this Pokemon is fighting at from this turn on, or null to
+         * take whatever the Box or the trainer's set says.
+         *
+         * A long fight levels things up part-way through, and the stats move the
+         * moment it happens - so a plan drawn at the level you walked in with
+         * quietly stops being true around turn six of a gym leader. Unlike the
+         * other seeds this one *carries*: you don't go back down a level, so it
+         * is written onto the Pokemon's record and inherited from there.
+         */
+        levelSeed: {you: [null, null], them: [null, null]},
+        /*
          * "This slot's held item went off on this turn." A statement, for the
          * case the arithmetic won't claim: a Sitrus Berry triggers below half
          * health, and while the band straddles half, whether it fired is exactly
@@ -480,6 +491,14 @@ function emptyMonState() {
              * on it. Reset by using any other move and by leaving the field.
              */
             protectStreak: 0,
+            /*
+             * The level it is fighting at, once a turn has stated one. Null means
+             * "whatever its set says", which is the ordinary case. Kept on the
+             * Pokemon rather than the slot so it follows a switch out and back,
+             * and so it carries down the rest of the line - levelling up is not
+             * something that wears off.
+             */
+            level: null,
             perish: 0, perishDone: false, trapped: null};
 }
 
@@ -2290,6 +2309,24 @@ function actedAt(node, side, slot) {
     return !(skipped && skipped[slot]);
 }
 
+/*
+ * The level a slot is fighting at: whatever the plan has stated, otherwise the
+ * level on its set.
+ *
+ * Read from the state rather than the node, because a stated level carries down
+ * the line from the turn it was set on - which is the whole point. A Pokemon
+ * that levels up on turn six of a gym leader is still that level on turn seven,
+ * and on every branch below it.
+ */
+function levelAt(line, node, state, side, slot) {
+    var ref = monAt(node, side, slot);
+    var stated = ref && state && state.mons && state.mons[side][ref] &&
+        state.mons[side][ref].level;
+    if (stated) return stated;
+    var entry = slotSet(line, node, side, slot);
+    return (entry && entry.set && parseInt(entry.set.level, 10)) || 0;
+}
+
 // Whether this turn states that a slot's held item went off on it.
 function itemStatedAt(node, side, slot) {
     var seed = node && node.itemSeed && node.itemSeed[side];
@@ -2460,9 +2497,18 @@ function applyStatusSeed(line, node, state) {
         var clear = seedFor(node, "volatileClear", side, slot, []);
         var boosts = seedFor(node, "boostSeed", side, slot, {});
         var statedHp = seedFor(node, "hpSeed", side, slot, null);
+        var statedLevel = seedFor(node, "levelSeed", side, slot, null);
         var hasBoosts = Object.keys(boosts).some(function(s) { return boosts[s]; });
-        if (!seed && !add.length && !clear.length && !hasBoosts && statedHp === null) continue;
+        if (!seed && !add.length && !clear.length && !hasBoosts &&
+            statedHp === null && statedLevel === null) continue;
         var mon = monState(state, side, who);
+
+        /*
+         * The level is written on before the health, because health is worked
+         * out as a share of a maximum that the level decides. Setting it after
+         * would measure the old bar and keep the number.
+         */
+        if (statedLevel !== null) mon.level = statedLevel;
 
         /*
          * A stated health collapses the range to a point - which is the whole
@@ -2518,7 +2564,8 @@ function seedFor(node, field, side, slot, fallback) {
     if (seed === undefined || seed === null) return fallback;
     if (!Array.isArray(seed)) return slot === 0 ? seed : fallback;
     // Per-slot arrays hold one entry per slot; the legacy volatile shape held ids.
-    if (field === "statusSeed" || field === "boostSeed" || field === "hpSeed") {
+    if (field === "statusSeed" || field === "boostSeed" || field === "hpSeed" ||
+        field === "levelSeed") {
         // Not `|| fallback`: a stated HP of 0 is a real answer, meaning fainted.
         return seed[slot] === undefined || seed[slot] === null ? fallback : seed[slot];
     }

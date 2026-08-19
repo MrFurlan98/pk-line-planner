@@ -616,6 +616,30 @@ lesson Lunar Dance taught.
 
 ### Back to health
 
+- **The level is editable on the card**, per slot, because a long fight changes
+  it. Something that levels up on turn six of a gym leader has its stats move
+  *that instant*, so a plan drawn at the level you walked in with quietly stops
+  being true half way through — and the longer the fight, the more it matters,
+  which is exactly backwards from how much attention it was getting.
+  - **Stated, not derived.** Working it out would need experience yields, who
+    actually participated, and the badge's level cap, and the answer would still
+    be a guess about how the fight went. This is the same escape hatch the stat
+    stages and the health get: you say it, and the arithmetic gives way.
+  - **It carries down the line**, unlike the other seeds, because levelling up is
+    not something that wears off. So it is written onto the *Pokémon's* record
+    rather than the turn's, which also means it follows the Pokémon out of a
+    switch and back, and leaves the other slots alone.
+  - Applied before the health seed, since health is a share of a maximum the
+    level decides — setting it after would measure the old bar and keep the
+    number. Verified: Lv20 → Lv26 takes a Makuhita from 63 max HP to 78, and its
+    Vital Throw from 38–48 to 56–68 on that turn and every turn below it.
+  - Shown in the place the foe's `Lv.15` already sat, so both sides now read the
+    same way, and it only stops looking like plain context once it has been
+    corrected. Clearing it goes back to whatever the Box or the trainer's set
+    says.
+  - **Evolution is a different thing and needs nothing here**: this generation
+    evolves *after* a battle, not during one, and a line already survives that on
+    its own — slots are keyed by an identity that outlives the species change.
 - **`hpSeed` states health outright**, per slot, as a percentage. An absolute
   rather than a delta, because its job is to collapse the range back to a point:
   for a line that opens mid-fight, or when the band has widened past being useful
