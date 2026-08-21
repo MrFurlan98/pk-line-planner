@@ -23,6 +23,34 @@ worked out in advance rather than found on the fly.
   arrows. Drop an arrow on empty space to start the next turn there.
 - **Both movesets side by side** on every turn, so a move is chosen by comparing
   what you can do against what's coming back at you.
+- **Damage on every move**, as a percentage range, worked out against the boosts,
+  status, items, abilities, screens and weather the turn already has in play.
+- **Health carried down the plan**, as a range rather than a number — a damage
+  roll is 85–100%, so the bar shows what a Pokémon holds for certain and what it
+  holds only if the rolls went its way. Weather, poison, burn, Leech Seed and
+  Leftovers are taken off at the end of each turn; entry hazards bite on the way
+  in; and recoil, drain, Life Orb and the healing moves all move the bar too.
+  - The band widens with every hit and **narrows at every branch**, because a
+    branch already says which way the roll went: *You KO* pins the target to
+    nothing, *You don't KO* lifts it off zero, *You crit* recalculates the turn.
+  - Something dead on every roll doesn't get a turn — which is what makes a KO
+    actually deny the next move.
+- **Targeting is yours to choose in a double.** Both of their Pokémon are in
+  reach of both of yours, so you can point two attackers at one of theirs —
+  which is usually the whole plan. Spread moves hit both regardless.
+- **Turn order is worked out**, priority bracket first and then speed, so a
+  Pokémon you outspeed and kill outright loses its move. Only a *certain* KO does
+  that: if the kill depends on the roll, the move still lands and the fork
+  belongs on a branch. Speed ties and Quick Claw holders are left alone rather
+  than guessed at.
+  - **Trick Room** reverses it while up — only the speed comparison, so priority
+    moves still go first. In this game it lasts until the move is used again
+    rather than five turns, and it starts from the turn *after* it's cast.
+  - Priority is read from this game's own move table, because Platinum Kaizo
+    rebalanced the brackets heavily — Trick Room and Block at +7, Tailwind +5,
+    Fake Out +3, and the hazard moves at +1.
+  - **Fake Out** is modelled properly: it flinches the target on the user's first
+    turn out, fails outright on every turn after, and works again after a switch.
 - **Branches are directional** — *You KO* / *They KO you*, *You miss* /
   *They miss*, crit, crit KO, sacrifice, they switch, they set up — and several
   branches can converge on the same turn.
@@ -34,6 +62,14 @@ worked out in advance rather than found on the fly.
   - Only one non-volatile status at a time — which is what makes deliberately
     statusing your own Pokémon (Rest, Magic Guard + poison) a real tactic for
     locking the AI out of something worse.
+- **Warnings for what can't work** — a Pokémon that's dead, a move it no longer
+  knows, a Leech Seed into a Grass type, a branch the numbers say can't happen.
+  Only certainties are flagged, and nothing is corrected for you.
+- **Blind mode**, a toolbar toggle that puts the numbers away — base power back
+  on the moves, no health bars, no speed. Working the fight out yourself is the
+  part of a Nuzlocke that's actually the game, so the damage is there when you
+  want it and gone when you don't. It turns the calculation off rather than
+  hiding it, so nothing leaks the answer back.
 - **Trainer AI flags** are shown in plain language, because they decide how much
   branching a fight actually needs. A `Risky` trainer needs a miss branch; a
   `CheckHP` one will switch rather than let you finish it.

@@ -458,6 +458,7 @@
         <a href="#start">Starting a line</a>
         <a href="#workspace">The workspace</a>
         <a href="#turn">Reading a turn</a>
+        <a href="#splits">Setting up a split</a>
         <a href="#filling">Filling a turn</a>
         <a href="#branching">Branching</a>
         <a href="#derived">What it works out for you</a>
@@ -532,6 +533,7 @@
             <button class="btn planner-btn">Add turn</button>
             <button class="btn planner-btn">All moves</button>
             <button class="btn planner-btn" id="planner-toggle-parties">Teams</button>
+            <button class="btn planner-btn active">Blind</button>
         </div>
     </div>
 
@@ -539,6 +541,18 @@
         <li><b>Add turn</b> drops an empty turn onto the canvas. New turns are staggered so they don't land on top of each other.</li>
         <li><b>All moves</b> expands or collapses the move lists on <em>every</em> turn at once. Collapsing them is what keeps a long line readable.</li>
         <li><b>Teams</b> folds the party strips and the Box away to give the canvas more room. The choice is remembered.</li>
+        <li>
+            <b>Blind</b> puts the numbers away: base power back on the moves, no health bars, no
+            speed markers, and nothing struck through for being outsped. Working the fight out
+            yourself is the part of a Nuzlocke that's actually the game, so the damage is there when
+            you want it and gone when you don't.
+            <br><br>
+            It switches the calculation <em>off</em> rather than hiding it, which matters &mdash;
+            otherwise a move struck through would tell you it was a guaranteed KO just as plainly as
+            the number would have. Everything that comes from the rules stays: hazards, screens,
+            weather, status, trapping, Perish Song, and Fake Out both flinching and failing. The
+            setting is remembered, and it's on until you turn it off.
+        </li>
     </ul>
 
     <h3>AI flags</h3>
@@ -670,6 +684,14 @@
                     <span class="planner-slot" data-side="you" data-slot="0">
                         <img class="planner-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/makuhita.png" alt="">
                         <span class="planner-slot-name">Bruiser</span>
+                        <span class="planner-hp" title="41-47 of 63 HP.">
+                            <span class="planner-hp-bar">
+                                <span class="planner-hp-min good" style="width: 65%"></span>
+                                <span class="planner-hp-band good" style="width: 10%"></span>
+                            </span>
+                            <span class="planner-hp-text good">65–75%</span>
+                        </span>
+                        <span class="planner-speed slow" title="Speed 21 against 28.">&#9660; SPD</span>
                         <span class="planner-statuses">
                             <span class="planner-status brn" title="Burned, 2 turns elapsed">BRN 2</span>
                         </span>
@@ -686,6 +708,14 @@
                     <span class="planner-slot foe" data-side="them" data-slot="0">
                         <img class="planner-sprite" src="https://play.pokemonshowdown.com/sprites/gen4/cranidos.png" alt="">
                         <span class="planner-slot-name">Cranidos <em>Lv.16</em></span>
+                        <span class="planner-hp" title="4-11 of 42 HP.">
+                            <span class="planner-hp-bar">
+                                <span class="planner-hp-min bad" style="width: 10%"></span>
+                                <span class="planner-hp-band bad" style="width: 16%"></span>
+                            </span>
+                            <span class="planner-hp-text bad">10–26%</span>
+                        </span>
+                        <span class="planner-speed fast" title="Speed 28 against 21.">&#9650; SPD</span>
                         <span class="planner-boosts">
                             <span class="planner-boost up">+2 Spe</span>
                         </span>
@@ -701,20 +731,20 @@
                     <div class="planner-move-side you">
                         <div class="planner-move-column" data-side="you" data-slot="0">
                             <span class="planner-move-column-title">Bruiser</span>
-                            <span class="planner-move you selected" title="Vital Throw — Physical, 70 BP, —% acc">
+                            <span class="planner-move you selected" title="Lvl 20 22 Atk Makuhita Vital Throw vs. Lvl 16 30 HP / 30 Def Cranidos: 44-52 (104.7 - 123.8%) -- guaranteed OHKO&#10;&#10;Vital Throw — Physical, 70 BP, —% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Fighting.png" alt="">
                                 <span class="planner-move-name">Vital Throw</span>
-                                <span class="planner-move-bp">70</span>
+                                <span class="planner-move-dmg kills">KO</span>
                             </span>
-                            <span class="planner-move you" title="Brick Break — Physical, 75 BP, 100% acc">
+                            <span class="planner-move you" title="Lvl 20 22 Atk Makuhita Brick Break vs. Lvl 16 30 HP / 30 Def Cranidos: 40-50 (95.2 - 119%) -- 93.8% chance to OHKO&#10;&#10;Brick Break — Physical, 75 BP, 100% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Fighting.png" alt="">
                                 <span class="planner-move-name">Brick Break</span>
-                                <span class="planner-move-bp">75</span>
+                                <span class="planner-move-dmg maykill">96–119</span>
                             </span>
-                            <span class="planner-move you" title="Fake Out — Physical, 40 BP, 100% acc">
+                            <span class="planner-move you" title="Lvl 20 22 Atk Silk Scarf Makuhita Fake Out vs. Lvl 16 30 HP / 30 Def Cranidos: 4-5 (9.5 - 11.9%) -- possible 8HKO&#10;&#10;Fake Out — Physical, 40 BP, 100% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Normal.png" alt="">
                                 <span class="planner-move-name">Fake Out</span>
-                                <span class="planner-move-bp">40</span>
+                                <span class="planner-move-dmg">10–13</span>
                             </span>
                             <span class="planner-move you" title="Bulk Up — status, 0 BP, —% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Fighting.png" alt="">
@@ -727,20 +757,20 @@
                     <div class="planner-move-side them">
                         <div class="planner-move-column" data-side="them" data-slot="0">
                             <span class="planner-move-column-title">Cranidos</span>
-                            <span class="planner-move them selected" title="Head Smash — Physical, 150 BP, 80% acc">
+                            <span class="planner-move them selected" title="Lvl 16 30 Atk Cranidos Head Smash vs. Lvl 20 21 HP / 24 Def Makuhita: 39-46 (61.9 - 73%) -- guaranteed 2HKO after sandstorm damage&#10;&#10;Head Smash — Physical, 150 BP, 80% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Rock.png" alt="">
                                 <span class="planner-move-name">Head Smash</span>
-                                <span class="planner-move-bp">150</span>
+                                <span class="planner-move-dmg">62–73</span>
                             </span>
-                            <span class="planner-move them" title="Zen Headbutt — Physical, 80 BP, 90% acc">
+                            <span class="planner-move them" title="Lvl 16 30 Atk Cranidos Zen Headbutt vs. Lvl 20 21 HP / 24 Def Makuhita: 56-68 (88.8 - 107.9%) -- 37.5% chance to OHKO (75% chance to OHKO after sandstorm damage)&#10;&#10;Zen Headbutt — Physical, 80 BP, 90% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Psychic.png" alt="">
                                 <span class="planner-move-name">Zen Headbutt</span>
-                                <span class="planner-move-bp">80</span>
+                                <span class="planner-move-dmg maykill">89–108</span>
                             </span>
-                            <span class="planner-move them" title="Crunch — Physical, 80 BP, 100% acc">
+                            <span class="planner-move them" title="Lvl 16 30 Atk Cranidos Crunch vs. Lvl 20 21 HP / 24 Def Makuhita: 17-20 (26.9 - 31.7%) -- 69.5% chance to 3HKO after sandstorm damage&#10;&#10;Crunch — Physical, 80 BP, 100% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Dark.png" alt="">
                                 <span class="planner-move-name">Crunch</span>
-                                <span class="planner-move-bp">80</span>
+                                <span class="planner-move-dmg">27–32</span>
                             </span>
                             <span class="planner-move them" title="Rock Polish — status, 0 BP, —% acc">
                                 <img src="https://play.pokemonshowdown.com/sprites/types/Rock.png" alt="">
@@ -758,7 +788,7 @@
                 <button class="btn planner-btn small">Edit</button>
                 <button class="btn planner-btn small">Remove</button>
             </div>
-            <div class="planner-node-handle" title="Drag onto another turn to branch to it, or onto empty space to make a new one"></div>
+            <div class="planner-node-handle" title="Drag onto another turn to branch to it, or onto empty space for a copy of this one"></div>
         </div>
 
         <div class="doc-aside">
@@ -801,11 +831,125 @@
                     </span>
                 </li>
                 <li>
+                    <span class="doc-part-demo">
+                        <span class="planner-hp" title="41-47 of 63 HP.">
+                            <span class="planner-hp-bar">
+                                <span class="planner-hp-min good" style="width: 65%"></span>
+                                <span class="planner-hp-band good" style="width: 10%"></span>
+                            </span>
+                            <span class="planner-hp-text good">65–75%</span>
+                        </span>
+                    </span>
+                    <span class="doc-part-text">
+                        <b>Health</b>
+                        What it has left, worked down from full by everything the plan does to it
+                        &mdash; moves, weather, poison, burn, Leech Seed, and whatever its item
+                        gives back.
+                        <br><br>
+                        It's a <em>range</em>, because a damage roll is 85&ndash;100%: the solid part
+                        of the bar is what it holds even on the worst run of rolls, and the pale part
+                        is health it only has if the rolls went its way. Reading the solid edge alone
+                        is reading the plan pessimistically, which in a Nuzlocke is the right way to
+                        read it. The band widens with every hit &mdash; and narrows again at every
+                        branch, because a branch says which way the roll went.
+                        <br><br>
+                        Know better? Put the real number in <b>Health</b> in the turn editor and the
+                        range collapses to it. That's also how you start a line mid-fight.
+                        <br><br>
+                        End-of-turn effects resolve in this game's own order, and the order can decide
+                        a fight: <em>Wish &rarr; weather &rarr; Ingrain and Aqua Ring &rarr; Leftovers
+                        &rarr; Leech Seed &rarr; poison and burn &rarr; Future Sight</em>. A Pokémon
+                        that faints partway down that list never reaches the rest of it &mdash; so a
+                        sandstorm can finish something its Leftovers would have saved, and a Wish
+                        landing first can save something the sandstorm would have finished.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo">
+                        <span class="planner-speed fast" title="Speed 84 against 28.">&#9650; SPD</span>
+                        <span class="planner-speed slow" title="Speed 28 against 84.">&#9660; SPD</span>
+                        <span class="planner-speed tie" title="A tie is settled at random.">= SPD</span>
+                    </span>
+                    <span class="doc-part-text">
+                        <b>Who moves first</b>
+                        Priority bracket first, then speed &mdash; after stat stages, paralysis,
+                        Choice Scarf and the weather abilities. It reads <b>PRI</b> instead of
+                        <b>SPD</b> when the bracket is what decided it, which in Kaizo is more often
+                        than you'd expect: this game moved a lot of moves into brackets they aren't in
+                        elsewhere.
+                        <br><br>
+                        <b>= SPD</b> is a genuine tie, settled at random in game. The planner won't
+                        resolve one, and won't let either side deny the other's move.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo">
+                        <span class="planner-move you" style="display:inline-flex"><span class="planner-move-dmg maykill">96–119</span></span>
+                        <span class="planner-move them" style="display:inline-flex"><span class="planner-move-dmg kills">KO</span></span>
+                    </span>
+                    <span class="doc-part-text">
+                        <b>What the move does</b>
+                        The damage range, as a percentage of the target's <em>maximum</em> health, so
+                        the number means the same thing on turn one and turn ten. Worked out against
+                        everything the turn already knows &mdash; boosts, status, items, abilities,
+                        screens and the weather the fight is standing in. Hover for the full
+                        calculation and the KO chance.
+                        <br><br>
+                        Whether it says <b>KO</b> is measured against what the target has
+                        <em>left</em>, not against full &mdash; so it means "this finishes it here",
+                        and it means so even on the roll that treated the target best. For a move
+                        that hits 2&ndash;5 times it also means the <em>fewest</em> hits would do it,
+                        which is why those moves show such a wide range: two uncertainties stacked,
+                        the roll and the hit count. A range
+                        straddling the kill, like the one on the left, is the interesting case: it's
+                        a coin flip on the roll, and exactly what a
+                        <span class="planner-condition good selected">You KO</span> /
+                        <span class="planner-condition bad selected">You don't KO</span> branch is for.
+                        Colour reads from your side: green is your KO, red is theirs.
+                        <br><br>
+                        These are always the <em>ordinary</em> hit. A
+                        <span class="planner-condition good selected">You crit</span> branch doesn't
+                        change them &mdash; a turn can fork several ways at once, so one figure can't
+                        mean a normal hit down one arm and a crit down another. The crit shows up in
+                        the health bars further down that branch instead.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo">
+                        <span class="planner-aim" style="max-width:110px">&#8594;<button class="planner-aim-btn active">Shroomish</button><button class="planner-aim-btn">Pachirisu</button></span>
+                    </span>
+                    <span class="doc-part-text">
+                        <b>Who it attacks</b> <em>(doubles only)</em>
+                        Both of theirs are in reach of both of yours &mdash; a 2v2 has no far slot
+                        &mdash; so pointing both your attackers at one of their Pokémon is a real
+                        option, and often the whole plan. Click to aim; click the same one again to
+                        go back to whoever happens to be across. A spread move says
+                        <em>&#8594; both</em> instead, since it has no choice to make.
+                    </span>
+                </li>
+                <li>
                     <span class="doc-part-demo"><button class="planner-switch-btn" style="width:auto">&#8646; Switch</button></span>
                     <span class="doc-part-text">
                         <b>Switch</b>
                         A real action for either side, and it costs that slot its turn &mdash; whoever
                         comes in takes the hit. Switches resolve before moves.
+                    </span>
+                </li>
+                <li>
+                    <span class="doc-part-demo"><button class="planner-warn-badge">&#9888; 2</button></span>
+                    <span class="doc-part-text">
+                        <b>Things worth checking</b>
+                        Appears only when a turn has something odd about it, and hovering lists what.
+                        A Pokémon that's dead in the Box or already fainted on this branch, a move it
+                        no longer knows, a move that will simply fail &mdash; Leech Seed into a Grass
+                        type, or a Fake Out that isn't its user's first turn &mdash; a slot with no
+                        move chosen, or a branch the numbers say can't happen.
+                        <br><br>
+                        Everything it flags is a <em>certainty</em>, never a hunch. <b>You KO</b> is
+                        only questioned when nothing on that side kills on any roll; anything in
+                        between is exactly what a branch is for and passes without comment. Nothing
+                        is corrected for you, and nothing is blocked &mdash; a plan is allowed to be
+                        odd on purpose.
                     </span>
                 </li>
                 <li>
@@ -822,6 +966,12 @@
                         <b>The connector nub</b>
                         The blue dot under the card. Drag it to branch. This is the least obvious
                         control in the tool &mdash; see <a href="#branching">branching</a>.
+                        <br><br>
+                        Dropped on empty canvas it makes the next turn a <b>copy</b> of this one:
+                        the same Pokémon out, the same moves, the same targets and note. What it
+                        doesn't carry is anything you <em>stated</em> &mdash; carried status, stat
+                        stages, health, <em>didn't act</em> &mdash; because the new turn already
+                        inherits those, and copying them would apply them a second time.
                     </span>
                 </li>
             </ul>
@@ -857,10 +1007,47 @@
     </p>
 
     <p>
+        <b>The level is editable.</b> Click the <em>Lv.</em> on any Pokémon to say it levelled up.
+        A long fight moves the numbers &mdash; something that levels on turn six of a gym leader has
+        its stats change right then, so a plan drawn at the level you walked in with stops being true
+        half way through. The change carries down to every turn below, because levelling up doesn't
+        wear off, and it follows that Pokémon rather than the slot. Clear it to go back to what the
+        Box says.
+    </p>
+
+    <div class="doc-note">
+        The planner won't work this out for you: it would need experience yields, who actually
+        participated and the badge's level cap, and it would still be guessing at how the fight went.
+        <b>Evolution needs nothing</b> &mdash; Pokémon evolve after a battle here, not during one,
+        and a line already survives that on its own.
+    </div>
+
+    <p>
         <b>Move didn't go off</b> says that Pokémon never got to act &mdash; you KO'd it first, it
-        flinched, it was fully paralysed, or it missed. Its effects are skipped, so outspeeding a
-        lead genuinely denies the Stealth Rock instead of the planner laying it anyway. The move
-        stays on the card, struck through, so the plan still records what it was going to do.
+        flinched, it was fully paralysed, or it missed. Its effects are skipped and its damage isn't
+        taken off anybody, so outspeeding a lead genuinely denies the Stealth Rock instead of the
+        planner laying it anyway. The move stays on the card and its damage figures stay visible,
+        both struck through, so the plan still records what it was going to do.
+    </p>
+
+    <p>
+        You won't always need it. The planner works out turn order itself &mdash; priority bracket
+        first, then speed &mdash; so if you outspeed something and your move kills it on
+        <em>every</em> roll, it loses its move without you saying so. The same goes for a Fake Out
+        flinch. What it will never do is guess: a kill that depends on the roll leaves the move
+        landing, because that fork belongs on a
+        <span class="planner-condition good selected">You KO</span> /
+        <span class="planner-condition bad selected">You don't KO</span> branch instead. Speed ties,
+        Quick Claw holders are left alone for the same reason.
+    </p>
+
+    <p>
+        <b>Trick Room</b> is handled: while it's up, the slower Pokémon moves first inside each
+        priority bracket &mdash; a Quick Attack still beats a Tackle, since only the speed comparison
+        flips. It shows in the state bar at the top of the card. Two things about it are specific to
+        this game: it lasts <em>until the move is used again</em> rather than running out after five
+        turns, and it doesn't change the order of the turn it's cast on &mdash; this generation fixes
+        turn order before anything moves, so the reversal starts on the turn after.
     </p>
 
     <p>
@@ -887,6 +1074,54 @@
 
 
     <!-- ====================================================== filling a turn -->
+
+    <h2 id="splits">Setting up a whole split</h2>
+
+    <p>
+        <b>Set up a split</b> in the sidebar makes a blank line for every trainer between one gym
+        leader and the next, in the order you fight them. That's the tedious part of starting a run
+        &mdash; the Byron split alone is 69 fights, and none of them can be planned until the line
+        exists. The button makes the shells; the thinking is still yours.
+    </p>
+
+    <div class="doc-scroll">
+        <div class="planner-split-list" style="max-width: 16em">
+            <button class="planner-split-btn" title="Create 23 blank lines.">
+                <span class="planner-split-name">Roark</span>
+                <span class="planner-split-count">23</span>
+            </button>
+            <button class="planner-split-btn" title="Create 69 blank lines.">
+                <span class="planner-split-name">Byron</span>
+                <span class="planner-split-count">69</span>
+            </button>
+            <button class="planner-split-btn done" title="Every trainer already has a line.">
+                <span class="planner-split-name">Volkner</span>
+                <span class="planner-split-count">&#10003;</span>
+            </button>
+        </div>
+    </div>
+
+    <p>
+        The number is how many lines it would still make &mdash; trainers you already have one for
+        are skipped, so it's safe to press twice, and useful when you come back to a split you only
+        half-planned. A tick means that split is fully laid out.
+    </p>
+
+    <p>
+        <b>The line list folds by split too</b>, which is what keeps it readable once you've done
+        this: two splits is over a hundred lines, and flat that's a list you scroll past rather than
+        read. Each group shows how many of its lines you've actually put turns into &mdash;
+        <em>0/106</em> for one you haven't started &mdash; and lines you've never opened are dimmed,
+        so how far through a split you are reads at a glance. The group holding the line you're
+        working on opens itself.
+    </p>
+
+    <div class="doc-note">
+        Which trainers belong to which split isn't in the game's own data &mdash; it comes from the
+        community's Platinum Kaizo reference sheet, with thanks. Tag partners like Dawn/Lucas and
+        Cheryl aren't included: they fight alongside you rather than against you, and the planner
+        already knows about them from the battle format.
+    </div>
 
     <h2 id="filling">Filling a turn</h2>
 
@@ -1205,18 +1440,294 @@
     <h3>Abilities</h3>
 
     <p>
-        21 abilities are modelled: status protection (Limber, Insomnia, Immunity, Water Veil,
+        27 abilities are modelled: status protection (Limber, Insomnia, Immunity, Water Veil,
         Magma Armor, Vital Spirit, Leaf Guard, Own Tempo), stat-drop protection (Clear Body,
         White Smoke, Hyper Cutter, Keen Eye), weather setters (Drizzle, Drought, Sand Stream,
-        Snow Warning), trapping (Shadow Tag, Arena Trap, Magnet Pull), plus Intimidate and
-        Natural Cure. Those are underlined on the card.
+        Snow Warning), trapping (Shadow Tag, Arena Trap, Magnet Pull), the absorb abilities
+        (Volt Absorb, Water Absorb, Dry Skin, Motor Drive), plus Intimidate, Natural Cure,
+        <b>Rough Skin</b> and <b>Aftermath</b>. Those are underlined on the card.
+    </p>
+
+    <p>
+        The last two are the ones that bill <em>you</em>. <b>Rough Skin</b> takes an eighth of your
+        health for every hit that made contact &mdash; so a 2&ndash;5 hit move pays between two and
+        five times. <b>Aftermath</b> takes a quarter, but only if your hit was the one that killed
+        it; if the roll decides whether it died, only the bad end of your health bar pays. Magic
+        Guard pays neither, and a non-contact move avoids both.
     </p>
 
     <p>
         Everything else &mdash; abilities that only change damage &mdash; is deliberately left out.
         The damage calculator already implements them, and modelling them twice would only let the
-        two drift apart.
+        two drift apart. So are the 30% contact abilities like <b>Static</b> and <b>Flame Body</b>,
+        for the same reason a 10% burn is: a plan can't rest on them.
     </p>
+
+    <h3>Switching, and the moves that punish it</h3>
+
+    <p>
+        <b>Pursuit</b> catches a Pokémon on the way out: if the slot it's aimed at is switching this
+        turn, the move resolves <em>before</em> the switch, so it hits whoever is leaving rather than
+        whoever arrives &mdash; at double power. Worth knowing that in Platinum Kaizo <b>Rage is a
+        second Pursuit</b>, word for word; it has nothing to do with the Attack-raising move of the
+        base game. Between them that's 198 of the game's trainer sets.
+    </p>
+
+    <p>
+        <b>U-turn</b> and <b>Baton Pass</b> land their damage and then take their user off the field.
+        That isn't optional, so the card asks who comes in: an arrow button appears under the moves
+        whenever you pick one of them, and it stays flagged until you answer.
+    </p>
+
+    <div class="doc-scroll">
+        <span class="planner-move-column" style="max-width: 14em">
+            <span class="planner-move-column-title">Bruiser</span>
+            <button class="planner-selfswitch-btn unset" title="U-turn switches its user out — it isn't optional.">&#8594; who comes in?</button>
+            <button class="planner-switch-btn" title="Switch instead of attacking.">&#8646; Switch</button>
+        </span>
+        <span class="planner-move-column" style="max-width: 14em">
+            <span class="planner-move-column-title">Bruiser</span>
+            <button class="planner-selfswitch-btn active" title="U-turn takes this Pokémon off the field and brings Tank in.">&#8594; Tank</button>
+            <button class="planner-switch-btn" title="Switch instead of attacking.">&#8646; Switch</button>
+        </span>
+    </div>
+
+    <p>
+        It's a different question from the <b>Switch</b> button beside it. That one is "switch
+        <em>instead</em> of attacking"; this one is "the move already happened, and it's taken this
+        Pokémon off the field".
+    </p>
+
+    <p>
+        <b>The switch happens inside the turn order</b>, which is the whole point of the move. If
+        your U-turn user is faster, it leaves before the reply comes &mdash; and whoever you brought
+        in is the one that takes it. A slower Karate Chop aimed at the Pokémon that U-turned away
+        lands on the newcomer instead, calculated against <em>its</em> typing and defences. Hazards
+        and abilities like Intimidate land at that moment too, in time to affect the moves still to
+        come. If the move never goes off &mdash; outsped and killed, flinched, Protected against
+        &mdash; nobody moves at all.
+    </p>
+
+    <p>
+        <b>Baton Pass</b> hands its work over instead of dropping it &mdash; stat changes,
+        Substitute and the volatiles all move to whoever comes in, which is the whole reason to use
+        it over a plain switch. Two things that catch people out: a <b>Perish Song count goes across
+        too</b> (you're handing a teammate the faint, not escaping it), and so does a
+        <b>Mean Look</b> &mdash; whoever you pass to arrives already trapped, and their Switch button
+        will say so. A <em>binding</em> move like Wrap doesn't pass; it just ends.
+    </p>
+
+    <p>
+        <b>Roar</b> and <b>Whirlwind</b> drag the <em>other</em> side out instead. Which Pokémon
+        arrives is random, so the planner won't pick &mdash; the same arrow button appears on
+        <em>their</em> column, in italic, for you to record which one it was. What's certain is what
+        the departing Pokémon takes with it: its boosts and its volatiles are gone.
+    </p>
+
+    <div class="doc-note">
+        Both are <b>&minus;6 priority</b> in this game, so they almost always go last and the
+        attack happens first. The planner does deny an interrupted move when a Roar genuinely
+        resolves before it, but in practice that only comes up against another &minus;6 move.
+    </div>
+
+    <h3>Moves that do nothing, and moves that help</h3>
+
+    <p>
+        A move that can't touch its target shows <b>0</b> rather than its base power &mdash; a Shadow
+        Ball into a Normal type, a Ground move into a <b>Levitate</b> Pokémon, Poison into a Steel
+        type. And a move the target <em>absorbs</em> shows what it heals instead: <b>Volt Absorb</b>,
+        <b>Water Absorb</b> and <b>Dry Skin</b> all take a quarter of their health back off the
+        matching type, so attacking into one is worse than doing nothing at all.
+    </p>
+
+    <div class="doc-scroll">
+        <span class="planner-move-column" style="max-width: 15em">
+            <span class="planner-move-column-title">Psyduck</span>
+            <span class="planner-move you" title="Dry Skin absorbs this: it deals no damage and heals 12 HP instead. Attacking into it is worse than doing nothing.">
+                <img src="https://play.pokemonshowdown.com/sprites/types/Water.png" alt="">
+                <span class="planner-move-name">Water Pulse</span>
+                <span class="planner-move-dmg absorbed">+24</span>
+            </span>
+            <span class="planner-move you" title="Does nothing at all — it can't touch this Pokémon.">
+                <img src="https://play.pokemonshowdown.com/sprites/types/Ghost.png" alt="">
+                <span class="planner-move-name">Shadow Ball</span>
+                <span class="planner-move-dmg immune">0</span>
+            </span>
+            <span class="planner-move you" title="Psybeam — special, 65 BP, 100% acc">
+                <img src="https://play.pokemonshowdown.com/sprites/types/Psychic.png" alt="">
+                <span class="planner-move-name">Psybeam</span>
+                <span class="planner-move-dmg">72–88</span>
+            </span>
+            <span class="planner-move you" title="Disable — status, 0 BP, —% acc">
+                <img src="https://play.pokemonshowdown.com/sprites/types/Normal.png" alt="">
+                <span class="planner-move-name">Disable</span>
+                <span class="planner-move-bp">&mdash;</span>
+            </span>
+        </span>
+    </div>
+
+    <p>
+        The dash still means something different: <em>no number here</em>, which is what a status
+        move shows. A <b>0</b> is a real zero, and a <b>+</b> figure is the only one on a card that
+        runs the wrong way &mdash; it keeps full weight and takes the colour of whoever it's helping.
+        Nothing comes back off the attacker either: a move that dealt nothing recoils nothing, drains
+        nothing, and doesn't pay a Life Orb.
+    </p>
+
+    <h3>Held items that go off</h3>
+
+    <p>
+        A <b>Sitrus Berry</b>, an <b>Oran Berry</b> or a <b>Berry Juice</b> heals its holder once its
+        health drops below half, and the pinch berries raise a stat below a quarter. The planner
+        applies those, and marks the item spent &mdash; a berry that's gone is exactly why a later
+        turn stops working. It only claims the trigger when the <em>whole</em> health bar is under
+        the line, though: while the bar straddles it, whether the berry fired is a coin flip.
+    </p>
+
+    <p>
+        So there's a button. Each Pokémon's item shows as a small pip under its health bar, and one
+        click says it went off on this turn.
+    </p>
+
+    <div class="doc-scroll">
+        <span class="planner-slot" style="max-width: 11em">
+            <span class="planner-slot-name">Pachirisu</span>
+            <span class="planner-hp" title="24-32 of 57 HP.">
+                <span class="planner-hp-bar">
+                    <span class="planner-hp-min warn" style="width: 42%"></span>
+                    <span class="planner-hp-band warn" style="width: 14%"></span>
+                </span>
+                <span class="planner-hp-text warn">42–56%</span>
+            </span>
+            <button class="planner-item-pip use" title="Berry Juice — restores 20 HP once it drops below 50%.">Berry Juice</button>
+        </span>
+        <span class="planner-slot" style="max-width: 11em">
+            <span class="planner-slot-name">Pachirisu</span>
+            <span class="planner-hp" title="44-52 of 57 HP.">
+                <span class="planner-hp-bar">
+                    <span class="planner-hp-min good" style="width: 77%"></span>
+                    <span class="planner-hp-band good" style="width: 14%"></span>
+                </span>
+                <span class="planner-hp-text good">77–91%</span>
+            </span>
+            <button class="planner-item-pip use stated" title="You've said it went off on this turn.">Berry Juice</button>
+        </span>
+        <span class="planner-slot" style="max-width: 11em">
+            <span class="planner-slot-name">Pachirisu</span>
+            <span class="planner-hp" title="44-52 of 57 HP.">
+                <span class="planner-hp-bar">
+                    <span class="planner-hp-min good" style="width: 77%"></span>
+                    <span class="planner-hp-band good" style="width: 14%"></span>
+                </span>
+                <span class="planner-hp-text good">77–91%</span>
+            </span>
+            <span class="planner-item-pip spent" title="Berry Juice is gone — it only works once.">Berry Juice</span>
+        </span>
+    </div>
+
+    <p>
+        Left, the bar straddles half so nothing is claimed. Middle, you've said the berry went off
+        and the plan is derived from there &mdash; it's a statement, like everything else you set on
+        a turn, so it works even from full health. Right, on a later turn, it's gone.
+    </p>
+
+    <p>
+        <b>Toxic Orb</b> and <b>Flame Orb</b> status their holder at the end of every turn, so the
+        status lands now and starts costing health next turn. They're never used up &mdash; that's
+        the whole point of a Guts or Poison Heal set. An ability that refuses the status still
+        refuses it, and a Pokémon already statused can't be given another.
+    </p>
+
+    <p>
+        The <b>type-resist berries</b> &mdash; Yache, Chople, Occa, Rindo and the rest &mdash; halve
+        one super-effective hit of their type and are then gone. The halving was always shown; what's
+        new is that they're now <em>spent</em>, so the second hit of that type lands in full instead
+        of being halved again for the rest of the fight.
+    </p>
+
+    <div class="doc-note">
+        Only a berry with a <em>health threshold</em> gets the button, because it's the only trigger
+        the planner won't guess at. Everything else fires on its own and has nothing to decide: a
+        <b>Focus Sash</b> catches a particular hit as it lands, a resist berry is spent by whoever
+        attacks into it, and an orb goes off whether you want it to or not. A <b>Focus Band</b> is a
+        flat 10% chance to live, so it's left out for the same reason a 10% burn is, and items that
+        only change damage &mdash; Life Orb, the Choice items &mdash; are the damage calculator's job.
+    </div>
+
+    <h3>Moves that refuse the turn</h3>
+
+    <p>
+        <b>Protect</b> and <b>Detect</b> stop a move outright &mdash; no damage, no status, no stat
+        drop. What they can stop comes from the game's own move data, so Stealth Rock, Swords Dance,
+        Perish Song and Rain Dance all go through them untouched. <b>Endure</b> is the other shape:
+        the hit lands in full and only the faint is refused, so it holds on at 1 HP &mdash; and
+        end-of-turn damage still finishes the job, which in Roark's sand it will.
+    </p>
+
+    <p>
+        A move stopped this way keeps its figure on the card, struck through, the same as one denied
+        any other way. Hovering it says who is doing the stopping.
+    </p>
+
+    <div class="doc-scroll">
+        <div class="planner-move-column" style="max-width: 15em">
+            <span class="planner-move-column-title">Aipom</span>
+            <span class="planner-move you selected" title="Croagunk is using Protect, so this doesn't land at all — no damage and no effect. The figure is what it would have done.&#10;&#10;Slash — physical, 70 BP, 100% acc">
+                <img src="https://play.pokemonshowdown.com/sprites/types/Normal.png" alt="">
+                <span class="planner-move-name">Slash</span>
+                <span class="planner-move-dmg denied">48–56</span>
+            </span>
+            <span class="planner-move you" title="Swift hits both of them, and only one is Protecting.&#10;&#10;Swift — special, 60 BP, —% acc">
+                <img src="https://play.pokemonshowdown.com/sprites/types/Normal.png" alt="">
+                <span class="planner-move-name">Swift</span>
+                <span class="planner-move-dmg">30–36</span>
+            </span>
+        </div>
+    </div>
+
+    <p>
+        <b>Follow Me</b> pulls every single-target move the other side throws onto the Pokémon using
+        it, whatever it was aimed at. Spread moves aren't affected &mdash; an Earthquake was always
+        hitting both. In a double the aim row shows where the move really lands rather than where you
+        pointed it, and the damage figures are recalculated against that Pokémon, since it has
+        different typing and different defences.
+    </p>
+
+    <div class="doc-scroll">
+        <span class="planner-aim redirected" style="max-width: 15em" title="This move is being pulled onto the Pokémon drawing it, so the aim doesn't decide where it lands.">&#8594;<button class="planner-aim-btn" title="Attack Croagunk.">Croagunk</button><button class="planner-aim-btn active drawn" title="Pachirisu is drawing this move onto itself, whatever the aim says.">Pachirisu</button></span>
+    </div>
+
+    <div class="doc-note">
+        All four are <b>+3 priority</b> in this game, which is why they work at all &mdash; they go
+        before nearly everything. The one thing that beats them is something faster in the same
+        bracket, and the planner reads that off the speeds rather than assuming.
+    </div>
+
+    <p>
+        The one uncertainty here is real. <b>The first Protect always works; each one straight after
+        it halves the chance.</b> The planner still applies it &mdash; that's what your plan says
+        happens &mdash; but it tells you that you're gambling, because a blocked move looks exactly
+        the same whether the block was guaranteed or a coin flip.
+    </p>
+
+    <div class="doc-scroll">
+        <button class="planner-warn-badge" title="One thing worth checking on this turn:&#10;&#10;• Aron's Protect is its second in a row, so it can fail — the plan assumes it holds. Branch it, and on the arm where it fails mark this slot &quot;didn't act&quot;.">&#9888; 1</button>
+    </div>
+
+    <p>
+        That's a fork, and forks belong on branches. Draw the branch, and on the arm where the
+        Protect failed set <b>Move didn't go off</b> on the Protecting slot &mdash; that's what
+        "its move never went off" means, and the attack lands normally. It also resets the counter,
+        so the next Protect is guaranteed again. Protect, Detect and Endure share the one counter,
+        switching out resets it, and alternating Protect with an attack keeps every one of them
+        guaranteed.
+    </p>
+
+    <div class="doc-note">
+        This is the only warning in the planner that fires on something <em>possible</em>. Every
+        other one fires on something that can't happen at all. It's here because there'd otherwise
+        be nothing on the card to tell you the difference.
+    </div>
 
 
     <!-- ============================================================= formats -->
@@ -1371,8 +1882,21 @@
 
     <ul>
         <li>
-            <b>Damage numbers.</b> No KO chances, rolls, HP bars or speed order yet &mdash; the cards
-            show base power and you judge the rest. This is the next thing being built.
+            <b>The four two-turn moves</b> &mdash; SolarBeam, Fly, Razor Wind and Shadow Force.
+            They're shown and can be planned, but the planner treats them as landing on the turn you
+            pick them rather than spending a turn charging first. Nor does it model the
+            <b>semi-invulnerable</b> turn Fly and Shadow Force spend out of reach, which eleven moves
+            in this game specifically say they can still hit.
+            <br><br>
+            Platinum Kaizo rewrote most of the rest: <b>Dig</b>, <b>Dive</b>, <b>Sky Attack</b> and
+            <b>Bounce</b> all land in one turn here, Hyper Beam and Giga Impact recoil instead of
+            recharging, and Skull Bash is gone. Those need nothing.
+        </li>
+        <li>
+            <b>Custap, Micle, Lansat and Starf berries.</b> The four pinch berries whose effect
+            lands somewhere the planner has no home for &mdash; moving first in the bracket on a
+            <em>later</em> turn, accuracy, critical hit ratio, and a random stat. Every other pinch
+            berry is modelled.
         </li>
         <li>
             <b>Renaming or duplicating a line</b>, and duplicating a turn. A line is named after its

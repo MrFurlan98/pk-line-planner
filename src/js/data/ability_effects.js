@@ -19,6 +19,26 @@ const ABILITY_EFFECTS = {
         ],
         "name": "Limber"
     },
+    "voltabsorb": {
+        "whenHitBy": {
+            "type": "electric",
+            "heal": [
+                1,
+                4
+            ]
+        },
+        "name": "Volt Absorb"
+    },
+    "waterabsorb": {
+        "whenHitBy": {
+            "type": "water",
+            "heal": [
+                1,
+                4
+            ]
+        },
+        "name": "Water Absorb"
+    },
     "insomnia": {
         "blocksStatus": [
             "slp"
@@ -49,6 +69,15 @@ const ABILITY_EFFECTS = {
     "shadowtag": {
         "traps": "all",
         "name": "Shadow Tag"
+    },
+    "roughskin": {
+        "contactRecoil": {
+            "fraction": [
+                1,
+                8
+            ]
+        },
+        "name": "Rough Skin"
     },
     "clearbody": {
         "blocksDrops": "all",
@@ -112,6 +141,25 @@ const ABILITY_EFFECTS = {
         "blocksDrops": "all",
         "name": "White Smoke"
     },
+    "motordrive": {
+        "whenHitBy": {
+            "type": "electric",
+            "boosts": {
+                "spe": 1
+            }
+        },
+        "name": "Motor Drive"
+    },
+    "dryskin": {
+        "whenHitBy": {
+            "type": "water",
+            "heal": [
+                1,
+                4
+            ]
+        },
+        "name": "Dry Skin"
+    },
     "leafguard": {
         "blocksStatus": [
             "psn",
@@ -123,6 +171,16 @@ const ABILITY_EFFECTS = {
         ],
         "requiresWeather": "Sun",
         "name": "Leaf Guard"
+    },
+    "aftermath": {
+        "onFaintRecoil": {
+            "fraction": [
+                1,
+                4
+            ],
+            "blockedBy": "damp"
+        },
+        "name": "Aftermath"
     },
     "snowwarning": {
         "onSwitchIn": {

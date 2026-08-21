@@ -18,6 +18,10 @@ const MOVE_EFFECTS = {
         },
         "name": "Swords Dance"
     },
+    "whirlwind": {
+        "phazes": true,
+        "name": "Whirlwind"
+    },
     "mysticalfire": {
         "target": {
             "spa": -1
@@ -54,6 +58,10 @@ const MOVE_EFFECTS = {
         },
         "name": "Growl"
     },
+    "roar": {
+        "phazes": true,
+        "name": "Roar"
+    },
     "sing": {
         "targetStatus": "slp",
         "name": "Sing"
@@ -80,6 +88,7 @@ const MOVE_EFFECTS = {
         "targetVolatiles": [
             "leechseed"
         ],
+        "failsAgainstType": "grass",
         "name": "Leech Seed"
     },
     "growth": {
@@ -136,6 +145,12 @@ const MOVE_EFFECTS = {
         },
         "name": "Agility"
     },
+    "rage": {
+        "pursues": {
+            "power": 2
+        },
+        "name": "Rage"
+    },
     "screech": {
         "target": {
             "def": -2
@@ -147,6 +162,15 @@ const MOVE_EFFECTS = {
             "eva": 1
         },
         "name": "Double Team"
+    },
+    "recover": {
+        "selfHeal": {
+            "fraction": [
+                50,
+                100
+            ]
+        },
+        "name": "Recover"
     },
     "harden": {
         "self": {
@@ -210,6 +234,15 @@ const MOVE_EFFECTS = {
         },
         "name": "Kinesis"
     },
+    "softboiled": {
+        "selfHeal": {
+            "fraction": [
+                50,
+                100
+            ]
+        },
+        "name": "Softboiled"
+    },
     "glare": {
         "targetStatus": "par",
         "name": "Glare"
@@ -239,6 +272,12 @@ const MOVE_EFFECTS = {
         "name": "Acid Armor"
     },
     "rest": {
+        "selfHeal": {
+            "fraction": [
+                1,
+                1
+            ]
+        },
         "selfStatus": "slp",
         "conditional": "Sleeps for 2 turns. Also the usual way to block a worse status on purpose.",
         "name": "Rest"
@@ -334,6 +373,15 @@ const MOVE_EFFECTS = {
         ],
         "name": "Swagger"
     },
+    "milkdrink": {
+        "selfHeal": {
+            "fraction": [
+                50,
+                100
+            ]
+        },
+        "name": "Milk Drink"
+    },
     "meanlook": {
         "trapsTarget": {
             "expires": false
@@ -347,6 +395,10 @@ const MOVE_EFFECTS = {
         "conditional": "Only lands if the two are of opposite genders.",
         "name": "Attract"
     },
+    "painsplit": {
+        "painSplit": true,
+        "name": "Pain Split"
+    },
     "bulldoze": {
         "target": {
             "spe": -1
@@ -359,17 +411,80 @@ const MOVE_EFFECTS = {
         ],
         "name": "DynamicPunch"
     },
+    "batonpass": {
+        "switchesUser": {
+            "passesBoosts": true
+        },
+        "name": "Baton Pass"
+    },
     "encore": {
         "targetVolatiles": [
             "encore"
         ],
         "name": "Encore"
     },
+    "pursuit": {
+        "pursues": {
+            "power": 2
+        },
+        "name": "Pursuit"
+    },
     "sweetscent": {
         "target": {
             "eva": -1
         },
         "name": "Sweet Scent"
+    },
+    "morningsun": {
+        "selfHeal": {
+            "fraction": [
+                50,
+                100
+            ],
+            "sun": [
+                2,
+                3
+            ],
+            "otherWeather": [
+                1,
+                4
+            ]
+        },
+        "name": "Morning Sun"
+    },
+    "synthesis": {
+        "selfHeal": {
+            "fraction": [
+                50,
+                100
+            ],
+            "sun": [
+                2,
+                3
+            ],
+            "otherWeather": [
+                1,
+                4
+            ]
+        },
+        "name": "Synthesis"
+    },
+    "moonlight": {
+        "selfHeal": {
+            "fraction": [
+                50,
+                100
+            ],
+            "sun": [
+                2,
+                3
+            ],
+            "otherWeather": [
+                1,
+                4
+            ]
+        },
+        "name": "Moonlight"
     },
     "twister": {
         "trapsTarget": {
@@ -384,6 +499,12 @@ const MOVE_EFFECTS = {
     "sunnyday": {
         "weather": "Sun",
         "name": "Sunny Day"
+    },
+    "futuresight": {
+        "delayed": {
+            "turns": 3
+        },
+        "name": "Future Sight"
     },
     "whirlpool": {
         "trapsTarget": {
@@ -433,6 +554,25 @@ const MOVE_EFFECTS = {
         },
         "name": "Charge"
     },
+    "wish": {
+        "wish": {
+            "delay": 2,
+            "fraction": [
+                1,
+                2
+            ]
+        },
+        "name": "Wish"
+    },
+    "ingrain": {
+        "selfVolatiles": [
+            "ingrain"
+        ],
+        "trapsSelf": {
+            "expires": false
+        },
+        "name": "Ingrain"
+    },
     "brickbreak": {
         "clearsScreens": true,
         "name": "Brick Break"
@@ -458,6 +598,15 @@ const MOVE_EFFECTS = {
             "confusion"
         ],
         "name": "Teeter Dance"
+    },
+    "slackoff": {
+        "selfHeal": {
+            "fraction": [
+                50,
+                100
+            ]
+        },
+        "name": "Slack Off"
     },
     "faketears": {
         "target": {
@@ -550,11 +699,40 @@ const MOVE_EFFECTS = {
         },
         "name": "Dragon Dance"
     },
+    "doomdesire": {
+        "delayed": {
+            "turns": 3
+        },
+        "name": "Doom Desire"
+    },
+    "roost": {
+        "selfLosesType": "flying",
+        "selfHeal": {
+            "fraction": [
+                50,
+                100
+            ]
+        },
+        "name": "Roost"
+    },
     "hammerarm": {
         "self": {
             "spe": -1
         },
         "name": "Hammer Arm"
+    },
+    "tailwind": {
+        "sideCondition": {
+            "field": "isTailwind",
+            "turns": 3
+        },
+        "name": "Tailwind"
+    },
+    "uturn": {
+        "switchesUser": {
+            "passesBoosts": false
+        },
+        "name": "U-turn"
     },
     "toxicspikes": {
         "hazard": {
@@ -562,6 +740,12 @@ const MOVE_EFFECTS = {
             "max": 2
         },
         "name": "Toxic Spikes"
+    },
+    "aquaring": {
+        "selfVolatiles": [
+            "aquaring"
+        ],
+        "name": "Aqua Ring"
     },
     "rockpolish": {
         "self": {
@@ -607,6 +791,24 @@ const MOVE_EFFECTS = {
             "spd": 1
         },
         "name": "Defend Order"
+    },
+    "healorder": {
+        "selfHeal": {
+            "fraction": [
+                50,
+                100
+            ]
+        },
+        "name": "Heal Order"
+    },
+    "lunardance": {
+        "selfHeal": {
+            "fraction": [
+                50,
+                100
+            ]
+        },
+        "name": "Lunar Dance"
     },
     "crushgrip": {
         "trapsTarget": {

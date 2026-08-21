@@ -1489,9 +1489,13 @@
         <script type="text/javascript" src="./js/sprite-fallback.js?"></script>
         <script type="text/javascript" src="./js/data/move_effects.js?"></script>
         <script type="text/javascript" src="./js/data/ability_effects.js?"></script>
+        <script type="text/javascript" src="./js/data/item_effects.js?"></script>
+        <script type="text/javascript" src="./js/data/splits.js?"></script>
         <script type="text/javascript" src="./js/box-controls.js?"></script>
         <script type="text/javascript" src="./js/map-controls.js?"></script>
         <script type="text/javascript" src="./js/planner-model.js?"></script>
+        <!-- After planner-model.js: it builds calc objects out of that file's state. -->
+        <script type="text/javascript" src="./js/planner-calc.js?"></script>
         <script type="text/javascript" src="./js/planner-controls.js?"></script>
     </div>
     
@@ -1559,6 +1563,10 @@
             <fieldset class="planner-sidebar">
                 <legend align="center">Lines</legend>
                 <button id="planner-new-line" class="btn planner-btn">New line</button>
+                <details class="planner-splits">
+                    <summary title="Create a blank line for every trainer in a stretch of the game">Set up a split</summary>
+                    <div class="planner-split-list"></div>
+                </details>
                 <ul class="planner-line-list"></ul>
                 <a class="planner-help-link" href="./how-to-use.html" target="_blank" rel="noopener"
                    title="Opens in a new tab">How to use &rarr;</a>
@@ -1572,6 +1580,7 @@
                         <button id="planner-add-node" class="btn planner-btn">Add turn</button>
                         <button id="planner-toggle-moves" class="btn planner-btn" title="Expand or collapse the move pickers on every turn">All moves</button>
                         <button id="planner-toggle-parties" class="btn planner-btn" title="Show or hide the teams and box, to give the canvas more room">Teams</button>
+                        <button id="planner-toggle-blind" class="btn planner-btn" title="Blind mode: hide damage, health and speed, and work the fight out yourself. Moves go back to showing base power.">Blind</button>
                     </div>
                     <div class="planner-ai-flags"></div>
                     <div class="planner-party-row">

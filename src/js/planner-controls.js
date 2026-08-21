@@ -35,26 +35,119 @@ function applyPartiesFold() {
             : "Show the teams and box");
 }
 
+/*
+ * Blind mode's button. Marked `active` rather than `folded` because it is a way
+ * of working rather than something collapsed away, and it is worth being obvious:
+ * a card with no numbers on it should never leave you wondering whether the
+ * planner is being coy or simply hasn't worked them out.
+ */
+function applyBlindMode() {
+    var blind = blindMode();
+    $("#planner-toggle-blind")
+        .toggleClass("active", blind)
+        .attr("title", blind
+            ? "Blind mode is on: base power instead of damage, no health bars, no speed. Click to show the numbers again."
+            : "Blind mode: hide damage, health and speed, and work the fight out yourself. Moves go back to showing base power.");
+}
+
 function currentLine() {
     return LINES[CURRENT_LINE];
 }
 
 /* ---------------------------------------------------------------- line list */
 
+/*
+ * Which split a line belongs to, from the trainer it is against. Lines whose
+ * trainer isn't in any split - or made before the splits existed - fall into a
+ * group of their own rather than being hidden.
+ */
+const LOOSE_LINES = "Other";
+
+function splitOfTrainer(trainer) {
+    if (typeof SPLITS_PK === "undefined") return LOOSE_LINES;
+    var names = splitNames();
+    for (var i = 0; i < names.length; i++) {
+        if (SPLITS_PK[names[i]].indexOf(trainer) >= 0) return names[i];
+    }
+    return LOOSE_LINES;
+}
+
+/*
+ * The line list, grouped into foldable splits.
+ *
+ * Flat, this is unusable the moment quick setup is used at all: the Galactic
+ * split alone is a hundred lines, and finding the one fight you meant to plan
+ * means scrolling past every other. Grouped, a split is one row until you open
+ * it.
+ *
+ * Which groups are open is remembered across renders - and the one holding the
+ * line you are working on is always opened, since re-rendering shouldn't lose
+ * sight of where you are.
+ */
+var OPEN_GROUPS = {};
+
 function renderLineList() {
     var list = $(".planner-line-list").empty();
     var ids = Object.keys(LINES);
     if (!ids.length) {
         list.append(`<li class="planner-empty">No lines yet.</li>`);
+        renderSplitList();
+        return;
     }
-    for (var i in ids) {
-        var line = LINES[ids[i]];
+
+    // Grouped, and in the splits' own order rather than whatever order the
+    // lines happen to have been made in.
+    var groups = {};
+    ids.forEach(function(id) {
+        var group = splitOfTrainer(LINES[id].trainer);
+        (groups[group] = groups[group] || []).push(LINES[id]);
+    });
+    var order = splitNames().filter(function(n) { return groups[n]; });
+    if (groups[LOOSE_LINES]) order.push(LOOSE_LINES);
+
+    var current = LINES[CURRENT_LINE];
+    var openGroup = current ? splitOfTrainer(current.trainer) : "";
+
+    order.forEach(function(group) {
+        var lines = groups[group];
+        /*
+         * Ordered by the split rather than by creation, so the list reads like
+         * the run. Anything loose keeps the order it was made in.
+         */
+        if (group !== LOOSE_LINES) {
+            var rank = {};
+            SPLITS_PK[group].forEach(function(t, i) { rank[t] = i; });
+            lines.sort(function(a, b) {
+                return (rank[a.trainer] === undefined ? 1e9 : rank[a.trainer]) -
+                       (rank[b.trainer] === undefined ? 1e9 : rank[b.trainer]);
+            });
+        }
+        var open = OPEN_GROUPS[group] || group === openGroup;
+        var done = lines.filter(function(l) { return Object.keys(l.nodes).length; }).length;
+
         list.append(
-            `<li class="planner-line-item${line.id === CURRENT_LINE ? " selected" : ""}" data-line="${line.id}">
-                <span class="planner-line-name">${line.name}</span>
-                <button class="planner-delete-line" title="Delete this line">&times;</button>
+            `<li class="planner-line-group">
+                <details class="planner-group" data-group="${escapeAttr(group)}"${open ? " open" : ""}>
+                    <summary title="${escapeAttr(`${lines.length} line${lines.length === 1 ? "" : "s"}, ${done} with turns in.`)}">
+                        <span class="planner-group-name">${group}</span>
+                        <span class="planner-group-count">${done}/${lines.length}</span>
+                    </summary>
+                    <ul class="planner-group-lines">
+                        ${lines.map(function(line) {
+                            return `<li class="planner-line-item${line.id === CURRENT_LINE ? " selected" : ""}${
+                                Object.keys(line.nodes).length ? "" : " blank"}" data-line="${line.id}">
+                                <span class="planner-line-name">${line.name}</span>
+                                <button class="planner-delete-line" title="Delete this line">&times;</button>
+                            </li>`;
+                        }).join("")}
+                    </ul>
+                </details>
             </li>`);
-    }
+    });
+
+    $(".planner-group").on("toggle", function() {
+        OPEN_GROUPS[$(this).attr("data-group")] = this.open;
+    });
 
     $(".planner-line-item").on("click", function(e) {
         if ($(e.target).hasClass("planner-delete-line")) return;
@@ -68,12 +161,112 @@ function renderLineList() {
         renderLineList();
         renderLine();
     });
+
+    // The split counts are "how many you still don't have", so they move with it.
+    renderSplitList();
 }
 
 function selectLine(id) {
     CURRENT_LINE = id;
     renderLineList();
     renderLine();
+}
+
+/* -------------------------------------------------------------- quick setup */
+
+/*
+ * A blank line for every trainer in a split - the stretch of the game between
+ * one gym leader and the next.
+ *
+ * Building them one at a time is the tedious part of starting a run: the Byron
+ * split alone is 69 fights, and none of them can be planned until it exists. The
+ * button makes the shell; the thinking is still yours.
+ *
+ * Trainers you already have a line for are left alone rather than duplicated, so
+ * the button is safe to press twice and useful when a split grows a fight you
+ * skipped the first time round.
+ */
+/*
+ * `unassigned` is the bucket the hand-maintained file starts everything in. It
+ * is not a split and gets no button - it is only counted, as a reminder that the
+ * list isn't finished.
+ */
+const UNASSIGNED = "unassigned";
+
+function splitNames() {
+    if (typeof SPLITS_PK === "undefined") return [];
+    return Object.keys(SPLITS_PK).filter(function(k) { return k !== UNASSIGNED; });
+}
+
+function trainersInSplit(name) {
+    return (typeof SPLITS_PK === "undefined" ? null : SPLITS_PK[name]) || [];
+}
+
+function renderSplitList() {
+    var list = $(".planner-split-list").empty();
+    var names = splitNames();
+    if (!names.length) {
+        list.append(`<span class="planner-empty">No split data loaded.</span>`);
+        return;
+    }
+    var planned = {};
+    Object.values(LINES).forEach(function(line) { planned[line.trainer] = true; });
+
+    names.forEach(function(name) {
+        var trainers = trainersInSplit(name);
+        var todo = trainers.filter(function(t) { return !planned[t]; });
+        /*
+         * A split nobody has assigned trainers to yet is shown but inert, so the
+         * panel reflects how far through the list you are rather than hiding the
+         * ones still to do.
+         */
+        var empty = !trainers.length;
+        list.append(
+            `<button class="planner-split-btn${empty ? " unset" : todo.length ? "" : " done"}"
+                     data-split="${escapeAttr(name)}"
+                     title="${escapeAttr(empty
+                        ? `No trainers assigned to the ${name} split yet — fill it in in src/js/data/splits.js.`
+                        : todo.length
+                        ? `Create ${todo.length} blank line${todo.length === 1 ? "" : "s"} — every trainer in the ${name} split you don't already have one for.`
+                        : `Every trainer in the ${name} split already has a line.`)}">
+                <span class="planner-split-name">${name}</span>
+                <span class="planner-split-count">${empty ? "—" : (todo.length || "✓")}</span>
+            </button>`);
+    });
+
+    var left = (typeof SPLITS_PK !== "undefined" && SPLITS_PK[UNASSIGNED] || []).length;
+    if (left) {
+        list.append(`<span class="planner-split-note" title="${escapeAttr(
+            `${left} trainers aren't in a split yet. They're listed under "unassigned" in src/js/data/splits.js, in level order — the splits are mostly contiguous runs, so they move in blocks.`)
+        }">${left} unassigned</span>`);
+    }
+}
+
+function setUpSplit(name) {
+    var trainers = trainersInSplit(name);
+    if (!trainers.length) return;
+
+    var planned = {};
+    Object.values(LINES).forEach(function(line) { planned[line.trainer] = true; });
+    var todo = trainers.filter(function(t) { return !planned[t]; });
+    if (!todo.length) return;
+
+    if (!confirm(`Create ${todo.length} blank line${todo.length === 1 ? "" : "s"} for the ${name} split?`)) return;
+
+    /*
+     * In the order they are fought, so the list reads like the run. The first one
+     * is selected afterwards, since that is the fight you are about to plan.
+     */
+    var first = "";
+    todo.forEach(function(trainer) {
+        var line = newLine(trainer);
+        addLine(line);
+        if (!first) first = line.id;
+    });
+    saveLines();
+    renderSplitList();
+    if (first) selectLine(first);
+    else { renderLineList(); renderLine(); }
 }
 
 /* -------------------------------------------------------------- foe display */
@@ -314,6 +507,12 @@ function renderLine() {
     // Re-applied because both strips are rebuilt above.
     applyPartiesFold();
 
+    /*
+     * Every turn's state, computed once and parents-first. Cleared and rebuilt on
+     * every render, so nothing here can outlive the plan it came from.
+     */
+    warmNodeStates(line);
+
     var visible = visibleNodes(line);
     for (var id in line.nodes) {
         if (visible[id]) renderNode(line.nodes[id], line, visible);
@@ -326,6 +525,13 @@ function renderNode(node, line, visible) {
     var state = computeNodeState(line, node.id);
     var slots = slotCount(line);
     var format = battleFormat(line.trainer);
+    /*
+     * What the turn actually does with each slot's move: which lose it to being
+     * outsped, flinched or Protected against, where a Follow Me sends the rest,
+     * and who is guarding. Worked out by running the turn against a throwaway
+     * copy of the state, so the card can't claim something the fold won't do.
+     */
+    var report = turnReport(line, node, state);
     var anyDead = false;
     for (var i = 0; i < slots; i++) {
         var entry = monAt(node, "you", i) ? boxEntry(monAt(node, "you", i)) : null;
@@ -342,14 +548,15 @@ function renderNode(node, line, visible) {
                 <span class="planner-slots">${renderSlots(line, node, state, "them", slots, format)}</span>
             </div>
             ${renderStatusBlock(line, node, state)}
-            ${renderMovePickers(line, node, slots, format)}
+            ${renderMovePickers(line, node, state, slots, format, report)}
             ${node.note ? `<div class="planner-node-note">${node.note}</div>` : ``}
             <div class="planner-node-buttons">
+                ${renderWarnings(line, node, state, report)}
                 ${renderFoldControl(node, line, visible)}
                 <button class="planner-edit-node btn planner-btn small">Edit</button>
                 <button class="planner-remove-node btn planner-btn small">Remove</button>
             </div>
-            <div class="planner-node-handle" title="Drag onto another turn to branch to it, or onto empty space to make a new one"></div>
+            <div class="planner-node-handle" title="Drag onto another turn to branch to it, or onto empty space for a copy of this one"></div>
         </div>`);
 }
 
@@ -358,6 +565,75 @@ function renderNode(node, line, visible) {
  * AI partner: still settable, since a plan has to assume something about it,
  * but marked so it never reads as an instruction you control.
  */
+/*
+ * Who moves first, shown against the slot.
+ *
+ * Priority bracket beats speed, and Platinum Kaizo rebalanced the brackets, so a
+ * slot can be first while being slower - which is worth saying rather than
+ * leaving to be inferred from two numbers. A tie is called a tie: it is genuinely
+ * random, and no plan should rest on it.
+ */
+function renderSpeed(line, node, state, side, slot, slots) {
+    if (typeof speedFor !== "function" || blindMode()) return "";
+    if (!monAt(node, side, slot)) return "";
+
+    var other = side === "you" ? "them" : "you";
+    var against = monAt(node, other, slot) ? slot : (monAt(node, other, 0) ? 0 : 1);
+    if (!monAt(node, other, against)) return "";
+
+    var mine = speedFor(line, node, state, side, slot);
+    var theirs = speedFor(line, node, state, other, against);
+    if (!mine || !theirs) return "";
+
+    var myPrio = movePriority(moveAt(node, side, slot));
+    var theirPrio = movePriority(moveAt(node, other, against));
+
+    // Under Trick Room the slower one goes first - but only within a bracket.
+    var reversed = !!state.trickRoom;
+    var faster = myPrio !== theirPrio
+        ? myPrio > theirPrio
+        : (reversed ? mine < theirs : mine > theirs);
+    var tied = myPrio === theirPrio && mine === theirs;
+    var byPriority = myPrio !== theirPrio;
+
+    var hint = `Speed ${mine} against ${theirs}` +
+        (byPriority ? `, but the brackets decide it: priority ${myPrio > 0 ? "+" : ""}${myPrio} against ${theirPrio > 0 ? "+" : ""}${theirPrio}.` : ".") +
+        (reversed && !byPriority ? " Trick Room is up, so the slower one moves first." : "") +
+        (tied ? " A tie is settled at random, so don't build the plan on it." : "");
+
+    if (tied) return `<span class="planner-speed tie" title="${escapeAttr(hint)}">= SPD</span>`;
+    return `<span class="planner-speed ${faster ? "fast" : "slow"}" title="${escapeAttr(hint)}">${
+        faster ? "&#9650;" : "&#9660;"} ${byPriority ? "PRI" : "SPD"}</span>`;
+}
+
+/*
+ * The level this Pokémon is fighting at, and a way to correct it.
+ *
+ * A long fight levels things up part-way through and the stats move the instant
+ * it happens, so a gym leader planned at the level you walked in with quietly
+ * stops being true around the fourth or fifth turn. Nothing here can derive
+ * that - it needs experience yields, who participated, and what the cap is - so
+ * it is stated, like every other correction on a turn.
+ *
+ * It carries down the line from the turn it is set on, because levelling up is
+ * not something that wears off.
+ */
+function renderLevel(line, node, state, side, slot) {
+    var shown = levelAt(line, node, state, side, slot);
+    if (!shown) return "";
+    var stated = !!(state.mons && state.mons[side][monAt(node, side, slot)] &&
+        state.mons[side][monAt(node, side, slot)].level);
+    var setLevel = (slotSet(line, node, side, slot) || {set: {}}).set.level;
+
+    var hint = stated
+        ? `Fighting at level ${shown}, which this plan says rather than the Box — its set says ${setLevel || "?"}. Carries down to every turn below. Click to change it, or clear it to go back.`
+        : `Level ${shown}, from its set. Click to say it levelled up on this turn — a long fight moves the numbers, and the change carries down the line.`;
+
+    return ` <button class="planner-slot-level${stated ? " stated" : ""}"
+                     data-side="${side}" data-slot="${slot}"
+                     title="${escapeAttr(hint)}">Lv.${shown}</button>`;
+}
+
 function renderSlots(line, node, state, side, slots, format) {
     var out = "";
     for (var i = 0; i < slots; i++) {
@@ -374,15 +650,13 @@ function renderSlots(line, node, state, side, slots, format) {
         } else if (isPartner) {
             // The partner's Pokemon come from their party, not your Box.
             species = ref ? GAME.species()[toID(ref)] : null;
-            var pset = trainerSet(trainerForSlot(line, "you", i), ref);
             label = species ? species.name : "Partner";
-            sub = pset ? ` <em>Lv.${pset.level}</em>` : "";
         } else {
             species = ref ? GAME.species()[toID(ref)] : null;
-            var set = foeSetFor(line, node, ref);
             label = species ? species.name : "any";
-            sub = set ? ` <em>Lv.${set.level}</em>` : "";
         }
+        // The level is its own control now, so every side gets one the same way.
+        sub = ref ? renderLevel(line, node, state, side, i) : "";
 
         var mon = slotState(line, node, state, side, i);
         var trapped = trapReason(line, node, state, side, i);
@@ -392,12 +666,67 @@ function renderSlots(line, node, state, side, slots, format) {
                 ? `<img class="planner-sprite" src="${GAME.sprites.species(species)}" alt="">`
                 : `<span class="planner-node-blank">?</span>`}
             <span class="planner-slot-name">${label}${sub}</span>
+            ${ref ? renderHp(mon) : ``}
+            ${ref ? renderItemTrigger(line, node, state, side, i) : ``}
+            ${ref ? renderSpeed(line, node, state, side, i, slots) : ``}
             ${renderStatus(mon, trapped)}
             ${renderBoosts(mon.boosts)}
             <span class="planner-chosen">${slotActionText(line, node, side, i, isPartner)}</span>
         </span>`;
     }
     return out;
+}
+
+/*
+ * What is wrong with this turn, if anything.
+ *
+ * A count and a list on hover rather than anything louder: these are notes on
+ * your plan, and every one of them is something you may have meant. Nothing is
+ * corrected and nothing is blocked - the card simply says what it noticed.
+ *
+ * Absent entirely when the turn is fine, so a clean line stays clean.
+ */
+function renderWarnings(line, node, state, report) {
+    var warnings = validateNode(line, node, state, report);
+
+    // A branch out of this turn that the arithmetic rules out belongs here too:
+    // it is this turn's moves that make the condition impossible.
+    childEdges(line, node.id).forEach(function(edge) {
+        var problem = validateEdge(line, edge);
+        if (problem) warnings.push({text: problem});
+    });
+
+    /*
+     * A move that switches its own user out, on a turn that leaves the same
+     * Pokémon standing there afterwards. U-turn and Baton Pass don't offer this
+     * as a choice - the switch is the move - so a plan that keeps it out is one
+     * the game refuses, which is exactly the bar these warnings are held to.
+     *
+     * Checked against the turns that follow rather than this one, because that is
+     * where the switch shows: the planner reads a changed slot as the switch, and
+     * an *unchanged* one as the plan saying nobody left.
+     */
+    var slots = slotCount(line);
+    ["you", "them"].forEach(function(side) {
+        for (var slot = 0; slot < slots; slot++) {
+            var ref = monAt(node, side, slot);
+            var move = findMove(moveAt(node, side, slot));
+            if (!ref || !move || !switchesUserOut(move.name)) continue;
+            if (!actedAt(node, side, slot)) continue;
+            if (switchTargetAt(node, side, slot)) continue;
+            if (switchAfterAt(node, side, slot)) continue;
+            var who = speciesAt(line, node, side, slot);
+            warnings.push({text: `${(who && who.name) || ref} leaves the field after ${move.name}, ` +
+                `and nobody is set to come in — say who with the arrow button under its moves.`});
+        }
+    });
+
+    if (!warnings.length) return "";
+    var list = warnings.map(function(w) { return "• " + w.text; }).join("\n");
+    return `<button class="planner-warn-badge" title="${escapeAttr(
+        (warnings.length === 1 ? "One thing worth checking on this turn:" : warnings.length + " things worth checking on this turn:")
+        + "\n\n" + list)
+    }">&#9888; ${warnings.length}</button>`;
 }
 
 /*
@@ -419,7 +748,7 @@ function renderFoldControl(node, line, visible) {
  * against what's coming back. Collapses once the turn is decided, which is what
  * keeps a long line readable.
  */
-function renderMovePickers(line, node, slots, format) {
+function renderMovePickers(line, node, state, slots, format, report) {
     if (!node.movesOpen) {
         return `<div class="planner-moves collapsed"><button class="planner-moves-toggle" title="Show the movesets">Moves</button></div>`;
     }
@@ -432,7 +761,7 @@ function renderMovePickers(line, node, slots, format) {
      */
     var columns = ["you", "them"].map(function(side) {
         var stack = "";
-        for (var i = 0; i < slots; i++) stack += renderSlotPicker(line, node, side, i, format);
+        for (var i = 0; i < slots; i++) stack += renderSlotPicker(line, node, state, side, i, format, report);
         return `<div class="planner-move-side ${side}">${stack}</div>`;
     }).join("");
 
@@ -442,7 +771,7 @@ function renderMovePickers(line, node, slots, format) {
     </div>`;
 }
 
-function renderSlotPicker(line, node, side, slot, format) {
+function renderSlotPicker(line, node, state, side, slot, format, report) {
     var ref = monAt(node, side, slot);
     var isPartner = side === "you" && slot === 1 && format.id === "tag";
     var moves = [];
@@ -468,35 +797,304 @@ function renderSlotPicker(line, node, side, slot, format) {
      * plan be built on a move the game will refuse. Still clickable when a
      * switch is already set there, so an now-illegal one can be cleared.
      */
-    var trap = trapReason(line, node, computeNodeState(line, node.id), side, slot);
+    var trap = trapReason(line, node, state, side, slot);
     return `<div class="planner-move-column${isPartner ? " ai" : ""}" data-side="${side}" data-slot="${slot}">
         <span class="planner-move-column-title">${title}${isPartner ? " (AI)" : ""}</span>
-        ${renderMoveList(moves, moveAt(node, side, slot), side, slot)}
+        ${renderMoveList(line, node, state, moves, moveAt(node, side, slot), side, slot, report)}
+        ${renderAimPicker(line, node, side, slot, format, report)}
+        ${renderSelfSwitch(line, node, side, slot)}
         <button class="planner-switch-btn${side === "them" ? " them" : ""}${switching ? " active" : ""}${trap && !switching ? " trapped" : ""}"
                 data-side="${side}" data-slot="${slot}"
                 title="${trap ? trapHint(trap) : "Switch instead of attacking. The turn is given up, so whoever comes in takes the hit."}">&#8646; ${trap ? "Trapped" : "Switch"}</button>
     </div>`;
 }
 
-function renderMoveList(moves, selected, side, slot) {
+/*
+ * Who comes in behind a U-turn or a Baton Pass.
+ *
+ * Only shown when the chosen move is one of those, because it is the only time
+ * the question exists - and it is a different question from the Switch button
+ * next to it. That one is "switch *instead* of attacking"; this one is "the move
+ * already happened, and it has taken this Pokémon off the field."
+ */
+function renderSelfSwitch(line, node, side, slot) {
+    if (switchTargetAt(node, side, slot)) return "";
+
+    var move = moveAt(node, side, slot);
+    var own = switchesUserOut(move);
+    // Being dragged out by the other side's Roar asks the same question.
+    var blown = own ? null : phazedInto(node, side, slot, slotCount(line));
+    if (!own && !blown) return "";
+
+    var incoming = switchAfterAt(node, side, slot);
+    var name = "";
+    if (incoming) {
+        if (side === "you" && !isPartnerSlot(line, side, slot)) {
+            var entry = boxEntry(incoming);
+            name = entry ? (entry.nickname || entry.species) : incoming;
+        } else {
+            name = (GAME.species()[toID(incoming)] || {}).name || incoming;
+        }
+    }
+
+    var cause = own ? findMove(move).name : findMove(moveAt(node, side === "you" ? "them" : "you", blown.by)).name;
+    var hint;
+    if (own) {
+        hint = incoming
+            ? `${cause} takes this Pokémon off the field and brings ${name} in. Click to change who.`
+            : `${cause} switches its user out — it isn't optional. Click to say who comes in, or the plan keeps a Pokémon out that the game has already removed.`;
+    } else {
+        hint = incoming
+            ? `${cause} drags this Pokémon out and ${name} in. The game picks at random, so this is you recording which one it was. Click to change it.`
+            : `${cause} drags this Pokémon off the field. Which one replaces it is random, so the planner won't guess — click to say who it was.`;
+    }
+
+    return `<button class="planner-selfswitch-btn${side === "them" ? " them" : ""}${incoming ? " active" : " unset"}${own ? "" : " forced"}"
+                    data-side="${side}" data-slot="${slot}"
+                    title="${escapeAttr(hint)}">${own ? "&#8594;" : "&#8598;"} ${incoming ? name : "who comes in?"}</button>`;
+}
+
+/*
+ * Which of the two opposing Pokémon this slot is attacking.
+ *
+ * Only ever shown in a double, because it is the only place the question exists:
+ * with one Pokémon a side there is nothing to choose. Both of theirs are within
+ * reach of both of yours - a 2v2 has no far slot - so focusing two attackers
+ * onto one target is a real option and has to be sayable.
+ *
+ * A spread move has no choice to make and says so instead of offering one.
+ */
+function renderAimPicker(line, node, side, slot, format, report) {
+    if (slotCount(line) < 2) return "";
+    if (!monAt(node, side, slot)) return "";
+    if (switchTargetAt(node, side, slot)) return "";
+
+    var move = findMove(moveAt(node, side, slot));
+    if (move && /allAdjacentFoes|allAdjacent/i.test(move.target || "")) {
+        return `<span class="planner-aim spread" title="${escapeAttr(
+            move.name + " hits both of them, so there is nothing to aim.")}">&#8594; both</span>`;
+    }
+
+    var otherSide = side === "you" ? "them" : "you";
+    var chosen = aimAt(node, side, slot);
+    var drawnBy = (report && report.redirect && report.redirect[otherSide]);
+    if (drawnBy === undefined) drawnBy = null;
+    // What it actually lands on right now, aim or fallback, so the highlight
+    // always matches the damage figures above it - which means following a
+    // Follow Me, since the aim is exactly what that move overrules.
+    var landing = targetsOf(node, side, slot, moveAt(node, side, slot), chosen, drawnBy)[0];
+    var redirected = drawnBy !== null && landing === drawnBy && chosen !== drawnBy &&
+        redirectable(moveAt(node, side, slot));
+
+    var buttons = [0, 1].map(function(i) {
+        var ref = monAt(node, otherSide, i);
+        if (!ref) return "";
+        var name = otherSide === "them" || isPartnerSlot(line, otherSide, i)
+            ? ((GAME.species()[toID(ref)] || {}).name || ref)
+            : (function() { var e = boxEntry(ref); return e ? (e.nickname || e.species) : ref; })();
+        var hint = redirected && i === drawnBy
+            ? `${name} is drawing this move onto itself, whatever the aim says.`
+            : `Attack ${name}.` + (chosen === null
+                ? " Nothing is stated yet, so this is just whoever is across."
+                : "");
+        return `<button class="planner-aim-btn${landing === i ? " active" : ""}${redirected && i === drawnBy ? " drawn" : ""}"
+                        data-side="${side}" data-slot="${slot}" data-aim="${i}"
+                        title="${escapeAttr(hint)}">${name}</button>`;
+    }).join("");
+
+    if (!buttons) return "";
+    var label = redirected
+        ? "This move is being pulled onto the Pokémon drawing it, so the aim doesn't decide where it lands."
+        : "Which of them this Pokémon attacks. Both are in reach of both of yours.";
+    return `<span class="planner-aim${redirected ? " redirected" : ""}" title="${escapeAttr(label)}">&#8594;${buttons}</span>`;
+}
+
+function renderMoveList(line, node, state, moves, selected, side, slot, report) {
     if (!moves.length) {
         return `<span class="planner-move-empty">${side === "you" ? "Nobody here yet" : "No opponent yet"}</span>`;
     }
+    var denied = (report && report.denied) || {};
+    var otherSide = side === "you" ? "them" : "you";
+    /*
+     * Where this slot's moves actually land, and what is waiting for them. Both
+     * belong to the whole moveset rather than to the chosen move: Follow Me draws
+     * every single-target move alike, and a Protect refuses them all, so the
+     * figures beside the moves you *didn't* pick have to say the same thing.
+     */
+    var drawnBy = (report && report.redirect && report.redirect[otherSide]);
+    if (drawnBy === undefined) drawnBy = null;
+    var guards = (report && report.guarding) || {};
+    /*
+     * A slot whose move never lands takes nothing off anybody, so its damage
+     * figures are struck through - the same treatment the chosen move above gets.
+     * They stay visible rather than blanking, because what it *would* have done
+     * is exactly why it matters that it didn't.
+     *
+     * Two ways to get here, and they read differently: you said so, or it was
+     * outsped and killed before it could move.
+     */
+    var saidSo = !actedAt(node, side, slot);
+    var reason = denied[side + slot] || "";
+    /*
+     * "blocked" is the one denial that belongs to a move rather than to the slot,
+     * since Protect only stops what the game lets it stop - so it is worked out
+     * per move below and left out of the slot-wide stop here.
+     */
+    var stopped = saidSo || (!!reason && reason !== "blocked");
+
+    var WHY = {
+        outsped: `Outsped and knocked out before it can move, on every roll — so none of this lands.\n\nOnly a certain KO does this. If the kill depends on the roll, the move still goes off and the fork belongs on a branch instead.`,
+        flinched: `Flinched by Fake Out before it could move, so none of this lands.\n\nFake Out's flinch is the one in this game that always happens rather than rolling for it.`,
+        failed: `Fake Out only works on the user's first turn out. This isn't it, so the move fails outright — no damage, no flinch — and the turn is spent.`,
+        phazed: `Dragged off the field before it could move, so none of this lands.\n\nRoar and Whirlwind are −6 priority in this game, so they almost always go last and the attack happens first. This is the rare turn where it doesn't.`
+    };
+
+    /*
+     * What is standing in this move's way, in the order it would be met. Read per
+     * move because all three answers depend on the move: Protect stops only what
+     * carries the game's own Protect flag, and Endure and a shaky Protect change
+     * what the hit *leaves* rather than whether it happens.
+     */
+    function guardWaiting(name) {
+        var landing = targetsOf(node, side, slot, name, aimAt(node, side, slot), drawnBy);
+        var kinds = landing.map(function(t) { return guards[otherSide + t] || null; });
+        // Only a guard on every target it lands on says anything certain.
+        if (!kinds.length || kinds.some(function(g) { return !g; })) return null;
+        var first = kinds[0];
+        if (!kinds.every(function(g) { return g.kind === first.kind && g.certain === first.certain; })) return null;
+        if (first.kind === "block" && !blockedByProtect(name)) return null;
+        return first;
+    }
+
     return moves.map(function(name) {
         var move = findMove(name);
         var isSelected = selected === name;
         if (!move) {
             return `<span class="planner-move ${side}${isSelected ? " selected" : ""}" data-move="${name}" data-side="${side}" data-slot="${slot}">${name}</span>`;
         }
-        var power = move.category === "status" ? "—" : move.basePower;
+
+        var guard = stopped ? null : guardWaiting(name);
+        var blocked = !!(guard && guard.kind === "block" && guard.certain);
+
+        /*
+         * The damage replaces base power rather than sitting beside it: the row
+         * has no room for both, and the tooltip carries the base power anyway.
+         * Anything without an honest number - a status move, an empty slot
+         * opposite, a move this game has deleted - keeps showing power, so a
+         * blank never reads as an immunity.
+         */
+        /*
+         * Always the ordinary hit, never the crit a branch out of this turn may
+         * ask for. A card shows what a move does; a crit is something a branch
+         * says happened, and it belongs in the health it leaves behind rather
+         * than in a figure that would then mean different things on different
+         * turns.
+         */
+        var damage = plannerDamage(line, node, state, side, slot, name, false, drawnBy);
+        var figure = damage
+            ? `<span class="planner-move-dmg${damageClass(damage)}${stopped || blocked ? " denied" : ""}">${damageText(damage)}</span>`
+            : `<span class="planner-move-bp">${move.category === "status" ? "—" : move.basePower}</span>`;
+
+        var tooltip = `${move.name} — ${move.category}, ${move.basePower || 0} BP, ${move.accuracy || "—"}% acc`;
+        /*
+         * The calculator's own sentence, which names every modifier it applied -
+         * and already ends with the KO chance, so that isn't repeated here.
+         */
+        if (damage) tooltip = `${damage.desc}\n\n${tooltip}`;
+        /*
+         * A move that lands a varying number of times has two uncertainties
+         * stacked on each other, which is why its range looks so wide. Worth
+         * saying, along with the fact that a KO here means the fewest hits.
+         */
+        if (damage && damage.hits && damage.hits.max > damage.hits.min) {
+            tooltip = `Hits ${damage.hits.min}-${damage.hits.max} times, so the range covers ${damage.hits.min} hits on the worst roll up to ${damage.hits.max} on the best. A KO is only claimed if ${damage.hits.min} hits would do it.\n\n${tooltip}`;
+        }
+        /*
+         * What the other side is doing about it, said before the numbers because
+         * it changes what those numbers mean - and whether that is something the
+         * plan is relying on or something it is gambling on.
+         */
+        if (guard) {
+            var who = (function() {
+                var landing = targetsOf(node, side, slot, name, aimAt(node, side, slot), drawnBy)[0];
+                var ref = monAt(node, otherSide, landing);
+                var species = speciesAt(line, node, otherSide, landing);
+                return (species && species.name) || ref || "it";
+            })();
+            tooltip = (guard.kind === "block"
+                ? `${who} is using ${guard.move}, so this doesn't land at all — no damage and no effect. The figure is what it would have done.`
+                : `${who} is using ${guard.move}, so this lands in full but cannot knock it out — it holds on with 1 HP. End-of-turn damage still can.`
+            ) + (guard.certain ? "" :
+                `\n\nThat is a repeat, so it can fail. The plan assumes it holds; branch the turn and mark that slot "didn't act" on the arm where it doesn't.`
+            ) + `\n\n${tooltip}`;
+        }
+        // Where it actually lands, when that isn't where it was pointed.
+        if (drawnBy !== null && redirectable(name) &&
+            targetsOf(node, side, slot, name, aimAt(node, side, slot), drawnBy)[0] === drawnBy &&
+            aimAt(node, side, slot) !== drawnBy) {
+            var drawer = speciesAt(line, node, otherSide, drawnBy);
+            tooltip = `Pulled onto ${(drawer && drawer.name) || "the other slot"} by Follow Me, so this figure is against that Pokémon rather than the one aimed at.\n\n${tooltip}`;
+        }
+        /*
+         * And what this slot's own guard is worth. The streak is read off the
+         * state coming *into* the turn, so it says the same thing whether or not
+         * the move is the one selected - which is the point, since it is exactly
+         * what you are deciding when you look at the list.
+         */
+        var mine = guardKind(name);
+        if (mine) {
+            var streak = (monState(state, side, monAt(node, side, slot)).protectStreak || 0);
+            tooltip = (streak === 0
+                ? (mine === "block"
+                    ? `Guaranteed here: the first use always works. Nothing it stops lands at all.\n\nUsing it again next turn halves the chance, and the card will say so.`
+                    : `Guaranteed here: the first use always works. Attacks still land in full; it just holds on with 1 HP.\n\nEnd-of-turn damage goes through it.`)
+                : `This would be the ${ordinal(streak + 1)} in a row, so it can fail — the chance has halved at least once. The plan assumes it holds; branch the turn and mark this slot "didn't act" on the arm where it doesn't.\n\nUsing anything else in between puts it back to guaranteed.`
+            ) + `\n\n${tooltip}`;
+        }
+        if (redirectsMoves(name)) {
+            tooltip = `Pulls every single-target move the other side throws onto this Pokémon, whatever they were aimed at. Spread moves, hazards and Counter aren't affected.\n\n${tooltip}`;
+        }
+        /*
+         * Why the number is nothing, said first, because a zero on its own reads
+         * like a mistake. calc's own sentence below already names the ability
+         * where one is responsible, but not the type chart.
+         */
+        if (damage && damage.immune) {
+            var absorbed = damage.absorbed;
+            if (absorbed && absorbed.heal) {
+                tooltip = `${absorbed.ability} absorbs this: it deals no damage and heals ${absorbed.heal} HP instead. Attacking into it is worse than doing nothing.\n\n${tooltip}`;
+            } else if (absorbed && absorbed.boosts) {
+                tooltip = `${absorbed.ability} takes this instead of damage: no damage, and ${Object.keys(absorbed.boosts).map(function(s) {
+                    return `${absorbed.boosts[s] > 0 ? "+" : ""}${absorbed.boosts[s]} ${BOOST_LABELS[s] || s}`; }).join(", ")} for them.\n\n${tooltip}`;
+            } else {
+                tooltip = `Does nothing at all — it can't touch this Pokémon.\n\n${tooltip}`;
+            }
+        }
+        if (saidSo) {
+            tooltip = `This move never goes off on this turn, so none of it lands — the turn is marked "didn't act".\n\n${tooltip}`;
+        } else if (WHY[reason]) {
+            tooltip = `${WHY[reason]}\n\n${tooltip}`;
+        }
+
         return `<span class="planner-move ${side}${isSelected ? " selected" : ""}" data-move="${name}" data-side="${side}" data-slot="${slot}"
-                      title="${move.name} — ${move.category}, ${move.basePower || 0} BP, ${move.accuracy || "—"}% acc">
+                      title="${escapeAttr(tooltip)}">
             <img src="${GAME.sprites.type(move.type)}" alt="">
             <span class="planner-move-name">${move.name}</span>
-            <span class="planner-move-bp">${power}</span>
+            ${figure}
             ${NO_DROP_MOVES.indexOf(move.id) >= 0 ? `<span class="planner-nodrop" title="Platinum Kaizo removes this move's stat drop - it has no drawback here.">nd</span>` : ``}
         </span>`;
     }).join("");
+}
+
+/*
+ * calc's descriptions carry quotes and angle brackets ("252+ Atk Cranidos Head
+ * Smash vs. ..."), and these go into a title attribute built by string
+ * concatenation, so they have to be escaped rather than trusted.
+ */
+function escapeAttr(text) {
+    return String(text)
+        .replace(/&/g, "&amp;").replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 /*
@@ -509,7 +1107,9 @@ function trapHint(trap) {
         return `Trapped by ${trap.by} - it can't switch out while that Pokémon is opposite it.`;
     }
     if (!trap.expires) {
-        return "Trapped for the rest of the fight - Mean Look and friends don't wear off.";
+        return trap.self
+            ? "Rooted by its own Ingrain, which is the price of the healing - it recovers 1/16 each turn and cannot switch out for the rest of the fight."
+            : "Trapped for the rest of the fight - Mean Look and friends don't wear off.";
     }
     if (trap.guaranteed) {
         return `Bound for exactly ${TRAP_MAX_TURNS} turns - the Grip Claw takes away the early release - with ${trap.turns} elapsed.`;
@@ -524,6 +1124,117 @@ function chosenMoveText(name) {
     if (!move) return `<b>${name}</b> <span class="planner-node-warn" title="This game has no move by that name.">?</span>`;
     return `<img class="planner-move-type" src="${GAME.sprites.type(move.type)}" alt=""> <b>${move.name}</b>` +
         (NO_DROP_MOVES.indexOf(move.id) >= 0 ? ` <span class="planner-nodrop" title="Platinum Kaizo removes this move's stat drop - it has no drawback here.">nd</span>` : ``);
+}
+
+/*
+ * The health bar for one slot.
+ *
+ * Two segments, because HP down a line is a range and not a number: the solid
+ * part is what the Pokémon has for certain even on the worst run of rolls, and
+ * the paler part on top is the rest of the band, the health it has only if the
+ * rolls went its way. Reading the solid edge alone is reading the plan
+ * pessimistically, which is the way a Nuzlocke wants to be read.
+ *
+ * Colour follows that same worst case. A slot nothing has touched yet still gets
+ * a full bar rather than nothing, so a row of cards can be scanned down.
+ */
+function renderHp(mon) {
+    if (blindMode()) return "";
+    var hp = hpOf(mon);
+    if (!hp) {
+        return `<span class="planner-hp" title="Undamaged so far on this branch.">
+            <span class="planner-hp-bar"><span class="planner-hp-min good" style="width: 100%"></span></span>
+        </span>`;
+    }
+    if (hp.max <= 0) {
+        return `<span class="planner-hp fainted" title="Nothing left on this branch - it faints here.">
+            <span class="planner-hp-bar"></span>
+            <span class="planner-hp-text">FAINTED</span>
+        </span>`;
+    }
+
+    var lowPct = Math.max(0, hp.min) * 100 / hp.full;
+    var highPct = Math.max(0, hp.max) * 100 / hp.full;
+    // The worst case decides the colour, the same way it decides the reading.
+    var health = lowPct > 50 ? "good" : lowPct > 20 ? "warn" : "bad";
+    var lo = Math.round(lowPct);
+    var hi = Math.round(highPct);
+
+    return `<span class="planner-hp" title="${escapeAttr(
+        `${hp.min}-${hp.max} of ${hp.full} HP.\n\nA damage roll is 85-100%, so what it has left is a range rather than a number, and it widens with every hit. A branch out of a turn - You KO, You don't KO - narrows it again.`)}">
+        <span class="planner-hp-bar">
+            <span class="planner-hp-min ${health}" style="width: ${lowPct}%"></span>
+            <span class="planner-hp-band ${health}" style="width: ${highPct - lowPct}%"></span>
+        </span>
+        <span class="planner-hp-text ${health}">${lo === hi ? `${lo}%` : `${lo}–${hi}%`}</span>
+    </span>`;
+}
+
+/*
+ * The held item, and a way to spend it.
+ *
+ * A berry that fires on a health threshold is only claimed once the whole band
+ * is under the line, because while it straddles, whether it went off is a coin
+ * flip and firing it would change what happens next rather than merely how much
+ * is left. That leaves a real gap, and this is what fills it: one click says the
+ * berry went off on this turn, and the plan is derived from there.
+ *
+ * It sits against the HP bar rather than in the turn editor because that is
+ * where you are looking when the question comes up, and because the answer shows
+ * up an inch to its left.
+ */
+const ORB_VERB = {tox: "badly poisons", psn: "poisons", brn: "burns"};
+
+function renderItemTrigger(line, node, state, side, slot) {
+    if (blindMode()) return "";
+    var holder = activeHolder(line, node, side, slot);
+    if (!holder || !holder.item) return "";
+    var fx = itemEffect(holder.item);
+    if (!fx) return "";
+
+    var spent = itemRecord(state, side, holder.id);
+    if (spent) {
+        return `<span class="planner-item-pip spent" title="${escapeAttr(
+            `${spent.name} is gone — it was used earlier on this branch, and it only works once.`)}">${spent.name}</span>`;
+    }
+
+    var stated = itemStatedAt(node, side, slot);
+    var what = fx.heal
+        ? (fx.heal.points !== undefined
+            ? `restores ${fx.heal.points} HP`
+            : `restores ${fx.heal.fraction[0]}/${fx.heal.fraction[1]} of its health`)
+        : fx.clearsNegative ? "clears its stat drops"
+        : fx.survives ? "lets it survive one hit from full health"
+        // Written out rather than built from the status name, which doesn't
+        // inflect: "Badly poisoned" + "es" is not a word.
+        : fx.selfStatus ? `${ORB_VERB[fx.selfStatus] || "statuses"} its holder at the end of every turn`
+        : fx.resists ? `halves one super-effective ${fx.resists.type} hit, then it's gone`
+        : `gives it ${Object.keys(fx.boost || {}).map(function(s) {
+            return `${fx.boost[s] > 0 ? "+" : ""}${fx.boost[s]} ${BOOST_LABELS[s] || s}`; }).join(", ")}`;
+
+    /*
+     * Only a health threshold gets a button, because it is the only trigger the
+     * planner refuses to guess at - the band can straddle the line, and saying
+     * which side of it the fight landed on is your call.
+     *
+     * Everything else fires on its own and has no decision in it: a Focus Sash
+     * catches a particular hit as it lands, a resist berry is spent by whoever
+     * attacks into it, an orb goes off every turn whether or not anyone wants it,
+     * and White Herb waits for a stat drop to exist. Those are shown, not offered.
+     */
+    if (!fx.threshold) {
+        return `<span class="planner-item-pip" title="${escapeAttr(
+            `${fx.name} — ${what}. The planner applies it on its own; there's nothing to decide.`)}">${fx.name}</span>`;
+    }
+
+    var hint = `${fx.name} — ${what} once it drops below ${Math.round(fx.threshold[0] * 100 / fx.threshold[1])}%.\n\n` +
+        (stated
+            ? `You've said it went off on this turn, so the plan uses it here. Click to take that back.`
+            : `The planner fires it on its own once the health bar is entirely under that line. While the bar straddles it, it's a coin flip — click to say it went off on this turn.`);
+
+    return `<button class="planner-item-pip use${stated ? " stated" : ""}"
+                    data-side="${side}" data-slot="${slot}"
+                    title="${escapeAttr(hint)}">${fx.name}</button>`;
 }
 
 const BOOST_LABELS = {atk: "Atk", def: "Def", spa: "SpA", spd: "SpD", spe: "Spe", acc: "Acc", eva: "Eva"};
@@ -611,7 +1322,8 @@ const HAZARD_LABELS = {
     spikes: "Spikes",
     toxicSpikes: "Toxic Spikes",
     isReflect: "Reflect",
-    isLightScreen: "Light Screen"
+    isLightScreen: "Light Screen",
+    isTailwind: "Tailwind"
 };
 
 // Field state that persists across turns, shown above the matchup it affects.
@@ -628,6 +1340,33 @@ function renderStateBar(state) {
             fromBattle ? ` title="This fight takes place in ${state.weather.toLowerCase()} - it is up before either side moves. A weather move or ability still overrides it."` : ``
         }>${state.weather}${fromBattle ? " (battle)" : ""}</span>`);
     }
+    /*
+     * Trick Room reorders the whole fight, so it belongs up here with the weather
+     * rather than against either side.
+     */
+    if (state.trickRoom) {
+        parts.push(`<span class="planner-field trickroom" title="${escapeAttr(
+            "Trick Room: the slower Pokémon moves first inside each priority bracket. A Quick Attack still goes before a Tackle - only the speed comparison is flipped.\n\nIn this game it lasts until the move is used again rather than running out after five turns."
+        )}">Trick Room</span>`);
+    }
+    /*
+     * A Wish in the air. Shown against the side because it belongs to the slot
+     * rather than to whoever made it - which is the point: switch, and the
+     * arrival collects it.
+     */
+    ["you", "them"].forEach(function(side) {
+        ((state[side] || {}).pending || []).forEach(function(list, slot) {
+            (list || []).forEach(function(item) {
+                var heals = item.kind === "heal";
+                var hint = heals
+                    ? `${item.name} lands on this slot at the end of ${item.turns > 1 ? "next turn" : "this turn"}, healing whoever is standing in it by ${item.amount} HP.\n\nThe amount was fixed when it was used — half of that Pokémon's max HP, not the receiver's — so switching something frailer in still collects the same number.`
+                    : `${item.name} lands on this slot at the end of ${item.turns > 1 ? "next turn" : "this turn"}, hitting whoever is standing in it for ${item.amount} HP.\n\nThe damage was worked out when the move was used, against whoever was standing there then — switching doesn't dodge it, and the Pokémon that takes it may not be the one it was aimed at.`;
+                parts.push(`<span class="planner-field ${side} pending ${heals ? "heal" : "hurt"}" title="${escapeAttr(hint)}">${
+                    side === "you" ? "Your" : "Their"} slot ${slot + 1}: ${item.name} &middot; ${item.turns}</span>`);
+            });
+        });
+    });
+
     ["you", "them"].forEach(function(side) {
         var hazards = state[side].hazards;
         for (var field in hazards) {
@@ -638,20 +1377,33 @@ function renderStateBar(state) {
              * A screen's value is the turns it has left, not a layer count, so
              * it reads as a countdown rather than "Reflect x5".
              */
-            if (SCREENS[field]) {
+            if (TIMED_SIDE[field]) {
                 var left = hazards[field];
-                parts.push(`<span class="planner-field ${side} screen" title="${label} lasts 5 turns from when it was set, or 8 if that Pokémon held a Light Clay. ${left} left, counting this one.">${whose}: ${label} &middot; ${left}</span>`);
+                var hint = SCREENS[field]
+                    ? `${label} lasts 5 turns from when it was set, or 8 if that Pokémon held a Light Clay. ${left} left, counting this one.`
+                    : `Tailwind doubles this side's Speed for 3 turns. ${left} left, counting this one. Defog doesn't clear it and Brick Break doesn't break it.`;
+                parts.push(`<span class="planner-field ${side} screen" title="${escapeAttr(hint)}">${whose}: ${label} &middot; ${left}</span>`);
                 continue;
             }
             var layers = hazards[field] > 1 ? ` x${hazards[field]}` : "";
             parts.push(`<span class="planner-field ${side}">${whose}: ${label}${layers}</span>`);
         }
     });
-    // A spent curing berry is easy to forget and changes whether a plan works.
+    // A spent item is easy to forget and changes whether a plan works.
+    var WHY_SPENT = {
+        cure: "to cure a status. It only works once, so anything later sticks.",
+        heal: "to heal. It only works once, so nothing later gets it back.",
+        boost: "for the stat change. It only works once.",
+        survive: "to survive a hit from full health. It only works once.",
+        resist: "to halve a super-effective hit. It only works once, so the next one lands in full."
+    };
     ["you", "them"].forEach(function(side) {
-        var used = state.itemsUsed && state.itemsUsed[side];
+        var used = (state.itemsUsed && state.itemsUsed[side]) || {};
         for (var who in used) {
-            parts.push(`<span class="planner-field cured ${side}" title="${who} used its ${used[who]} to cure a status. It only works once, so anything later sticks.">${used[who]} spent</span>`);
+            var record = itemRecord(state, side, who);
+            if (!record) continue;
+            parts.push(`<span class="planner-field cured ${side}" title="${escapeAttr(
+                `${who} used its ${record.name} ${WHY_SPENT[record.why] || "already."}`)}">${record.name} spent</span>`);
         }
     });
     if (state.ambiguous) {
@@ -819,13 +1571,22 @@ function renderEdges(visible) {
             "marker-end": `url(#planner-arrow-${condition.color})`
         }));
 
+        /*
+         * A branch the arithmetic rules out is marked on the arrow itself, since
+         * that is the thing that would have to change. The turn's own badge says
+         * the same, but the label is where you would go to fix it.
+         */
+        var impossible = validateEdge(line, edge);
         var label = svgEl("text", {
             x: route.labelX,
             y: route.labelY,
-            class: `planner-edge-label ${condition.color}`,
+            class: `planner-edge-label ${condition.color}${impossible ? " impossible" : ""}`,
             "data-edge": edge.id
-        }, edge.label || condition.name);
-        label.appendChild(svgEl("title", {}, "Click to change or delete this branch"));
+        }, (impossible ? "⚠ " : "") + (edge.label || condition.name));
+        label.appendChild(svgEl("title", {},
+            impossible
+                ? impossible + "\n\nClick to change or delete this branch."
+                : "Click to change or delete this branch"));
         label.addEventListener("click", editEdgeFromLabel);
         svg.appendChild(label);
     }
@@ -938,6 +1699,11 @@ function openNodeEditor(nodeId) {
                 <span><button type="button" class="planner-condition planner-skip${(skipped[s.side] || [])[s.slot] ? " bad selected" : ""}"
                         data-side="${s.side}" data-slot="${s.slot}"
                         title="Its move never went off - KO'd before acting, flinched, fully paralysed, or missed. The move's effects are skipped.">Move didn't go off</button></span>
+                <label>Health</label>
+                <span><input type="number" min="0" max="100" step="1" class="planner-edit-hp"
+                        data-side="${s.side}" data-slot="${s.slot}" placeholder="inherit"
+                        value="${seedFor(node, "hpSeed", s.side, s.slot, null) === null ? "" : seedFor(node, "hpSeed", s.side, s.slot, null)}"
+                        title="Health carried into this turn, as a percentage. Leave blank to use what the plan works out.&#10;&#10;Stating it pins the range to a single number, which is what you want for a line that starts mid-fight, or when the band has widened past being useful and you know what actually happened."> %</span>
             </div>
             <span class="planner-panel-label" title="Added on top of what this turn inherited. Leave at 0 to change nothing.">Stat stages</span>
             <span class="planner-boost-edit" data-side="${s.side}" data-slot="${s.slot}">${
@@ -1060,26 +1826,54 @@ function renderPickerOptions(list, options, current, emptyText) {
     });
 }
 
-function openSwitchEditor(nodeId, side, slot) {
+/*
+ * The same picker serves both: choosing to switch *instead* of attacking, and
+ * naming who arrives after a move that has already switched its user out. They
+ * ask the same question of the same roster and differ only in what the answer is
+ * written to, so `EDITING_SWITCH_AFTER` is the whole of the difference.
+ */
+var EDITING_SWITCH_AFTER = false;
+
+function openSwitchEditor(nodeId, side, slot, afterMove) {
     var line = currentLine();
     var node = line.nodes[nodeId];
     if (!node) return;
     EDITING_SWITCH_NODE = nodeId;
     EDITING_SWITCH_SIDE = side;
     EDITING_SWITCH_SLOT = slot || 0;
+    EDITING_SWITCH_AFTER = !!afterMove;
+
+    /*
+     * The move responsible is this slot's own when it switches itself out, and
+     * the *other* side's when a Roar is dragging it out.
+     */
+    var forced = afterMove && !switchesUserOut(moveAt(node, side, EDITING_SWITCH_SLOT))
+        ? phazedInto(node, side, EDITING_SWITCH_SLOT, slotCount(line)) : null;
+    var move = !afterMove ? null
+        : forced ? findMove(moveAt(node, side === "you" ? "them" : "you", forced.by))
+        : findMove(moveAt(node, side, EDITING_SWITCH_SLOT));
 
     $("#planner-popup-container").html(switchEditorPopup).removeClass("hide").show();
-    $(".planner-switch-popup legend").text(side === "them" ? "They switch" : "Switch");
-    $(".planner-switch-popup .planner-hint").text(side === "them"
-        ? "They give up the turn to do this, so whoever comes in takes your attack. Your boosts stay; theirs reset."
-        : "You give up the turn to do this, so whoever comes in takes their attack. Their boosts stay; yours reset.");
-    $("#planner-clear-switch").text(side === "them" ? "They attack instead" : "Attack instead");
+    $(".planner-switch-popup legend").text(afterMove
+        ? `After ${move ? move.name : "the move"}`
+        : (side === "them" ? "They switch" : "Switch"));
+    $(".planner-switch-popup .planner-hint").text(afterMove
+        ? (forced
+            ? `${move ? move.name : "The move"} drags this Pokémon out and something random in. The planner won't pick for you — say which one it was, and it walks into any hazards on the way.`
+            : `${move ? move.name : "The move"} lands first and then takes its user off the field, so whoever comes in arrives after the damage — and walks into any hazards on the way.`)
+        : side === "them"
+            ? "They give up the turn to do this, so whoever comes in takes your attack. Your boosts stay; theirs reset."
+            : "You give up the turn to do this, so whoever comes in takes their attack. Their boosts stay; yours reset.");
+    $("#planner-clear-switch").text(afterMove
+        ? "Nobody yet"
+        : (side === "them" ? "They attack instead" : "Attack instead"));
 
     // Whoever is already out can't also be the one switching in.
     var onField = [monAt(node, side, 0), monAt(node, side, 1)].filter(x => x);
     renderPickerOptions($(".planner-switch-list"),
         slotOptionsFor(line, node, side, EDITING_SWITCH_SLOT, onField),
-        switchTargetAt(node, side, EDITING_SWITCH_SLOT),
+        afterMove ? switchAfterAt(node, side, EDITING_SWITCH_SLOT)
+                  : switchTargetAt(node, side, EDITING_SWITCH_SLOT),
         side === "them" ? "Nobody else on their team." : "Nobody else on your team to switch to.");
 }
 
@@ -1161,6 +1955,12 @@ function closeSwitchEditor() {
 function setSideAction(node, side, action) {
     var list = side === "them" ? node.foeActions : node.actions;
     list[EDITING_SWITCH_SLOT] = action;
+}
+
+// Who arrives after a U-turn. Lines saved before this field existed have none.
+function setSwitchAfter(node, side, slot, ref) {
+    if (!node.switchAfter) node.switchAfter = {you: ["", ""], them: ["", ""]};
+    node.switchAfter[side][slot] = ref || "";
 }
 
 /* ---------------------------------------------------------------- held item */
@@ -1506,6 +2306,7 @@ function finishConnectToEmpty(e) {
     var node = newNode(
         Math.max(0, e.clientX - rect.left + canvas.scrollLeft - width / 2),
         Math.max(0, e.clientY - rect.top + canvas.scrollTop));
+    copyTurnInto(node, line.nodes[CONNECTING.from]);
     node.movesOpen = true;
     line.nodes[node.id] = node;
 
@@ -1535,7 +2336,11 @@ function finishConnect(toNodeId) {
     }
     CONNECTING = null;
     $(".planner-canvas").removeClass("connecting");
-    renderEdges();
+    /*
+     * Joining two turns gives the second one a parent to inherit from, so the
+     * whole line below is re-derived rather than only the arrow being drawn.
+     */
+    renderLine();
 }
 
 /* ---------------------------------------------------------------- bootstrap */
@@ -1543,6 +2348,7 @@ function finishConnect(toNodeId) {
 function initPlanner() {
     loadLines();
     applyPartiesFold();
+    applyBlindMode();
     // Open the first line rather than landing on an empty placeholder when
     // there's an obvious one to show.
     var first = Object.keys(LINES)[0];
@@ -1554,6 +2360,11 @@ function initPlanner() {
     }
 
     $("#planner-new-line").on("click", openNewLineEditor);
+
+    renderSplitList();
+    $(document).on("click", ".planner-split-btn", function() {
+        setUpSplit($(this).attr("data-split"));
+    });
 
     $(document).on("click", "#planner-cancel-line", function() {
         closeNewLineEditor();
@@ -1825,7 +2636,8 @@ function initPlanner() {
         var line = currentLine();
         var node = line.nodes[EDITING_SWITCH_NODE];
         if (!node) return closeSwitchEditor();
-        setSideAction(node, EDITING_SWITCH_SIDE, {type: "switch", value: $(this).attr("data-mon")});
+        if (EDITING_SWITCH_AFTER) setSwitchAfter(node, EDITING_SWITCH_SIDE, EDITING_SWITCH_SLOT, $(this).attr("data-mon"));
+        else setSideAction(node, EDITING_SWITCH_SIDE, {type: "switch", value: $(this).attr("data-mon")});
         saveLines();
         closeSwitchEditor();
         // Switching changes who is out for every turn after this one.
@@ -1836,11 +2648,63 @@ function initPlanner() {
         var line = currentLine();
         var node = line.nodes[EDITING_SWITCH_NODE];
         if (node) {
-            setSideAction(node, EDITING_SWITCH_SIDE, {type: "move", value: ""});
+            if (EDITING_SWITCH_AFTER) setSwitchAfter(node, EDITING_SWITCH_SIDE, EDITING_SWITCH_SLOT, "");
+            else setSideAction(node, EDITING_SWITCH_SIDE, {type: "move", value: ""});
             saveLines();
         }
         closeSwitchEditor();
         renderLine();
+    });
+
+    $(".planner-canvas").on("mousedown", ".planner-selfswitch-btn", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    /*
+     * The slot underneath opens a Pokémon picker and the card itself is
+     * draggable, so both have to be headed off before either sees this.
+     */
+    $(".planner-canvas").on("mousedown", ".planner-slot-level", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    $(".planner-canvas").on("click", ".planner-slot-level", function(e) {
+        e.stopPropagation();
+        var line = currentLine();
+        var node = line.nodes[$(this).closest(".planner-node").attr("data-node")];
+        if (!node) return;
+        var side = $(this).attr("data-side");
+        var slot = parseInt($(this).attr("data-slot"), 10) || 0;
+        var state = computeNodeState(line, node.id);
+        var setLevel = (slotSet(line, node, side, slot) || {set: {}}).set.level || "";
+
+        var answer = prompt(
+            "Level from this turn on.\n\nLeave it empty to go back to its set" +
+            (setLevel ? ` (Lv.${setLevel})` : "") + ".",
+            levelAt(line, node, state, side, slot) || "");
+        if (answer === null) return;
+
+        if (!node.levelSeed) node.levelSeed = {you: [null, null], them: [null, null]};
+        var wanted = String(answer).trim();
+        if (!wanted) {
+            node.levelSeed[side][slot] = null;
+        } else {
+            var level = Math.max(1, Math.min(100, parseInt(wanted, 10) || 0));
+            if (!level) return;
+            node.levelSeed[side][slot] = level;
+        }
+        saveLines();
+        // Level moves every stat, so every turn below this one is re-derived.
+        renderLine();
+    });
+
+    $(".planner-canvas").on("click", ".planner-selfswitch-btn", function(e) {
+        e.stopPropagation();
+        openSwitchEditor($(this).closest(".planner-node").attr("data-node"),
+            $(this).attr("data-side") || "you",
+            parseInt($(this).attr("data-slot"), 10) || 0, true);
     });
 
     $(document).on("click", "#planner-cancel-switch", function() {
@@ -1867,6 +2731,38 @@ function initPlanner() {
         renderLine();
     });
 
+    $(".planner-canvas").on("click", ".planner-aim-btn", function(e) {
+        e.stopPropagation();
+        var line = currentLine();
+        var node = line.nodes[$(this).closest(".planner-node").attr("data-node")];
+        var side = $(this).attr("data-side");
+        var slot = parseInt($(this).attr("data-slot"), 10) || 0;
+        var aim = parseInt($(this).attr("data-aim"), 10) || 0;
+        if (!node.aimedAt) node.aimedAt = {you: [null, null], them: [null, null]};
+        // Clicking the current target again goes back to "whoever is across".
+        node.aimedAt[side][slot] = aimAt(node, side, slot) === aim ? null : aim;
+        saveLines();
+        renderLine();
+    });
+
+    /*
+     * "Its berry went off here." A statement about this turn, so it lives on the
+     * node like every other seed - and like every other seed it overrules the
+     * arithmetic rather than asking it. Clicking again takes it back.
+     */
+    $(".planner-canvas").on("click", ".planner-item-pip.use", function(e) {
+        e.stopPropagation();
+        var line = currentLine();
+        var node = line.nodes[$(this).closest(".planner-node").attr("data-node")];
+        var side = $(this).attr("data-side");
+        var slot = parseInt($(this).attr("data-slot"), 10) || 0;
+        if (!node.itemSeed) node.itemSeed = {you: [false, false], them: [false, false]};
+        node.itemSeed[side][slot] = !itemStatedAt(node, side, slot);
+        saveLines();
+        // The item changes health, so every turn below this one is re-derived.
+        renderLine();
+    });
+
     $(".planner-canvas").on("click", ".planner-moves-toggle", function(e) {
         e.stopPropagation();
         var line = currentLine();
@@ -1879,6 +2775,13 @@ function initPlanner() {
     $("#planner-toggle-parties").on("click", function() {
         localStorage.plannerPartiesOpen = partiesOpen() ? "false" : "true";
         applyPartiesFold();
+    });
+
+    $("#planner-toggle-blind").on("click", function() {
+        setBlindMode(!blindMode());
+        applyBlindMode();
+        // Every card changes: the whole point is that the derivation changes too.
+        renderLine();
     });
 
     $("#planner-toggle-moves").on("click", function() {
@@ -1919,7 +2822,14 @@ function initPlanner() {
         edge.condition = condition;
         saveLines();
         closeEdgeEditor();
-        renderEdges();
+        /*
+         * The whole line, not just the arrows. A condition is not decoration: it
+         * settles which way the roll went, so changing one re-derives the health
+         * of every turn below it - and, for a crit, the damage figures on the
+         * turn above. Redrawing the arrow alone left all of that showing the
+         * previous branch's arithmetic until something else forced a render.
+         */
+        renderLine();
     });
 
     $(document).on("click", "#planner-cancel-edge", function() {
@@ -1958,6 +2868,19 @@ function initPlanner() {
                 var value = parseInt($(this).val(), 10) || 0;
                 if (value) target[$(this).attr("data-stat")] = value;
             });
+        });
+
+        /*
+         * A blank field means "inherit", which is a different thing from 0 - so
+         * this checks for an empty string rather than leaning on falsiness.
+         */
+        node.hpSeed = {you: [null, null], them: [null, null]};
+        $(".planner-edit-hp").each(function() {
+            var raw = $(this).val();
+            if (raw === "" || raw === null) return;
+            var pct = Math.max(0, Math.min(100, parseInt(raw, 10)));
+            if (isNaN(pct)) return;
+            node.hpSeed[$(this).attr("data-side")][parseInt($(this).attr("data-slot"), 10) || 0] = pct;
         });
 
         node.skipped = {you: [false, false], them: [false, false]};

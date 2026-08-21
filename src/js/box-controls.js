@@ -229,22 +229,29 @@ $(document).ready(function() {
         currentPoke.isCustomSet = true;
         currentPoke.ability = $(".edit-ability-selector").val();
         if (!currentPoke.ability) currentPoke.ability = currentPoke.abilities[0];
-        currentPoke.level = $(".edit-level").val();
+        /*
+         * ~~ because .val() is a string, and these end up in stat formulas that
+         * mix * and +: gen 4's HP is (2*base + iv + ev/4) * level / 100 + level
+         * + 10, so a string IV concatenates where it should add and the stat
+         * comes out in the tens of thousands. Every field here is already
+         * bounds-validated on keyup, so truncating is safe.
+         */
+        currentPoke.level = ~~$(".edit-level").val();
         currentPoke.ivs = {
-            "hp": $("#edit-iv-hp").val(),
-            "at": $("#edit-iv-atk").val(),
-            "df": $("#edit-iv-def").val(),
-            "sa": $("#edit-iv-spa").val(),
-            "sd": $("#edit-iv-spd").val(),
-            "sp": $("#edit-iv-spe").val()
+            "hp": ~~$("#edit-iv-hp").val(),
+            "at": ~~$("#edit-iv-atk").val(),
+            "df": ~~$("#edit-iv-def").val(),
+            "sa": ~~$("#edit-iv-spa").val(),
+            "sd": ~~$("#edit-iv-spd").val(),
+            "sp": ~~$("#edit-iv-spe").val()
         };
         currentPoke.evs = {
-            "hp": $("#edit-ev-hp").val(),
-            "at": $("#edit-ev-atk").val(),
-            "df": $("#edit-ev-def").val(),
-            "sa": $("#edit-ev-spa").val(),
-            "sd": $("#edit-ev-spd").val(),
-            "sp": $("#edit-ev-spe").val()
+            "hp": ~~$("#edit-ev-hp").val(),
+            "at": ~~$("#edit-ev-atk").val(),
+            "df": ~~$("#edit-ev-def").val(),
+            "sa": ~~$("#edit-ev-spa").val(),
+            "sd": ~~$("#edit-ev-spd").val(),
+            "sp": ~~$("#edit-ev-spe").val()
         };
         currentPoke.nature = $(".edit-nature-selector").val();
         currentPoke.moves = [];

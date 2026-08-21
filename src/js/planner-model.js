@@ -94,6 +94,19 @@ const SCREEN_TURNS_LIGHT_CLAY = 8;
 const LIGHT_CLAY = "lightclay";
 
 /*
+ * Everything on a side whose stored value is a countdown rather than a layer
+ * count. A superset of SCREENS, because Tailwind counts down the same way but is
+ * not a screen: Brick Break doesn't break it and Defog doesn't clear it, so the
+ * two lists have to stay separate even though they tick together.
+ */
+const TAILWIND = "isTailwind";
+const TIMED_SIDE = {
+    isReflect: "Reflect",
+    isLightScreen: "Light Screen",
+    isTailwind: "Tailwind"
+};
+
+/*
  * Binding moves run 2-5 turns, so 5 is a ceiling as much as confusion's is: the
  * grip is gone after it either way. A Grip Claw doesn't extend that in this game
  * - its own text says "last for 5 turns" - it removes the early release, so the
@@ -102,8 +115,21 @@ const LIGHT_CLAY = "lightclay";
 const GRIP_CLAW = "gripclaw";
 const TRAP_MAX_TURNS = 5;
 
+/*
+ * Unique against what already exists, not merely unlikely to collide.
+ *
+ * The timestamp plus four random digits was fine while lines were made one at a
+ * time. Setting up a whole split makes seventy inside one millisecond, and at
+ * that rate the birthday problem gives about a one-in-four chance of two of them
+ * landing on the same id - which would not error, it would silently overwrite a
+ * line with another.
+ */
 function newLineId() {
-    return `line-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    var id;
+    do {
+        id = `line-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    } while (LINES[id]);
+    return id;
 }
 
 function newLine(trainerName) {
@@ -143,6 +169,17 @@ function newNode(x, y) {
         // slot its turn.
         actions: [{type: "move", value: ""}, {type: "move", value: ""}],
         foeActions: [{type: "move", value: ""}, {type: "move", value: ""}],
+        /*
+         * Which opposing slot each slot is attacking, or null for "whoever is
+         * across". In a 2v2 every position is adjacent to every other, so a
+         * single-target move can be aimed at either opponent - focusing both of
+         * yours onto one of theirs is most of what makes a double a double.
+         *
+         * Kept beside the actions rather than on them because actions are
+         * replaced wholesale in half a dozen places, and an aim stored inside one
+         * would be silently thrown away by any of them.
+         */
+        aimedAt: {you: [null, null], them: [null, null]},
         note: "",
         /*
          * Status carried into this turn rather than caused by it - for walking
@@ -179,6 +216,41 @@ function newNode(x, y) {
          * up.
          */
         boostSeed: {you: [{}, {}], them: [{}, {}]},
+        /*
+         * Health stated outright, as a percentage, or null to inherit whatever
+         * the plan worked out. Unlike boostSeed this is an absolute rather than a
+         * delta, because its whole job is to collapse a range back to a point:
+         * for a line that starts mid-fight, or for one where the band has widened
+         * past the point of being useful and you know what actually happened.
+         */
+        hpSeed: {you: [null, null], them: [null, null]},
+        /*
+         * The level this Pokemon is fighting at from this turn on, or null to
+         * take whatever the Box or the trainer's set says.
+         *
+         * A long fight levels things up part-way through, and the stats move the
+         * moment it happens - so a plan drawn at the level you walked in with
+         * quietly stops being true around turn six of a gym leader. Unlike the
+         * other seeds this one *carries*: you don't go back down a level, so it
+         * is written onto the Pokemon's record and inherited from there.
+         */
+        levelSeed: {you: [null, null], them: [null, null]},
+        /*
+         * "This slot's held item went off on this turn." A statement, for the
+         * case the arithmetic won't claim: a Sitrus Berry triggers below half
+         * health, and while the band straddles half, whether it fired is exactly
+         * the kind of coin flip this planner refuses to guess at. Once the band
+         * is wholly under the line it fires on its own and this isn't needed.
+         */
+        itemSeed: {you: [false, false], them: [false, false]},
+        /*
+         * Who comes in after a move that switches its own user out - U-turn and
+         * Baton Pass. It can't live on the action the way a declared switch does,
+         * because the action is already the move; and the game asks you the same
+         * question, since the planner has no way to know which Pokémon you would
+         * bring. Empty means the move still lands and nobody has been named yet.
+         */
+        switchAfter: {you: ["", ""], them: ["", ""]},
         stateOverride: null,
         // Move pickers start open so a fresh turn can be filled in, then get
         // collapsed away once it's decided.
@@ -186,6 +258,64 @@ function newNode(x, y) {
         // Folds away everything that follows this turn.
         collapsed: false
     };
+}
+
+/*
+ * Fills a fresh turn with the arrangement of an existing one: who is out on each
+ * side, what each of them does, and who they are aiming at. A branch is nearly
+ * always a near-copy of the turn it comes from, and rebuilding that by hand -
+ * four slots, four moves - is the most tedious thing in the tool.
+ *
+ * What it deliberately leaves behind is everything that *states* something about
+ * the fight rather than arranging it: the status, stat-stage, volatile and
+ * health seeds, and the "didn't act" flags. Those are corrections applied on top
+ * of what a turn inherits, so copying them would apply them a second time - a
+ * carried +2 Attack would silently become +4, and a stated 40% health would pin
+ * the new turn to 40% however much had happened since. The new turn inherits all
+ * of it from its parent already.
+ *
+ * The note comes along, because it is nearly always about the matchup rather
+ * than the instant, and it is one keystroke to clear.
+ */
+function copyTurnInto(node, source) {
+    if (!source) return node;
+
+    /*
+     * A slot that switched last turn has the newcomer standing in it now, not
+     * whoever left - so the copy takes the switch *target* and drops the switch
+     * itself. Carrying the action across would send in a Pokemon that is already
+     * out, which is the one thing a copied turn must not do.
+     */
+    ["you", "them"].forEach(function(side) {
+        var mons = side === "you" ? "mons" : "foes";
+        var actions = side === "you" ? "actions" : "foeActions";
+        node[mons] = [0, 1].map(function(i) {
+            /*
+             * A U-turn counts here for the same reason a declared switch does:
+             * whoever it brought in is the one standing there now, and copying
+             * the Pokemon that left would send it back in.
+             */
+            return switchTargetAt(source, side, i) || selfSwitchTarget(source, side, i) ||
+                monAt(source, side, i);
+        });
+        node[actions] = [0, 1].map(function(i) {
+            var action = actionAt(source, side, i);
+            // The move that did the switching goes with it, on the same argument.
+            if (selfSwitchTarget(source, side, i)) return {type: "move", value: ""};
+            return action.type === "switch"
+                ? {type: "move", value: ""}
+                : {type: action.type, value: action.value};
+        });
+    });
+
+    if (source.aimedAt) {
+        node.aimedAt = {
+            you: (source.aimedAt.you || []).slice(),
+            them: (source.aimedAt.them || []).slice()
+        };
+    }
+    node.note = source.note || "";
+    return node;
 }
 
 /*
@@ -272,7 +402,16 @@ const VOLATILES = {
     disable: {id: "disable", name: "Disabled - its last move is unusable", short: "DIS", maxTurns: 7},
     torment: {id: "torment", name: "Tormented - cannot use the same move twice in a row", short: "TOR"},
     attract: {id: "attract", name: "Infatuated - may not act", short: "ATT"},
-    substitute: {id: "substitute", name: "Behind a Substitute", short: "SUB"}
+    substitute: {id: "substitute", name: "Behind a Substitute", short: "SUB"},
+    /*
+     * The two that hand a sixteenth back every turn. `regen` is the denominator,
+     * carried here beside `maxTurns` because it is the same kind of fact: a rule
+     * about the condition rather than anything the move text has to be parsed
+     * for. Neither ever expires; both go when the Pokemon leaves the field, which
+     * is what Ingrain's self-trap is there to prevent.
+     */
+    aquaring: {id: "aquaring", name: "Aqua Ring - recovers 1/16 each turn", short: "RING", regen: 16},
+    ingrain: {id: "ingrain", name: "Ingrained - recovers 1/16 each turn, and cannot switch out", short: "ROOT", regen: 16}
 };
 
 /*
@@ -319,14 +458,1135 @@ function emptyMonState() {
      * when a Grip Claw pins it to exactly 5, which is the one case a plan can
      * actually rely on.
      */
+    /*
+     * `hp` is null until something takes a chunk out of this Pokemon, meaning
+     * "at full, whatever full is" - which saves needing its max HP, and so its
+     * whole set, before anything has happened to it.
+     *
+     * Once damaged it is {min, max, full} in real HP points. A range rather than
+     * a number because a damage roll is 85-100%: the honest carry is the band,
+     * widening by the spread on every hit, exactly the way sleep and the binding
+     * moves are a gauge rather than a promise. The branch conditions are what
+     * narrow it again - see applyOutcome.
+     */
     return {boosts: {}, status: "", statusTurns: 0, volatiles: {},
             // Turns elapsed per volatile, for the three that run out on their own.
             volatileTurns: {},
+            hp: null,
+            // End-of-turn ticks a badly-poisoned Pokemon has taken; the damage
+            // ramps with it, and leaving the field puts it back to zero.
+            toxicTicks: 0,
+            /*
+             * Turns on which this Pokemon has had the chance to act. Zero means
+             * it is acting for the first time since it came in, which is the
+             * whole of Fake Out's condition. A turn spent switching in doesn't
+             * count - it never got to move - so a Pokemon can still Fake Out on
+             * the turn after it arrives.
+             */
+            turnsActive: 0,
+            /*
+             * Consecutive turns this Pokemon has spent on Protect, Detect or
+             * Endure. Zero means the next one is guaranteed; anything above it
+             * means the chance has halved at least once and the plan cannot rest
+             * on it. Reset by using any other move and by leaving the field.
+             */
+            protectStreak: 0,
+            /*
+             * The level it is fighting at, once a turn has stated one. Null means
+             * "whatever its set says", which is the ordinary case. Kept on the
+             * Pokemon rather than the slot so it follows a switch out and back,
+             * and so it carries down the rest of the line - levelling up is not
+             * something that wears off.
+             */
+            level: null,
             perish: 0, perishDone: false, trapped: null};
 }
 
+/*
+ * HP helpers. `full` is carried on the record rather than looked up because the
+ * card needs it to draw a bar, and rebuilding a whole calc Pokemon just to ask
+ * its max HP would be wasteful.
+ */
+function hpOf(mon) {
+    return mon && mon.hp ? mon.hp : null;
+}
+
+// Dead on every roll. `min` is the worst case, so this is certainty, not a risk.
+function isFainted(mon) {
+    var hp = hpOf(mon);
+    return !!(hp && hp.max <= 0);
+}
+
+// Could be dead, could not - which is precisely what a KO branch is drawn for.
+function mayHaveFainted(mon) {
+    var hp = hpOf(mon);
+    return !!(hp && hp.min <= 0 && hp.max > 0);
+}
+
+/*
+ * Takes a damage range off a Pokemon. The worst case for its survival is the
+ * biggest roll, so `min` loses `hi` and `max` loses `lo` - which is what makes
+ * the band widen by the roll spread on every hit.
+ */
+function damageMon(mon, lo, hi, full) {
+    if (!mon.hp) mon.hp = {min: full, max: full, full: full};
+    // Nothing further reaches something already gone on every roll.
+    if (mon.hp.max <= 0) return;
+    mon.hp.min -= hi;
+    mon.hp.max -= lo;
+    if (mon.hp.min < 0) mon.hp.min = 0;
+    if (mon.hp.max < 0) mon.hp.max = 0;
+}
+
+/*
+ * Healing, the same arithmetic the other way, capped at full - and refused to
+ * anything already gone.
+ *
+ * That guard is the whole reason this isn't a one-liner. End-of-turn effects
+ * resolve in a fixed order, so a Pokémon can be killed by the sandstorm and then
+ * "healed" by its Leftovers a step later unless something stops it. It faints
+ * where it fainted; the Leftovers never happen.
+ *
+ * The half-dead case is the interesting one. A band straddling zero means it
+ * survived on some rolls and not others, so the healing applies only to the
+ * rolls where there was still somebody to heal: the top of the band moves and
+ * the bottom stays at nothing.
+ */
+function healMon(mon, lo, hi) {
+    if (!mon.hp) return;
+    if (mon.hp.max <= 0) return;
+    if (mon.hp.min > 0) mon.hp.min = Math.min(mon.hp.full, mon.hp.min + lo);
+    mon.hp.max = Math.min(mon.hp.full, mon.hp.max + hi);
+}
+
+/*
+ * Turn order.
+ *
+ * Priority bracket first, then speed - and Platinum Kaizo rebalanced the
+ * brackets, so they are read from the move table rather than assumed. This game
+ * puts Trick Room and Block at +7, Tailwind at +5, Fake Out at +3, and gives the
+ * hazard moves +1, none of which match the base game. Hardcoding vanilla values
+ * here would quietly get the order wrong in exactly the fights that turn on it.
+ */
+function movePriority(moveName) {
+    var move = findMove(moveName);
+    return (move && move.priority) || 0;
+}
+
+/*
+ * Things that make the order genuinely unknowable rather than merely unknown.
+ * A Quick Claw is a flat 20% to jump the whole queue, so a plan can no more rely
+ * on the holder moving last than it can on a sleep breaking early - and a slot
+ * that might have moved first must never be denied its move.
+ */
+const QUICK_CLAW = "quickclaw";
+// Abilities and items that always move last inside their bracket.
+const GOES_LAST_ABILITY = "stall";
+const GOES_LAST_ITEMS = ["laggingtail", "fullincense"];
+const TRICK_ROOM = "trickroom";
+
+/*
+ * Every slot's action for this turn, fastest first, grouped so that anything
+ * genuinely simultaneous stays together.
+ *
+ * The grouping is the important part: two Pokemon on the same priority and the
+ * same speed move in an order nothing here can know, so they are handed the same
+ * snapshot of the fight and cannot deny each other.
+ */
+function turnOrder(line, parent, onField, state, slots) {
+    var actions = [];
+    /*
+     * Trick Room already up flips the speed comparison - and only the speed one.
+     * Priority brackets still win outright, which is why a Quick Attack still
+     * goes first under it.
+     *
+     * Read off the state at the top of the turn rather than watched for during
+     * it: gen 4 settles turn order once, before anything moves, and never
+     * revisits it. A Trick Room cast *this* turn therefore changes nothing until
+     * the next one, which is exactly what this gets right by not looking.
+     */
+    var reversed = !!state.trickRoom;
+
+    ["you", "them"].forEach(function(side) {
+        for (var i = 0; i < slots; i++) {
+            if (switchTargetAt(parent, side, i)) continue;
+            if (!monAt(onField, side, i)) continue;
+            var move = moveAt(parent, side, i);
+            var holder = activeHolder(line, onField, side, i);
+            var item = toID((holder && holder.item) || "");
+            var ability = toID((holder && holder.ability) || "");
+            actions.push({
+                side: side,
+                slot: i,
+                priority: movePriority(move),
+                speed: typeof speedFor === "function" ? speedFor(line, onField, state, side, i) : 0,
+                last: ability === GOES_LAST_ABILITY || GOES_LAST_ITEMS.indexOf(item) >= 0,
+                unsure: item === QUICK_CLAW
+            });
+        }
+    });
+
+    actions.sort(function(a, b) {
+        if (a.priority !== b.priority) return b.priority - a.priority;
+        if (a.last !== b.last) return a.last ? 1 : -1;
+        return reversed ? a.speed - b.speed : b.speed - a.speed;
+    });
+
+    var groups = [];
+    actions.forEach(function(action) {
+        var group = groups[groups.length - 1];
+        var tied = group && group[0].priority === action.priority &&
+            group[0].last === action.last && group[0].speed === action.speed;
+        if (tied) group.push(action);
+        else groups.push([action]);
+    });
+    return groups;
+}
+
+/*
+ * Fake Out is the one move in this game whose flinch is a certainty rather than
+ * a chance, which is what makes it modellable at all - the percentage flinchers
+ * (Bite, Rock Slide, Air Slash) are deliberately left alone for the same reason
+ * a 10% burn is. It is also the only move that fails on its own schedule:
+ *
+ *   "Causes the target to flinch. Fails if used after the user's first turn on
+ *    the field."
+ *
+ * 121 of this game's 2121 trainer sets carry it, and at +3 priority in Kaizo it
+ * nearly always resolves first - so a lead that Fake Outs really does take the
+ * other side's whole first turn away.
+ *
+ * Neither half of this is in the generated tables: the effect text isn't in the
+ * "Has a 100% chance to..." form gen-move-effects.js matches, and flinch isn't a
+ * volatile the planner tracks (it lasts a fraction of a turn, not turns).
+ */
+const FAKE_OUT = "fakeout";
+// Inner Focus simply refuses to flinch.
+const FLINCH_PROOF_ABILITY = "innerfocus";
+
+/*
+ * The three moves that spend a turn refusing what is coming, and the one that
+ * volunteers for it. All four are +3 in this game, so they resolve before nearly
+ * everything - which is the whole reason they work at all, and it comes free from
+ * the turn order rather than needing a special case here.
+ *
+ * Protect and Detect stop the move outright; Endure lets it land and refuses only
+ * the faint. Two different shapes, so they are kept apart rather than collapsed.
+ *
+ * None of the four is in the generated table: "Protects the user from incoming
+ * moves" and "Forces all single-target moves to target the user" are not effects
+ * gen-move-effects.js extracts, and neither is a volatile the planner tracks -
+ * they last one turn rather than turns.
+ */
+const GUARD_MOVES = {protect: "block", detect: "block", endure: "endure"};
+// Follow Me, and nothing else here - this game has no Rage Powder.
+const REDIRECT_MOVES = ["followme"];
+
+/*
+ * Protect's one uncertainty, and it is a real one: the first use always works,
+ * and each successive use halves the chance.
+ *
+ * The planner applies the guard either way and says so, rather than hedging the
+ * health. A repeat Protect is a fork, and this tool already has a fork: draw the
+ * branch, and on the arm where it failed mark the slot *didn't act* - which is
+ * exactly what "its move never went off" means, and makes the attack land. A
+ * second mechanism for the same fact would double-count it, which is the same
+ * reason a miss isn't a branch condition.
+ *
+ * So the streak is not what decides whether the block happens. It is what decides
+ * whether the card warns you that you are resting on a coin flip. It counts
+ * consecutive uses, and is reset by using anything else, by the guard not going
+ * off, and by leaving the field - exactly as the mechanic is.
+ */
+function guardKind(moveName) {
+    var move = findMove(moveName);
+    return (move && GUARD_MOVES[move.id]) || "";
+}
+
+function redirectsMoves(moveName) {
+    var move = findMove(moveName);
+    return !!(move && REDIRECT_MOVES.indexOf(move.id) >= 0);
+}
+
+/*
+ * Whether Protect stops a given move, read from the move's own flags rather than
+ * from a list kept here. The dex carries a "Protect" flag on precisely the moves
+ * the game lets Protect block, so a Swords Dance, a Stealth Rock and a Perish
+ * Song all go through it untouched without anything having to say so.
+ */
+function blockedByProtect(moveName) {
+    var move = findMove(moveName);
+    return !!(move && (move.flags || []).indexOf("Protect") >= 0);
+}
+
+/*
+ * Whether Follow Me can pull a move off its chosen target. "All single-target
+ * moves" is the game's own wording, and the dex says which those are: `normal`
+ * is one adjacent Pokemon, and everything else is a spread move, a self-target, a
+ * side condition, or Counter's scripted target - none of which has a single
+ * choice of victim to redirect.
+ */
+function redirectable(moveName) {
+    var move = findMove(moveName);
+    return !!(move && move.target === "normal");
+}
+
+/*
+ * What a slot is doing to refuse this turn's damage, or null. Written by
+ * resolveMoves as the turn resolves and wiped at the end of it, the way Roost's
+ * type change is, because that is exactly how long it lasts.
+ */
+function guardAt(state, side, slot) {
+    return (state && state.guarding && state.guarding[side + slot]) || null;
+}
+
+// "second", "third", "fourth" - and a plain number past where that reads well.
+const ORDINALS = ["", "first", "second", "third", "fourth", "fifth"];
+function ordinal(n) {
+    return ORDINALS[n] || (n + "th");
+}
+
+/*
+ * Endure's floor: it survives with at least 1 HP, on every roll.
+ *
+ * Only the turn's moves are floored. End-of-turn damage comes after this and
+ * never consults it, which is right: a sandstorm kills through an Endure.
+ */
+function endureMon(mon) {
+    if (!mon || !mon.hp) return;
+    if (mon.hp.min < 1) mon.hp.min = 1;
+    if (mon.hp.max < 1) mon.hp.max = 1;
+}
+
+// Whether a move does nothing at all this turn, before anything is applied.
+function moveFailsNow(state, node, side, slot, moveName) {
+    var move = findMove(moveName);
+    if (!move || move.id !== FAKE_OUT) return false;
+    var mon = monState(state, side, monAt(node, side, slot));
+    return (mon.turnsActive || 0) > 0;
+}
+
+function flinchesTarget(moveName) {
+    var move = findMove(moveName);
+    return !!(move && move.id === FAKE_OUT);
+}
+
+function canBeFlinched(line, node, state, side, slot) {
+    var ref = monAt(node, side, slot);
+    if (!ref) return false;
+    if (isFainted(monState(state, side, ref))) return false;
+    var holder = activeHolder(line, node, side, slot);
+    return toID((holder && holder.ability) || "") !== FLINCH_PROOF_ABILITY;
+}
+
+/*
+ * Resolves every slot's move in turn order, folding in effects and damage.
+ *
+ * `alreadyGone` is who was dead before the turn started; those never act. Within
+ * the turn, a slot is denied only when something strictly faster has already
+ * killed it *on every roll* - a certainty, the same class of fact as sleep
+ * ending after four turns. A kill that only lands on some rolls stays a branch,
+ * because that is exactly what "You KO / You don't KO" is drawn for.
+ *
+ * `onDenied` is how the card finds out; the fold itself ignores it.
+ */
+function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, onDenied) {
+    // Slots a flinch has already taken the turn away from.
+    var flinched = {};
+    // And slots a Roar has already dragged off it.
+    var phazed = {};
+
+    /*
+     * Both last exactly this turn, so they are built here rather than inherited,
+     * and applyTurn wipes them once the moves are done. They live on the state
+     * rather than in a local because planner-calc.js has to read them: a blocked
+     * hit takes no HP off, and an endured one stops at 1.
+     */
+    state.guarding = {};
+    state.redirect = {};
+    /*
+     * Slots that took themselves off the field part-way through the turn, so the
+     * end-of-turn sweep in applyTurn doesn't switch them in a second time.
+     */
+    state.selfSwitched = {};
+
+    /*
+     * Turn order is settled once, here, and never revisited - this generation
+     * fixes it at the top of the turn, which is the same reason Trick Room only
+     * bites from the following one. A Pokemon brought in mid-turn by a U-turn
+     * therefore doesn't get a place in the order, which is right: it hasn't moved.
+     */
+    turnOrder(line, parent, onField, state, slots).forEach(function(group) {
+        /*
+         * One snapshot per group, taken before any of its members move. Slots on
+         * the same priority and speed are simultaneous, so neither can be denied
+         * by the other's damage - or by its flinch.
+         */
+        var goneBefore = {};
+        group.forEach(function(action) {
+            goneBefore[action.side + action.slot] =
+                isFainted(monState(state, action.side, monAt(onField, action.side, action.slot)));
+        });
+        var newFlinches = {};
+        /*
+         * A guard and a redirection are held back to the end of the group for the
+         * same reason a flinch is: two Pokemon moving at the same instant move in
+         * an order nothing here can know, so a Protect can only refuse something
+         * strictly slower and a Follow Me can only draw one. Inside the group it
+         * abstains rather than guessing, which is the same call the turn order
+         * makes about a Quick Claw and a tie.
+         */
+        var newGuards = {};
+        var newDraws = {};
+        var newSwitches = [];
+        var newPhazed = {};
+
+        group.forEach(function(action) {
+            var side = action.side;
+            var i = action.slot;
+            var other = side === "you" ? "them" : "you";
+            if (alreadyGone[side][i]) return;
+            if (!actedAt(parent, side, i)) return;
+
+            /*
+             * Outsped and killed outright. A Quick Claw holder is spared, since
+             * it may well have moved first and nothing here can say it didn't.
+             */
+            if (goneBefore[side + i] && !action.unsure) {
+                if (onDenied) onDenied(side, i, "outsped");
+                return;
+            }
+            // Flinched by something that already moved this turn.
+            if (flinched[side + i] && !action.unsure) {
+                if (onDenied) onDenied(side, i, "flinched");
+                return;
+            }
+            /*
+             * Dragged off the field before it could move. At -6 priority a Roar
+             * almost always goes last, so this is rare rather than routine - but
+             * when it does resolve first the move it interrupts never happens.
+             */
+            if (phazed[side + i] && !action.unsure) {
+                if (onDenied) onDenied(side, i, "phazed");
+                return;
+            }
+
+            var move = moveAt(parent, side, i);
+            if (!move) return;
+            /*
+             * A Fake Out that isn't this Pokemon's first turn out does nothing
+             * whatsoever - no damage, no flinch. It still costs the turn.
+             */
+            if (moveFailsNow(state, onField, side, i, move)) {
+                if (onDenied) onDenied(side, i, "failed");
+                return;
+            }
+
+            /*
+             * Protect's streak, settled before anything else so that the guard
+             * this turn puts up knows whether it can be relied on. Any other move
+             * breaks the run, which is the mechanic and also why alternating
+             * Protect with something else is the way it is actually used.
+             */
+            var guarding = guardKind(move);
+            var guardMon = monState(state, side, monAt(onField, side, i));
+            if (guarding) {
+                newGuards[side + i] = {
+                    kind: guarding,
+                    certain: (guardMon.protectStreak || 0) === 0,
+                    move: (findMove(move) || {}).name || move
+                };
+                guardMon.protectStreak = (guardMon.protectStreak || 0) + 1;
+            }
+            if (redirectsMoves(move)) newDraws[side] = i;
+
+            // The aim is a decision on the turn, so it is read from `parent`;
+            // `onField` only knows who is standing where after the switches.
+            var targets = targetsOf(onField, side, i, move, aimAt(parent, side, i),
+                state.redirect[other]);
+
+            /*
+             * What is left after the Protects. A block takes the target off the
+             * list entirely, so nothing lands on it - not the damage and not the
+             * effect either, which is the half a status move cares about.
+             *
+             * A repeat Protect blocks here exactly like a first one. Whether it
+             * held is a fork, and a fork belongs on a branch: the card warns that
+             * this one can fail, and the arm where it does says so with the slot's
+             * own *didn't act* toggle rather than with a hedge in the arithmetic.
+             */
+            var landed = targets;
+            if (blockedByProtect(move)) {
+                landed = targets.filter(function(t) {
+                    var guard = state.guarding[other + t];
+                    return !(guard && guard.kind === "block");
+                });
+                if (targets.length && !landed.length) {
+                    if (onDenied) onDenied(side, i, "blocked");
+                    return;
+                }
+            }
+
+            applyMoveEffect(move, state, side, i, landed, line, onField);
+            /*
+             * Damage is folded in by planner-calc.js, which owns everything that
+             * touches the calculator. Absent, the plan still derives every other
+             * kind of state - HP is simply never subtracted.
+             */
+            if (typeof foldDamage === "function") {
+                // `parent` is handed over so a Pursuit can find whoever is on
+                // their way out, who is only still standing there in that copy.
+                foldDamage(line, onField, state, side, i, landed, move, crits, parent);
+            }
+
+            /*
+             * Held back until the group finishes, so a flinch can only take the
+             * turn from something strictly slower. Two Pokemon moving at the same
+             * instant can't flinch one another out of a move.
+             */
+            if (flinchesTarget(move)) {
+                landed.forEach(function(target) {
+                    if (canBeFlinched(line, onField, state, other, target)) {
+                        newFlinches[other + target] = true;
+                    }
+                });
+            }
+
+            /*
+             * And the same for a U-turn leaving the field. Held to the end of the
+             * group for the same reason, so only something strictly slower finds
+             * the newcomer standing there.
+             */
+            var leaving = selfSwitchTarget(parent, side, i);
+            if (leaving) {
+                newSwitches.push({side: side, slot: i, incoming: leaving,
+                    passes: !!(switchesUserOut(move) || {}).passesBoosts});
+            }
+
+            /*
+             * Roar and Whirlwind drag the *other* side out. Which Pokemon arrives
+             * is random and never guessed at - it is stated, in the same field a
+             * U-turn writes to, against the slot being dragged out.
+             */
+            if (phazesTarget(move)) {
+                landed.forEach(function(target) {
+                    var mon = monState(state, other, monAt(onField, other, target));
+                    if (!monAt(onField, other, target) || isFainted(mon)) return;
+                    newPhazed[other + target] = true;
+                    var arriving = switchAfterAt(parent, other, target);
+                    if (arriving) {
+                        newSwitches.push({side: other, slot: target, incoming: arriving, passes: false});
+                    }
+                });
+            }
+        });
+
+        for (var key in newFlinches) flinched[key] = true;
+        for (var blown in newPhazed) phazed[blown] = true;
+        for (var guard in newGuards) state.guarding[guard] = newGuards[guard];
+        for (var drawn in newDraws) state.redirect[drawn] = newDraws[drawn];
+
+        /*
+         * The switch itself, once the whole group has moved.
+         *
+         * This is what makes a faster U-turn hand the reply to whoever it brought
+         * in: `onField` is mutated, so every slower group that follows resolves
+         * against the newcomer - its typing, its defences, its health. Switching
+         * in mid-turn also means its hazards and its Intimidate land now, in time
+         * to matter to the moves still to come.
+         */
+        newSwitches.forEach(function(change) {
+            /*
+             * Baton Pass hands its work over instead of dropping it, which is the
+             * whole reason anybody uses it. Taken before the slot is cleared and
+             * put back after, because leaveField is what does the clearing and it
+             * has no business knowing which move caused the switch.
+             */
+            var carried = change.passes
+                ? passedRecord(monState(state, change.side, monAt(onField, change.side, change.slot)))
+                : null;
+
+            leaveField(line, onField, state, change.side, change.slot);
+            (change.side === "you" ? onField.mons : onField.foes)[change.slot] = change.incoming;
+            applySwitchInAbility(line, onField, state, change.side, change.slot);
+            if (carried) receivePassed(monState(state, change.side, change.incoming), carried);
+            state.selfSwitched[change.side + change.slot] = true;
+        });
+    });
+}
+
+/*
+ * What a Baton Pass carries across: "any stat changes, Substitute, and most
+ * volatile status conditions", in the move's own words.
+ *
+ * The Perish Song count goes too, which is the trap worth knowing - passing a
+ * count onto a teammate hands them the faint rather than escaping it, where an
+ * ordinary switch would have shaken it off.
+ *
+ * The non-volatile status deliberately does not: it belongs to the Pokemon that
+ * caught it and stays with it on the bench, which is how the record already works
+ * everywhere else here.
+ */
+function passedRecord(mon) {
+    return {
+        boosts: Object.assign({}, mon.boosts),
+        volatiles: Object.assign({}, mon.volatiles),
+        volatileTurns: Object.assign({}, mon.volatileTurns),
+        perish: mon.perish || 0,
+        perishDone: !!mon.perishDone,
+        trapped: passableTrap(mon.trapped)
+    };
+}
+
+/*
+ * A trap passes only if it never wears off, and the table's own `expires` flag is
+ * exactly that line: Mean Look, Block and Spider Web are `false`, every binding
+ * move is `true`. Which is also the generation's rule - a Mean Look follows the
+ * Baton Pass onto whoever arrives, while a Wrap simply ends when its victim
+ * leaves. Ingrain's self-root is on the `false` side too, and passing it is what
+ * keeps the recipient coherent: it already inherits the volatile that does the
+ * healing, so inheriting the root that pays for it is the consistent half.
+ *
+ * The ability traps - Shadow Tag, Arena Trap, Magnet Pull - aren't here at all.
+ * Those are derived from whoever is standing opposite rather than stored, so they
+ * re-derive against the newcomer on their own and would be wrong to copy.
+ */
+function passableTrap(trapped) {
+    if (!trapped || trapped.expires) return null;
+    return Object.assign({}, trapped);
+}
+
+function receivePassed(mon, carried) {
+    mon.boosts = carried.boosts;
+    mon.volatiles = carried.volatiles;
+    mon.volatileTurns = carried.volatileTurns;
+    if (carried.perish) {
+        mon.perish = carried.perish;
+        mon.perishDone = carried.perishDone;
+    }
+    if (carried.trapped) mon.trapped = carried.trapped;
+}
+
+/*
+ * What actually happens to each slot's move this turn, for the card to show:
+ * which of them lose it to being outsped, flinched or Protected against, which
+ * side is drawing single-target moves, and who is guarding.
+ *
+ * Runs the same resolution against a throwaway copy, so what is drawn and what is
+ * folded can't disagree - which is the whole reason this exists rather than the
+ * card working any of it out for itself. Redirection especially: a Follow Me
+ * moves where a move lands, and a card showing the damage against the target you
+ * picked would be quoting a number that never happens.
+ */
+function turnReport(line, node, state) {
+    var report = {denied: {}, redirect: {}, guarding: {}};
+    if (typeof foldDamage !== "function") return report;
+    /*
+     * Blind mode runs this too, which it did not when the only thing here was
+     * "outsped and killed". A Protect and a Follow Me are rules rather than
+     * answers - they belong with the hazards and the weather, not with the
+     * numbers - and the fold applies them in blind mode either way, so a card
+     * that didn't know about them would be showing a different turn from the one
+     * being derived. Nothing damage-derived can slip through: no HP is carried in
+     * blind mode, so nothing is ever fainted and nothing is ever outsped.
+     */
+    var slots = slotCount(line);
+    var scratch = normalizeState(cloneState(state));
+    var alreadyGone = {you: [], them: []};
+    ["you", "them"].forEach(function(side) {
+        for (var i = 0; i < slots; i++) {
+            alreadyGone[side][i] = isFainted(monState(scratch, side, monAt(node, side, i)));
+        }
+    });
+    /*
+     * No crits. A crit belongs to one branch out of this turn, and the card has
+     * a single set of figures for all of them - so it shows the ordinary hit and
+     * leaves the crit to the health each branch carries away.
+     */
+    resolveMoves(line, node, node, scratch, {}, alreadyGone, slots,
+        function(side, slot, reason) { report.denied[side + slot] = reason; });
+    report.redirect = scratch.redirect || {};
+    report.guarding = scratch.guarding || {};
+    return report;
+}
+
+/*
+ * End-of-turn damage and healing: weather, Leftovers, Leech Seed and status.
+ *
+ * @smogon/calc computes one move against one target and stops, so none of this
+ * comes free with the damage - but without it an HP bar drifts further from the
+ * truth every turn, and drifts worst in exactly the long fights most worth
+ * planning. The fractions and the exception lists are taken from calc's own
+ * getEndOfTurn (calc/src/desc.ts) so that the planner's HP and the calculator's
+ * KO chances can't disagree about the same fight.
+ *
+ * Every one of these is a fixed fraction of max HP rather than a roll, so unlike
+ * move damage they shift both ends of the band equally and never widen it.
+ */
+const SAND_IMMUNE_TYPES = ["rock", "ground", "steel"];
+// Abilities that shrug the weather off, sand and hail respectively.
+const SAND_IMMUNE_ABILITIES = ["magicguard", "overcoat", "sandforce", "sandrush", "sandveil"];
+const HAIL_IMMUNE_ABILITIES = ["magicguard", "overcoat", "snowcloak"];
+
+// Gen 4 truncates each fraction, and never to less than a single point.
+function chip(full, denominator) {
+    return Math.max(1, Math.floor(full / denominator));
+}
+
+function applyResiduals(line, node, state) {
+    /*
+     * Wish first, before anything else takes a bite - it is collected at the end
+     * of the turn after it was made, by whoever is standing in the slot then.
+     * Counted down here rather than on the Pokemon, the way Perish Song is
+     * counted on the Pokemon, because this one genuinely belongs to the slot.
+     */
+    /*
+     * The queue is drained in two passes, because its two members sit at
+     * opposite ends of the turn. Wish resolves before the weather is even
+     * announced; Future Sight and Doom Desire land right at the back, after the
+     * poison and the burn have taken their share. So a Wish can save something
+     * from a sandstorm, and a Future Sight cannot be outrun by one.
+     */
+    function drainPending(kind) {
+        ["you", "them"].forEach(function(side) {
+            var queued = state[side].pending || [];
+            for (var slot = 0; slot < 2; slot++) {
+                var list = queued[slot] || [];
+                queued[slot] = list.filter(function(item) {
+                    if (item.kind !== kind) return true;
+                    item.turns -= 1;
+                    if (item.turns > 0) return true;
+
+                    var target = ensureHp(line, node, state, side, slot);
+                    // Nobody standing there means it simply goes to waste.
+                    if (target) {
+                        if (kind === "heal") healMon(target, item.amount, item.amount);
+                        else damageMon(target, item.amount, item.amount, target.hp.full);
+                    }
+                    return false;
+                });
+            }
+        });
+    }
+
+    drainPending("heal");
+
+    ["you", "them"].forEach(function(side) {
+        var other = side === "you" ? "them" : "you";
+        for (var slot = 0; slot < 2; slot++) {
+            var ref = monAt(node, side, slot);
+            if (!ref) continue;
+            var mon = monState(state, side, ref);
+            // The ramp only belongs to a poison that is still there.
+            if (mon.status !== "tox") mon.toxicTicks = 0;
+            // Nothing left to take off something already gone.
+            if (isFainted(mon)) continue;
+
+            var holder = activeHolder(line, node, side, slot);
+            var ability = toID((holder && holder.ability) || "");
+            var item = toID((holder && holder.item) || "");
+            /*
+             * Magic Guard takes nothing from any of this - weather, status,
+             * Leech Seed, the lot - so it short-circuits the whole block.
+             */
+            if (ability === "magicguard") continue;
+
+            var record = ensureHp(line, node, state, side, slot);
+            if (!record) continue;
+            var full = record.hp.full;
+            var types = ((speciesAt(line, node, side, slot) || {}).types) || [];
+            var goggles = item === "safetygoggles";
+
+            function hurt(fraction) { damageMon(record, chip(full, fraction), chip(full, fraction), full); }
+            function heal(fraction) { healMon(record, chip(full, fraction), chip(full, fraction)); }
+
+            /*
+             * Weather first. Sand Veil earns its place here rather than only in
+             * the evasion it is famous for - Roark's Gible sits in his gym's
+             * sandstorm taking nothing from it.
+             */
+            if (state.weather === "Sand") {
+                if (!types.some(function(t) { return SAND_IMMUNE_TYPES.indexOf(t) >= 0; }) &&
+                    SAND_IMMUNE_ABILITIES.indexOf(ability) < 0 && !goggles) hurt(16);
+            } else if (state.weather === "Hail") {
+                if (ability === "icebody") heal(16);
+                else if (types.indexOf("ice") < 0 && HAIL_IMMUNE_ABILITIES.indexOf(ability) < 0 && !goggles) hurt(16);
+            } else if (state.weather === "Sun") {
+                if (ability === "dryskin" || ability === "solarpower") hurt(8);
+            } else if (state.weather === "Rain") {
+                if (ability === "dryskin") heal(8);
+                else if (ability === "raindish") heal(16);
+            }
+
+            /*
+             * Aqua Ring and Ingrain hand back a sixteenth every turn. Small, and
+             * over a long fight worth more than it looks - which is the entire
+             * case for a Pokemon that carries either.
+             */
+            for (var v in mon.volatiles) {
+                if (mon.volatiles[v] && VOLATILES[v] && VOLATILES[v].regen) heal(VOLATILES[v].regen);
+            }
+
+            // Then the item, which in this generation resolves before status.
+            if (item === "leftovers") heal(16);
+            else if (item === "blacksludge") types.indexOf("poison") >= 0 ? heal(16) : hurt(8);
+            else if (item === "stickybarb") hurt(8);
+
+            /*
+             * Leech Seed moves HP rather than destroying it: whatever the seeded
+             * Pokemon loses, whoever is opposite gains. A Big Root on the one
+             * being fed makes the transfer bigger without costing the other side
+             * any more.
+             */
+            if (mon.volatiles.leechseed) {
+                var drain = chip(full, 8);
+                damageMon(record, drain, drain, full);
+                var fedSlot = monAt(node, other, slot) ? slot : 0;
+                var fed = ensureHp(line, node, state, other, fedSlot);
+                var fedHolder = activeHolder(line, node, other, fedSlot);
+                if (fed && !isFainted(fed)) {
+                    var gain = toID((fedHolder && fedHolder.item) || "") === "bigroot"
+                        ? Math.trunc(drain * 5324 / 4096)
+                        : drain;
+                    // Liquid Ooze turns the drink into a drink of poison.
+                    if (toID((fedHolder && fedHolder.ability) || "") === "liquidooze") {
+                        damageMon(fed, gain, gain, fed.hp.full);
+                    } else {
+                        healMon(fed, gain, gain);
+                    }
+                }
+            }
+
+            // Status last, and only one of these can ever apply.
+            if (mon.status === "psn") {
+                ability === "poisonheal" ? heal(8) : hurt(8);
+            } else if (mon.status === "tox") {
+                if (ability === "poisonheal") heal(8);
+                else {
+                    /*
+                     * Toxic keeps its own count rather than reading statusTurns.
+                     * That one is incremented at the top of a turn, so it is
+                     * already 1 for a poison carried in but still 0 for one a
+                     * move landed this turn - two different numbers for what is
+                     * equally the first tick. Counting the ticks themselves is
+                     * the thing that is actually being asked for.
+                     */
+                    mon.toxicTicks = (mon.toxicTicks || 0) + 1;
+                    var toxic = chip(full, 16) * mon.toxicTicks;
+                    damageMon(record, toxic, toxic, full);
+                }
+            } else if (mon.status === "brn") {
+                // Gen 4 burns for a full 1/8; it was only softened to 1/16 in gen 7.
+                ability === "heatproof" ? hurt(16) : hurt(8);
+            }
+        }
+    });
+
+    /*
+     * Last of all, the attacks that were aimed two turns ago. Being at the back
+     * is what makes them so hard to play around: whatever the weather and the
+     * poison have already taken comes off first, and this lands on the remainder.
+     */
+    drainPending("damage");
+}
+
+/* ------------------------------------------------------------- validation */
+
+/*
+ * Things wrong with a turn, in the terms a plan cares about.
+ *
+ * Every one of these is a *certainty* rather than a suspicion. A warning that
+ * fires on a maybe is worse than none at all: it trains you to ignore the ones
+ * that matter, and half of what this planner tracks is deliberately uncertain.
+ * So nothing here fires on a damage roll going one way or the other, only on
+ * something that cannot be true however the rolls fall.
+ *
+ * Nothing is ever corrected. These are notes on your plan, not a plan of their
+ * own - the line the roadmap draws around auto-generated lines applies here too.
+ */
+function validateNode(line, node, state, report) {
+    var warnings = [];
+    var slots = slotCount(line);
+    var seen = {};
+    var redirect = (report && report.redirect) || {};
+
+    ["you", "them"].forEach(function(side) {
+        var other = side === "you" ? "them" : "you";
+        for (var slot = 0; slot < slots; slot++) {
+            var ref = monAt(node, side, slot);
+            if (!ref) continue;
+
+            function warn(text) { warnings.push({side: side, slot: slot, text: text}); }
+            var who = speciesAt(line, node, side, slot);
+            var name = (who && who.name) || ref;
+
+            // The same Pokemon cannot be in both slots at once.
+            if (seen[side + ref]) warn(`${name} is on this turn twice - it can only be in one slot`);
+            seen[side + ref] = true;
+
+            // Something you have already lost for good.
+            if (side === "you" && !isPartnerSlot(line, side, slot)) {
+                var entry = boxEntry(ref);
+                if (entry && entry.dead) warn(`${name} is dead in the Box, so it can't be in this fight`);
+            }
+
+            var mon = monState(state, side, ref);
+            var move = moveAt(node, side, slot);
+            var switching = switchTargetAt(node, side, slot);
+
+            /*
+             * Dead coming into the turn. Only ever true once HP is being
+             * carried, so this stays quiet in blind mode of its own accord.
+             */
+            if (isFainted(mon)) {
+                if (move) warn(`${name} has already fainted, so it can't use ${move}`);
+                continue;
+            }
+
+            if (!move && !switching) {
+                warn(`${name} has no move chosen`);
+                continue;
+            }
+            if (!move) continue;
+
+            /*
+             * A move it no longer has - usually because the Box was edited.
+             *
+             * Compared by identity rather than by string, because the same move
+             * has two spellings here: a set carries the game's own name while the
+             * dex carries its display name, and "Self-Destruct" and "Selfdestruct"
+             * are the same move. Matching on text would report every one of those
+             * as forgotten, which is exactly the false positive this whole block
+             * is supposed to avoid.
+             */
+            var entrySet = slotSet(line, node, side, slot);
+            var known = entrySet && entrySet.set && entrySet.set.moves;
+            var chosen = findMove(move);
+            if (known && chosen) {
+                var hasIt = known.some(function(m) {
+                    var known_ = findMove(m);
+                    return known_ && known_.id === chosen.id;
+                });
+                if (!hasIt) warn(`${name} doesn't know ${chosen.name} any more`);
+            }
+
+            /*
+             * A guard that follows another one. The planner applies it - it is
+             * what the plan says happens - but this is the one place a turn rests
+             * on a coin flip that nothing else on the card would tell you about,
+             * because a blocked move looks identical whether the block was
+             * guaranteed or a gamble.
+             *
+             * It is worded as the branch it wants to become. Every other warning
+             * here fires on the impossible; this one fires on a real fork, and it
+             * earns that by being rare, by being invisible otherwise, and by
+             * saying exactly what to do about it.
+             */
+            var guarding = guardKind(move);
+            if (guarding && actedAt(node, side, slot) && !switching) {
+                var streak = mon.protectStreak || 0;
+                if (streak > 0) {
+                    warn(`${name}'s ${chosen ? chosen.name : move} is its ${ordinal(streak + 1)} in a row, so it can fail — ` +
+                         `the plan assumes it holds. Branch it, and on the arm where it fails mark this slot "didn't act".`);
+                }
+            }
+
+            /*
+             * Attacking something that is already gone - read against where the
+             * move actually lands, not where it was pointed. A Follow Me pulls it
+             * off a fainted slot onto a live one, and warning about the corpse it
+             * was never going to hit is exactly the false positive that teaches
+             * you to stop reading these.
+             */
+            var aimed = targetsOf(node, side, slot, move, aimAt(node, side, slot), redirect[other]);
+            var allDead = aimed.length && aimed.every(function(t) {
+                var target = monAt(node, other, t);
+                return target && isFainted(monState(state, other, target));
+            });
+            if (allDead) warn(`${name} is attacking something that has already fainted`);
+        }
+    });
+    return warnings;
+}
+
+/*
+ * Whether a branch says something the arithmetic rules out.
+ *
+ * Only the impossible is flagged, never the unlikely: "You KO" is wrong only if
+ * the move cannot kill on *any* roll, and "You don't KO" only if it kills on
+ * every one. Anything in between is exactly what a branch is for.
+ */
+const OUTCOME_NEEDS_KILL = {youko: "you", youcritko: "you", theyko: "them", theycritko: "them"};
+const OUTCOME_NEEDS_SURVIVAL = {younoko: "you", yousurvive: "them"};
+
+function validateEdge(line, edge) {
+    if (typeof plannerDamage !== "function") return null;
+    var node = line.nodes[edge.from];
+    if (!node) return null;
+
+    var condition = conditionFor(edge);
+    var killer = OUTCOME_NEEDS_KILL[condition.id] || OUTCOME_NEEDS_SURVIVAL[condition.id];
+    if (!killer) return null;
+    var needsKill = !!OUTCOME_NEEDS_KILL[condition.id];
+
+    var state = computeNodeState(line, edge.from);
+    var slots = slotCount(line);
+    var victim = killer === "you" ? "them" : "you";
+    /*
+     * What the turn actually does with those moves, so a branch is judged against
+     * where they land and what stops them rather than against the aim alone.
+     */
+    var report = turnReport(line, node, state);
+    /*
+     * In a double any of the attacking side's slots could be the one the branch
+     * is about, so it is only a contradiction when *none* of them can manage it.
+     */
+    var anyPossible = false;
+    var anyChecked = false;
+
+    for (var slot = 0; slot < slots; slot++) {
+        var move = moveAt(node, killer, slot);
+        if (!move || !actedAt(node, killer, slot)) continue;
+        if (switchTargetAt(node, killer, slot)) continue;
+        var landing = targetsOf(node, killer, slot, move, aimAt(node, killer, slot),
+            report.redirect[victim]);
+        /*
+         * Something on the other side is spending the turn refusing this, and
+         * that puts the branch beyond what this check can rule out either way.
+         *
+         * The arithmetic below knows what a move does and nothing else, and a
+         * guard breaks that in both directions at once: a Protect makes a KO
+         * impossible, a shaky one makes it a coin flip, and an Endure holds the
+         * faint off the move while leaving the sandstorm free to finish the job
+         * a moment later. So the branch is left alone rather than contradicted -
+         * a warning that fires on a turn the plan got right is worse than no
+         * warning at all.
+         */
+        var guarded = landing.length && landing.every(function(t) {
+            return !!report.guarding[victim + t];
+        });
+        if (guarded || report.denied[killer + slot] === "blocked") {
+            anyChecked = true;
+            anyPossible = true;
+            continue;
+        }
+        var damage = plannerDamage(line, node, state, killer, slot, move,
+            condition.id === "youcritko" || condition.id === "theycritko" ||
+            condition.id === "youcrit" || condition.id === "theycrit",
+            report.redirect[victim]);
+        if (!damage) continue;
+        anyChecked = true;
+        if (needsKill ? damage.mayKill : !damage.kills) anyPossible = true;
+    }
+
+    /*
+     * Worded around the move that was actually picked, because that is all this
+     * looks at. Something on that side may well have another move that kills;
+     * the branch is only impossible for the one the plan commits to.
+     */
+    if (!anyChecked || anyPossible) return null;
+    return needsKill
+        ? `"${condition.name}" can't happen here: the move selected on that side does not kill on any roll.`
+        : `"${condition.name}" can't happen here: the attack kills on every roll.`;
+}
+
+/*
+ * A branch condition is a statement about which way a roll went, so it is also
+ * the thing that narrows the HP range back down. That is what stops the band
+ * widening forever: every fork in the plan prunes it.
+ *
+ *   You KO / You crit KO / Sacrifice   -> pinned to nothing left
+ *   They KO you / They crit KO
+ *   You don't KO / You survive         -> floor lifted off zero
+ *
+ * A miss is deliberately not here. "Its move never went off" is already the
+ * per-slot `skipped` toggle, and two mechanisms for one fact would double-count.
+ */
+const OUTCOME_FAINTS = {youko: "them", youcritko: "them", sac: "you", theyko: "you", theycritko: "you"};
+const OUTCOME_SURVIVES = {younoko: "them", yousurvive: "you"};
+
+// Whose move the branch says landed a critical hit, if either.
+function critSides(condition) {
+    if (!condition) return {};
+    if (condition.id === "youcrit" || condition.id === "youcritko") return {you: true};
+    if (condition.id === "theycrit" || condition.id === "theycritko") return {them: true};
+    return {};
+}
+
+/*
+ * The HP record for a slot, created at full if nothing has touched it yet. Full
+ * comes from the calc layer, since max HP means knowing the whole set; without
+ * it there is no scale to express damage on, so the caller leaves the slot be.
+ */
+function ensureHp(line, node, state, side, slot) {
+    // No health is tracked at all in blind mode, so there is no scale to put a
+    // Pokemon on - which also stops the residuals and the hazards from writing
+    // a record that would then have nothing to show it in.
+    if (blindMode()) return null;
+    var ref = monAt(node, side, slot);
+    if (!ref) return null;
+    var mon = monState(state, side, ref);
+    if (mon.hp) return mon;
+    var full = typeof maxHpFor === "function" ? maxHpFor(line, node, state, side, slot) : 0;
+    if (!full) return null;
+    mon.hp = {min: full, max: full, full: full};
+    return mon;
+}
+
+function applyOutcome(condition, state, onField, line) {
+    if (!condition) return;
+    var faints = OUTCOME_FAINTS[condition.id];
+    var survives = OUTCOME_SURVIVES[condition.id];
+    var side = faints || survives;
+    if (!side) return;
+
+    var slots = [0, 1].filter(function(i) { return monAt(onField, side, i); });
+
+    /*
+     * The slots the outcome is genuinely about are the ones whose range straddles
+     * zero - it could have died, it could have held on - because that uncertainty
+     * is the only thing a branch can resolve. In singles there is never more than
+     * one, and in a double it is nearly always the one being attacked.
+     */
+    var uncertain = slots.filter(function(i) {
+        return mayHaveFainted(monState(state, side, monAt(onField, side, i)));
+    });
+
+    /*
+     * With nothing uncertain the branch disagrees with the arithmetic - a KO the
+     * numbers say couldn't have happened, or couldn't have failed to. The
+     * statement still wins, because that is how every other seed here works: you
+     * are recording what happened, not asking to be second-guessed. It applies to
+     * one slot only, so a double doesn't lose both Pokemon to a single label.
+     */
+    var affected = uncertain.length ? uncertain : slots.filter(function(i) {
+        return !isFainted(monState(state, side, monAt(onField, side, i)));
+    }).slice(0, 1);
+
+    affected.forEach(function(i) {
+        var mon = ensureHp(line, onField, state, side, i);
+        if (!mon) return;
+        if (faints) {
+            mon.hp.min = 0;
+            mon.hp.max = 0;
+        } else if (mon.hp.min <= 0) {
+            mon.hp.min = 1;
+        }
+    });
+}
+
 function emptySide() {
-    return {hazards: {}};
+    /*
+     * Things already on their way to a slot, one list per slot. They belong to
+     * the *slot* rather than to any Pokemon, which is the whole point of every
+     * move that queues one: Wish, switch, and the arrival collects the healing;
+     * Future Sight, and whatever they bring in two turns later takes the hit.
+     *
+     * Each entry is {turns, amount, kind, name}, with the amount fixed at the
+     * moment the move was used - half of the *user's* max HP for a Wish, and for
+     * Future Sight the damage worked out against whoever was standing there then.
+     */
+    return {hazards: {}, pending: [[], []]};
 }
 
 // The record for one Pokémon, created the first time anything touches it.
@@ -352,6 +1612,15 @@ function emptyState() {
         mons: {you: {}, them: {}},
         weather: "",
         /*
+         * Trick Room, which belongs to the field rather than to either side, the
+         * way weather does. A plain boolean because this game made it a toggle
+         * rather than a timer - "Reverses the speed order of the battle until the
+         * move is used again", where the base game gives it five turns. So there
+         * is no counter to keep and no expiry to model; casting it again turns it
+         * back off.
+         */
+        trickRoom: false,
+        /*
          * Where the weather came from: "battle" for weather the fight starts in,
          * otherwise whichever move or ability set it. Only the card reads this,
          * to say why there is sand on a turn nobody asked for sand on.
@@ -365,6 +1634,27 @@ function emptyState() {
 
 // Older saved overrides predate these.
 function normalizeState(state) {
+    if (state.trickRoom === undefined) state.trickRoom = false;
+    /*
+     * Guards, redirection and mid-turn switches all belong to a single turn, so
+     * nothing carries them in. Cleared rather than defaulted, in case an override
+     * was ever saved with a turn's worth of them still on it.
+     */
+    state.guarding = null;
+    state.redirect = null;
+    state.selfSwitched = null;
+    ["you", "them"].forEach(function(side) {
+        if (!state[side]) return;
+        if (!state[side].pending) state[side].pending = [[], []];
+        // An override saved while Wish had its own field still carries one.
+        if (state[side].wish) {
+            state[side].wish.forEach(function(wish, slot) {
+                if (wish) state[side].pending[slot].push(
+                    {turns: wish.turns, amount: wish.amount, kind: "heal", name: "Wish"});
+            });
+            delete state[side].wish;
+        }
+    });
     if (!state.mons) state.mons = {you: {}, them: {}};
     if (!state.mons.you) state.mons.you = {};
     if (!state.mons.them) state.mons.them = {};
@@ -400,9 +1690,31 @@ function findMove(name) {
 }
 
 /*
- * Folds one move into the running state. Hazards and stat drops land on the
- * side opposite the user; boosts, screens and weather on their own.
+ * The full set behind a slot, from whichever roster owns it, with the species
+ * name alongside it - a Box entry is keyed by a reference that survives
+ * evolution, so the species has to come off the entry rather than off the key.
+ *
+ * The damage adapter needs the whole set (level, IVs, EVs, nature) rather than
+ * just the ability and item, so the roster dispatch lives here and activeHolder
+ * reads it too.
  */
+function slotSet(line, node, side, slot) {
+    var ref = monAt(node, side, slot);
+    if (!ref) return null;
+
+    // Your own Box, only for slots you actually control.
+    if (side === "you" && !isPartnerSlot(line, side, slot)) {
+        var entry = boxEntry(ref);
+        return entry ? {species: entry.species, set: entry.set} : null;
+    }
+
+    var set = side === "you"
+        ? trainerSet(trainerForSlot(line, side, slot), ref)
+        : foeSetFor(line, node, ref);
+    // Trainer rosters are keyed by species, so the reference is the name.
+    return set ? {species: ref, set: set} : null;
+}
+
 /*
  * What the active Pokémon on a side is holding, and who it is. Your side reads
  * from the Box; theirs from the trainer's set for that fight.
@@ -410,17 +1722,19 @@ function findMove(name) {
 function activeHolder(line, node, side, slot) {
     var ref = monAt(node, side, slot);
     if (!ref) return null;
+    var entry = slotSet(line, node, side, slot);
 
-    // Your own Box, only for slots you actually control.
+    /*
+     * An unresolvable Box reference means the slot is genuinely empty - that
+     * Pokémon has left the Box. A trainer set that doesn't resolve still names
+     * somebody, so it keeps its id and simply holds nothing.
+     */
+    // The nature rides along for the Figy family, whose confusion depends on it.
     if (side === "you" && !isPartnerSlot(line, side, slot)) {
-        var entry = boxEntry(ref);
-        return entry ? {id: ref, item: entry.set.item, ability: entry.set.ability} : null;
+        return entry ? {id: ref, item: entry.set.item, ability: entry.set.ability, nature: entry.set.nature} : null;
     }
-
-    var set = side === "you"
-        ? trainerSet(trainerForSlot(line, side, slot), ref)
-        : foeSetFor(line, node, ref);
-    return {id: ref, item: set ? set.item : "", ability: set ? set.ability : ""};
+    return {id: ref, item: entry ? entry.set.item : "", ability: entry ? entry.set.ability : "",
+            nature: entry ? entry.set.nature : ""};
 }
 
 /*
@@ -464,15 +1778,192 @@ function tryCureWithItem(state, side, holder, status, volatile_) {
     if (!holder || !holder.item) return false;
     var cure = STATUS_CURES[toID(holder.item)];
     if (!cure) return false;
-    if (state.itemsUsed[side][holder.id]) return false;
+    if (itemSpent(state, side, holder.id)) return false;
 
     var covers = status
         ? (cure.statuses === "all" || (cure.statuses || []).indexOf(status) >= 0)
         : (cure.volatiles || []).indexOf(volatile_) >= 0;
     if (!covers) return false;
 
-    state.itemsUsed[side][holder.id] = cure.name;
+    spendItem(state, side, holder.id, cure.name, "cure");
     return true;
+}
+
+/*
+ * The planner-relevant half of a held item - what it does to HP and to stat
+ * stages, which is all the planner tracks. Damage-only items are @smogon/calc's
+ * job, and anything with a percentage on it (a Focus Band's 10% to live) is out
+ * on the same rule that keeps a 10% burn out.
+ *
+ * Generated from the items' own descriptions; see tools/gen-item-effects.js.
+ */
+function itemEffect(itemName) {
+    if (!itemName || typeof ITEM_EFFECTS === "undefined") return null;
+    return ITEM_EFFECTS[toID(itemName)] || null;
+}
+
+/*
+ * Spent items are recorded per Pokémon, so a berry really is gone rather than
+ * coming back every turn.
+ *
+ * The record was a bare name when curing berries were the only thing that spent
+ * one. It carries a reason now - a Sitrus Berry and a Lum Berry are both "spent"
+ * and the card should say which happened - so old saved states are read through
+ * the same shape.
+ */
+function itemRecord(state, side, ref) {
+    var used = state.itemsUsed && state.itemsUsed[side] && state.itemsUsed[side][ref];
+    if (!used) return null;
+    return typeof used === "string" ? {name: used, why: "cure"} : used;
+}
+
+function itemSpent(state, side, ref) {
+    return !!itemRecord(state, side, ref);
+}
+
+function spendItem(state, side, ref, name, why) {
+    if (!state.itemsUsed[side]) state.itemsUsed[side] = {};
+    state.itemsUsed[side][ref] = {name: name, why: why};
+}
+
+/*
+ * Whether a health threshold has certainly been crossed.
+ *
+ * A band straddling the line means it went off on some rolls and not on others,
+ * and there is no honest way to carry both - unlike a damage roll, an item that
+ * fires changes what happens next rather than only how much is left. So it is
+ * not claimed, and the turn's `itemSeed` is how you say it happened.
+ */
+function belowThreshold(mon, fraction) {
+    var hp = hpOf(mon);
+    if (!hp) return false;
+    if (hp.max <= 0) return false;
+    // Integer arithmetic throughout, as everywhere else fractions are used here.
+    return hp.max * fraction[1] < hp.full * fraction[0];
+}
+
+/*
+ * Fires one slot's held item, if it holds one the planner models and hasn't
+ * already spent it.
+ *
+ * `stated` is the turn saying it went off - the itemSeed - and it overrules the
+ * threshold entirely, the way every other seed overrules the arithmetic. Without
+ * it the threshold has to be *certainly* crossed.
+ *
+ * Called at the two points a gen 4 berry actually gets its chance: once the
+ * turn's moves have resolved, and again after the end-of-turn chip. The second
+ * matters as much as the first - a sandstorm is what puts a lot of things under
+ * half - and doing it only at the end would let something die on the way there.
+ */
+function applyHeldItem(line, node, state, side, slot, stated) {
+    var ref = monAt(node, side, slot);
+    if (!ref) return false;
+    var holder = activeHolder(line, node, side, slot);
+    if (!holder || !holder.item) return false;
+    var fx = itemEffect(holder.item);
+    if (!fx) return false;
+    if (itemSpent(state, side, holder.id)) return false;
+
+    var mon = monState(state, side, holder.id);
+    // Nothing left to help. A berry never brings anything back.
+    if (isFainted(mon)) return false;
+
+    /*
+     * An immediate item - Berserk Gene, and this game's rewritten Ganlon and
+     * Apicot - has no threshold to wait for and goes off the moment it is out.
+     * Everything else needs its line crossed, or you saying it was.
+     *
+     * White Herb is neither: its trigger is a stat drop existing rather than any
+     * amount of health, so it is waved through to the check below, which is the
+     * one that can actually answer the question.
+     */
+    if (!stated && !fx.immediate && !fx.clearsNegative) {
+        if (!fx.threshold) return false;
+        var record = ensureHp(line, node, state, side, slot);
+        if (!record || !belowThreshold(record, fx.threshold)) return false;
+    }
+
+    /*
+     * And that check. With nothing dropped there is nothing to restore, so the
+     * Herb waits rather than being spent on an empty turn - which is true even
+     * when the turn *stated* it went off, because it genuinely cannot.
+     */
+    if (fx.clearsNegative) {
+        var dropped = Object.keys(mon.boosts || {}).filter(function(stat) { return mon.boosts[stat] < 0; });
+        if (!dropped.length) return false;
+        dropped.forEach(function(stat) { delete mon.boosts[stat]; });
+    }
+
+    if (fx.heal) {
+        var healed = ensureHp(line, node, state, side, slot);
+        if (healed) {
+            var amount = fx.heal.points !== undefined
+                ? fx.heal.points
+                : Math.floor(healed.hp.full * fx.heal.fraction[0] / fx.heal.fraction[1]);
+            healMon(healed, amount, amount);
+        }
+    }
+
+    if (fx.boost) addBoosts(mon.boosts, fx.boost, null);
+
+    /*
+     * The Figy family pay for the healing by confusing anything that dislikes
+     * the flavour, which is a fact about the holder's nature rather than about
+     * the fight - so it is read off the set and applied without a guard, exactly
+     * as the berry does.
+     */
+    if (fx.confusesNature && dislikesFlavour(holder, fx.confusesNature)) {
+        mon.volatiles.confusion = true;
+        mon.volatileTurns.confusion = 0;
+    }
+
+    // Focus Sash is spent in planner-calc.js, where the hit it refuses happens.
+    if (fx.consumed) spendItem(state, side, holder.id, fx.name, fx.heal ? "heal" : "boost");
+    return true;
+}
+
+/*
+ * The orbs, which status their own holder at the end of the turn.
+ *
+ * Separate from applyHeldItem because the timing is the point: this is the last
+ * thing that happens on a turn, so the status lands now and starts costing HP on
+ * the *next* one. Neither orb is consumed - they keep working all fight, which is
+ * exactly why a Guts or Poison Heal set carries one.
+ *
+ * It is the intended, deterministic half of both items rather than an accident,
+ * so it is claimed outright. An ability that refuses the status still refuses it,
+ * and something already statused can't take another - which is the whole reason
+ * pre-statusing your own Pokémon works.
+ */
+function applyStatusOrbs(line, node, state, side, slot) {
+    var holder = activeHolder(line, node, side, slot);
+    if (!holder || !holder.item) return;
+    var fx = itemEffect(holder.item);
+    if (!fx || !fx.selfStatus) return;
+
+    var mon = monState(state, side, holder.id);
+    if (mon.status) return;
+    if (isFainted(mon)) return;
+    if (abilityBlocksStatus(holder, fx.selfStatus, "", state)) return;
+    // A curing berry can't help here: the Pokemon is holding the orb instead.
+    mon.status = fx.selfStatus;
+    mon.statusTurns = 0;
+}
+
+/*
+ * Whether a nature lowers the stat a berry's flavour is tied to. A neutral
+ * nature dislikes nothing, so nothing is confused.
+ */
+const NATURE_DROPS = {
+    Lonely: "Def", Brave: "Spe", Adamant: "SpA", Naughty: "SpD",
+    Bold: "Atk", Relaxed: "Spe", Impish: "SpA", Lax: "SpD",
+    Timid: "Atk", Hasty: "Def", Jolly: "SpA", Naive: "SpD",
+    Modest: "Atk", Mild: "Def", Quiet: "Spe", Rash: "SpD",
+    Calm: "Atk", Gentle: "Def", Sassy: "Spe", Careful: "SpA"
+};
+
+function dislikesFlavour(holder, stat) {
+    return NATURE_DROPS[(holder && holder.nature) || ""] === stat;
 }
 
 /*
@@ -485,6 +1976,20 @@ function tryCureWithItem(state, side, holder, status, volatile_) {
 function applyMoveEffect(moveName, state, actor, from, targets, line, node) {
     var move = findMove(moveName);
     if (!move) return;
+
+    /*
+     * Trick Room is handled before the generated table is consulted, because it
+     * isn't in it: what it does is reverse the field's speed order, which is not
+     * one of the effects gen-move-effects.js extracts. A toggle rather than a
+     * timer in this game, so casting it again simply turns it off.
+     *
+     * This takes effect from the *next* turn. Gen 4 fixes turn order at the top
+     * of a turn and never revisits it - speed changing part-way through changes
+     * nothing until the following turn - so the turn Trick Room lands on still
+     * runs in the order it was already going to.
+     */
+    if (move.id === TRICK_ROOM) state.trickRoom = !state.trickRoom;
+
     var fx = typeof MOVE_EFFECTS === "undefined" ? null : MOVE_EFFECTS[move.id];
     if (!fx) return;
 
@@ -497,6 +2002,16 @@ function applyMoveEffect(moveName, state, actor, from, targets, line, node) {
     targets.forEach(function(slot) {
         var ref = monAt(node, otherSide, slot);
         if (!ref) return;
+        /*
+         * A type the move simply doesn't work on - Leech Seed against a Grass
+         * type, and nothing else in this game. Its own text says so, and the
+         * planner used to seed them happily, which let a plan rest on something
+         * the game refuses outright.
+         */
+        if (fx.failsAgainstType) {
+            var victim = speciesAt(line, node, otherSide, slot);
+            if (victim && (victim.types || []).indexOf(fx.failsAgainstType) >= 0) return;
+        }
         var holder = activeHolder(line, node, otherSide, slot);
         var target = monState(state, otherSide, ref);
         var guard = abilityEffect(holder && holder.ability);
@@ -552,6 +2067,63 @@ function applyMoveEffect(moveName, state, actor, from, targets, line, node) {
         });
     }
 
+    // Ingrain roots its user down: it heals every turn and can never leave.
+    if (fx.trapsSelf) {
+        user.trapped = {expires: fx.trapsSelf.expires, turns: 0, guaranteed: false, self: true};
+    }
+
+    /*
+     * Roost stops its user being a Flying type for the rest of the turn, which is
+     * what lets it Roost into a Rock or Electric move and live. Recorded against
+     * the slot rather than the Pokemon, and wiped at the end of the turn, because
+     * that is exactly how long it lasts.
+     */
+    if (fx.selfLosesType) {
+        if (!state.losesType) state.losesType = {};
+        state.losesType[actor + from] = fx.selfLosesType;
+    }
+
+    /*
+     * Wish is set on the slot and collected a turn later, so what it heals is
+     * whoever is standing there by then - and how much is fixed now, at half of
+     * the *user's* max HP.
+     */
+    if (fx.wish) {
+        var wisher = ensureHp(line, node, state, actor, from);
+        if (wisher) {
+            state[actor].pending[from].push({
+                turns: fx.wish.delay,
+                amount: Math.floor(wisher.hp.full * fx.wish.fraction[0] / fx.wish.fraction[1]),
+                kind: "heal",
+                name: move.name
+            });
+        }
+    }
+
+    /*
+     * Pain Split levels the two health bars: both end on the average of what
+     * they had. Neither an attack nor a heal - which of the two it is depends
+     * entirely on who was worse off, which is why something frail and nearly
+     * dead uses it to drag a healthy Pokemon down to meet it.
+     *
+     * Both bands are averaged end for end, so the result is as uncertain as the
+     * two that went into it.
+     */
+    if (fx.painSplit) {
+        targets.forEach(function(slot) {
+            var mine = ensureHp(line, node, state, actor, from);
+            var theirs = ensureHp(line, node, state, otherSide, slot);
+            if (!mine || !theirs) return;
+            var lo = Math.floor((mine.hp.min + theirs.hp.min) / 2);
+            var hi = Math.floor((mine.hp.max + theirs.hp.max) / 2);
+            [mine, theirs].forEach(function(record) {
+                // Neither can end up above its own maximum.
+                record.hp.min = Math.min(lo, record.hp.full);
+                record.hp.max = Math.min(hi, record.hp.full);
+            });
+        });
+    }
+
     // Hazards and screens are the side's, not any one Pokémon's.
     if (fx.hazard) {
         var field = fx.hazard.field;
@@ -579,11 +2151,48 @@ function applyMoveEffect(moveName, state, actor, from, targets, line, node) {
         });
     }
 
-    if (fx.clearsTarget) state[otherSide].hazards = {};
+    if (fx.clearsTarget) {
+        // Defog takes hazards and screens. Tailwind is neither, and rides it out.
+        var keptTailwind = state[otherSide].hazards[TAILWIND];
+        state[otherSide].hazards = {};
+        if (keptTailwind) state[otherSide].hazards[TAILWIND] = keptTailwind;
+    }
 
     // Brick Break only breaks the screens; hazards on that side stay put.
     if (fx.clearsScreens) {
         for (var screen in SCREENS) delete state[otherSide].hazards[screen];
+    }
+
+    /*
+     * Healing a fixed fraction of the user's own max HP. The drain moves are not
+     * here - they heal a share of the damage dealt, which comes off the damage
+     * itself in planner-calc.js rather than from a number in the table.
+     *
+     * Synthesis, Moonlight and Morning Sun swing on the weather: two thirds in
+     * sun, a quarter in anything else at all. In a fight that starts in sand -
+     * 235 of them do - that is the difference between a recovery move and a
+     * wasted turn, so it is worth getting right rather than averaging.
+     */
+    if (fx.selfHeal) {
+        var healed = ensureHp(line, node, state, actor, from);
+        if (healed) {
+            var share = fx.selfHeal.fraction;
+            if (fx.selfHeal.sun) {
+                if (state.weather === "Sun") share = fx.selfHeal.sun;
+                else if (state.weather) share = fx.selfHeal.otherWeather;
+            }
+            // Integer arithmetic throughout; see the note in gen-move-effects.js.
+            var amount = Math.floor(healed.hp.full * share[0] / share[1]);
+            healMon(healed, amount, amount);
+        }
+    }
+
+    /*
+     * Tailwind, and nothing else in this game. Kept out of the screen list on
+     * purpose: Brick Break doesn't break it and Defog doesn't blow it away.
+     */
+    if (fx.sideCondition) {
+        state[actor].hazards[fx.sideCondition.field] = fx.sideCondition.turns;
     }
 
     // Light Clay is checked on the setter, not on whoever is out later.
@@ -700,9 +2309,125 @@ function actedAt(node, side, slot) {
     return !(skipped && skipped[slot]);
 }
 
+/*
+ * The level a slot is fighting at: whatever the plan has stated, otherwise the
+ * level on its set.
+ *
+ * Read from the state rather than the node, because a stated level carries down
+ * the line from the turn it was set on - which is the whole point. A Pokemon
+ * that levels up on turn six of a gym leader is still that level on turn seven,
+ * and on every branch below it.
+ */
+function levelAt(line, node, state, side, slot) {
+    var ref = monAt(node, side, slot);
+    var stated = ref && state && state.mons && state.mons[side][ref] &&
+        state.mons[side][ref].level;
+    if (stated) return stated;
+    var entry = slotSet(line, node, side, slot);
+    return (entry && entry.set && parseInt(entry.set.level, 10)) || 0;
+}
+
+// Whether this turn states that a slot's held item went off on it.
+function itemStatedAt(node, side, slot) {
+    var seed = node && node.itemSeed && node.itemSeed[side];
+    return !!(seed && seed[slot]);
+}
+
+/*
+ * Whether a move takes its own user off the field - U-turn and Baton Pass - and
+ * who the turn says comes in behind it.
+ *
+ * The move isn't optional about it, which is the difference between this and the
+ * Switch button: naming nobody doesn't mean the user stays, it means the plan
+ * hasn't said yet. The card warns about exactly that.
+ */
+function switchesUserOut(moveName) {
+    var move = findMove(moveName);
+    var fx = move && typeof MOVE_EFFECTS !== "undefined" && MOVE_EFFECTS[move.id];
+    return (fx && fx.switchesUser) || null;
+}
+
+function switchAfterAt(node, side, slot) {
+    var after = node && node.switchAfter && node.switchAfter[side];
+    return (after && after[slot]) || "";
+}
+
+/*
+ * Roar and Whirlwind, which drag the target out rather than the user.
+ *
+ * Which Pokemon arrives is random, so it is stated - in the same `switchAfter`
+ * field a U-turn writes to, against the slot being dragged out, since the
+ * question is the same one: who is standing here after this turn's switch.
+ */
+function phazesTarget(moveName) {
+    var move = findMove(moveName);
+    var fx = move && typeof MOVE_EFFECTS !== "undefined" && MOVE_EFFECTS[move.id];
+    return !!(fx && fx.phazes);
+}
+
+/*
+ * Whether this slot is the one being dragged out by the *other* side's Roar, and
+ * who the turn says replaces it. Read per slot, so the card can put the question
+ * where the switch actually happens.
+ */
+function phazedInto(node, side, slot, slots) {
+    var other = side === "you" ? "them" : "you";
+    for (var i = 0; i < (slots || 2); i++) {
+        if (!phazesTarget(moveAt(node, other, i))) continue;
+        if (!actedAt(node, other, i)) continue;
+        var aimed = targetsOf(node, other, i, moveAt(node, other, i), aimAt(node, other, i));
+        if (aimed.indexOf(slot) >= 0) return {by: i, incoming: switchAfterAt(node, side, slot)};
+    }
+    return null;
+}
+
+/*
+ * Whether this slot actually leaves the field on this turn under its own move -
+ * it used one that switches, it got the move off, and the plan has said who
+ * replaces it.
+ */
+function selfSwitchTarget(node, side, slot) {
+    if (!switchesUserOut(moveAt(node, side, slot))) return "";
+    if (!actedAt(node, side, slot)) return "";
+    if (switchTargetAt(node, side, slot)) return "";
+    return switchAfterAt(node, side, slot);
+}
+
+/*
+ * Pursuit, and this game's Rage, which its own text has rewritten into a second
+ * one: "If the target attempts to switch out, this move hits before the switch,
+ * and deals double the damage."
+ *
+ * Both halves matter and the planner had neither. A declared switch resolves
+ * before any move does, so whoever came *in* was taking the Pursuit, at normal
+ * power - which is precisely backwards from what the move is for. Switching away
+ * is how you dodge a hit, and this is the move that punishes it.
+ *
+ * Returns the multiplier when it applies, or 0. It applies only against a slot
+ * that is genuinely leaving on this turn, which is a stated switch and therefore
+ * a certainty rather than a guess about intent.
+ */
+function pursuitPower(moveName, parent, targetSide, targetSlot) {
+    var move = findMove(moveName);
+    var fx = move && typeof MOVE_EFFECTS !== "undefined" && MOVE_EFFECTS[move.id];
+    if (!fx || !fx.pursues) return 0;
+    return switchTargetAt(parent, targetSide, targetSlot) ? fx.pursues.power : 0;
+}
+
 function moveAt(node, side, slot) {
     var action = actionAt(node, side, slot);
     return action.type === "move" ? action.value : "";
+}
+
+/*
+ * The opposing slot this one is attacking, or null for "whoever is across".
+ * Null rather than a number by default, so a plan that never says anything about
+ * targeting behaves exactly as it did before aiming existed.
+ */
+function aimAt(node, side, slot) {
+    var aim = node && node.aimedAt && node.aimedAt[side];
+    var chosen = aim && aim[slot];
+    return chosen === undefined ? null : chosen;
 }
 
 // How many slots a fight actually uses, so singles stay single.
@@ -759,7 +2484,7 @@ function foeSetFor(line, node, speciesName) {
  *
  * Applied to slot one, which is the Pokemon a seed is nearly always about.
  */
-function applyStatusSeed(node, state) {
+function applyStatusSeed(line, node, state) {
     if (!node) return state;
     ["you", "them"].forEach(function(side) {
     // Every slot, not just the first - a double has two Pokemon out per side
@@ -771,9 +2496,33 @@ function applyStatusSeed(node, state) {
         var add = seedFor(node, "volatileSeed", side, slot, []);
         var clear = seedFor(node, "volatileClear", side, slot, []);
         var boosts = seedFor(node, "boostSeed", side, slot, {});
+        var statedHp = seedFor(node, "hpSeed", side, slot, null);
+        var statedLevel = seedFor(node, "levelSeed", side, slot, null);
         var hasBoosts = Object.keys(boosts).some(function(s) { return boosts[s]; });
-        if (!seed && !add.length && !clear.length && !hasBoosts) continue;
+        if (!seed && !add.length && !clear.length && !hasBoosts &&
+            statedHp === null && statedLevel === null) continue;
         var mon = monState(state, side, who);
+
+        /*
+         * The level is written on before the health, because health is worked
+         * out as a share of a maximum that the level decides. Setting it after
+         * would measure the old bar and keep the number.
+         */
+        if (statedLevel !== null) mon.level = statedLevel;
+
+        /*
+         * A stated health collapses the range to a point - which is the whole
+         * reason to state one. It is applied before anything else so a line that
+         * opens mid-fight can set the scene in one place.
+         */
+        if (statedHp !== null) {
+            var record = ensureHp(line, node, state, side, slot);
+            if (record) {
+                var points = Math.round(record.hp.full * Math.max(0, Math.min(100, statedHp)) / 100);
+                record.hp.min = points;
+                record.hp.max = points;
+            }
+        }
 
         /*
          * Through addBoosts so the +-6 ceiling still applies. No ability guard
@@ -815,7 +2564,11 @@ function seedFor(node, field, side, slot, fallback) {
     if (seed === undefined || seed === null) return fallback;
     if (!Array.isArray(seed)) return slot === 0 ? seed : fallback;
     // Per-slot arrays hold one entry per slot; the legacy volatile shape held ids.
-    if (field === "statusSeed" || field === "boostSeed") return seed[slot] || fallback;
+    if (field === "statusSeed" || field === "boostSeed" || field === "hpSeed" ||
+        field === "levelSeed") {
+        // Not `|| fallback`: a stated HP of 0 is a real answer, meaning fainted.
+        return seed[slot] === undefined || seed[slot] === null ? fallback : seed[slot];
+    }
     return Array.isArray(seed[0]) || seed.length === 0
         ? (seed[slot] || fallback)
         : (slot === 0 ? seed : fallback);
@@ -847,10 +2600,99 @@ function absorbToxicSpikes(line, node, state, side, slot) {
     if (!species || !species.types) return;
     if (species.types.indexOf("poison") < 0) return;
 
+    if (isGrounded(line, node, side, slot)) delete state[side].hazards.toxicSpikes;
+}
+
+/*
+ * Whether a Pokemon is standing on the ground, which is what decides whether the
+ * two spike layers reach it at all. Flying types and Levitate float over both.
+ */
+function isGrounded(line, node, side, slot) {
+    var species = speciesAt(line, node, side, slot);
+    if (!species || !species.types) return false;
+    if (species.types.indexOf("flying") >= 0) return false;
     var holder = activeHolder(line, node, side, slot);
-    var grounded = species.types.indexOf("flying") < 0 &&
-        toID(holder && holder.ability || "") !== "levitate";
-    if (grounded) delete state[side].hazards.toxicSpikes;
+    return toID((holder && holder.ability) || "") !== "levitate";
+}
+
+/*
+ * What a Pokemon walks into. Straight from the moves' own text:
+ *
+ *   Stealth Rock  1/8 of max HP, "affected by its defensive matchup against the
+ *                 Rock type" - so a quarter of it for a Steel type and half its
+ *                 health for a Charizard.
+ *   Spikes        1/8, 1/6 or 1/4 by layer count, grounded Pokemon only.
+ *   Toxic Spikes  poison for one layer, badly poisoned for two.
+ *
+ * The Toxic Spikes half is the one that had never done anything: the layers were
+ * tracked, displayed and removable, but nothing was ever actually poisoned by
+ * walking into them.
+ */
+const SPIKES_DENOMINATOR = [8, 6, 4];
+const STEALTH_ROCK_DENOMINATOR = 8;
+
+function applyEntryHazards(line, node, state, side, slot) {
+    var ref = monAt(node, side, slot);
+    if (!ref) return;
+    var hazards = state[side].hazards;
+    if (!hazards.isSR && !hazards.spikes && !hazards.toxicSpikes) return;
+
+    var species = speciesAt(line, node, side, slot);
+    var types = (species && species.types) || [];
+    var holder = activeHolder(line, node, side, slot);
+    var ability = toID((holder && holder.ability) || "");
+    var grounded = isGrounded(line, node, side, slot);
+    var mon = monState(state, side, ref);
+
+    /*
+     * Magic Guard turns all of this off - it takes no damage it wasn't dealt
+     * directly. It does not stop Toxic Spikes, which poison rather than hurt.
+     */
+    if (hazards.isSR && ability !== "magicguard") {
+        var record = ensureHp(line, node, state, side, slot);
+        if (record) {
+            /*
+             * Rock's effectiveness against whatever walked in, from the same
+             * table the damage calculator uses so the two can't disagree.
+             */
+            var chart = (typeof calc !== "undefined" && calc.TYPE_CHART && calc.TYPE_CHART[GAME.gen])
+                ? calc.TYPE_CHART[GAME.gen].Rock : null;
+            var multiplier = 1;
+            if (chart) {
+                types.forEach(function(t) {
+                    var key = t.charAt(0).toUpperCase() + t.slice(1);
+                    if (chart[key] !== undefined) multiplier *= chart[key];
+                });
+            }
+            var rocks = Math.floor(record.hp.full * multiplier / STEALTH_ROCK_DENOMINATOR);
+            if (rocks > 0) damageMon(record, rocks, rocks, record.hp.full);
+        }
+    }
+
+    if (hazards.spikes && grounded && ability !== "magicguard") {
+        var spiked = ensureHp(line, node, state, side, slot);
+        if (spiked) {
+            var layers = Math.min(hazards.spikes, SPIKES_DENOMINATOR.length);
+            var hit = Math.floor(spiked.hp.full / SPIKES_DENOMINATOR[layers - 1]);
+            if (hit > 0) damageMon(spiked, hit, hit, spiked.hp.full);
+        }
+    }
+
+    /*
+     * Toxic Spikes last, and only onto something already standing in them: a
+     * grounded Poison type has soaked them up by now and never gets poisoned.
+     * Steel types are immune to poison outright.
+     */
+    if (hazards.toxicSpikes && grounded && !mon.status &&
+        types.indexOf("steel") < 0 && types.indexOf("poison") < 0 &&
+        !abilityBlocksStatus(holder, hazards.toxicSpikes >= 2 ? "tox" : "psn", "", state)) {
+        var status = hazards.toxicSpikes >= 2 ? "tox" : "psn";
+        if (!tryCureWithItem(state, side, holder, status)) {
+            mon.status = status;
+            mon.statusTurns = 0;
+            mon.toxicTicks = 0;
+        }
+    }
 }
 
 /*
@@ -869,7 +2711,7 @@ function trapReason(line, node, state, side, slot) {
     if (mon.trapped) {
         return mon.trapped.expires
             ? {kind: "move", expires: true, turns: mon.trapped.turns || 0, guaranteed: mon.trapped.guaranteed}
-            : {kind: "move", expires: false};
+            : {kind: "move", expires: false, self: !!mon.trapped.self};
     }
 
     var species = speciesAt(line, node, side, slot);
@@ -896,7 +2738,12 @@ function trapReason(line, node, state, side, slot) {
  * Attack of everything opposite it, the weather abilities set the field.
  */
 function applySwitchInAbility(line, node, state, side, slot) {
+    /*
+     * Absorption first, then what is left bites: a grounded Poison type clears
+     * the Toxic Spikes as it lands and so is never poisoned by them.
+     */
     absorbToxicSpikes(line, node, state, side, slot);
+    applyEntryHazards(line, node, state, side, slot);
     var holder = activeHolder(line, node, side, slot);
     var fx = abilityEffect(holder && holder.ability);
     if (!fx || !fx.onSwitchIn) return;
@@ -917,15 +2764,32 @@ function applySwitchInAbility(line, node, state, side, slot) {
 }
 
 /*
- * Which opposing slots a move lands on. Only genuine spread moves reach both;
- * everything else hits the slot across from the user, falling back to whoever
- * is actually there.
+ * Which opposing slots a move lands on.
+ *
+ * Only genuine spread moves reach both. Everything else hits one, and *which*
+ * one is a choice: in a 2v2 every position is adjacent to every other, so either
+ * of your Pokemon can attack either of theirs. There is no "far" slot to be out
+ * of reach - that only exists in triples. Focusing both of your attackers onto
+ * one of their Pokemon is most of what makes a double a double, and pinning each
+ * slot to the one across from it would rule that out entirely.
+ *
+ * `aim` is the stated choice, and it falls back to the slot across whenever
+ * nothing was said or nobody is standing where it points.
+ *
+ * `drawnBy` is a slot on the other side that has used Follow Me and is pulling
+ * single-target moves onto itself. It beats the aim outright - that is the entire
+ * move - but only over moves that have a single target to move: a spread move
+ * hits everything anyway, and Counter, the hazards and the weather moves have no
+ * victim to redirect.
  */
-function targetsOf(node, actorSide, slot, moveName) {
+function targetsOf(node, actorSide, slot, moveName, aim, drawnBy) {
     var otherSide = actorSide === "you" ? "them" : "you";
     var move = findMove(moveName);
     var spread = move && /allAdjacentFoes|allAdjacent/i.test(move.target || "");
     if (spread) return [0, 1];
+    if (drawnBy !== null && drawnBy !== undefined && redirectable(moveName) &&
+        monAt(node, otherSide, drawnBy)) return [drawnBy];
+    if (aim !== null && aim !== undefined && monAt(node, otherSide, aim)) return [aim];
     if (monAt(node, otherSide, slot)) return [slot];
     return monAt(node, otherSide, 0) ? [0] : [1];
 }
@@ -941,6 +2805,10 @@ function leaveField(line, parent, state, side, slot) {
     mon.boosts = {};
     mon.volatiles = {};
     mon.volatileTurns = {};
+    // Coming back in is a fresh arrival, so Fake Out works again.
+    mon.turnsActive = 0;
+    // And so does a guaranteed Protect - the streak doesn't survive the switch.
+    mon.protectStreak = 0;
     // "unless they switch out" - leaving the field is the whole counterplay.
     mon.perish = 0;
     mon.perishDone = false;
@@ -952,7 +2820,11 @@ function leaveField(line, parent, state, side, slot) {
      * it comes back. Sleep's count deliberately does not reset here: it carries
      * across a switch in this generation.
      */
-    if (mon.status === "tox") mon.statusTurns = 0;
+    if (mon.status === "tox") {
+        mon.statusTurns = 0;
+        // The ramp restarts at 1/16 on the way back in - the point of the reset.
+        mon.toxicTicks = 0;
+    }
     var holder = activeHolder(line, parent, side, slot);
     var fx = abilityEffect(holder && holder.ability);
     if (fx && fx.curesOnSwitchOut) {
@@ -971,9 +2843,11 @@ function leaveField(line, parent, state, side, slot) {
  * Boosts and volatiles are cleared when a Pokemon leaves the field; its status
  * stays with it, because the record is the Pokemon's rather than the slot's.
  */
-function applyTurn(line, parent, node, state) {
+function applyTurn(line, parent, node, state, condition) {
     if (!parent) return state;
     var slots = slotCount(line);
+    // Which side's move the branch says landed a critical hit, if either.
+    var crits = critSides(condition);
 
     function eachSlot(fn) {
         ["you", "them"].forEach(function(side) {
@@ -986,6 +2860,8 @@ function applyTurn(line, parent, node, state) {
         if (!switchTargetAt(parent, side, i)) return;
         leaveField(line, parent, state, side, i);
         applySwitchInAbility(line, node, state, side, i);
+        // Whatever goes off on arrival rather than on a threshold.
+        applyHeldItem(line, node, state, side, i, false);
     });
 
     // A status that survived the turn has been there one turn longer.
@@ -1073,14 +2949,86 @@ function applyTurn(line, parent, node, state) {
         })
     };
 
-    // Then the moves of whichever slots did not switch - and did get to act.
+    /*
+     * Who was already gone before a single move went off this turn, kept apart
+     * from the deaths that happen during it. The two mean different things: this
+     * lot never act at all, whereas something killed mid-turn only loses its move
+     * if whatever killed it was genuinely faster - which resolveMoves works out
+     * from the turn order rather than from the order of a loop.
+     */
+    var alreadyGone = {you: [], them: []};
+    eachSlot(function(side, i) {
+        alreadyGone[side][i] = isFainted(monState(state, side, monAt(onField, side, i)));
+    });
+
+    /*
+     * Then the moves, fastest first, of whichever slots did not switch. A U-turn
+     * takes its user off the field from inside here, between speed groups, so
+     * anything slower meets whoever it brought in - and a U-turn that never went
+     * off switches nobody, because it returns before reaching that point.
+     */
+    resolveMoves(line, parent, onField, state, crits, alreadyGone, slots);
+    // Kept before the wipe below, for the end-of-turn sweep to skip those slots.
+    var selfSwitched = state.selfSwitched || {};
+
+    /*
+     * A slot that spent this turn on anything other than a guard has broken its
+     * run, so the next Protect is guaranteed again. Read from what the resolution
+     * actually did rather than from the declared move, so a Protect that never
+     * went off - outsped and killed, or marked "didn't act" - doesn't count.
+     */
+    eachSlot(function(side, i) {
+        var ref = monAt(onField, side, i);
+        if (!ref) return;
+        if (!(state.guarding && state.guarding[side + i])) {
+            monState(state, side, ref).protectStreak = 0;
+        }
+    });
+
+    /*
+     * Roost's type change lasted exactly this turn, so it goes no further. Wiped
+     * after the moves have all resolved, which is the window it covers.
+     *
+     * The guards and the redirection go with it, and for the same reason: a
+     * Protect covers the turn it was used on and nothing beyond it. They are
+     * cleared *before* the residuals below, which is what lets a sandstorm kill
+     * through an Endure - the floor was only ever on the turn's moves.
+     */
+    state.losesType = null;
+    state.guarding = null;
+    state.redirect = null;
+    state.selfSwitched = null;
+
+    /*
+     * The first of a held item's two chances: the moves have landed, so anything
+     * they put under its threshold goes off now rather than waiting for the end
+     * of the turn. Doing it only at the back would let a Pokémon walk into the
+     * sandstorm on health its Sitrus Berry had already topped up.
+     *
+     * `itemSeed` is you saying it fired, which overrules the threshold. Read from
+     * `parent`, since it is a statement about the turn being folded in.
+     */
+    eachSlot(function(side, i) {
+        applyHeldItem(line, onField, state, side, i, itemStatedAt(parent, side, i));
+    });
+
+    /*
+     * A turn on which a Pokemon had the chance to act. The slot that switched is
+     * skipped: it spent the turn arriving and never got to move, which is why a
+     * Pokemon can still Fake Out on the turn *after* it comes in.
+     */
     eachSlot(function(side, i) {
         if (switchTargetAt(parent, side, i)) return;
-        if (!actedAt(parent, side, i)) return;
-        var move = moveAt(parent, side, i);
-        if (!move) return;
-        applyMoveEffect(move, state, side, i, targetsOf(onField, side, i, move), line, onField);
+        var ref = monAt(onField, side, i);
+        if (!ref) return;
+        var mon = monState(state, side, ref);
+        mon.turnsActive = (mon.turnsActive || 0) + 1;
     });
+    /*
+     * Counted before the U-turn switch below, so the credit goes to the Pokemon
+     * that actually used the move rather than to whoever it brought in - who
+     * never moved, and can therefore still Fake Out next turn.
+     */
 
     /*
      * Screens burn a turn each time one passes, and vanish at zero.
@@ -1091,7 +3039,7 @@ function applyTurn(line, parent, node, state) {
      */
     ["you", "them"].forEach(function(side) {
         var hazards = state[side].hazards;
-        for (var field in SCREENS) {
+        for (var field in TIMED_SIDE) {
             if (!hazards[field]) continue;
             hazards[field] -= 1;
             if (hazards[field] <= 0) delete hazards[field];
@@ -1099,9 +3047,49 @@ function applyTurn(line, parent, node, state) {
     });
 
 
+    /*
+     * Then everything the turn takes off without anybody choosing it: weather,
+     * status, Leech Seed, and whatever the held item gives back.
+     */
+    applyResiduals(line, onField, state);
+
+    /*
+     * And the second chance, for whatever the chip damage put under the line.
+     * The sandstorm is the usual culprit, and 235 of this game's fights start in
+     * one, so this is not the rare case it might look like.
+     */
+    eachSlot(function(side, i) {
+        applyHeldItem(line, onField, state, side, i, false);
+    });
+
+    /*
+     * The orbs go last of all, which is what makes a Toxic Orb set work: the
+     * status lands at the end of this turn and starts costing health on the next.
+     * Putting it any earlier would have the holder taking a tick of its own
+     * poison on the turn it applied it.
+     */
+    eachSlot(function(side, i) {
+        applyStatusOrbs(line, onField, state, side, i);
+    });
+
+    /*
+     * Last, what the branch out of this turn says actually happened - which is
+     * the only thing that ever narrows an HP range back down. After the moves and
+     * the residuals so it has the turn's full arithmetic to narrow, and before
+     * the switches below so a Pokemon that died is recorded as dead rather than
+     * as having left the field.
+     */
+    applyOutcome(condition, state, onField, line);
+
     // Anything that changed without being declared a switch happens between turns.
     eachSlot(function(side, i) {
         if (switchTargetAt(parent, side, i)) return;
+        /*
+         * A slot that already switched itself out with a U-turn has had all of
+         * this done for it above, mid-turn. Running it again would clear the
+         * newcomer's boosts a second time and, worse, fire its Intimidate twice.
+         */
+        if (selfSwitched[side + i]) return;
         var was = monAt(parent, side, i);
         var now = monAt(node, side, i);
         if (!now || now === was) return;
@@ -1150,14 +3138,74 @@ function inheritedState(line, nodeId, seen) {
     }
 
     var parent = line.nodes[parents[0].from];
-    var state = computeNodeState(line, parents[0].from, seen);
+    /*
+     * Always a copy: the parent's state may be the shared one in STATE_CACHE, and
+     * applyTurn mutates whatever it is handed. Owning the copy here is what makes
+     * the cache safe to hand out at all.
+     */
+    var state = normalizeState(cloneState(computeNodeState(line, parents[0].from, seen)));
     if (parents.length > 1) state.ambiguous = true;
-    applyTurn(line, parent, node, state);
+    /*
+     * The branch that leads here says which way the fight actually went, and that
+     * is the only thing that narrows a damage roll back down - so the edge is
+     * carried into the turn rather than being purely decorative on the canvas.
+     */
+    applyTurn(line, parent, node, state, conditionFor(parents[0]));
     return state;
 }
 
+/*
+ * Every turn's state is a fresh walk back to the root, so drawing a whole line
+ * is quadratic in its length. Phase one left that alone - it measured in single
+ * figures of milliseconds. Folding damage into every turn changed the sum: each
+ * turn now runs a calculation per move, so the same quadratic walk costs whole
+ * seconds on a long line.
+ *
+ * Hence a memo, but a strictly per-render one: renderLine clears it before it
+ * draws anything, so an entry never outlives the plan it was computed from and
+ * there is no hand invalidation to get wrong. Only complete, top-level results
+ * are written; a recursive call carries `seen` and may return a state truncated
+ * part-way round a cycle, which is not an answer worth keeping.
+ */
+var STATE_CACHE = {};
+
+function invalidateNodeStates() {
+    STATE_CACHE = {};
+}
+
 function computeNodeState(line, nodeId, seen) {
-    return applyStatusSeed(line.nodes[nodeId], inheritedState(line, nodeId, seen));
+    if (STATE_CACHE[nodeId]) return STATE_CACHE[nodeId];
+    var state = applyStatusSeed(line, line.nodes[nodeId], inheritedState(line, nodeId, seen));
+    if (!seen) STATE_CACHE[nodeId] = state;
+    return state;
+}
+
+/*
+ * Fills the memo parents-first, so each turn's walk stops at its parent's entry
+ * instead of running all the way back to the root.
+ *
+ * Without this the memo only pays off when turns happen to be stored in the
+ * order they were created - which is usual but not guaranteed, and the penalty
+ * for the other order is the whole quadratic cost back again. Turns inside a
+ * cycle never come up in this ordering and are simply left to the ordinary walk.
+ */
+function warmNodeStates(line) {
+    invalidateNodeStates();
+    var pending = {};
+    var queue = [];
+    Object.keys(line.nodes).forEach(function(id) {
+        pending[id] = parentEdges(line, id).length;
+        if (!pending[id]) queue.push(id);
+    });
+    while (queue.length) {
+        var id = queue.shift();
+        computeNodeState(line, id);
+        childEdges(line, id).forEach(function(edge) {
+            if (pending[edge.to] === undefined) return;
+            pending[edge.to] -= 1;
+            if (pending[edge.to] === 0) queue.push(edge.to);
+        });
+    }
 }
 
 /*
@@ -1169,7 +3217,13 @@ function slotState(line, node, state, side, slot) {
 }
 
 function hasState(state) {
-    if (state.weather) return true;
+    if (state.weather || state.trickRoom) return true;
+    var anyPending = ["you", "them"].some(function(side) {
+        return ((state[side] || {}).pending || []).some(function(list) {
+            return (list || []).length;
+        });
+    });
+    if (anyPending) return true;
     var anyMon = ["you", "them"].some(function(side) {
         return Object.values(state.mons[side] || {}).some(function(mon) {
             return mon.status || Object.keys(mon.boosts).length || Object.keys(mon.volatiles).length;
@@ -1252,6 +3306,10 @@ function loadLines() {
                 delete node.foeAction;
                 delete node.foeMove;
             }
+            // Turns saved before HP was carried simply inherit it everywhere.
+            if (!node.hpSeed) node.hpSeed = {you: [null, null], them: [null, null]};
+            // Turns saved before aiming existed keep hitting the slot across.
+            if (!node.aimedAt) node.aimedAt = {you: [null, null], them: [null, null]};
             if (node.stateOverride === undefined) node.stateOverride = null;
             if (node.statusSeed === undefined) node.statusSeed = {you: "", them: ""};
             // Existing turns are already decided, so start them collapsed.
@@ -1268,6 +3326,32 @@ function loadLines() {
 
 function saveLines() {
     localStorage.lines = JSON.stringify(LINES);
+}
+
+/*
+ * Blind mode: plan the fight without being told the answer.
+ *
+ * The moves go back to showing base power, the health bars and the speed markers
+ * go away, and nothing is denied for being outsped and killed - because working
+ * out that it *would* be is the part of a Nuzlocke that is actually the game.
+ * The same argument the roadmap makes against generated lines applies in
+ * miniature to every damage figure on the card: useful, and not always wanted.
+ *
+ * It switches off the derivation rather than hiding it, which matters. Hiding
+ * alone would still leak the numbers back through their consequences - a move
+ * struck through tells you it is a guaranteed KO just as plainly as the figure
+ * would have.
+ *
+ * Everything that comes from the *rules* rather than from a calculation stays on:
+ * hazards, screens, weather, status, trapping, Perish Song, and Fake Out both
+ * flinching and failing. None of those is an answer you were meant to work out.
+ */
+function blindMode() {
+    return localStorage.plannerBlind === "true";
+}
+
+function setBlindMode(on) {
+    localStorage.plannerBlind = on ? "true" : "false";
 }
 
 function addLine(line) {

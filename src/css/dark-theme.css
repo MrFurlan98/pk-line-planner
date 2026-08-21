@@ -164,3 +164,49 @@ input.select2-input {
     */
     background: url('../js/vendor/select2/select2.png') no-repeat 100% -22px, var(--background);
 }
+
+/*
+ * Planner damage rolls. The light-theme greens and reds in planner.css sit too
+ * close to a dark card to read; this file loads after it, so plain selectors at
+ * the same specificity win.
+ */
+.planner-move.you .planner-move-dmg.kills {
+    color: #7ddc84;
+}
+
+.planner-move.you .planner-move-dmg.maykill {
+    color: #ecc94b;
+}
+
+.planner-move.them .planner-move-dmg.kills {
+    color: #ff7b6b;
+}
+
+.planner-move.them .planner-move-dmg.maykill {
+    color: #ffa04d;
+}
+
+/* A move that heals its target, in the same two directional colours. */
+.planner-move.you .planner-move-dmg.absorbed {
+    color: #ff7b6b;
+}
+
+.planner-move.them .planner-move-dmg.absorbed {
+    color: #7ddc84;
+}
+
+/* Planner health bars: the light-theme greens and reds are too dark to read
+   against a dark card. */
+.planner-hp-min.good { background: #4caf50; }
+.planner-hp-min.warn { background: #e0a02e; }
+.planner-hp-min.bad  { background: #e05a4a; }
+
+.planner-hp-band.good { background: rgba(76, 175, 80, 0.4); }
+.planner-hp-band.warn { background: rgba(224, 160, 46, 0.4); }
+.planner-hp-band.bad  { background: rgba(224, 90, 74, 0.4); }
+
+.planner-hp.fainted .planner-hp-text { color: #ff7b6b; }
+
+/* Planner speed markers, lightened for a dark card. */
+.planner-speed.fast { color: #7ddc84; }
+.planner-speed.slow { color: #ff7b6b; }

@@ -46,6 +46,18 @@ const WEATHER_BY_PHRASE = {
     "hail": "Hail"
 };
 
+/*
+ * Fractions as [numerator, denominator], never decimals - the same rule the move
+ * and item generators follow, for the same reason: floor(maxHP * 0.25) is fine
+ * and floor(maxHP * 0.333) is a rounding bug waiting for the right max HP.
+ */
+const FRACTIONS = {"25": [1, 4], "50": [1, 2], "12.5": [1, 8]};
+
+const STAT_BY_NAME = {
+    "Attack": "atk", "Defense": "def", "Special Attack": "spa",
+    "Special Defense": "spd", "Speed": "spe"
+};
+
 var effects = {};
 var unmatched = [];
 
@@ -77,6 +89,55 @@ Object.values(ABILITIES).forEach(function(ability) {
     if (/Cures the user's status condition upon switching out/i.test(text)) entry.curesOnSwitchOut = true;
 
     /*
+     * Taking a hit and getting something out of it. @smogon/calc already returns
+     * zero damage for all of these - it treats them as immunities - but it stops
+     * there, because what happens *instead* is state rather than damage, and
+     * state is this planner's half of the job.
+     *
+     * Anchored on "when hit by" so Dry Skin's other clause, which heals an eighth
+     * at the end of every turn in rain, can't be mistaken for this one.
+     */
+    var absorb = /[Hh]eals (?:the user|it) by (\d+)% of its total HP when hit by an? (\w+) type move/.exec(text);
+    if (absorb && FRACTIONS[absorb[1]]) {
+        entry.whenHitBy = {
+            type: absorb[2].toLowerCase(),
+            heal: FRACTIONS[absorb[1]]
+        };
+    }
+
+    /*
+     * Rough Skin, which bills whoever touches it. Written as a fraction here
+     * rather than a percentage, and kept as one - the same integer-arithmetic
+     * rule the rest of these follow.
+     *
+     * The 30% contact abilities - Static, Effect Spore, Poison Point, Flame Body,
+     * Cute Charm - all say "Has a 30% chance to", so this pattern never reaches
+     * them and they land in the unmatched report instead. That is where they
+     * belong: a 30% paralysis is not something a plan may rest on, and Rough Skin
+     * is the one in the family that always happens.
+     */
+    var barbs = /Damages Pok.mon that make contact with the user by (\d+)\/(\d+) of their total HP/i.exec(text);
+    if (barbs) entry.contactRecoil = {fraction: [parseInt(barbs[1], 10), parseInt(barbs[2], 10)]};
+
+    /*
+     * Aftermath, which bills them only if the hit was fatal. Deterministic once
+     * the faint is - which is the same "certain or it's a branch" test everything
+     * else here is held to.
+     */
+    var aftermath = /If the user faints to a move that made contact, the attacker loses (\d+)% of its total HP/i.exec(text);
+    if (aftermath && FRACTIONS[aftermath[1]]) {
+        entry.onFaintRecoil = {fraction: FRACTIONS[aftermath[1]]};
+        if (/Damp/.test(text)) entry.onFaintRecoil.blockedBy = "damp";
+    }
+
+    // Motor Drive: the same shape, paid out in a stat stage instead of health.
+    var onHit = /Raises the (Attack|Defense|Special Attack|Special Defense|Speed) stat of the user by one stage when hit by an? (\w+) type move/.exec(text);
+    if (onHit && STAT_BY_NAME[onHit[1]]) {
+        entry.whenHitBy = {type: onHit[2].toLowerCase(), boosts: {}};
+        entry.whenHitBy.boosts[STAT_BY_NAME[onHit[1]]] = 1;
+    }
+
+    /*
      * Leaf Guard only works while the sun is up, so the weather it depends on
      * is recorded rather than dropped - applying it unconditionally would make
      * a Pokémon look immune to status it can absolutely catch.
@@ -89,7 +150,7 @@ Object.values(ABILITIES).forEach(function(ability) {
     if (Object.keys(entry).length) {
         entry.name = ability.name;
         effects[ability.id] = entry;
-    } else if (/Protects the user from|when the user enters|switches in|switching out/i.test(text)) {
+    } else if (/Protects the user from|when the user enters|switches in|switching out|when hit by|make contact|faints to a move/i.test(text)) {
         // Surfaced so the hand-check can confirm each was skipped on purpose.
         unmatched.push(ability.name + ": " + text.slice(0, 92));
     }
@@ -108,7 +169,7 @@ var out = "/*\n" +
 fs.writeFileSync(path.join(ROOT, "src/js/data/ability_effects.js"), out);
 
 console.log("entries written:", Object.keys(effects).length);
-["blocksStatus", "blocksVolatiles", "blocksDrops", "onSwitchIn", "traps", "curesOnSwitchOut"].forEach(function(key) {
+["blocksStatus", "blocksVolatiles", "blocksDrops", "onSwitchIn", "traps", "curesOnSwitchOut", "whenHitBy", "contactRecoil", "onFaintRecoil"].forEach(function(key) {
     console.log("  " + key + ":", Object.values(effects).filter(e => e[key]).length);
 });
 console.log("\nmatched none of the rules, but mention relevant wording (" + unmatched.length + "):");
