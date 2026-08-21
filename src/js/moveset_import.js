@@ -13,55 +13,68 @@ function placeBsBtn() {
 	});
 	var VERSION_ALERTED = false;
 	$("#sync.bs-btn").click(function () {
-		var luaVersion = "";
-		fetch("http://localhost:31125/version").then(x => x.text()).then(function (x) {
-			luaVersion = x.split(" ").at(-1).split("-")[0];
-		}).then(function () {
-			if (parseFloat(luaVersion) < MINIMUM_LUA_VERSION) {
-				alert(`This version of the Lua script is no longer supported. Please update to the latest version.\n\n- Your version: ${luaVersion}\n- Latest version: ${CURRENT_LUA_VERSION}`);
-				return;
-			}
-			var status;
-			if (parseFloat(luaVersion) < parseFloat(CURRENT_LUA_VERSION)) {
-				if (!VERSION_ALERTED) {
-					VERSION_ALERTED = true;
-					alert(`You are using an outdated version of the Lua script. Please update to the latest version.\n\n- Your version: ${luaVersion}\n- Latest version: ${CURRENT_LUA_VERSION}\n\n(This is not an error, sync will start when this message is closed)`);
-				}
-				fetch("http://localhost:31125/update").then(x => {status = x.status; return x.text()}).then(function (x) {
-					if (status !== 200) {
-						alert(x);
+		switch (SETTINGS.luaScript) {
+			case "PK_Script":
+				var luaVersion = "";
+				fetch("http://localhost:31125/version").then(x => x.text()).then(function (x) {
+					luaVersion = x.split(" ").at(-1).split("-")[0];
+				}).then(function () {
+					if (parseFloat(luaVersion) < MINIMUM_LUA_VERSION) {
+						alert(`This version of the Lua script is no longer supported. Please update to the latest version.\n\n- Your version: ${luaVersion}\n- Latest version: ${CURRENT_LUA_VERSION}`);
 						return;
 					}
-					var data = JSON.parse(x);
-				for (var i in data) addSavePokemon(data[i]);
+					var status;
+					if (parseFloat(luaVersion) < parseFloat(CURRENT_LUA_VERSION)) {
+						if (!VERSION_ALERTED) {
+							VERSION_ALERTED = true;
+							alert(`You are using an outdated version of the Lua script. Please update to the latest version.\n\n- Your version: ${luaVersion}\n- Latest version: ${CURRENT_LUA_VERSION}\n\n(This is not an error, sync will start when this message is closed)`);
+						}
+						fetch("http://localhost:31125/update").then(x => {status = x.status; return x.text()}).then(function (x) {
+							if (status !== 200) {
+								alert(x);
+								return;
+							}
+							var data = JSON.parse(x);
+						for (var i in data) addSavePokemon(data[i]);
+						}).catch((x) => {
+							alert("An unknown error has occured. The error details can be found in the browser console.");
+							console.log(x);
+						});
+						return;
+					}
+					if (luaVersion !== CURRENT_LUA_VERSION) {
+						if (!VERSION_ALERTED) {
+							VERSION_ALERTED = true;
+							alert(`You are using an outdated version of the Lua script. Please update to the latest version.\n\n- Your version: ${luaVersion}\n- Latest version: ${CURRENT_LUA_VERSION}\n\n(This is not an error, sync will start when this message is closed)`);
+						}
+					}
+					fetch("http://localhost:31125/update").then(x => {status = x.status; return x.text()}).then(function (x) {
+						if (status !== 200) {
+							alert(x);
+							return;
+						}
+						var data = JSON.parse(x);
+						for (var i in data[0]) addSavePokemon(data[0][i]);
+						for (var i in data[1]) addSavePokemon(data[1][i], true);
+					}).catch((x) => {
+						alert("An unknown error has occured. The error details can be found in the browser console.");
+						console.log(x);
+					});
+				}).catch((x) => {
+					alert("Please make sure both parts of the Lua script are running. A link to the script can be found at the bottom of the page.");
+					console.log(x);
+				});
+				break;
+			case "vs-link-ersatz":
+				fetch("http://localhost:31123/sync").then(x => x.json()).then(function (x) {
+					for (var i = 0; i < x.party.length / 236; i++) addSavePokemon(x.party.slice(i*236, i*236+236));
+					for (var i = 0; i < x.pc.length / 136; i++) addSavePokemon(x.pc.slice(i*136, i*136+136), i >= 420);
 				}).catch((x) => {
 					alert("An unknown error has occured. The error details can be found in the browser console.");
 					console.log(x);
 				});
-				return;
-			}
-			if (luaVersion !== CURRENT_LUA_VERSION) {
-				if (!VERSION_ALERTED) {
-					VERSION_ALERTED = true;
-					alert(`You are using an outdated version of the Lua script. Please update to the latest version.\n\n- Your version: ${luaVersion}\n- Latest version: ${CURRENT_LUA_VERSION}\n\n(This is not an error, sync will start when this message is closed)`);
-				}
-			}
-			fetch("http://localhost:31125/update").then(x => {status = x.status; return x.text()}).then(function (x) {
-				if (status !== 200) {
-					alert(x);
-					return;
-				}
-				var data = JSON.parse(x);
-				for (var i in data[0]) addSavePokemon(data[0][i]);
-				for (var i in data[1]) addSavePokemon(data[1][i], true);
-			}).catch((x) => {
-				alert("An unknown error has occured. The error details can be found in the browser console.");
-				console.log(x);
-			});
-		}).catch((x) => {
-			alert("Please make sure both parts of the Lua script are running. A link to the script can be found at the bottom of the page.");
-			console.log(x);
-		});
+				break;
+		}
 	});
 	$("#upload.bs-btn").click(function () {
 		$("#saveFile").click();

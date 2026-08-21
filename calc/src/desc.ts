@@ -121,8 +121,8 @@ export function getRecovery(
   if (attacker.hasItem('Shell Bell') && !ignoresShellBell) {
     const max = Math.round(defender.maxHP() / 8);
     for (let i = 0; i < minD.length; i++) {
-      recovery[0] += Math.min(Math.round(minD[i] * move.hits / 8), max);
-      recovery[1] += Math.min(Math.round(maxD[i] * move.hits / 8), max);
+      recovery[0] += Math.min(Math.round(minD[i] / 8), max);
+      recovery[1] += Math.min(Math.round(maxD[i] / 8), max);
     }
   }
 
