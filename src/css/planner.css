@@ -125,12 +125,74 @@
     background: transparent;
 }
 
+/* Nothing assigned to it yet, so there is nothing to press. */
+.planner-split-btn.unset {
+    opacity: 0.4;
+    cursor: default;
+    border-style: dashed;
+}
+
+.planner-split-btn.unset:hover {
+    background: transparent;
+}
+
+/* How much of the list is still unsorted. */
+.planner-split-note {
+    padding: 2px 6px;
+    font-size: 10px;
+    font-style: italic;
+    opacity: 0.6;
+    cursor: help;
+}
+
 .planner-line-list {
     list-style: none;
     margin: 0;
     padding: 0;
     max-height: 520px;
     overflow-y: auto;
+}
+
+/*
+ * Lines grouped by split. Flat, the list is unusable the moment quick setup is
+ * used - the Galactic split alone is a hundred rows - so a split is one row
+ * until it is opened.
+ */
+.planner-line-group {
+    list-style: none;
+}
+
+.planner-group > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 3px 6px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+    opacity: 0.85;
+}
+
+.planner-group > summary:hover {
+    background: rgba(128, 128, 128, 0.18);
+    opacity: 1;
+}
+
+/* How many of the split's lines have any turns in them yet. */
+.planner-group-count {
+    flex: 0 0 auto;
+    font-weight: normal;
+    font-variant-numeric: tabular-nums;
+    font-size: 10px;
+    opacity: 0.6;
+}
+
+.planner-group-lines {
+    list-style: none;
+    margin: 0 0 2px;
+    padding: 0 0 0 8px;
 }
 
 .planner-line-item {
@@ -142,6 +204,11 @@
     cursor: pointer;
     border-radius: 3px;
     font-size: 11px;
+}
+
+/* Created but never opened - dimmed, so a planned split reads at a glance. */
+.planner-line-item.blank .planner-line-name {
+    opacity: 0.55;
 }
 
 .planner-line-item:hover {

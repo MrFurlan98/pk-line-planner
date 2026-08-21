@@ -56,20 +56,98 @@ function currentLine() {
 
 /* ---------------------------------------------------------------- line list */
 
+/*
+ * Which split a line belongs to, from the trainer it is against. Lines whose
+ * trainer isn't in any split - or made before the splits existed - fall into a
+ * group of their own rather than being hidden.
+ */
+const LOOSE_LINES = "Other";
+
+function splitOfTrainer(trainer) {
+    if (typeof SPLITS_PK === "undefined") return LOOSE_LINES;
+    var names = splitNames();
+    for (var i = 0; i < names.length; i++) {
+        if (SPLITS_PK[names[i]].indexOf(trainer) >= 0) return names[i];
+    }
+    return LOOSE_LINES;
+}
+
+/*
+ * The line list, grouped into foldable splits.
+ *
+ * Flat, this is unusable the moment quick setup is used at all: the Galactic
+ * split alone is a hundred lines, and finding the one fight you meant to plan
+ * means scrolling past every other. Grouped, a split is one row until you open
+ * it.
+ *
+ * Which groups are open is remembered across renders - and the one holding the
+ * line you are working on is always opened, since re-rendering shouldn't lose
+ * sight of where you are.
+ */
+var OPEN_GROUPS = {};
+
 function renderLineList() {
     var list = $(".planner-line-list").empty();
     var ids = Object.keys(LINES);
     if (!ids.length) {
         list.append(`<li class="planner-empty">No lines yet.</li>`);
+        renderSplitList();
+        return;
     }
-    for (var i in ids) {
-        var line = LINES[ids[i]];
+
+    // Grouped, and in the splits' own order rather than whatever order the
+    // lines happen to have been made in.
+    var groups = {};
+    ids.forEach(function(id) {
+        var group = splitOfTrainer(LINES[id].trainer);
+        (groups[group] = groups[group] || []).push(LINES[id]);
+    });
+    var order = splitNames().filter(function(n) { return groups[n]; });
+    if (groups[LOOSE_LINES]) order.push(LOOSE_LINES);
+
+    var current = LINES[CURRENT_LINE];
+    var openGroup = current ? splitOfTrainer(current.trainer) : "";
+
+    order.forEach(function(group) {
+        var lines = groups[group];
+        /*
+         * Ordered by the split rather than by creation, so the list reads like
+         * the run. Anything loose keeps the order it was made in.
+         */
+        if (group !== LOOSE_LINES) {
+            var rank = {};
+            SPLITS_PK[group].forEach(function(t, i) { rank[t] = i; });
+            lines.sort(function(a, b) {
+                return (rank[a.trainer] === undefined ? 1e9 : rank[a.trainer]) -
+                       (rank[b.trainer] === undefined ? 1e9 : rank[b.trainer]);
+            });
+        }
+        var open = OPEN_GROUPS[group] || group === openGroup;
+        var done = lines.filter(function(l) { return Object.keys(l.nodes).length; }).length;
+
         list.append(
-            `<li class="planner-line-item${line.id === CURRENT_LINE ? " selected" : ""}" data-line="${line.id}">
-                <span class="planner-line-name">${line.name}</span>
-                <button class="planner-delete-line" title="Delete this line">&times;</button>
+            `<li class="planner-line-group">
+                <details class="planner-group" data-group="${escapeAttr(group)}"${open ? " open" : ""}>
+                    <summary title="${escapeAttr(`${lines.length} line${lines.length === 1 ? "" : "s"}, ${done} with turns in.`)}">
+                        <span class="planner-group-name">${group}</span>
+                        <span class="planner-group-count">${done}/${lines.length}</span>
+                    </summary>
+                    <ul class="planner-group-lines">
+                        ${lines.map(function(line) {
+                            return `<li class="planner-line-item${line.id === CURRENT_LINE ? " selected" : ""}${
+                                Object.keys(line.nodes).length ? "" : " blank"}" data-line="${line.id}">
+                                <span class="planner-line-name">${line.name}</span>
+                                <button class="planner-delete-line" title="Delete this line">&times;</button>
+                            </li>`;
+                        }).join("")}
+                    </ul>
+                </details>
             </li>`);
-    }
+    });
+
+    $(".planner-group").on("toggle", function() {
+        OPEN_GROUPS[$(this).attr("data-group")] = this.open;
+    });
 
     $(".planner-line-item").on("click", function(e) {
         if ($(e.target).hasClass("planner-delete-line")) return;
@@ -108,37 +186,69 @@ function selectLine(id) {
  * the button is safe to press twice and useful when a split grows a fight you
  * skipped the first time round.
  */
+/*
+ * `unassigned` is the bucket the hand-maintained file starts everything in. It
+ * is not a split and gets no button - it is only counted, as a reminder that the
+ * list isn't finished.
+ */
+const UNASSIGNED = "unassigned";
+
+function splitNames() {
+    if (typeof SPLITS_PK === "undefined") return [];
+    return Object.keys(SPLITS_PK).filter(function(k) { return k !== UNASSIGNED; });
+}
+
+function trainersInSplit(name) {
+    return (typeof SPLITS_PK === "undefined" ? null : SPLITS_PK[name]) || [];
+}
+
 function renderSplitList() {
     var list = $(".planner-split-list").empty();
-    if (typeof SPLITS_PK === "undefined") {
+    var names = splitNames();
+    if (!names.length) {
         list.append(`<span class="planner-empty">No split data loaded.</span>`);
         return;
     }
     var planned = {};
     Object.values(LINES).forEach(function(line) { planned[line.trainer] = true; });
 
-    SPLITS_PK.forEach(function(split) {
-        var todo = split.trainers.filter(function(t) { return !planned[t]; });
+    names.forEach(function(name) {
+        var trainers = trainersInSplit(name);
+        var todo = trainers.filter(function(t) { return !planned[t]; });
+        /*
+         * A split nobody has assigned trainers to yet is shown but inert, so the
+         * panel reflects how far through the list you are rather than hiding the
+         * ones still to do.
+         */
+        var empty = !trainers.length;
         list.append(
-            `<button class="planner-split-btn${todo.length ? "" : " done"}"
-                     data-split="${escapeAttr(split.name)}"
-                     title="${escapeAttr(todo.length
-                        ? `Create ${todo.length} blank line${todo.length === 1 ? "" : "s"} — every trainer in the ${split.name} split you don't already have one for.`
-                        : `Every trainer in the ${split.name} split already has a line.`)}">
-                <span class="planner-split-name">${split.name}</span>
-                <span class="planner-split-count">${todo.length || "✓"}</span>
+            `<button class="planner-split-btn${empty ? " unset" : todo.length ? "" : " done"}"
+                     data-split="${escapeAttr(name)}"
+                     title="${escapeAttr(empty
+                        ? `No trainers assigned to the ${name} split yet — fill it in in src/js/data/splits.js.`
+                        : todo.length
+                        ? `Create ${todo.length} blank line${todo.length === 1 ? "" : "s"} — every trainer in the ${name} split you don't already have one for.`
+                        : `Every trainer in the ${name} split already has a line.`)}">
+                <span class="planner-split-name">${name}</span>
+                <span class="planner-split-count">${empty ? "—" : (todo.length || "✓")}</span>
             </button>`);
     });
+
+    var left = (typeof SPLITS_PK !== "undefined" && SPLITS_PK[UNASSIGNED] || []).length;
+    if (left) {
+        list.append(`<span class="planner-split-note" title="${escapeAttr(
+            `${left} trainers aren't in a split yet. They're listed under "unassigned" in src/js/data/splits.js, in level order — the splits are mostly contiguous runs, so they move in blocks.`)
+        }">${left} unassigned</span>`);
+    }
 }
 
 function setUpSplit(name) {
-    var split = (typeof SPLITS_PK === "undefined" ? [] : SPLITS_PK)
-        .find(function(s) { return s.name === name; });
-    if (!split) return;
+    var trainers = trainersInSplit(name);
+    if (!trainers.length) return;
 
     var planned = {};
     Object.values(LINES).forEach(function(line) { planned[line.trainer] = true; });
-    var todo = split.trainers.filter(function(t) { return !planned[t]; });
+    var todo = trainers.filter(function(t) { return !planned[t]; });
     if (!todo.length) return;
 
     if (!confirm(`Create ${todo.length} blank line${todo.length === 1 ? "" : "s"} for the ${name} split?`)) return;

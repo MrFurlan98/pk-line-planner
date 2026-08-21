@@ -822,6 +822,20 @@ the roadmap draws around generated lines.
   twice, and useful when you come back to a split you only half-planned. The
   count on each button is how many it would still make, and a split that is
   fully laid out shows a tick instead.
+- **The line list is grouped by split and folded**, which is what makes the
+  buttons usable at all: setting up Roark and Galactic is 133 lines, and flat
+  that is a list you scroll past rather than read. Folded it is three rows and
+  59px of sidebar.
+  - Each group counts how many of its lines have any turns in them yet — `0/106`
+    for one nobody has started — so how far through a split you are reads at a
+    glance, and a line that has never been opened is dimmed.
+  - Lines are ordered by the split rather than by when they were made, so the
+    list reads like the run.
+  - Which groups are open is remembered, and the group holding the line you are
+    working on always opens, since a re-render shouldn't lose sight of where you
+    are.
+  - A trainer in no split — or a line made before the splits existed — lands in
+    an **Other** group rather than disappearing.
 - **`newLineId()` had to be made genuinely unique**, not merely unlikely to
   collide. Timestamp plus four random digits was fine one line at a time; seventy
   inside a millisecond is a birthday problem with about a **one in four** chance
