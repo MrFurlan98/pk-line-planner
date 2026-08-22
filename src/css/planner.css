@@ -1608,6 +1608,13 @@ button.planner-item-pip.use.stated {
     cursor: help;
 }
 
+/* The other field-wide condition, and permanent here too - so it matches. */
+.planner-field.gravity {
+    background: rgba(90, 120, 200, 0.25);
+    border-color: rgba(90, 120, 200, 0.55);
+    cursor: help;
+}
+
 /* Weather the fight starts in, rather than anything either side did. */
 .planner-field.standing {
     background: rgba(138, 138, 138, 0.25);

@@ -83,13 +83,35 @@
                 width: 200px;
             }
         }
+        /*
+         * The Hidden Power readout, folded away until asked for. Toggled with
+         * jQuery show/hide rather than a class, so it never has a `display` rule
+         * of its own to fight with.
+         */
+        .hidden-power {
+            width: 100%;
+            padding: 4px 10px 0px;
+            font-size: 10pt;
+            text-align: center;
+
+            img {
+                height: 12px;
+                vertical-align: -1px;
+            }
+
+            .hidden-power-note {
+                opacity: 0.6;
+                font-style: italic;
+            }
+        }
         .buttons {
             display: inline-block;
             width: 100%;
             text-align: center;
             margin-bottom: 7px;
 
-            .edit-encounter, .delete-encounter {
+            /* Every button but the last one, so four sit as evenly as three did. */
+            .edit-encounter, .delete-encounter, .dead-encounter {
                 margin-right: 20px;
             }
         }

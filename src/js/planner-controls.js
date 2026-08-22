@@ -991,11 +991,22 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
          * turns.
          */
         var damage = plannerDamage(line, node, state, side, slot, name, false, drawnBy);
+        /*
+         * Hidden Power and a Weather Ball in weather are neither the type nor the
+         * power the table lists, and the card was showing both wrong. Resolved
+         * per turn rather than once: weather changes, so the same Weather Ball is
+         * a different move two turns later.
+         */
+        var resolved = resolvedMoveFor(name, activeHolder(line, node, side, slot), state);
+        var shownType = resolved ? resolved.type : move.type;
+        var shownPower = resolved ? resolved.power : move.basePower;
+
         var figure = damage
             ? `<span class="planner-move-dmg${damageClass(damage)}${stopped || blocked ? " denied" : ""}">${damageText(damage)}</span>`
-            : `<span class="planner-move-bp">${move.category === "status" ? "—" : move.basePower}</span>`;
+            : `<span class="planner-move-bp">${move.category === "status" ? "—" : shownPower}</span>`;
 
-        var tooltip = `${move.name} — ${move.category}, ${move.basePower || 0} BP, ${move.accuracy || "—"}% acc`;
+        var tooltip = `${move.name}${resolved ? ` (${resolved.label})` : ""} — ${move.category}, ${shownPower || 0} BP, ${move.accuracy || "—"}% acc`;
+        if (resolved) tooltip = `${resolved.why}\n\n${tooltip}`;
         /*
          * The calculator's own sentence, which names every modifier it applied -
          * and already ends with the KO chance, so that isn't repeated here.
@@ -1078,7 +1089,7 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
 
         return `<span class="planner-move ${side}${isSelected ? " selected" : ""}" data-move="${name}" data-side="${side}" data-slot="${slot}"
                       title="${escapeAttr(tooltip)}">
-            <img src="${GAME.sprites.type(move.type)}" alt="">
+            <img src="${GAME.sprites.type(shownType)}" alt="">
             <span class="planner-move-name">${move.name}</span>
             ${figure}
             ${NO_DROP_MOVES.indexOf(move.id) >= 0 ? `<span class="planner-nodrop" title="Platinum Kaizo removes this move's stat drop - it has no drawback here.">nd</span>` : ``}
@@ -1348,6 +1359,12 @@ function renderStateBar(state) {
         parts.push(`<span class="planner-field trickroom" title="${escapeAttr(
             "Trick Room: the slower Pokémon moves first inside each priority bracket. A Quick Attack still goes before a Tackle - only the speed comparison is flipped.\n\nIn this game it lasts until the move is used again rather than running out after five turns."
         )}">Trick Room</span>`);
+    }
+    // Gravity sits beside it for the same reason - it is the field's, not a side's.
+    if (state.gravity) {
+        parts.push(`<span class="planner-field gravity" title="${escapeAttr(
+            "Gravity: everything on the field is grounded. Ground moves hit Flying types and Levitate, and both spike layers reach everything.\n\nIn this game it lasts the rest of the battle rather than five turns, and a second Gravity does nothing.\n\nIts accuracy multiplier and its move bans are not modelled."
+        )}">Gravity</span>`);
     }
     /*
      * A Wish in the air. Shown against the side because it belongs to the slot
@@ -2313,6 +2330,13 @@ function finishConnectToEmpty(e) {
     var edge = newEdge(CONNECTING.from, node.id, "always");
     line.edges[edge.id] = edge;
 
+    /*
+     * Only once the edge exists, because the new turn's state is inherited
+     * through it - and only then is there anything to notice a corpse in.
+     */
+    invalidateNodeStates();
+    fillPredictedSwitchIns(line, node.id);
+
     CONNECTING = null;
     $(".planner-canvas").removeClass("connecting");
     saveLines();
@@ -2725,6 +2749,13 @@ function initPlanner() {
             node.actions[slot] = {type: "move", value: current === move ? "" : move};
         } else {
             node.foeActions[slot] = {type: "move", value: moveAt(node, "them", slot) === move ? "" : move};
+            /*
+             * A U-turn is not optional about leaving, so the question of who
+             * replaces it arrives with the move rather than waiting to be asked.
+             * The picker is still there to say otherwise.
+             */
+            invalidateNodeStates();
+            fillSelfSwitchTarget(line, node.id, slot);
         }
         saveLines();
         // Both sides feed the state of every turn below this one.
@@ -2820,6 +2851,14 @@ function initPlanner() {
 
         edge.label = label;
         edge.condition = condition;
+        /*
+         * "You KO" turns a health band that straddled zero into a certainty, so
+         * this is the moment the turn below can be told who arrives - it could
+         * not be said when the branch was drawn, because the branch is what says
+         * it. Nothing happens on any other condition.
+         */
+        invalidateNodeStates();
+        fillPredictedSwitchIns(line, edge.to);
         saveLines();
         closeEdgeEditor();
         /*

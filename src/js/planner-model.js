@@ -295,8 +295,7 @@ function copyTurnInto(node, source) {
              * whoever it brought in is the one standing there now, and copying
              * the Pokemon that left would send it back in.
              */
-            return switchTargetAt(source, side, i) || selfSwitchTarget(source, side, i) ||
-                monAt(source, side, i);
+            return standingAt(source, side, i);
         });
         node[actions] = [0, 1].map(function(i) {
             var action = actionAt(source, side, i);
@@ -584,6 +583,10 @@ const QUICK_CLAW = "quickclaw";
 const GOES_LAST_ABILITY = "stall";
 const GOES_LAST_ITEMS = ["laggingtail", "fullincense"];
 const TRICK_ROOM = "trickroom";
+const GRAVITY = "gravity";
+// Iron Ball drags its holder down the same way Gravity does, and is the only
+// item in this game that grounds anything.
+const GROUNDING_ITEM = "ironball";
 
 /*
  * Every slot's action for this turn, fastest first, grouped so that anything
@@ -1621,6 +1624,18 @@ function emptyState() {
          */
         trickRoom: false,
         /*
+         * Gravity, which this game also rewrote away from its timer: "For the
+         * rest of the battle, all moves get an accuracy multiplier of 5/3, all
+         * Pokémon are grounded, and certain moves are unable to be used." So it
+         * is a boolean like Trick Room - but unlike Trick Room it does not toggle
+         * back off, because the text says the rest of the battle and means it.
+         *
+         * Only the grounding half is modelled. The accuracy multiplier would be
+         * the first thing to make an accuracy subsystem exist, and the planner
+         * deliberately has none; the move bans are a validation warning at most.
+         */
+        gravity: false,
+        /*
          * Where the weather came from: "battle" for weather the fight starts in,
          * otherwise whichever move or ability set it. Only the card reads this,
          * to say why there is sand on a turn nobody asked for sand on.
@@ -1635,6 +1650,7 @@ function emptyState() {
 // Older saved overrides predate these.
 function normalizeState(state) {
     if (state.trickRoom === undefined) state.trickRoom = false;
+    if (state.gravity === undefined) state.gravity = false;
     /*
      * Guards, redirection and mid-turn switches all belong to a single turn, so
      * nothing carries them in. Cleared rather than defaulted, in case an override
@@ -1729,12 +1745,16 @@ function activeHolder(line, node, side, slot) {
      * Pokémon has left the Box. A trainer set that doesn't resolve still names
      * somebody, so it keeps its id and simply holds nothing.
      */
-    // The nature rides along for the Figy family, whose confusion depends on it.
+    /*
+     * The nature rides along for the Figy family, whose confusion depends on it,
+     * and the IVs for Hidden Power, whose type and power are nothing but IVs.
+     */
     if (side === "you" && !isPartnerSlot(line, side, slot)) {
-        return entry ? {id: ref, item: entry.set.item, ability: entry.set.ability, nature: entry.set.nature} : null;
+        return entry ? {id: ref, item: entry.set.item, ability: entry.set.ability,
+                        nature: entry.set.nature, ivs: entry.set.ivs} : null;
     }
     return {id: ref, item: entry ? entry.set.item : "", ability: entry ? entry.set.ability : "",
-            nature: entry ? entry.set.nature : ""};
+            nature: entry ? entry.set.nature : "", ivs: entry ? entry.set.ivs : null};
 }
 
 /*
@@ -1989,6 +2009,15 @@ function applyMoveEffect(moveName, state, actor, from, targets, line, node) {
      * runs in the order it was already going to.
      */
     if (move.id === TRICK_ROOM) state.trickRoom = !state.trickRoom;
+    /*
+     * Gravity sits beside it and is handled the same way, for the same reason -
+     * "all Pokémon are grounded" is a field fact, not one of the per-target
+     * effects gen-move-effects.js knows how to extract.
+     *
+     * Set rather than toggled: its text says the rest of the battle, so a second
+     * Gravity is simply redundant rather than a cancellation.
+     */
+    if (move.id === GRAVITY) state.gravity = true;
 
     var fx = typeof MOVE_EFFECTS === "undefined" ? null : MOVE_EFFECTS[move.id];
     if (!fx) return;
@@ -2393,6 +2422,194 @@ function selfSwitchTarget(node, side, slot) {
     return switchAfterAt(node, side, slot);
 }
 
+/* ---------------------------------------------------- who they send in next */
+
+/*
+ * Whoever is standing in a slot once this turn's switches have happened - the
+ * declared one, the one a U-turn forced, or nobody having left. The switch-in
+ * prediction asks this of every slot but the one it is filling.
+ */
+function standingAt(node, side, slot) {
+    return switchTargetAt(node, side, slot) || selfSwitchTarget(node, side, slot) ||
+        monAt(node, side, slot);
+}
+
+/*
+ * The trainer's next Pokémon, in the game's own two steps against whoever of
+ * yours is standing there.
+ *
+ *   One. Which of the party still alive holds a super-effective move? Of those,
+ *        the best *type score* comes in - the candidate's own two types scored
+ *        against yours, not the move's effectiveness and not its damage.
+ *   Two. Only if step one found nobody: the most damage possible.
+ *
+ * The two steps are not two tiebreaks on one question, which is the thing that
+ * is easy to get backwards. Damage never runs while anybody holds a
+ * super-effective move, however feeble that move is, and the size of the
+ * multiplier never matters - a 4x and a 2x both merely qualify, and the typing
+ * decides between them. `switchTypeScore` is where that ranking lives.
+ *
+ * Party order settles a tie in either step, and is also the whole answer when
+ * nothing in the party can deal damage at all.
+ *
+ * This is the one prediction the planner makes, and it earns its place because
+ * it is a *rule* rather than a guess at a roll - the choice is deterministic and
+ * every input to it is known. It is also not binding: it fills the slot in so a
+ * turn arrives ready to read, and naming somebody else is one click, with the
+ * plan taking your word over it exactly as it does everywhere else.
+ *
+ * Two more things worth knowing. The routine is universal - the AI flags in
+ * trainer_flags.js do not touch it, so a Youngster switches as sharply as a gym
+ * leader. And it never asks whether a move would *kill*, which is a common
+ * misconception: 200 damage into a 1 HP Pokémon beats 1 damage into it, and the
+ * fact that both are lethal changes nothing.
+ *
+ * Returns a read of the winner, or null when there is nothing to say - no party
+ * left, or nothing living of yours to evaluate against.
+ */
+function predictSwitchIn(line, node, state, slot) {
+    var trainer = trainerForSlot(line, "them", slot);
+    var party = GAME.partyOrder()[trainer] || [];
+    if (!party.length) return null;
+
+    var slots = slotCount(line);
+    var mons = (state.mons && state.mons.them) || {};
+    var out = {};
+    for (var i = 0; i < slots; i++) {
+        if (i === slot) continue;
+        var here = standingAt(node, "them", i);
+        if (here) out[here] = true;
+    }
+    // The one being replaced is not a candidate to replace itself.
+    var leaving = monAt(node, "them", slot);
+    if (leaving) out[leaving] = true;
+
+    var candidates = party.filter(function(name) {
+        return !out[name] && !isFainted(mons[name]);
+    });
+    if (!candidates.length) return null;
+
+    /*
+     * Which of yours the AI is looking at. The slot across from the gap first,
+     * since that is the matchup the card is laid out to be read across, falling
+     * back to whatever else is still standing. In a single there is only ever
+     * one, and a side with nothing alive has no matchup to rank on at all.
+     */
+    var yours = -1;
+    for (var j = 0; j < slots; j++) {
+        var mine = standingAt(node, "you", j);
+        if (!mine || isFainted(((state.mons && state.mons.you) || {})[mine])) continue;
+        if (j === slot) { yours = j; break; }
+        if (yours < 0) yours = j;
+    }
+    if (yours < 0) return null;
+
+    var reads = candidates.map(function(name, order) {
+        var read = switchRead(line, node, state, trainer, name, "you", yours);
+        return {
+            name: name,
+            order: order,
+            seMove: read ? read.seMove : "",
+            score: read ? read.score : 0,
+            rawScore: read ? read.raw : 0,
+            overflowed: !!(read && read.overflowed),
+            damage: 0,
+            damageMove: ""
+        };
+    });
+
+    // Step one. The filter is the existence of the move; the ranking is typing.
+    var pool = reads.filter(function(x) { return x.seMove; });
+    if (pool.length) {
+        pool.sort(function(a, b) {
+            if (b.score !== a.score) return b.score - a.score;
+            return a.order - b.order;
+        });
+        pool[0].step = 1;
+        return pool[0];
+    }
+
+    /*
+     * Step two. Reached only when nothing in the party holds a super-effective
+     * move, and fired from the Pokemon that just left rather than from the one
+     * being considered - see `switchDamage`, where that lives.
+     */
+    reads.forEach(function(read) {
+        var set = trainerSet(trainer, read.name);
+        if (!set) return;
+        var hit = switchDamage(line, node, state, set, "you", yours, slot);
+        read.damage = hit.damage;
+        read.damageMove = hit.move;
+        read.rawDamage = hit.raw;
+    });
+    reads.sort(function(a, b) {
+        if (b.damage !== a.damage) return b.damage - a.damage;
+        return a.order - b.order;
+    });
+    /*
+     * With nothing able to deal a point the sort has settled on party order
+     * already, which is exactly what the game falls back to.
+     */
+    reads[0].step = 2;
+    return reads[0];
+}
+
+/*
+ * Puts the prediction into a foe slot whose occupant is certainly gone.
+ *
+ * Certainly, not maybe: a slot whose health band still straddles zero is exactly
+ * what a branch is drawn to settle, and replacing the Pokémon before the branch
+ * says so would answer the question the plan is still asking. Which is why this
+ * runs again when a branch condition is set - "You KO" turns a maybe into a
+ * certainty, and that is the moment the replacement becomes knowable.
+ *
+ * Never over a stated switch, and never over a living Pokémon.
+ */
+function fillPredictedSwitchIns(line, nodeId) {
+    var node = line.nodes[nodeId];
+    if (!node) return false;
+    var state = computeNodeState(line, nodeId);
+    var slots = slotCount(line);
+    var changed = false;
+
+    for (var slot = 0; slot < slots; slot++) {
+        var ref = monAt(node, "them", slot);
+        if (!ref) continue;
+        if (switchTargetAt(node, "them", slot)) continue;
+        if (!isFainted(((state.mons && state.mons.them) || {})[ref])) continue;
+        var pick = predictSwitchIn(line, node, state, slot);
+        if (!pick || pick.name === ref) continue;
+        node.foes[slot] = pick.name;
+        // Whatever the corpse was going to do is not this Pokémon's move.
+        node.foeActions[slot] = {type: "move", value: ""};
+        changed = true;
+    }
+    if (changed) invalidateNodeStates();
+    return changed;
+}
+
+/*
+ * The other way a foe leaves: its own U-turn. Nobody is dead, so there is no
+ * corpse to notice - the move simply takes it off the field and the plan has to
+ * say who arrives. The same rule answers it, so the picker is filled in rather
+ * than left asking.
+ */
+function fillSelfSwitchTarget(line, nodeId, slot) {
+    var node = line.nodes[nodeId];
+    if (!node) return false;
+    if (!switchesUserOut(moveAt(node, "them", slot))) return false;
+    if (!actedAt(node, "them", slot)) return false;
+    if (switchTargetAt(node, "them", slot)) return false;
+    if (switchAfterAt(node, "them", slot)) return false;
+
+    var pick = predictSwitchIn(line, node, computeNodeState(line, nodeId), slot);
+    if (!pick) return false;
+    if (!node.switchAfter) node.switchAfter = {you: ["", ""], them: ["", ""]};
+    node.switchAfter.them[slot] = pick.name;
+    invalidateNodeStates();
+    return true;
+}
+
 /*
  * Pursuit, and this game's Rage, which its own text has rewritten into a second
  * one: "If the target attempts to switch out, this move hits before the switch,
@@ -2600,18 +2817,28 @@ function absorbToxicSpikes(line, node, state, side, slot) {
     if (!species || !species.types) return;
     if (species.types.indexOf("poison") < 0) return;
 
-    if (isGrounded(line, node, side, slot)) delete state[side].hazards.toxicSpikes;
+    if (isGrounded(line, node, side, slot, state)) delete state[side].hazards.toxicSpikes;
 }
 
 /*
  * Whether a Pokemon is standing on the ground, which is what decides whether the
  * two spike layers reach it at all. Flying types and Levitate float over both.
+ *
+ * Two things drag them back down, and both beat either kind of floating: Gravity
+ * on the field, and an Iron Ball in hand. So a Skarmory holding one walks into
+ * Spikes, and once Gravity is up nothing on the field is exempt from anything.
+ *
+ * `state` is optional so the older callers that only ever asked about the
+ * Pokemon itself keep working; without it Gravity simply isn't consulted.
  */
-function isGrounded(line, node, side, slot) {
+function isGrounded(line, node, side, slot, state) {
+    var holder = activeHolder(line, node, side, slot);
+    if (state && state.gravity) return true;
+    if (toID((holder && holder.item) || "") === GROUNDING_ITEM) return true;
+
     var species = speciesAt(line, node, side, slot);
     if (!species || !species.types) return false;
     if (species.types.indexOf("flying") >= 0) return false;
-    var holder = activeHolder(line, node, side, slot);
     return toID((holder && holder.ability) || "") !== "levitate";
 }
 
@@ -2641,7 +2868,7 @@ function applyEntryHazards(line, node, state, side, slot) {
     var types = (species && species.types) || [];
     var holder = activeHolder(line, node, side, slot);
     var ability = toID((holder && holder.ability) || "");
-    var grounded = isGrounded(line, node, side, slot);
+    var grounded = isGrounded(line, node, side, slot, state);
     var mon = monState(state, side, ref);
 
     /*
@@ -3217,7 +3444,7 @@ function slotState(line, node, state, side, slot) {
 }
 
 function hasState(state) {
-    if (state.weather || state.trickRoom) return true;
+    if (state.weather || state.trickRoom || state.gravity) return true;
     var anyPending = ["you", "them"].some(function(side) {
         return ((state[side] || {}).pending || []).some(function(list) {
             return (list || []).length;

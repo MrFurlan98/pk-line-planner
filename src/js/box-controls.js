@@ -87,11 +87,13 @@ function reloadEncounters() {
                             </tr>
                         </table>
                     </span>
+                    <span class="hidden-power" style="display: none;"></span>
                     <hr />
                     <span class="buttons">
                         <button class="edit-encounter btn">Edit</button>
                         <button class="delete-encounter btn">Delete</button>
                         <button class="dead-encounter btn">Dead?</button>
+                        <button class="hidden-power-encounter btn" title="What Hidden Power this Pokémon has. Both its type and its power come off the IVs, so they are fixed for this Pokémon and worth knowing before spending the TM.">H. Power</button>
                     </span>
                 </span>`);
         }
@@ -123,6 +125,41 @@ function reloadEncounters() {
         $(".edit-move-selector").val("").change();
         $("#popup-container").show();
     });
+    /*
+     * Hidden Power, on demand. Both halves are nothing but IVs, so this is a
+     * fixed property of the Pokémon rather than anything about a matchup - which
+     * is exactly why it is worth checking before spending the TM on it.
+     *
+     * Folded away by default because it is true of every Pokémon in the box and
+     * only interesting for the one you are about to teach it to. The raw set is
+     * re-read here rather than closed over, so the IVs arrive in the short
+     * at/df/sa form hiddenPowerFor expects - and get coerced on the way through,
+     * since a hand-entered IV may still be a string.
+     */
+    $(".hidden-power-encounter").on("click", function() {
+        var readout = $(this).closest(".encounter").find(".hidden-power");
+        if (readout.is(":visible")) {
+            readout.hide();
+            return;
+        }
+        var dataSetName = $(this).closest(".encounter").attr("data-set-name");
+        var mon = dataSetName.substring(0, dataSetName.indexOf(" ("));
+        var setName = dataSetName.substring(dataSetName.indexOf("(") + 1, dataSetName.lastIndexOf(")"));
+        var set = JSON.parse(localStorage.customsets ?? "{}")[mon][setName];
+
+        var hidden = hiddenPowerFor(set.ivs);
+        // Whether it can actually use this, said plainly rather than implied.
+        var knowsIt = (set.moves || []).some(function(name) {
+            var move = findMove(name);
+            return move && move.id === "hiddenpower";
+        });
+        readout.html(
+            `<img src="/img/dex/icon/types/${hidden.type.toLowerCase()}.png" alt="">
+             <b>Hidden Power ${hidden.type}</b> &middot; ${hidden.power} BP
+             <span class="hidden-power-note">${knowsIt ? "knows it" : "doesn't know it yet"}</span>`
+        ).show();
+    });
+
     $(".edit-encounter").on("click", function() {
         var dataSetName = $(this).closest(".encounter").attr("data-set-name");
         EDITING = dataSetName;

@@ -195,6 +195,45 @@ graph, so editing one turn updates everything after it.
     two disagree: Triple Kick is 1–3 here and a flat 3 in calc.
   - Fixed multi-hit moves (Double Kick, Bonemerang, Twineedle) carry no extra
     uncertainty and are unaffected.
+- **Hidden Power is resolved before calc sees it**, and had to be: calc's plain
+  `Hidden Power` entry is a **zero power Normal move** — it expects to be handed
+  one of the sixteen typed entries instead — so left alone the move quietly did
+  nothing at all, on every card, for every set carrying it. It now reads `Hidden
+  Power Dark, 70 BP` for the game's one Hidden Power set, a Burmy, where it used
+  to read `0`.
+  - Both halves come off the IVs, per [Bulbapedia's Gen III–V calculation][hp]:
+    the **type** from the least significant bit of each IV and the **power** from
+    the *second* least significant bit, over the same six stats in the order HP,
+    Attack, Defence, **Speed**, Special Attack, Special Defence — which is not the
+    order stats are usually written in, and is the whole trick. The two sums are
+    independent, so type and power genuinely do not constrain each other.
+  - The typed entries all sit at a flat 70, so the computed power is overridden
+    onto whichever one the type picks. Verified at both ends of the range: all-0
+    IVs give Fighting at 30, all-31 give Dark at 70.
+  - IVs ride along on `activeHolder` beside the nature the Figy berries need, and
+    are read through `calcStatsOf` — so a Box set that stored them as strings
+    behaves like every other stat read in the planner.
+- **The card shows what these moves actually are**, which is a separate problem
+  from calculating them right. A Hidden Power was drawing a *Normal* type icon
+  and a base power of 1, and a Weather Ball in rain a Normal icon — both lies
+  about a move the damage figure beside them had already resolved correctly.
+  - **The type icon changes; the name does not.** "Hidden Power" already fills
+    the move column, so a type appended to it is the first thing the ellipsis
+    eats. The icon carries the type, and the tooltip carries the name, the
+    resolved type and the real base power together.
+  - **Resolved per turn, never cached.** Weather changes, so the same Weather Ball
+    is a different move two turns later. Measured across a three-turn line: a
+    Bronzong's own Drizzle makes it `Water @ 100` for 1224–1440, and after a
+    Sunny Day it is `Fire @ 100` for 306–360, against the same target.
+  - **The Box tab has an `H. Power` button per card**, folding out the type and
+    base power for that Pokémon. It belongs there rather than only on a turn
+    because it is a fixed property of the Pokémon and nothing to do with a
+    matchup — the question it answers is whether the TM is worth spending, which
+    you ask in the Box and not mid-fight. It also says whether the Pokémon knows
+    the move yet. Verified against hand-worked IVs: 26/30/25/22/19/19 gives
+    Psychic at 67 BP.
+
+[hp]: https://bulbapedia.bulbagarden.net/wiki/Hidden_Power_(move)/Calculation
 - **A guaranteed KO says `KO` rather than a number.** Past the kill the range
   informs nothing — Kaizo overkill runs to "222–265" — and it is the one case
   wide enough to push a long move name into an ellipsis. The range that *does*
@@ -320,6 +359,24 @@ gets a move it never had.
   - Nine sets across seven trainers carry it, and five of those nine are in
     doubles or tag fights: Slowking, Slowbro, Dusknoir, Bronzor, Spiritomb. They
     are slow and bulky on purpose — Trick Room *is* the set, not a footnote.
+- **Gravity** sits on the state beside it, for the same reason and in the same
+  shape — a plain boolean, because this game rewrote its duration away too: *"For
+  the rest of the battle, all moves get an accuracy multiplier of 5/3, all Pokémon
+  are grounded, and certain moves are unable to be used."* Unlike Trick Room it
+  does **not** toggle back off; the text says the rest of the battle. 18 sets
+  carry the move.
+  - **Only the grounding half is modelled**, and that half is modelled
+    everywhere: Ground moves stop missing Levitate and Flying types, both spike
+    layers reach everything, and `isGravity` goes to `calc.Field` so the damage
+    figures and the card's own grounding rules cannot disagree. Measured: an
+    Earthquake into a Staravia reads `0–0` before Gravity and `99–117` after.
+  - **The accuracy multiplier is deliberately out.** It would be the first thing
+    to make an accuracy subsystem exist, which the planner does not have and does
+    not want. The move bans are a validation warning at most.
+  - **An Iron Ball grounds its holder the same way**, which is why the two are
+    handled together. It is the only item in this game that grounds anything, and
+    no *trainer* set pairs one with a Flying type or Levitate — so it reaches the
+    plan through your own Box, which is exactly the side the switch AI reads.
 
 ### Fake Out
 
@@ -525,6 +582,138 @@ its volatiles — and that is now derived rather than left to the player.
   happened: in practice this fires only against another −6 move. Implemented
   because it is free and correct, not because it will come up.
 - Three sets each, so little rests on any of it.
+
+### Who they send in next
+
+Roar's replacement is random, so the planner refuses to guess it. The one after a
+**faint** is not — it is a fixed routine, transcribed from the Gen 4 decomp
+([pret/pokeplatinum][pret], via [this write-up][aidoc]) rather than reasoned out,
+because reasoning it out is exactly how you get it wrong.
+
+> **Step one.** Which of the party still alive holds a super-effective move on
+> your active? Of those, the best **type score** comes in.
+> **Step two.** *Only* if step one found nobody: the most damage possible.
+>
+> Party order settles a tie in either step.
+
+**These are two steps, not two tiebreaks on one question**, and that is the thing
+to keep straight. Damage never runs while anybody holds a super-effective move,
+however feeble that move is. And the size of the multiplier never matters either
+— a 4x and a 2x both merely *qualify*, and the typing decides between them.
+
+The **type score** is not about the moves at all. It is the candidate's own two
+types, each scored against yours, summed and multiplied by 40. A monotype is
+stored internally as a dual type with both slots the same, so its single type is
+counted twice — which is why a Dragon monotype (160) beats a Dragon/Psychic (120)
+against a Dragon: the second type doubles the good matchup instead of diluting it
+with a neutral one. All of the source's worked examples are reproduced against
+calc's own type chart in verification, and they match exactly.
+
+The routine is **universal** — the flags in `trainer_flags.js` have no say in it,
+so a Youngster switches as sharply as a gym leader. And it **never checks whether
+a move would kill**, which the source calls a common misconception: 200 damage
+into a 1 HP Pokémon beats 1 damage into it, and the fact that both are lethal
+changes nothing.
+
+#### The two bugs, modelled on purpose
+
+The tool exists to say what the game *will* do, so a routine that quietly
+corrected the game's mistakes would mispredict exactly the fights where knowing
+the answer matters most. Both are in.
+
+- **Score overflow.** The type score is one byte. A 4x on *both* types comes to
+  320 and wraps to **64** — which then loses to a completely neutral 80, so the
+  Pokémon with the best matchup on the field is passed over precisely because it
+  is so good. The source calls this common and it is: a scan of 810 real matchups
+  found 55 carrying it.
+- **Immunity check fail.** For five species a later super-effective match
+  overrules an earlier immunity, so the AI reads them as weak to something that
+  cannot touch them at all: **Gligar** and **Gliscor** to Electric, **Aerodactyl**
+  and **Skarmory** to Ground, **Girafarig** to Ghost. It depends on the internal
+  type-check order — Ground vs Flying is checked before Ground vs Rock, which is
+  why Aerodactyl is affected and Crobat is not. Kaizo adds no types, so the
+  vanilla list carries over unchanged. Both halves are verified.
+
+**Damage overflows too**, the same way. Verified on real data rather than assumed:
+Black Belt Daniel's Primeape corpse makes Dunsparce's Drill Run read *exactly*
+256, which wraps to **0**, so a Rock Slide worth 30 wins the step instead.
+
+#### The traps
+
+- **Status moves count** for step one. A Gyarados whose only qualifying move is
+  Dragon Dance is "holding a super-effective move" and gets sent in on it. This is
+  why the filter cannot reuse the damage path, which only ever sees damaging moves
+  — and it is not academic: **Aipom qualifies against a Grotle on U-turn alone.**
+- **Step two fires the moves from the wrong Pokémon.** The moves are taken from
+  the candidate, but the attacker is *the one that just died* — its stats, its
+  item, its ability. Verified: one fixed Dunsparce moveset scores 188, 208, 30,
+  188 and 188 depending only on which of its team-mates died first. A Choice Band
+  on the corpse inflates every candidate, and since a fainted Pokémon sits at 0 HP
+  it is technically in Blaze or Swarm throughout. That last part falls out for
+  free — the attacker is built from the dead slot by the same function everything
+  else uses, carrying the zero health the plan already derived.
+- **Step two throws away the base-power-1 moves** — Low Kick, Grass Knot, Counter,
+  Super Fang, Endeavor, Fling, the OHKO moves and the rest. It is the game's own
+  data rather than a judgement, and it cuts oddly: Explosion, Eruption and Sucker
+  Punch are all kept. They still count for step one, so a Low Kick is a
+  super-effective Fighting move for the filter and worth zero for the ranking.
+  - **Read off this game's move table rather than transcribed as a list of
+    names**, because the two disagree and the data is right. Kaizo rebuilt
+    **Sheer Cold** into a plain 70-power freezing Ice move, so it is no longer an
+    excluded OHKO move here; and **Hidden Power** is stored at 1 and so *is*
+    excluded, which the vanilla write-up's list happens not to mention. Reading
+    the field gets both right for free and survives the next rebalance.
+  - **Magnitude and Spit Up are not in this game at all**, deleted the way Taunt
+    and Nightmare are, and no set carries either.
+- **Only four abilities are read**: Levitate and the Mold Breaker that cancels it,
+  Scrappy, and Wonder Guard. Everything else is ignored *by the game* — a Volt
+  Absorb Lapras still draws in the Thunderbolt user.
+- **Being dragged out of the air beats both kinds of floating.** Gravity and an
+  Iron Ball each ground their target, and that cancels Levitate *and* a Flying
+  type's Ground immunity — so a grounded Skarmory is no longer immune to Ground at
+  all. Verified both ways round.
+- **Variable-type moves are resolved, not read off the table.** Weather Ball takes
+  the weather's type and Hidden Power comes off its IVs. Five sets in the game
+  carry one, and one of them earns it outright: **Galactic Erripaus's Bronzong
+  brings its own rain in with Drizzle**, which turns its Weather Ball from a
+  Normal move that qualifies against nothing into a Water one that is
+  super-effective against an Aron.
+
+#### How it reaches the plan
+
+- **Two moments, because there are two.** A turn branched off a faint arrives with
+  the replacement already in it; a branch *labelled* `You KO` later fills it in
+  then, since the label is what turns a health band straddling zero into a corpse.
+  Before that the planner leaves the Pokémon standing — a band that might have
+  died is precisely what the branch is drawn to settle, and answering it early
+  would answer the question the plan is still asking.
+- **A U-turn gets the same answer**, written straight into the `switchAfter`
+  picker rather than leaving it asking. The source is explicit that post-KO switch
+  AI also governs U-turn and forced switches.
+- **It never overwrites a statement** — not a declared switch, not a picker you
+  have already filled, not a living Pokémon. The player's word wins, as always.
+- **Nothing is predicted when your side is wiped**, since there is no matchup to
+  rank on. The Selfdestruct branch in the sample line is exactly this case.
+
+This is the only prediction in the tool, and it does not make it the thing the
+roadmap rules out below. Nothing here ranks a plan or picks one — it answers a
+question about the *opponent*, the way a damage figure and a type matchup already
+do, and leaves the decision where it was.
+
+#### Known gaps
+
+- **Normalize** is read by the game and ignored here, because **no set in the game
+  has it**.
+- **The damage figure is the top of calc's roll**, on the grounds that the AI's
+  own damage number carries no random factor and a 100% roll is the maximum. It
+  matters more than it looks, since the wrap at 256 turns a small difference into
+  a large one.
+- The whole routine is **vanilla Gen 4, assumed unchanged by Kaizo**. The hack's
+  move-scoring documentation covers move choice only and has no switch page, which
+  is the evidence for that assumption rather than a confirmation of it.
+
+[pret]: https://github.com/pret/pokeplatinum
+[aidoc]: https://docs.google.com/document/d/1IC1M4x0fo9X6cik8-7vkZTCThl4tMcUbzY8CDpHrfDQ/edit
 
 ### Held items that go off
 
@@ -1007,6 +1196,29 @@ Each of these wants a line in the "How to use" page once it lands.
   is a validation warning too, and only left out because it needs badge data the
   planner doesn't read yet.
 - **Canvas zoom** and keyboard shortcuts (add turn, delete, Esc to close).
+
+### AI move scoring
+
+The other half of reading the opponent, and the harder half. The game scores every
+move against every target and picks the highest, and the eleven modules that do
+the scoring are **already in the repo** — `trainer_flags.js` carries them per
+trainer, and today they only draw badges. What is missing is what each module
+scores, which is documented per move at
+<https://bparkpk.github.io/PKMoveScoring/>: one `move<Name>.html` page each, all
+of them the same eleven sections in a rigid grammar (*"If the target is already
+statused: Score −10 and terminate"*). That is a `tools/gen-move-scoring.js` away
+from being data, the same shape as the move and ability effect generators, and
+fetching over the network like `gen-splits.js` already does.
+
+The design question to settle first is what the score should *read* as. Most
+Kaizo scoring lines are probabilistic — *"68.8% chance of +2"* — so a certain-only
+score would be 0 for most moves, and an expected value is the average the rest of
+this file refuses to take. A range, low to high, is the shape the damage numbers
+already use and is the likely answer, but it has not been decided.
+
+Two things the docs settle that the planner would have to respect: the AI **does
+not know your moves until you use one** and forgets them when you switch out, and
+it **never factors accuracy**.
 
 ### The charge turn, and the semi-invulnerable one
 

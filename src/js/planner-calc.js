@@ -224,6 +224,13 @@ function calcFieldFor(line, state, attacker) {
         // Which is what gets a spread move its reduction in a double.
         gameType: slotCount(line) > 1 ? "Doubles" : "Singles",
         weather: state.weather || undefined,
+        /*
+         * calc's gen-4 mechanics already know what this means: Ground moves stop
+         * missing Levitate and Flying types, which is the whole of Gravity that
+         * the planner models. Passing it here is what keeps the damage figures
+         * and the card's own grounding rules from disagreeing.
+         */
+        isGravity: !!state.gravity,
         attackerSide: calcSideOf(state[attacker]),
         defenderSide: calcSideOf(state[defender])
     });
@@ -241,6 +248,23 @@ function calcMoveFor(moveName, holder, isCrit, hits, power) {
 
     var name = move.calcName || move.name;
     var table = calc.MOVES[calcGen()];
+
+    /*
+     * Hidden Power has to be resolved before calc sees it. calc's plain "Hidden
+     * Power" entry is a *zero* power Normal move - it expects to be handed one of
+     * the sixteen typed entries instead - so left alone this move quietly did
+     * nothing at all, on every card, for every set that carries it.
+     *
+     * The type picks the entry and the power is overridden onto it, since the
+     * typed entries all sit at a flat 70 and the real figure runs 30-70.
+     */
+    var hiddenPower = null;
+    if (move.id === "hiddenpower") {
+        hiddenPower = hiddenPowerFor(holder && holder.ivs);
+        if (table && table["Hidden Power " + hiddenPower.type]) {
+            name = "Hidden Power " + hiddenPower.type;
+        }
+    }
     if (!table || !table[name]) return null;
 
     var options = {
@@ -249,13 +273,21 @@ function calcMoveFor(moveName, holder, isCrit, hits, power) {
         isCrit: !!isCrit
     };
     if (hits) options.hits = hits;
+    // Whatever the base power is before anything multiplies it.
+    var basePower = hiddenPower ? hiddenPower.power : (table[name].bp || move.basePower || 0);
+    if (hiddenPower) options.overrides = {basePower: basePower};
     /*
      * A Pursuit catching something on the way out doubles its *base power*, not
      * its damage. Doubling the finished range instead would drift by a point or
      * two on the rounding, and compound down the line.
+     *
+     * Multiplies whatever was resolved above rather than re-reading the table,
+     * so a computed power survives it. Nothing can be both today - `power` is
+     * only ever set for Pursuit and this game's Rage - but the two overrides
+     * sharing one key is a trap worth not leaving armed.
      */
     if (power && power !== 1) {
-        options.overrides = {basePower: (table[name].bp || move.basePower || 0) * power};
+        options.overrides = {basePower: basePower * power};
     }
     return new calc.Move(calcGen(), name, options);
 }
@@ -491,6 +523,323 @@ function effectivenessOf(moveName, defender) {
 function capitalise(type) {
     var t = String(type || "");
     return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
+}
+
+/* ------------------------------------------------- the post-KO switch AI */
+
+/*
+ * The routine that decides who a trainer sends in after a KO, transcribed from
+ * the Gen 4 decomp (pret/pokeplatinum) rather than reasoned out. It is the same
+ * code for every trainer - the AI flags in trainer_flags.js have no say in it.
+ *
+ * Two of its quirks are outright bugs, and both are modelled here on purpose:
+ * the tool exists to say what the game *will* do, and a routine that quietly
+ * fixed the game's mistakes would mispredict exactly the fights where knowing
+ * the answer matters most.
+ */
+
+/*
+ * Bug: for these five, the type routine lets a later super-effective match
+ * overrule an earlier immunity, so the AI reads them as weak to something that
+ * cannot touch them. It happens when a species' *first* type is immune to the
+ * attacking type and its second is weak to it - Ground vs Flying is checked
+ * before Ground vs Rock, which is why Aerodactyl is affected and Crobat is not.
+ *
+ * This is the whole list for an unmodified Gen 4 game. Platinum Kaizo adds no
+ * types, so the check order it derives from is unchanged.
+ */
+const SWITCH_IMMUNITY_FAIL = {
+    gligar: "Electric",
+    gliscor: "Electric",
+    aerodactyl: "Ground",
+    skarmory: "Ground",
+    girafarig: "Ghost"
+};
+
+/*
+ * How effective an attacking *type* is against a Pokémon, as the switch AI works
+ * it out. Not quite the type chart, and not quite `effectivenessOf` either:
+ * that one takes a move and is used for damage, this one takes a bare type and
+ * carries the routine's own blind spots.
+ *
+ * Only the handful of abilities the routine actually reads are applied. Every
+ * other ability is ignored by the game here - a Volt Absorb Lapras still draws
+ * in the Thunderbolt user, which is the point of saying so.
+ */
+function switchEffectiveness(moveType, defender, attackerAbility, state) {
+    var chart = (typeof calc !== "undefined" && calc.TYPE_CHART && calc.TYPE_CHART[calcGen()]) || null;
+    var type = capitalise(moveType);
+    var row = chart && chart[type];
+    if (!row) return 1;
+
+    var ability = toID(attackerAbility || "");
+    var breaksMolds = ability === "moldbreaker";
+
+    // The immunity bug fires before anything else and simply reports a weakness.
+    var fails = SWITCH_IMMUNITY_FAIL[toID(defender.name || "")];
+    if (fails && capitalise(fails) === type) return 2;
+
+    /*
+     * Whether the defender has been dragged out of the air. Gravity does it to
+     * the whole field and an Iron Ball does it to its holder, and both beat
+     * Levitate *and* a Flying type - which is the half that matters here, since
+     * a grounded Skarmory is no longer immune to Ground at all.
+     */
+    var pinned = !!(state && state.gravity) || toID(defender.item || "") === GROUNDING_ITEM;
+
+    var total = (defender.types || []).filter(function(t) { return t; }).reduce(function(acc, t) {
+        var mult = row[capitalise(t)];
+        if (mult === undefined) mult = 1;
+        // Scrappy is read, and puts Normal and Fighting through a Ghost.
+        if (!mult && ability === "scrappy" && (type === "Normal" || type === "Fighting")) mult = 1;
+        // A pinned Pokémon takes Ground moves on the chin whatever it is.
+        if (!mult && pinned && type === "Ground" && capitalise(t) === "Flying") mult = 1;
+        return acc * mult;
+    }, 1);
+
+    // Levitate is read; Mold Breaker cancels it, and so does being pinned down.
+    if (!breaksMolds && !pinned && type === "Ground" &&
+        toID(defender.ability || "") === "levitate") return 0;
+    return total;
+}
+
+/*
+ * The type a move actually counts as for the super-effective check. The game
+ * resolves the variable-type moves properly here, so reading the table's base
+ * type would call a rain-boosted Weather Ball a Normal move.
+ *
+ * Only two of them exist in this game's trainer sets - four Weather Balls and a
+ * single Hidden Power - but one of those four is a Bronzong that brings its own
+ * rain in with Drizzle, so it is not a hypothetical.
+ */
+const WEATHER_BALL_TYPES = {Sun: "Fire", Rain: "Water", Sand: "Rock", Hail: "Ice"};
+
+/*
+ * Hidden Power, both halves, per Bulbapedia's Gen III-V calculation.
+ *
+ * Two sums over the same six IVs in the same order - HP, Attack, Defence,
+ * *Speed*, Special Attack, Special Defence, which is not the order stats are
+ * usually written in and is the whole trick - but off different bits:
+ *
+ *   type   the least significant bit of each,        x15/63, floored
+ *   power  the *second* least significant bit,       x40/63, floored, +30
+ *
+ * so a Pokémon's type and its power are genuinely independent of each other.
+ */
+const HIDDEN_POWER_TYPES = ["Fighting", "Flying", "Poison", "Ground", "Rock", "Bug", "Ghost",
+    "Steel", "Fire", "Water", "Grass", "Electric", "Psychic", "Ice", "Dragon", "Dark"];
+const HIDDEN_POWER_ORDER = ["hp", "atk", "def", "spe", "spa", "spd"];
+
+function hiddenPowerBits(ivs, shift) {
+    // Through calcStatsOf, so the set's short stat names, its missing entries
+    // and its string-typed IVs are all handled the one way the rest of this file
+    // handles them - a perfect IV being the default for anything unstated.
+    var stats = calcStatsOf(ivs, 31);
+    var sum = 0;
+    HIDDEN_POWER_ORDER.forEach(function(key, i) {
+        sum += (Math.floor(stats[key] / shift) % 2) * Math.pow(2, i);
+    });
+    return sum;
+}
+
+function hiddenPowerFor(ivs) {
+    return {
+        type: HIDDEN_POWER_TYPES[Math.floor(hiddenPowerBits(ivs, 1) * 15 / 63)],
+        power: Math.floor(hiddenPowerBits(ivs, 2) * 40 / 63) + 30
+    };
+}
+
+function switchMoveType(move, set, state) {
+    if (move.id === "weatherball") {
+        return WEATHER_BALL_TYPES[(state && state.weather) || ""] || move.type;
+    }
+    if (move.id === "hiddenpower") return hiddenPowerFor(set && set.ivs).type;
+    return move.type;
+}
+
+/*
+ * What a move on a card actually *is* this turn, when the table's own entry
+ * doesn't say. Null for everything else, so a caller can fall straight back to
+ * the move's own type and power.
+ *
+ * This is display only - both moves already reach the right damage figure by
+ * different routes. calc resolves Weather Ball itself inside its gen-4
+ * mechanics, and Hidden Power is resolved on the way in by `calcMoveFor`. What
+ * neither of them fixes is the *card*, which was showing a Normal type icon and
+ * a base power of 1 for a move that is neither.
+ */
+function resolvedMoveFor(moveName, holder, state) {
+    var move = findMove(moveName);
+    if (!move) return null;
+
+    /*
+     * The move keeps its own name on the card. The type *icon* is what changes -
+     * a Hidden Power stops claiming to be Normal and shows what it really is -
+     * and the label rides in the tooltip beside the corrected base power. The
+     * name column has no room for a type as well, and does not need one.
+     */
+    if (move.id === "hiddenpower") {
+        var hidden = hiddenPowerFor(holder && holder.ivs);
+        return {
+            type: hidden.type.toLowerCase(),
+            power: hidden.power,
+            label: hidden.type,
+            why: "Its type and power both come off this Pokémon's IVs, and are fixed for it."
+        };
+    }
+    if (move.id === "weatherball") {
+        var weather = (state && state.weather) || "";
+        var type = WEATHER_BALL_TYPES[weather];
+        // No weather and it genuinely is a 50 power Normal move - nothing to say.
+        if (!type) return null;
+        return {
+            type: type.toLowerCase(),
+            power: (move.basePower || 0) * 2,
+            label: type,
+            why: `${weather} makes it ${type} and doubles its base power. Change the weather and this changes with it.`
+        };
+    }
+    return null;
+}
+
+/*
+ * Step one's ranking. Not the moves at all - the candidate's *own two types*,
+ * each scored against whoever of yours is standing there, summed and multiplied
+ * by 40.
+ *
+ * A monotype is stored internally as a dual type with both slots the same, so
+ * its single type is counted twice. That is why a Dragon monotype (160) beats a
+ * Dragon/Psychic (120) against a Dragon: the second type doubles the good
+ * matchup instead of diluting it with a neutral one.
+ */
+function switchTypeScore(species, defender, attackerAbility, state) {
+    var types = (species.types || []).filter(function(t) { return t; });
+    if (!types.length) return {raw: 0, score: 0};
+    var pair = types.length === 1 ? [types[0], types[0]] : types;
+    var raw = (switchEffectiveness(pair[0], defender, attackerAbility, state) +
+               switchEffectiveness(pair[1], defender, attackerAbility, state)) * 40;
+    /*
+     * Bug: the score is one byte. A 4x on both types comes to 320 and wraps to
+     * 64, which then loses to a completely neutral 80 - so the Pokémon with the
+     * best matchup on the field is passed over precisely because it is so good.
+     * The source calls this common, and it is: plenty of things carry a 4x.
+     */
+    return {raw: raw, score: ((raw % 256) + 256) % 256};
+}
+
+/*
+ * Step one's filter: does this Pokémon hold any move whose type is
+ * super-effective against yours?
+ *
+ * Status moves count. A Gyarados with Dragon Dance and nothing else that hits
+ * hard is "holding a super-effective move" against anything Dragon is strong
+ * into, and will be sent in on the strength of it. That trap is the reason this
+ * cannot reuse the damage path, which only ever sees damaging moves.
+ *
+ * Returns the move that qualified, or "".
+ */
+function switchSuperEffectiveMove(set, defender, state) {
+    var ability = set.ability || "";
+    var found = "";
+    (set.moves || []).forEach(function(moveName) {
+        if (found) return;
+        var move = findMove(moveName);
+        if (!move) return;
+        if (switchEffectiveness(switchMoveType(move, set, state), defender, ability, state) > 1) {
+            found = moveName;
+        }
+    });
+    return found;
+}
+
+/*
+ * Whether step two throws this move away. The rule is exactly "the move is
+ * stored with a base power of 1", which is why it cuts in such odd places: Low
+ * Kick and Grass Knot are out, while Explosion, Eruption and Sucker Punch are
+ * all in. They still count for step *one* - a Low Kick is a super-effective
+ * Fighting move for the filter and worth zero damage for the ranking.
+ *
+ * Read off this game's own move table rather than transcribed as a list of
+ * names, because the two disagree and the data is right. Platinum Kaizo rebuilt
+ * **Sheer Cold** into a plain 70-power Ice move that freezes, so it is no longer
+ * an excluded OHKO move here - and **Hidden Power** is stored at 1 and so *is*
+ * excluded, which the vanilla write-up's list happens not to mention. Reading
+ * the field gets both right for free, and survives the next rebalance.
+ */
+function switchIgnoresDamage(move) {
+    return move.category === "status" || move.basePower === 1;
+}
+
+/*
+ * Step two, and the strangest thing in the routine: the moves are taken from the
+ * Pokémon being considered, but they are fired from the one that just *died*.
+ * Its stats, its item, its ability - a Choice Band on the corpse inflates every
+ * candidate's number, and because a fainted Pokémon sits at 0 HP it is
+ * technically in Blaze or Swarm the whole time.
+ *
+ * That falls out here rather than being arranged: the attacker is built from the
+ * dead slot by the same function every other calculation uses, and it carries
+ * the zero health the plan already worked out for it.
+ *
+ * Only reached when nothing in the party has a super-effective move.
+ */
+function switchDamage(line, node, state, set, defSide, defSlot, faintedSlot) {
+    var deadSide = defSide === "you" ? "them" : "you";
+    var attacker = calcPokemonFor(line, node, state, deadSide, faintedSlot);
+    var defender = calcPokemonFor(line, node, state, defSide, defSlot);
+    if (!attacker || !defender) return {damage: 0, move: ""};
+
+    var holder = activeHolder(line, node, deadSide, faintedSlot);
+    var field = calcFieldFor(line, state, deadSide);
+    var best = {damage: 0, move: "", raw: 0};
+
+    (set.moves || []).forEach(function(moveName) {
+        var found = findMove(moveName);
+        if (!found || switchIgnoresDamage(found)) return;
+        var move = calcMoveFor(moveName, holder, false, 0, 0);
+        if (!move) return;
+        try {
+            var range = calc.calculate(calcGen(), attacker, defender, move, field).range();
+            if (!range) return;
+            /*
+             * The top of the roll, because the AI's damage figure carries no
+             * random factor at all and the maximum is what a 100% roll is.
+             *
+             * Bug: this is a byte too, so 268 damage scores 12 and a Double-Edge
+             * reading 711 wraps twice down to 199. Rare below high levels, and
+             * near-guaranteed on an Explosion at the top of the game.
+             */
+            var wrapped = ((range[1] % 256) + 256) % 256;
+            if (wrapped > best.damage) {
+                best.damage = wrapped;
+                best.raw = range[1];
+                best.move = moveName;
+            }
+        } catch (e) {
+            // One unresolvable move shouldn't cost the whole prediction.
+        }
+    });
+    return best;
+}
+
+/*
+ * Everything step one needs about one candidate, in a single pass so the model
+ * can rank without touching calc itself.
+ */
+function switchRead(line, node, state, trainer, speciesName, defSide, defSlot) {
+    var set = trainerSet(trainer, speciesName);
+    var species = GAME.species()[toID(speciesName)];
+    if (!set || !species) return null;
+    var defender = calcPokemonFor(line, node, state, defSide, defSlot);
+    if (!defender) return null;
+
+    var scored = switchTypeScore(species, defender, set.ability, state);
+    return {
+        seMove: switchSuperEffectiveMove(set, defender, state),
+        score: scored.score,
+        raw: scored.raw,
+        overflowed: scored.raw !== scored.score
+    };
 }
 
 /*
