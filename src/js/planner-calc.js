@@ -796,7 +796,18 @@ function switchDamage(line, node, state, set, defSide, defSlot, faintedSlot) {
     (set.moves || []).forEach(function(moveName) {
         var found = findMove(moveName);
         if (!found || switchIgnoresDamage(found)) return;
-        var move = calcMoveFor(moveName, holder, false, 0, 0);
+        /*
+         * One hit, always. The AI runs a single damage calculation per move and
+         * never multiplies it by a hit count - but calc settles a 2-5 hit move
+         * at three on its own, so leaving it alone scored a Fury Swipes as three
+         * hits and let it beat moves it does not really beat.
+         *
+         * Caught on a real fight: Lass Sarah's Meowth was predicted in over her
+         * Skitty because Fury Swipes read 12 against a Sandshrew where Skitty's
+         * Sucker Punch read 9. One hit puts Fury Swipes at 4 and the order back
+         * the right way round, which is what the game actually did.
+         */
+        var move = calcMoveFor(moveName, holder, false, 1, 0);
         if (!move) return;
         try {
             var range = calc.calculate(calcGen(), attacker, defender, move, field).range();

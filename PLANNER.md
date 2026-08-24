@@ -652,6 +652,15 @@ Black Belt Daniel's Primeape corpse makes Dunsparce's Drill Run read *exactly*
   it is technically in Blaze or Swarm throughout. That last part falls out for
   free — the attacker is built from the dead slot by the same function everything
   else uses, carrying the zero health the plan already derived.
+- **Step two calculates one hit, never a hit count.** The AI runs a single damage
+  calculation per move, but calc settles a 2–5 hit move at three on its own, so
+  leaving it alone scored those moves at triple. Caught on a real fight rather
+  than in testing: against **Lass Sarah**, a Sandshrew that KO'd her Shinx was
+  told Meowth would come in, and Skitty did. Meowth's Fury Swipes was reading 9
+  at three hits against Skitty's Sucker Punch at 6; at one hit it reads 3, Bite
+  becomes Meowth's best at 5, and Skitty's 6 takes it — which is what the game
+  did. 55 sets carry a multi-hit move, and Kaizo made **Shadow Claw** one of them
+  (2–5 hits at 25 BP, 16 sets), so this was not a rare miss.
 - **Step two throws away the base-power-1 moves** — Low Kick, Grass Knot, Counter,
   Super Fang, Endeavor, Fling, the OHKO moves and the rest. It is the game's own
   data rather than a judgement, and it cuts oddly: Explosion, Eruption and Sucker
@@ -1199,26 +1208,88 @@ Each of these wants a line in the "How to use" page once it lands.
 
 ### AI move scoring
 
-The other half of reading the opponent, and the harder half. The game scores every
-move against every target and picks the highest, and the eleven modules that do
-the scoring are **already in the repo** — `trainer_flags.js` carries them per
-trainer, and today they only draw badges. What is missing is what each module
-scores, which is documented per move at
-<https://bparkpk.github.io/PKMoveScoring/>: one `move<Name>.html` page each, all
-of them the same eleven sections in a rigid grammar (*"If the target is already
-statused: Score −10 and terminate"*). That is a `tools/gen-move-scoring.js` away
-from being data, the same shape as the move and ability effect generators, and
-fetching over the network like `gen-splits.js` already does.
+The other half of reading the opponent. The game scores every move against every
+target and picks the highest, and the eleven modules that do the scoring were
+**already in the repo** — `trainer_flags.js` carries them per trainer, and until
+now they only drew badges.
 
-The design question to settle first is what the score should *read* as. Most
-Kaizo scoring lines are probabilistic — *"68.8% chance of +2"* — so a certain-only
-score would be 0 for most moves, and an expected value is the average the rest of
-this file refuses to take. A range, low to high, is the shape the damage numbers
-already use and is the likely answer, but it has not been decided.
+**The data is in.** `tools/gen-move-scoring.js` scrapes
+<https://bparkpk.github.io/PKMoveScoring/> — the Kaizo-specific reference, which
+is authoritative for anything a particular move scores — into
+`src/js/data/move_scoring.js`. That is **464 moves, 14,527 steps, 571 KB**, and it
+parses the site with **nothing left over**: the generator's unparsed report is
+empty rather than merely short.
 
-Two things the docs settle that the planner would have to respect: the AI **does
+- **Nesting is by position**, not a tree. The pages express it purely by order —
+  a condition directly under another sits inside it — with no indentation to key
+  off, so any tree built by the scraper would be a guess. Verified on Thunder
+  Wave, whose Doubles-vs-Ally block nests a five-branch Volt Absorb check inside
+  an outer `Otherwise`; both `Otherwise` arms survive and stay distinguishable.
+- **Conditions are interned** and referenced by index. There are 14.5k steps and
+  **487 distinct conditions**, so writing them out in full spent most of the file
+  repeating one sentence — *"If the effectiveness of the move is 4x"* appears
+  2,276 times. Interning plus dropping the indent took the file from 2,591 KB to
+  571 KB.
+  - That array is also **the evaluator's list of work**: one predicate per entry,
+    and an index with no predicate behind it is a condition the planner cannot
+    answer and should say so about rather than guess. 368 of the 487 already fall
+    into families the planner can evaluate today — effectiveness, HP thresholds,
+    KO checks, abilities, party state — leaving a tail of 119.
+- **Half of all outcomes are behind a dice roll** — 3,451 of 6,922, almost exactly
+  50%. That is what settles the reading: a certain-only score would be 0 for most
+  moves, and an expected value is the average this file refuses to take
+  everywhere else. So a **score is a range**, low to high, the same shape as a
+  damage roll — and the useful part is which moves' ranges can still reach the
+  top, because a move is only ruled out when it certainly cannot win.
+
+Things the scrape turned up that were not obvious:
+
+- **The site scores the variable-type moves separately**, as `HP Dark`,
+  `Fire Ball` and so on — the same behaviour the switch AI shows, and which the
+  planner already models. They are kept under compound ids (`hiddenpower:dark`,
+  `weatherball:fire`) so the type survives; falling back to the base move would
+  score a rain-fed Weather Ball as a Normal one.
+- **Two of the site's own index links are broken** — `moveRoarofTime.html` and
+  `moveJudgment.html` 404, while `moveRoarOfTime.html` and `moveJudgement.html`
+  are real pages for two genuinely different moves. Corrected by a small table
+  rather than a clever regex.
+- **`doublesOpponent` and `doublesAlly` are both mapped to `TagStrategy`.** The
+  site splits the doubles logic in two where the flag table has one entry. That
+  is inference from the counts, not something either source states, and the
+  generator prints it every run so it stays visible until someone checks it
+  against a real doubles trainer.
+- The scraped pages are cached under `tools/.cache/` (13 MB, gitignored) so a
+  re-run costs one request rather than 465.
+
+**Nothing loads it yet.** `move_scoring.js` is not in `index.template.html`,
+because shipping 571 KB to the browser before an evaluator exists would cost the
+page load and buy nothing.
+
+Two things the docs settle that the evaluator will have to respect: the AI **does
 not know your moves until you use one** and forgets them when you switch out, and
 it **never factors accuracy**.
+
+### Mid-turn switching
+
+Distinct from the post-KO routine, and the doc is explicit that it runs *before*
+any move scoring — switch AI is the boss of move AI, and if it wants the switch
+the move never happens. It is one algorithm of eight checks in a fixed order.
+
+What makes it a different kind of problem is that **almost every check is a dice
+roll**: ⅔ for Wonder Guard and the no-damaging-moves check, ½ for ability
+absorbing and the immune switch, ⅓ for the resist switch, and a 90%-per-move
+stacking chance to stop once the AI holds a super-effective move. Only three
+things are certain — the impossible-switch check, Perish Song (*"no randomness
+involved"*), and that **+4 or more positive stat stages means it never switches**.
+
+So this cannot be a prediction, and it should not pretend to be one. It is a
+**risk flag**: a badge on the turn naming which check can fire and roughly how
+likely, so a plan knows it has a fork nobody has drawn yet. The odds are the
+reason to branch, not a number to rely on.
+
+Worth knowing before building it: the doc's own conclusion is that **going first
+avoids nearly all of it**, since the immune and resist switches both require the
+AI to have acted first.
 
 ### The charge turn, and the semi-invulnerable one
 
