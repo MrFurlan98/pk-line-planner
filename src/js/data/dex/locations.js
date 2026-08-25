@@ -361,6 +361,20 @@ const LOCATIONS = {
         metLocationId: 17,
         search: true,
     },
+    poketchco: {
+        id: "poketchco",
+        name: "Pokétch Co.",
+        coords: [],
+        sublocations: [],
+        desc: "",
+        encounters: [
+            {'species': 'skitty', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'},
+            {'species': 'glameow', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'},
+            {'species': 'meowth', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'}
+        ],
+        metLocationId: 91,
+        search: true,
+    },
     route204: {
         id: "route204",
         name: "Route 204",
@@ -1043,20 +1057,6 @@ const LOCATIONS = {
         encounters: [],
         metLocationId: 93,
         search: false,
-    },
-    poketchco: {
-        id: "poketchco",
-        name: "Pokétch Co.",
-        coords: [],
-        sublocations: [],
-        desc: "",
-        encounters: [
-            {'species': 'skitty', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'},
-            {'species': 'glameow', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'},
-            {'species': 'meowth', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'}
-        ],
-        metLocationId: 91,
-        search: true,
     },
     route204north: {
         id: "route204north",
