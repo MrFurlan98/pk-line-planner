@@ -848,7 +848,7 @@ const LOCATIONS = {
             {'species': 'aron', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
             {'species': 'bonsly', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
             {'species': 'ledyba', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
-            {'species': 'magcargo', 'chance': 0, 'minLevel': 0, 'maxLevel': 0, 'method': 'trade', 'trade': {'nickname': 'Chestnut', 'ability': 'vitalspirit', 'nature': 'quiet', 'traded': 'any'}}
+            {'species': 'slugma', 'chance': 0, 'minLevel': 0, 'maxLevel': 0, 'method': 'trade', 'trade': {'nickname': 'Chestnut', 'ability': 'vitalspirit', 'nature': 'quiet', 'traded': 'any'}}
         ],
         metLocationId: 8,
         search: true,
