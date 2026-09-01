@@ -512,7 +512,10 @@ function addToBox(poke) {
 				loadSet($(this).attr("data-set"), $(this).attr("data-side"));
 			},
 			drag: pickup,
-			drop: iconDrop
+			drop: iconDrop,
+			contextmenu: function(e) {
+				e.preventDefault();
+			}
 		});
 	}
 	if (setdex[poke.name][poke.nameProp].data.dead) $(`[data-set="${set}"]`).hide();
