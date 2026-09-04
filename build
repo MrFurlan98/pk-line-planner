@@ -7,12 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.55";
+const VERSION = "1.7.56";
 const CHANGELOG = `
-- Moved Pokétch Co. to a more accurate position in the location list.
-- Fixed Chestnut showing as Magcargo instead of Slugma in the dex.
-- Fixed damage colors using 0 HP for damage calcs, affecting results for moves/abilities that use HP to calculate damage.
-- Fixed ctrl-clicking a location encounter not working for encounters with level ranges. It now loads the moveset for the highest level.
+- Fixed damage colors and speed borders not applying when using Sync.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, in order for the calculator to navigate to the correct rival sets. Good luck, have fun!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
