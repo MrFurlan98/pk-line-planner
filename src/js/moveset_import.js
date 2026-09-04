@@ -56,6 +56,7 @@ function placeBsBtn() {
 						var data = JSON.parse(x);
 						for (var i in data[0]) addSavePokemon(data[0][i]);
 						for (var i in data[1]) addSavePokemon(data[1][i], true);
+						applyIconColors();
 					}).catch((x) => {
 						alert("An unknown error has occured. The error details can be found in the browser console.");
 						console.log(x);
@@ -69,6 +70,7 @@ function placeBsBtn() {
 				fetch("http://localhost:31123/sync").then(x => x.json()).then(function (x) {
 					for (var i = 0; i < x.party.length / 236; i++) addSavePokemon(x.party.slice(i*236, i*236+236));
 					for (var i = 0; i < x.pc.length / 136; i++) addSavePokemon(x.pc.slice(i*136, i*136+136), i >= 420);
+					applyIconColors();
 				}).catch((x) => {
 					alert("An unknown error has occured. The error details can be found in the browser console.");
 					console.log(x);
