@@ -1828,12 +1828,12 @@ function applyIconColors() {
 	var speedBorders = $("#speedBorders").prop("checked");
 	var damageColors = $("#damageColors").prop("checked");
 	if (!(speedBorders || damageColors)) return;
-	var enemy = createPokemon($("#p2"));
-	var field = createField();
-	var enemyField = field.clone().swap();
 	$(".team-box .pokemon-icon").each(function() {
 		var set = $(this).attr("data-set");
 		var mon = createPokemon(set);
+		var field = createField();
+		var enemy = createPokemon($("#p2"));
+		var enemyField = field.clone().swap();
 		var calculation = calculateAllMoves(gen, mon, field, enemy, enemyField);
 		mon = calculation[0][0].attacker;
 		enemy = calculation[1][0].attacker;
