@@ -49,6 +49,7 @@ function cpdir(src, dest) {
 		if (e.code != 'EEXIST') throw e;
 	}
 	for (const file of fs.readdirSync(src)) {
+		if (file == ".git") continue;
 		var current = fs.lstatSync(path.join(src, file));
 		if (current.isDirectory()) {
 			cpdir(path.join(src, file), path.join(dest, file));
