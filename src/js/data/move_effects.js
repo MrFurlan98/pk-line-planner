@@ -392,7 +392,7 @@ const MOVE_EFFECTS = {
         "targetVolatiles": [
             "attract"
         ],
-        "conditional": "Only lands if the two are of opposite genders.",
+        "oppositeGender": true,
         "name": "Attract"
     },
     "safeguard": {
@@ -777,6 +777,7 @@ const MOVE_EFFECTS = {
         "target": {
             "spa": -2
         },
+        "oppositeGender": true,
         "name": "Captivate"
     },
     "stealthrock": {

@@ -528,9 +528,10 @@ function scoringClause(clause, ctx) {
      */
     m = clause.match(/^the target is (not )?the opposite gender (?:as|to) the user$/i);
     if (m) {
-        var a = String(facts.gender || "").charAt(0).toUpperCase();
-        var b = String(facts.targetGender || "").charAt(0).toUpperCase();
-        var opposite = !!a && !!b && a !== b && "MF".indexOf(a) >= 0 && "MF".indexOf(b) >= 0;
+        var a = facts.gender, b = facts.targetGender;
+        // A gender nobody set could be either, so the rule is tried both ways.
+        if (a !== "N" && b !== "N" && (a === "?" || b === "?")) return SCORING_UNKNOWN;
+        var opposite = mayBeOppositeGenders(a, b);
         return m[1] ? !opposite : opposite;
     }
 

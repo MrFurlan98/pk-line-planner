@@ -1183,6 +1183,32 @@ rather than the whole run being thrown away.
   by mistake look identical on the button.
 - **Disabled on a line with no turns**, rather than live and refusing.
 
+### Gender
+
+Shown as a ♂ or ♀ beside the name on every card — the turn card and both team
+strips — because Attract, Captivate and Rivalry all turn on it and none of them
+says so on the move.
+
+- **The species decides first.** A genderless species is genderless whatever its
+  set says, and a single-gender species can only be the one: 20 trainer sets in
+  this game's data give a Male Arceus, Darkrai, Giratina or Bronzor, and the game
+  ignores that. `genderOf` is the one reading of it, used by the card, by calc
+  and by the model alike — calc was being handed those sets' "Male" for Rivalry.
+- **Nothing is shown for a genderless Pokémon**, since there is nothing to know.
+  A Box entry that could be either but was never set shows a **"?"** — the one
+  case the planner cannot read these moves for, and one click in the Box to fix.
+- **Attract and Captivate only reach the other gender**, and are now enforced
+  rather than noted. The move-effects generator used to carry Attract's condition
+  as text *because the planner didn't check it*; it emits an `oppositeGender`
+  flag instead, and Captivate — whose text says the same thing — gets it too. A
+  same-gender or genderless target takes neither the infatuation nor the Special
+  Attack drop.
+- **An unknown gender lets them land.** Only a certain "no" stops the move —
+  either side genderless, or both known and the same — the same way a roll that
+  might not kill leaves a move landing. The move-scoring rule that asks about
+  gender tries an unknown both ways. calc has no "unknown", so an unset gender
+  goes to it as none, which leaves Rivalry neutral rather than guessing the 25%.
+
 ### Filling a turn
 
 Four ways in, because the strips can be folded away:

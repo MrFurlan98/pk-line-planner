@@ -358,7 +358,7 @@ function renderTrainerParty(strip, trainer, cls, attr, ownerIndex) {
             `<span class="${cls} planner-card" ${attr}="${speciesName}" data-owner="${ownerIndex}"
                    title="${speciesName} - ${trainer}">
                 <img class="planner-card-sprite" src="${GAME.sprites.species(species)}" alt="${speciesName}">
-                <span class="planner-card-name">${species.name}</span>
+                <span class="planner-card-name">${species.name}${renderGender(genderOf(speciesName, set && set.gender))}</span>
                 <span class="planner-card-meta">${set ? `Lv. ${set.level}` : ""}</span>
                 ${renderCardAbility(set ? set.ability : "")}
                 ${renderCardItem(item)}
@@ -472,7 +472,7 @@ function renderMonStrip(strip, roster, hint, compact) {
         strip.append(
             `<span class="planner-mine planner-card${entry.dead ? " dead" : ""}" data-mon="${entry.ref}" title="${title}">
                 <img class="planner-card-sprite" src="${GAME.sprites.species(species)}" alt="${entry.species}">
-                <span class="planner-card-name">${entry.nickname || species.name}</span>
+                <span class="planner-card-name">${entry.nickname || species.name}${renderGender(genderOf(entry.species, entry.set.gender))}</span>
                 <span class="planner-card-meta">Lv. ${level}</span>
                 ${renderCardAbility(entry.set.ability)}
                 ${renderCardItem(item, true)}
@@ -691,6 +691,23 @@ function renderLevel(line, node, state, side, slot) {
                      title="${escapeAttr(hint)}">Lv.${shown}</button>`;
 }
 
+/*
+ * A gender mark beside a name. Worth the few pixels because Attract, Captivate
+ * and Rivalry all turn on it, and none of them says so on the move itself.
+ *
+ * A genderless Pokémon gets nothing - there is nothing to know. A Box entry that
+ * could be either but was never set gets a "?", since that is the one case where
+ * the planner cannot read those moves and you can fix it in a click.
+ */
+function renderGender(gender) {
+    if (gender === "M") return `<span class="planner-gender male" title="Male">&#9794;</span>`;
+    if (gender === "F") return `<span class="planner-gender female" title="Female">&#9792;</span>`;
+    if (gender === "?") {
+        return `<span class="planner-gender unknown" title="Gender not set - Attract, Captivate and Rivalry can't be read for it. Set it in the Box.">?</span>`;
+    }
+    return "";
+}
+
 function renderSlots(line, node, state, side, slots, format) {
     var out = "";
     for (var i = 0; i < slots; i++) {
@@ -722,7 +739,7 @@ function renderSlots(line, node, state, side, slots, format) {
             ${species
                 ? `<img class="planner-sprite" src="${GAME.sprites.species(species)}" alt="">`
                 : `<span class="planner-node-blank">?</span>`}
-            <span class="planner-slot-name">${label}${sub}</span>
+            <span class="planner-slot-name">${label}${ref ? renderGender(slotGender(line, node, side, i)) : ""}${sub}</span>
             ${ref ? renderHp(mon) : ``}
             ${ref ? renderItemTrigger(line, node, state, side, i) : ``}
             ${ref ? renderSpeed(line, node, state, side, i, slots) : ``}

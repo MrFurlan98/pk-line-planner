@@ -1764,6 +1764,47 @@ function slotSet(line, node, side, slot) {
 }
 
 /*
+ * A Pokémon's gender as the game has it: "M", "F", "N" for a genderless species,
+ * or "?" for one that could be either but has nothing set.
+ *
+ * The species decides first. A genderless species is genderless whatever its set
+ * says - 20 trainer sets in this game's data give a Male Arceus, Darkrai,
+ * Giratina or Bronzor, and the game pays that no attention - and a
+ * single-gender species can only be the one gender. Only a species that can be
+ * either reads the set, and a Box entry nobody filled in stays unknown rather
+ * than being guessed at.
+ */
+function genderOf(speciesName, setGender) {
+    var species = GAME.species()[toID(speciesName || "")];
+    var ratio = String((species && species.genderRatio) || "");
+    if (/genderless/i.test(ratio)) return "N";
+    if (/^100% male/i.test(ratio)) return "M";
+    if (/^100% female/i.test(ratio)) return "F";
+    var stated = String(setGender || "").toLowerCase();
+    if (stated === "male" || stated === "m") return "M";
+    if (stated === "female" || stated === "f") return "F";
+    return "?";
+}
+
+// The gender of whoever stands in a slot on this turn.
+function slotGender(line, node, side, slot) {
+    var entry = slotSet(line, node, side, slot);
+    return entry ? genderOf(entry.species, entry.set.gender) : "?";
+}
+
+/*
+ * Whether two Pokémon could be of opposite genders - which is all Attract and
+ * Captivate ask. Only a certain "no" stops them: either side genderless, or both
+ * known and the same. An unknown gender might be the right one, so it lets the
+ * move through, the same way a roll that might not kill leaves a move landing.
+ */
+function mayBeOppositeGenders(a, b) {
+    if (a === "N" || b === "N") return false;
+    if (a === "?" || b === "?") return true;
+    return a !== b;
+}
+
+/*
  * What the active Pokémon on a side is holding, and who it is. Your side reads
  * from the Box; theirs from the trainer's set for that fight.
  */
@@ -2100,6 +2141,16 @@ function applyMoveEffect(moveName, state, actor, from, targets, line, node) {
         var holder = activeHolder(line, node, otherSide, slot);
         var target = monState(state, otherSide, ref);
         var guard = abilityEffect(holder && holder.ability);
+
+        /*
+         * Attract and Captivate reach only the other gender, and do nothing at
+         * all otherwise - so a same-gender or genderless target takes neither
+         * the infatuation nor the Special Attack drop.
+         */
+        if (fx.oppositeGender &&
+            !mayBeOppositeGenders(slotGender(line, node, actor, from), slotGender(line, node, otherSide, slot))) {
+            return;
+        }
 
         if (fx.target) addBoosts(target.boosts, fx.target, guard);
 

@@ -103,7 +103,13 @@ function calcPokemonFor(line, node, state, side, slot) {
          * 100 to match what the Box and createPokemon assume for a set with none.
          */
         level: (mon && mon.level) || numberOr(set.level, 0) || 100,
-        gender: getGender(set.gender),
+        /*
+         * Through the species first, so a genderless legendary a set calls Male
+         * is not handed to Rivalry as one. calc has no "unknown": an unset Box
+         * gender goes over as none, which leaves Rivalry neutral rather than
+         * guessing which way the 25% goes.
+         */
+        gender: (function(g) { return g === "?" ? "N" : g; })(genderOf(entry.species, set.gender)),
         ability: set.ability,
         abilityOn: true,
         item: held,
@@ -1482,10 +1488,10 @@ function scoringFactsFor(line, node, state, side, slot, targetSlot) {
             var them = slotSet(line, node, other, targetSlot);
             return them ? (numberOr(them.set.level, 0) || 100) : 100;
         })(),
-        gender: entry.set.gender || "",
+        gender: genderOf(entry.species, entry.set.gender),
         targetGender: (function() {
             var them = slotSet(line, node, other, targetSlot);
-            return them ? (them.set.gender || "") : "";
+            return them ? genderOf(them.species, them.set.gender) : "?";
         })(),
         userItem: holder ? (holder.item || "") : "",
         targetItem: defender.item || "",

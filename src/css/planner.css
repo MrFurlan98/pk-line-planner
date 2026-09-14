@@ -852,6 +852,30 @@
 }
 
 /*
+ * Beside the name, a step smaller and never bold, so it reads as a detail of the
+ * Pokémon rather than part of what it is called.
+ */
+.planner-gender {
+    margin-left: 2px;
+    font-size: 0.9em;
+    font-weight: normal;
+}
+
+.planner-gender.male {
+    color: #4a90d9;
+}
+
+.planner-gender.female {
+    color: #e0609a;
+}
+
+/* The one that asks for something: set it in the Box. */
+.planner-gender.unknown {
+    opacity: 0.6;
+    cursor: help;
+}
+
+/*
  * The level, which is editable because a long fight changes it. Styled to read
  * as the italic "Lv.9" it replaced rather than as a button - it is context most
  * of the time, and only worth noticing once it has been corrected.
