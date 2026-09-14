@@ -20,8 +20,13 @@ src/img/.gitignore
 src/testdata.json
 src/seed.html
 src/doubles-mockup.html
+src/scoring-mockup.html
 
 # Agent tooling, kept local for the same reason as .vscode/ above: a working
 # setup and a set of notes-to-self, not part of the app.
 .claude/
 CLAUDE.md
+
+# Scraped source pages for tools/gen-move-scoring.js - a rebuildable cache,
+# not part of the app. Delete it to force a fresh pull.
+tools/.cache/

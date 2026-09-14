@@ -51,6 +51,14 @@ graph, so editing one turn updates everything after it.
   out per side "the side's boosts" stops meaning anything, and it makes
   switching fall out for free: a Pokémon keeps its own record, loses its boosts
   and volatiles on leaving the field, and keeps its status.
+- **A move the type chart stops carries nothing with it.** The game checks
+  every damaging move aimed at somebody else, and **Thunder Wave by name** — no
+  other status move (`BattleControllerPlayer_CheckTypeChart` in the decomp). So
+  a Thunder Wave into a Sandshrew does nothing, while Glare, Stun Spore, Static
+  and Body Slam's paralysis still reach it; and a move that reached nobody
+  failed outright, so a Close Combat into a Ghost costs its user no stats.
+  Levitate, Scrappy, Mold Breaker and grounding are read; Foresight and Miracle
+  Eye aren't tracked yet, so an identified Ghost still reads as immune.
 - **Hazards, screens and weather** belong to the side.
 - **Hazards and screens can be removed**, by three different routes:
   **Defog** clears the target's side of hazards *and* screens; **Brick Break**
@@ -177,6 +185,23 @@ graph, so editing one turn updates everything after it.
   everything the turn already knows — boosts, status, ability, item, screens and
   the weather the fight is standing in — because all of that was already derived
   and `@smogon/calc` takes it natively.
+- **A power the game rolls for itself gets a band, like a hit count does.**
+  **Present** was reading a flat `0`: calc keeps it at 0 BP because its power is
+  decided in the move's own script, and the game's table stores it as 1 — a
+  placeholder rather than a small number. Its dex text is the whole spec, so the
+  card now runs from the weakest power on its worst roll to the strongest on its
+  best (40 BP 40% of the time, 80 BP 30%, 120 BP 10%), and blind mode shows
+  `40–120` instead of `1`.
+  - **The other 20% it heals what it hit**, a quarter of its maximum. That
+    cannot go in a damage band, so it rides alongside as `mayHeal`: the target's
+    health opens *upwards* by that much when the turn is folded in, while the
+    bottom of the band still has to survive the hit. It is also why **no KO is
+    ever claimed for Present** however hard it can land — the same
+    only-certainties rule the 2–5 hit moves follow.
+  - **The AI is left reading it as a 1-power move**, because that is what the
+    game does: its damage function takes the table's power, and every
+    base-power-1 move is thrown out of the post-KO switch comparison outright.
+  - Magnitude is the only other move of this shape, and Kaizo deletes it.
 - **Gen 4 in this fork *is* Platinum Kaizo.** `calc/src/data/moves.ts` builds its
   gen-4 table by patching DPP with the hack's changes and deleting the moves it
   removes, and `species.ts` does the same to base stats. So a plain
@@ -195,6 +220,45 @@ graph, so editing one turn updates everything after it.
     two disagree: Triple Kick is 1–3 here and a flat 3 in calc.
   - Fixed multi-hit moves (Double Kick, Bonemerang, Twineedle) carry no extra
     uncertainty and are unaffected.
+- **Hidden Power is resolved before calc sees it**, and had to be: calc's plain
+  `Hidden Power` entry is a **zero power Normal move** — it expects to be handed
+  one of the sixteen typed entries instead — so left alone the move quietly did
+  nothing at all, on every card, for every set carrying it. It now reads `Hidden
+  Power Dark, 70 BP` for the game's one Hidden Power set, a Burmy, where it used
+  to read `0`.
+  - Both halves come off the IVs, per [Bulbapedia's Gen III–V calculation][hp]:
+    the **type** from the least significant bit of each IV and the **power** from
+    the *second* least significant bit, over the same six stats in the order HP,
+    Attack, Defence, **Speed**, Special Attack, Special Defence — which is not the
+    order stats are usually written in, and is the whole trick. The two sums are
+    independent, so type and power genuinely do not constrain each other.
+  - The typed entries all sit at a flat 70, so the computed power is overridden
+    onto whichever one the type picks. Verified at both ends of the range: all-0
+    IVs give Fighting at 30, all-31 give Dark at 70.
+  - IVs ride along on `activeHolder` beside the nature the Figy berries need, and
+    are read through `calcStatsOf` — so a Box set that stored them as strings
+    behaves like every other stat read in the planner.
+- **The card shows what these moves actually are**, which is a separate problem
+  from calculating them right. A Hidden Power was drawing a *Normal* type icon
+  and a base power of 1, and a Weather Ball in rain a Normal icon — both lies
+  about a move the damage figure beside them had already resolved correctly.
+  - **The type icon changes; the name does not.** "Hidden Power" already fills
+    the move column, so a type appended to it is the first thing the ellipsis
+    eats. The icon carries the type, and the tooltip carries the name, the
+    resolved type and the real base power together.
+  - **Resolved per turn, never cached.** Weather changes, so the same Weather Ball
+    is a different move two turns later. Measured across a three-turn line: a
+    Bronzong's own Drizzle makes it `Water @ 100` for 1224–1440, and after a
+    Sunny Day it is `Fire @ 100` for 306–360, against the same target.
+  - **The Box tab has an `H. Power` button per card**, folding out the type and
+    base power for that Pokémon. It belongs there rather than only on a turn
+    because it is a fixed property of the Pokémon and nothing to do with a
+    matchup — the question it answers is whether the TM is worth spending, which
+    you ask in the Box and not mid-fight. It also says whether the Pokémon knows
+    the move yet. Verified against hand-worked IVs: 26/30/25/22/19/19 gives
+    Psychic at 67 BP.
+
+[hp]: https://bulbapedia.bulbagarden.net/wiki/Hidden_Power_(move)/Calculation
 - **A guaranteed KO says `KO` rather than a number.** Past the kill the range
   informs nothing — Kaizo overkill runs to "222–265" — and it is the one case
   wide enough to push a long move name into an ellipsis. The range that *does*
@@ -320,6 +384,24 @@ gets a move it never had.
   - Nine sets across seven trainers carry it, and five of those nine are in
     doubles or tag fights: Slowking, Slowbro, Dusknoir, Bronzor, Spiritomb. They
     are slow and bulky on purpose — Trick Room *is* the set, not a footnote.
+- **Gravity** sits on the state beside it, for the same reason and in the same
+  shape — a plain boolean, because this game rewrote its duration away too: *"For
+  the rest of the battle, all moves get an accuracy multiplier of 5/3, all Pokémon
+  are grounded, and certain moves are unable to be used."* Unlike Trick Room it
+  does **not** toggle back off; the text says the rest of the battle. 18 sets
+  carry the move.
+  - **Only the grounding half is modelled**, and that half is modelled
+    everywhere: Ground moves stop missing Levitate and Flying types, both spike
+    layers reach everything, and `isGravity` goes to `calc.Field` so the damage
+    figures and the card's own grounding rules cannot disagree. Measured: an
+    Earthquake into a Staravia reads `0–0` before Gravity and `99–117` after.
+  - **The accuracy multiplier is deliberately out.** It would be the first thing
+    to make an accuracy subsystem exist, which the planner does not have and does
+    not want. The move bans are a validation warning at most.
+  - **An Iron Ball grounds its holder the same way**, which is why the two are
+    handled together. It is the only item in this game that grounds anything, and
+    no *trainer* set pairs one with a Flying type or Levitate — so it reaches the
+    plan through your own Box, which is exactly the side the switch AI reads.
 
 ### Fake Out
 
@@ -525,6 +607,356 @@ its volatiles — and that is now derived rather than left to the player.
   happened: in practice this fires only against another −6 move. Implemented
   because it is free and correct, not because it will come up.
 - Three sets each, so little rests on any of it.
+
+### Who they send in next
+
+Roar's replacement is random, so the planner refuses to guess it. The one after a
+**faint** is not — it is a fixed routine, transcribed from the Gen 4 decomp
+([pret/pokeplatinum][pret], via [this write-up][aidoc]) rather than reasoned out,
+because reasoning it out is exactly how you get it wrong.
+
+> **Step one.** Which of the party still alive holds a super-effective move on
+> your active? Of those, the best **type score** comes in.
+> **Step two.** *Only* if step one found nobody: the most damage possible.
+>
+> Party order settles a tie in either step.
+
+**These are two steps, not two tiebreaks on one question**, and that is the thing
+to keep straight. Damage never runs while anybody holds a super-effective move,
+however feeble that move is. And the size of the multiplier never matters either
+— a 4x and a 2x both merely *qualify*, and the typing decides between them.
+
+The **type score** is not about the moves at all. It is the candidate's own two
+types, each scored against yours, summed and multiplied by 40. A monotype is
+stored internally as a dual type with both slots the same, so its single type is
+counted twice — which is why a Dragon monotype (160) beats a Dragon/Psychic (120)
+against a Dragon: the second type doubles the good matchup instead of diluting it
+with a neutral one. All of the source's worked examples are reproduced against
+calc's own type chart in verification, and they match exactly.
+
+The routine is **universal** — the flags in `trainer_flags.js` have no say in it,
+so a Youngster switches as sharply as a gym leader. And it **never checks whether
+a move would kill**, which the source calls a common misconception: 200 damage
+into a 1 HP Pokémon beats 1 damage into it, and the fact that both are lethal
+changes nothing.
+
+#### The two bugs, modelled on purpose
+
+The tool exists to say what the game *will* do, so a routine that quietly
+corrected the game's mistakes would mispredict exactly the fights where knowing
+the answer matters most. Both are in.
+
+- **Score overflow.** The type score is one byte. A 4x on *both* types comes to
+  320 and wraps to **64** — which then loses to a completely neutral 80, so the
+  Pokémon with the best matchup on the field is passed over precisely because it
+  is so good. The source calls this common and it is: a scan of 810 real matchups
+  found 55 carrying it.
+- **Immunity check fail.** For five species a later super-effective match
+  overrules an earlier immunity, so the AI reads them as weak to something that
+  cannot touch them at all: **Gligar** and **Gliscor** to Electric, **Aerodactyl**
+  and **Skarmory** to Ground, **Girafarig** to Ghost. It depends on the internal
+  type-check order — Ground vs Flying is checked before Ground vs Rock, which is
+  why Aerodactyl is affected and Crobat is not. Kaizo adds no types, so the
+  vanilla list carries over unchanged. Both halves are verified.
+
+**Damage overflows too**, the same way. Verified on real data rather than assumed:
+Black Belt Daniel's Primeape corpse makes Dunsparce's Drill Run read *exactly*
+256, which wraps to **0**, so a Rock Slide worth 30 wins the step instead.
+
+#### The traps
+
+- **Status moves count** for step one. A Gyarados whose only qualifying move is
+  Dragon Dance is "holding a super-effective move" and gets sent in on it. This is
+  why the filter cannot reuse the damage path, which only ever sees damaging moves
+  — and it is not academic: **Aipom qualifies against a Grotle on U-turn alone.**
+- **Step two fires the moves from the wrong Pokémon.** The moves are taken from
+  the candidate, but the attacker is *the one that just died* — its stats, its
+  item, its ability. **Not its stat stages**: the faint animation runs the
+  game's `BattleSystem_CleanupFaintedMon`, which resets every stage to neutral
+  before the replacement menu asks (verified in the decomp's call order). Health,
+  item and ability survive it. Caught on **Youngster Dallas**: a Totodile charmed
+  twice by a Luvdisc then Dragon Dancing fell at −3 Attack, the planner fired
+  Bite from −3 and named Whismur, and the game — at +0 — sent Treecko. A U-turn
+  runs the same routine on a Pokémon still standing, so its stages count.
+- **Life Orb and the Metronome item don't count in step two**, corpse or not —
+  the routine calls only the base damage function and the type-chart step, and
+  both items are applied after those (Expert Belt, inside the type-chart step,
+  *does* count). The write-up says so too. calc applies them, and **154 trainer
+  sets carry a Life Orb**, so every one of those fainting read each candidate's
+  damage 30% high: Clown Luigi's Ampharos made an Explosion read 158 for 122.
+- **It is asked at the moment of the faint, against what you had out then.**
+  The pick is made before you are offered a switch — Shift mode names the
+  incoming Pokémon, then asks — so a Pokémon you bring in on the next turn was
+  never what the AI looked at. `predictAtFaint` rebuilds the turn that way (the
+  corpse back in its slot, your side as the turn above left it) for both the
+  first prediction and every refresh. Asked from the turn as drawn, a Machamp
+  that switches to Steelix after killing Clown Luigi's Ampharos turned Mr. Mime
+  into Swalot. Verified: one fixed Dunsparce moveset scores 188, 208, 30,
+  188 and 188 depending only on which of its team-mates died first. A Choice Band
+  on the corpse inflates every candidate, and since a fainted Pokémon sits at 0 HP
+  it is technically in Blaze or Swarm throughout. That last part falls out for
+  free — the attacker is built from the dead slot by the same function everything
+  else uses, carrying the zero health the plan already derived.
+- **Step two calculates one hit, never a hit count.** The AI runs a single damage
+  calculation per move, but calc settles a 2–5 hit move at three on its own, so
+  leaving it alone scored those moves at triple. Caught on a real fight rather
+  than in testing: against **Lass Sarah**, a Sandshrew that KO'd her Shinx was
+  told Meowth would come in, and Skitty did. Meowth's Fury Swipes was reading 9
+  at three hits against Skitty's Sucker Punch at 6; at one hit it reads 3, Bite
+  becomes Meowth's best at 5, and Skitty's 6 takes it — which is what the game
+  did. 55 sets carry a multi-hit move, and Kaizo made **Shadow Claw** one of them
+  (2–5 hits at 25 BP, 16 sets), so this was not a rare miss.
+- **Step two throws away the base-power-1 moves** — Low Kick, Grass Knot, Counter,
+  Super Fang, Endeavor, Fling, the OHKO moves and the rest. It is the game's own
+  data rather than a judgement, and it cuts oddly: Explosion, Eruption and Sucker
+  Punch are all kept. They still count for step one, so a Low Kick is a
+  super-effective Fighting move for the filter and worth zero for the ranking.
+  - **Read off this game's move table rather than transcribed as a list of
+    names**, because the two disagree and the data is right. Kaizo rebuilt
+    **Sheer Cold** into a plain 70-power freezing Ice move, so it is no longer an
+    excluded OHKO move here; and **Hidden Power** is stored at 1 and so *is*
+    excluded, which the vanilla write-up's list happens not to mention. Reading
+    the field gets both right for free and survives the next rebalance.
+  - **Magnitude and Spit Up are not in this game at all**, deleted the way Taunt
+    and Nightmare are, and no set carries either.
+- **Only four abilities are read**: Levitate and the Mold Breaker that cancels it,
+  Scrappy, and Wonder Guard. Everything else is ignored *by the game* — a Volt
+  Absorb Lapras still draws in the Thunderbolt user.
+- **Being dragged out of the air beats both kinds of floating.** Gravity and an
+  Iron Ball each ground their target, and that cancels Levitate *and* a Flying
+  type's Ground immunity — so a grounded Skarmory is no longer immune to Ground at
+  all. Verified both ways round.
+- **Variable-type moves are resolved, not read off the table.** Weather Ball takes
+  the weather's type and Hidden Power comes off its IVs. Five sets in the game
+  carry one, and one of them earns it outright: **Galactic Erripaus's Bronzong
+  brings its own rain in with Drizzle**, which turns its Weather Ball from a
+  Normal move that qualifies against nothing into a Water one that is
+  super-effective against an Aron.
+
+#### How it reaches the plan
+
+- **Two moments, because there are two.** A turn branched off a faint arrives with
+  the replacement already in it; a branch *labelled* `You KO` later fills it in
+  then, since the label is what turns a health band straddling zero into a corpse.
+  Before that the planner leaves the Pokémon standing — a band that might have
+  died is precisely what the branch is drawn to settle, and answering it early
+  would answer the question the plan is still asking.
+- **A U-turn gets the same answer**, written straight into the `switchAfter`
+  picker rather than leaving it asking. The source is explicit that post-KO switch
+  AI also governs U-turn and forced switches.
+- **It never overwrites a statement** — not a declared switch, not a picker you
+  have already filled, not a living Pokémon. The player's word wins, as always.
+- **A prediction is asked again whenever the plan changes.** It used to be made
+  once and then stored as though you had said it, so an edit to the turns above
+  never reached it. Each fill now records the corpse it replaced
+  (`predictedFoes`), and every render puts the corpse back in the slot and asks
+  again — back, because with the replacement standing there is no corpse to
+  fire the damage step from. A slot holding anything but the last pick is yours,
+  and is left alone for good.
+- **A double KO in a single is still predicted, against your fainted
+  Pokémon.** Both replacement menus open together and nobody is sent out until
+  both have chosen, and the game's opponent in a single is simply "the other
+  battler" — so the AI ranks against the Pokémon lying in your slot, its types
+  and stats intact and its stages reset by the faint. The Selfdestruct branch in
+  the sample line is this case. (It used to predict nothing here.)
+- **In a double the AI picks which of yours to look at by coin flip**
+  (`BattleSystem_RandomOpponent`), falling back to the other only when the one
+  it drew is on 0 HP. The planner still reads the slot across from the gap, so
+  with both of yours standing it states one of two possible answers — a known
+  gap against the only-certainties rule, not yet fixed.
+- **Step two is table power.** The game's damage function has no move-specific
+  cases, so Brine, Facade, Payback, Revenge, Punishment, Wake-Up Slap,
+  SmellingSalt and Water Spout all count at their listed power whatever the
+  situation — a Water Spout from a zero-HP corpse is 150, where calc read 1.
+  They are renamed for calc in this one step so its special cases fall through.
+  Weather Ball is left as calc has it: its power and ability checks see a Normal
+  move and its effectiveness sees the weather type, which calc cannot hold at
+  once (4 sets).
+
+This is the only prediction in the tool, and it does not make it the thing the
+roadmap rules out below. Nothing here ranks a plan or picks one — it answers a
+question about the *opponent*, the way a damage figure and a type matchup already
+do, and leaves the decision where it was.
+
+#### Known gaps
+
+- **Normalize** is read by the game and ignored here, because **no set in the game
+  has it**.
+- **The damage figure is the top of calc's roll**, on the grounds that the AI's
+  own damage number carries no random factor and a 100% roll is the maximum. It
+  matters more than it looks, since the wrap at 256 turns a small difference into
+  a large one.
+- The whole routine is **vanilla Gen 4, assumed unchanged by Kaizo**. The hack's
+  move-scoring documentation covers move choice only and has no switch page, which
+  is the evidence for that assumption rather than a confirmation of it.
+
+[pret]: https://github.com/pret/pokeplatinum
+[aidoc]: https://docs.google.com/document/d/1IC1M4x0fo9X6cik8-7vkZTCThl4tMcUbzY8CDpHrfDQ/edit
+
+### AI move scoring
+
+The other half of reading the opponent. The game scores every move against every
+target and picks the highest, and the eleven modules that do the scoring were
+**already in the repo** — `trainer_flags.js` carries them per trainer, and until
+now they only drew badges.
+
+**The data is in.** `tools/gen-move-scoring.js` scrapes
+<https://bparkpk.github.io/PKMoveScoring/> — the Kaizo-specific reference, which
+is authoritative for anything a particular move scores — into
+`src/js/data/move_scoring.js`. That is **464 moves, 6,935 rule groups, 649 KB**,
+and it parses the site with **nothing left over**: the generator's unparsed report
+is empty rather than merely short. (Empty is not the same as right — see *What the
+walk had wrong* below for three things that parsed cleanly and meant the wrong
+thing.)
+
+- **Nesting is by position**, not a tree. The pages express it purely by order —
+  a condition directly under another sits inside it — with no indentation to key
+  off, so any tree built by the scraper would be a guess. Verified on Thunder
+  Wave, whose Doubles-vs-Ally block nests a five-branch Volt Absorb check inside
+  an outer `Otherwise`; both `Otherwise` arms survive and stay distinguishable.
+- **Conditions are interned** and referenced by index. There are **486 distinct
+  conditions**, so writing them out in full spent most of the file
+  repeating one sentence — *"If the effectiveness of the move is 4x"* appears
+  2,276 times. Interning plus dropping the indent took the file from 2,591 KB to
+  571 KB.
+  - That array is also **the evaluator's list of work**: one predicate per entry,
+    and an index with no predicate behind it is a condition the planner cannot
+    answer and should say so about rather than guess.
+- **Half of all outcomes are behind a dice roll** — 3,451 of 6,935. Each roll is
+  the game's own fraction (`176/256`, not the "68.8%" printed beside it) and each
+  is its own draw, so for a move whose conditions are all answered the score is
+  an **exact distribution**, and four of them give an exact chance of each move
+  being picked. That is a certainty about the dice in the same way a damage
+  range is, not the average this file refuses to take everywhere else. Roar's
+  page prints its own total — 12.5% nothing, 50% +2, 37.5% +4 — and the walk
+  reproduces it to the digit.
+
+Things the scrape turned up that were not obvious:
+
+- **The site scores the variable-type moves separately**, as `HP Dark`,
+  `Fire Ball` and so on — the same behaviour the switch AI shows, and which the
+  planner already models. They are kept under compound ids (`hiddenpower:dark`,
+  `weatherball:fire`) so the type survives; falling back to the base move would
+  score a rain-fed Weather Ball as a Normal one.
+- **Two of the site's own index links are broken** — `moveRoarofTime.html` and
+  `moveJudgment.html` 404, while `moveRoarOfTime.html` and `moveJudgement.html`
+  are real pages for two genuinely different moves. Corrected by a small table
+  rather than a clever regex.
+- **`doublesOpponent` and `doublesAlly` are both mapped to `TagStrategy`.** The
+  site splits the doubles logic in two where the flag table has one entry. That
+  is inference from the counts, not something either source states, and the
+  generator prints it every run so it stays visible until someone checks it
+  against a real doubles trainer.
+- The scraped pages are cached under `tools/.cache/` (13 MB, gitignored) so a
+  re-run costs one request rather than 465.
+
+**The evaluator is `src/js/planner-scoring.js`**, fed by `scoringFactsFor` in
+`planner-calc.js`, and shown by the ▁▄▇ button beside an AI-driven Pokémon's
+moves and in the turn editor.
+
+#### What it shows
+
+Settled against a mockup rather than in the abstract — `src/scoring-mockup.html`,
+gitignored beside `doubles-mockup.html` and built on the real stylesheets. The
+mockup still shows the older band-and-marker design.
+
+- **A ranked panel, off the card.** The collapsed card says nothing about
+  scoring. It already carries damage, type icons, health bars and the aim row,
+  and it is the thing that grew from 185px to 285px and started covering its
+  neighbours' buttons. Reading the AI is something you go and ask for.
+- **The verdict is the chance of being picked, not a score.** A raw score means
+  nothing on its own — it only matters against the other three moves. So the
+  panel leads with *"Stealth Rock 78% · Self-Destruct 22%"*, and each row's
+  tooltip carries the score, how it spreads across the rolls, and each module's
+  share.
+- **An unevaluable condition is not a dice roll.** "Does the target hold a King's
+  Rock" has no honest probability, so it is not given one. Each unknown is
+  assumed true in one scenario and false in another — the same answer everywhere
+  it is asked within a scenario — and the chance is shown as the lowest and
+  highest across them: *"Head Smash 14–100%"*. The bar is solid up to what the
+  move has in every scenario and light beyond it. The range still contains the
+  truth, and the panel gets less decisive rather than wrong.
+  - Bounded without enumerating the combinations across moves: a move's chance
+    only rises as its own score does and only falls as a rival's does, so its
+    lowest stochastic envelope against everyone else's highest bounds it from
+    below, and the reverse from above.
+- **A move is ruled out only at a certain 0%** — its best case cannot reach what
+  a rival is guaranteed. The same line the old band verdict drew, and the same
+  only-certainties rule the damage figures follow. Rounding never manufactures
+  one: a chance merely near 0 or 100 reads `<1%` or `>99%`.
+- **Ruled-out moves stay on the list**, dimmed. Hiding them would answer a
+  question the panel is not being asked; *"Roar cannot happen"* is part of what
+  you opened it for.
+- **A tie splits evenly.** The game picks at random among equal top scores, so
+  two moves level at the top are each 50% of that outcome — worked into the
+  chance rather than ordered by position.
+- **Scores are per target**, so a double grows a target column. Singles stay one
+  row per move.
+
+#### What the walk had wrong
+
+Found while building the chances, and each one made the old band *not contain
+the truth* — the one guarantee it existed to give:
+
+- **A gate is not an inline chance.** *"68.8% chance of score +2 and
+  terminate"* rolls the score only; the module ends either way. *"With a 78.1%
+  chance: no scoring change and terminate"* rolls whether the rule fires at all —
+  miss it and the walk carries on to the next rule. Read the first way, that
+  Acid Armor line is a rule that does nothing, and it was read that way: a
+  certain stop at 0 on every roll. 41 groups, and the five with no condition
+  (Stealth Rock, Spikes, Toxic Spikes, Tailwind, Gastro Acid) were skipped
+  outright — Stealth Rock claimed a +1 floor it does not have, which could rule
+  *out* a rival that can actually win. Recover at 75% HP read −3 to 0; it scores
+  +2 on 10.8% of rolls.
+- **A second outcome in the same block is a follow-on.** *"Score +1 and
+  continue"* then *"50% chance of score +1 and terminate"* under one condition is
+  one block carrying on, and the walker skipped the second line as having no
+  condition. 10 groups — Brine, Wring Out, Flail, Reversal, Protect, Detect,
+  Roar, Whirlwind, Me First, Trump Card. The generator now flags them
+  `follows: true`. Four more after a blank line (Defog, Fling, Sunny Day's
+  doubles module twice) have nothing on the page saying which block they belong
+  to, so they are left as an unknown rather than guessed.
+- **"No score change" didn't parse.** The generator matched only "No *scoring*
+  change"; the other spelling was long enough to be filed as commentary, so its
+  *terminate* went with it. Explosion, Self-Destruct and Memento's Basic module
+  says "the user has other living party members: no change and terminate" —
+  lost, the walk ran on into *"the target has other living party members: −10"*.
+  In almost any real fight, the planner said the AI **could not** explode.
+- **Your team never counted as a party.** `livingPartyMatesFor` looked up the
+  trainer's party, and your side has none, so *"the target has no other living
+  party members"* was true on every turn. With the other fixes in but this one
+  not, Roark's lead Bonsly read 60% Self-Destruct and **0% Stealth Rock** (−10 in
+  Basic); with your team counted, it is 78% Stealth Rock, 22% Self-Destruct.
+- **The type-list regex backtracked exponentially.** An empty separator let "or"
+  match inside words (N-*or*-mal), so a list that failed to match was retried every
+  way its letters could be cut. Six types took 20 seconds; Counter and Mirror
+  Coat ask about eight or nine, on a condition any Expert trainer reaches. The
+  tab would have frozen.
+
+Worth keeping from building the mockup: the panel wants **98px for a move name**,
+because `AncientPower` clips at the width the card's own move rows use. That the
+card cannot show these names in full is itself the argument for the panel having
+its own layout rather than reusing the card's.
+
+Two things the docs settle, and the evaluator respects both: the AI **never
+factors accuracy**, and it **does not know your moves until you use one**.
+
+The second shipped wrong at first — the rules asking whether you have Snatch or
+Feint were handed your whole moveset. They now read `seenMoves`, which the fold
+keeps per Pokémon, and the decomp settles what counts as seen:
+
+- **A move is recorded once its user gets as far as using it.**
+  `BattleControllerPlayer_BeforeMove` marks it after sleep, flinching and
+  paralysis have let it through, and *before* accuracy, Protect or the type chart
+  are checked. So a miss, a blocked hit and a Fake Out that fails all give the
+  move away; a flinch doesn't. `TrainerAI_RecordLastMove` copies it into the AI's
+  memory when it next picks a move.
+- **Leaving the field forgets them all** — `BattleAI_ClearKnownMoves`, from both
+  the switch and the faint cleanup — so it clears in `leaveField` with the boosts.
+- **A turn marked *didn't act* is a maybe.** That toggle covers a miss, which is
+  seen, and a full paralysis, which isn't, so the rule is left unknown rather than
+  guessed. The same goes for a Quick Claw holder let through a denial it might
+  not have beaten.
 
 ### Held items that go off
 
@@ -877,6 +1309,71 @@ to **420 fights with nothing unresolved**:
   there are no School Kid trainers in `sets.js` at all. Listed as a known omission
   so the generator's report stays empty and a genuinely new mismatch stands out.
 
+### Starting over
+
+A **Reset planner…** link at the foot of the line list, quieter than the help
+link above it and last in the sidebar, because it is the only control there that
+destroys anything.
+
+- **Three things, ticked separately**, since they cost very different amounts to
+  rebuild: the lines (a run's worth of planning), your team (a few clicks), and
+  the Box (the run itself, and the Box tab's list as much as the planner's).
+  Lines and team are ticked by default and the Box is not.
+- **Each row says what it holds** — *"1 line, 0 beaten"*, *"9 Pokémon"* — and a
+  row with nothing in it is disabled rather than offered, so the dialog doubles
+  as a statement of what there is to lose.
+- **A backup button sits in the same dialog**, writing every key the planner
+  keeps into one `planner-backup-<date>.json` exactly as stored, so restoring is
+  putting three strings back. It is in the dialog rather than in the docs
+  because it is the only thing between a misread checkbox and a lost run.
+- **The confirm lists what was ticked** rather than asking "are you sure" about
+  a dialog you can no longer see.
+- **It reloads afterwards.** The Box tab holds its own copy of the sets in the
+  DOM and the strips and open line are derived from what just went; rebuilding
+  that by hand is a list nobody keeps up to date. The tab lives in the URL hash,
+  so the planner is still the planner on the way back.
+
+And a **Reset plan** button in the toolbar, beside Blind, for the line you have
+open — the common case, since a fight usually gets re-planned after you lose it
+rather than the whole run being thrown away.
+
+- **The line survives, blank.** Same trainer, same name, same notes, same place
+  in the list; only the turns and branches go, and the canvas scrolls back to
+  the top left.
+- **The beaten tick stays.** It records that you won the fight, which is a fact
+  about the run rather than part of the plan — clearing it would take a split's
+  progress with it the moment you re-plan one fight inside it.
+- **It says how much it is about to throw away** — *"Clear 5 turns from the line
+  for Leader Roark?"* — because a plan you spent an hour on and one you started
+  by mistake look identical on the button.
+- **Disabled on a line with no turns**, rather than live and refusing.
+
+### Gender
+
+Shown as a ♂ or ♀ beside the name on every card — the turn card and both team
+strips — because Attract, Captivate and Rivalry all turn on it and none of them
+says so on the move.
+
+- **The species decides first.** A genderless species is genderless whatever its
+  set says, and a single-gender species can only be the one: 20 trainer sets in
+  this game's data give a Male Arceus, Darkrai, Giratina or Bronzor, and the game
+  ignores that. `genderOf` is the one reading of it, used by the card, by calc
+  and by the model alike — calc was being handed those sets' "Male" for Rivalry.
+- **Nothing is shown for a genderless Pokémon**, since there is nothing to know.
+  A Box entry that could be either but was never set shows a **"?"** — the one
+  case the planner cannot read these moves for, and one click in the Box to fix.
+- **Attract and Captivate only reach the other gender**, and are now enforced
+  rather than noted. The move-effects generator used to carry Attract's condition
+  as text *because the planner didn't check it*; it emits an `oppositeGender`
+  flag instead, and Captivate — whose text says the same thing — gets it too. A
+  same-gender or genderless target takes neither the infatuation nor the Special
+  Attack drop.
+- **An unknown gender lets them land.** Only a certain "no" stops the move —
+  either side genderless, or both known and the same — the same way a roll that
+  might not kill leaves a move landing. The move-scoring rule that asks about
+  gender tries an unknown both ways. calc has no "unknown", so an unset gender
+  goes to it as none, which leaves Rivalry neutral rather than guessing the 25%.
+
 ### Filling a turn
 
 Four ways in, because the strips can be folded away:
@@ -960,29 +1457,7 @@ costs is the Flying resistances and the Ground immunity.
 
 ---
 
-## Next: history across attempts
-
-Resetting is the normal loop in a Nuzlocke, not an edge case. A planner that
-forgets everything on reset throws away exactly the knowledge that makes the
-next attempt better.
-
-Lines currently live-update from the Box — right for a run in progress, wrong
-for a past attempt. The resolution: **a line is live while its Pokémon still
-exist, and freezes when they don't.**
-
-- Store a light snapshot beside the reference (species, level, moves, item,
-  ability, nature). Resolve live first; fall back to the snapshot and mark the
-  line **historical** — read-only and dimmed.
-- Editing a historical line should be blocked, offering **"Duplicate into
-  current run"** instead, so a past attempt stays an honest record of what was
-  actually done.
-- Optional later: **runs** as a browsable concept, so attempts can be compared
-  side by side. The snapshot already preserves the information; this only
-  organises it.
-
----
-
-## Then: making the builder pleasant
+## Next: making the builder pleasant
 
 - **Rename and duplicate a line** — "Roark, safe" vs "Roark, risky" is how you
   compare plans; today both would just read "Leader Roark".
@@ -1007,6 +1482,41 @@ Each of these wants a line in the "How to use" page once it lands.
   is a validation warning too, and only left out because it needs badge data the
   planner doesn't read yet.
 - **Canvas zoom** and keyboard shortcuts (add turn, delete, Esc to close).
+
+### What is still open in move scoring
+
+Built — see **AI move scoring** above — but two things in it are inference or
+left unknown, and both want checking against the real game rather than more
+reading:
+
+- **`doublesOpponent` and `doublesAlly` both map to `TagStrategy`.** Inferred from
+  the counts; the generator prints it every run. Settle it against a real doubles
+  trainer — Twins Liv & Liz.
+- **Four follow-on outcomes after a blank line** — Defog, Fling, and Sunny Day's
+  doubles module twice — have nothing on the page saying which block they belong
+  to, so the walk treats them as unknown and those moves read wider than they are.
+
+### Mid-turn switching
+
+Distinct from the post-KO routine, and the doc is explicit that it runs *before*
+any move scoring — switch AI is the boss of move AI, and if it wants the switch
+the move never happens. It is one algorithm of eight checks in a fixed order.
+
+What makes it a different kind of problem is that **almost every check is a dice
+roll**: ⅔ for Wonder Guard and the no-damaging-moves check, ½ for ability
+absorbing and the immune switch, ⅓ for the resist switch, and a 90%-per-move
+stacking chance to stop once the AI holds a super-effective move. Only three
+things are certain — the impossible-switch check, Perish Song (*"no randomness
+involved"*), and that **+4 or more positive stat stages means it never switches**.
+
+So this cannot be a prediction, and it should not pretend to be one. It is a
+**risk flag**: a badge on the turn naming which check can fire and roughly how
+likely, so a plan knows it has a fork nobody has drawn yet. The odds are the
+reason to branch, not a number to rely on.
+
+Worth knowing before building it: the doc's own conclusion is that **going first
+avoids nearly all of it**, since the immune and resist switches both require the
+AI to have acted first.
 
 ### The charge turn, and the semi-invulnerable one
 

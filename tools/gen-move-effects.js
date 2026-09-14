@@ -227,7 +227,13 @@ const SCREENS = {
  * table rather than here.
  */
 const SIDE_CONDITIONS = {
-    tailwind: {field: "isTailwind", turns: 3}
+    tailwind: {field: "isTailwind", turns: 3},
+    /*
+     * "Protects the user's side from status conditions for 5 turns" - a real
+     * thing to plan around, and the first thing the AI checks before trying to
+     * status you: 42 of its scoring rules ask about it.
+     */
+    safeguard: {field: "isSafeguard", turns: 5}
 };
 
 /*
@@ -308,13 +314,11 @@ Object.values(MOVES).forEach(function(move) {
     var losesType = parseSelfLosesType(effect);
     if (losesType) entry.selfLosesType = losesType;
     /*
-     * Attract only lands between opposite genders. That is knowable rather than
-     * random, so it is modelled - but the planner doesn't check it, so the
-     * condition is carried as text the way Curse and Rest already do.
+     * Attract and Captivate only reach a Pokémon of the other gender - "if the
+     * target is of the opposite gender". That is knowable rather than random,
+     * so it is carried as a flag the planner enforces, not as a note beside it.
      */
-    if (volatiles && volatiles.indexOf("attract") >= 0) {
-        entry.conditional = "Only lands if the two are of opposite genders.";
-    }
+    if (/opposite gender/i.test(effect)) entry.oppositeGender = true;
 
     /*
      * Hazard removal. Defog is the only route in this game - Rapid Spin is one

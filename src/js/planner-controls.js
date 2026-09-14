@@ -124,18 +124,30 @@ function renderLineList() {
         }
         var open = OPEN_GROUPS[group] || group === openGroup;
         var done = lines.filter(function(l) { return Object.keys(l.nodes).length; }).length;
+        var won = lines.filter(function(l) { return l.won; }).length;
+        var allWon = won === lines.length;
 
         list.append(
-            `<li class="planner-line-group">
+            `<li class="planner-line-group${allWon ? " won" : ""}">
                 <details class="planner-group" data-group="${escapeAttr(group)}"${open ? " open" : ""}>
-                    <summary title="${escapeAttr(`${lines.length} line${lines.length === 1 ? "" : "s"}, ${done} with turns in.`)}">
+                    <summary title="${escapeAttr(
+                        `${won} of ${lines.length} beaten. ${done} ${done === 1 ? "line has" : "lines have"} turns in.`)}">
+                        <button class="planner-won-split${allWon ? " won" : ""}" data-group="${escapeAttr(group)}"
+                                title="${escapeAttr(allWon
+                                    ? `Mark the whole ${group} split as not beaten yet.`
+                                    : `Mark every fight in the ${group} split as beaten.`)}">&#10003;</button>
                         <span class="planner-group-name">${group}</span>
-                        <span class="planner-group-count">${done}/${lines.length}</span>
+                        <span class="planner-group-count">${won}/${lines.length}</span>
                     </summary>
                     <ul class="planner-group-lines">
                         ${lines.map(function(line) {
                             return `<li class="planner-line-item${line.id === CURRENT_LINE ? " selected" : ""}${
-                                Object.keys(line.nodes).length ? "" : " blank"}" data-line="${line.id}">
+                                Object.keys(line.nodes).length ? "" : " blank"}${
+                                line.won ? " won" : ""}" data-line="${line.id}">
+                                <button class="planner-won-line${line.won ? " won" : ""}"
+                                        title="${escapeAttr(line.won
+                                            ? `${line.name} is marked beaten. Click to undo.`
+                                            : `Mark ${line.name} as beaten.`)}">&#10003;</button>
                                 <span class="planner-line-name">${line.name}</span>
                                 <button class="planner-delete-line" title="Delete this line">&times;</button>
                             </li>`;
@@ -151,7 +163,36 @@ function renderLineList() {
 
     $(".planner-line-item").on("click", function(e) {
         if ($(e.target).hasClass("planner-delete-line")) return;
+        if ($(e.target).hasClass("planner-won-line")) return;
         selectLine($(this).attr("data-line"));
+    });
+
+    $(".planner-won-line").on("click", function(e) {
+        e.stopPropagation();
+        var id = $(this).closest(".planner-line-item").attr("data-line");
+        setLineWon(id, !lineWon(id));
+        renderLineList();
+    });
+
+    /*
+     * The split's own toggle. Inside a <summary>, so the default action has to
+     * go or clicking it would fold the group as well as mark it - which is
+     * exactly the thing you don't want when ticking off a fight.
+     *
+     * Sets every line to match: all beaten when any is still outstanding, and
+     * all clear when the whole split is already done, so one button both marks
+     * a finished split and undoes a mistake.
+     */
+    $(".planner-won-split").on("click", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var group = $(this).attr("data-group");
+        var lines = Object.values(LINES).filter(function(l) {
+            return splitOfTrainer(l.trainer) === group;
+        });
+        var makeWon = lines.some(function(l) { return !l.won; });
+        lines.forEach(function(l) { setLineWon(l.id, makeWon); });
+        renderLineList();
     });
     $(".planner-delete-line").on("click", function() {
         var id = $(this).closest(".planner-line-item").attr("data-line");
@@ -317,7 +358,7 @@ function renderTrainerParty(strip, trainer, cls, attr, ownerIndex) {
             `<span class="${cls} planner-card" ${attr}="${speciesName}" data-owner="${ownerIndex}"
                    title="${speciesName} - ${trainer}">
                 <img class="planner-card-sprite" src="${GAME.sprites.species(species)}" alt="${speciesName}">
-                <span class="planner-card-name">${species.name}</span>
+                <span class="planner-card-name">${species.name}${renderGender(genderOf(speciesName, set && set.gender))}</span>
                 <span class="planner-card-meta">${set ? `Lv. ${set.level}` : ""}</span>
                 ${renderCardAbility(set ? set.ability : "")}
                 ${renderCardItem(item)}
@@ -431,7 +472,7 @@ function renderMonStrip(strip, roster, hint, compact) {
         strip.append(
             `<span class="planner-mine planner-card${entry.dead ? " dead" : ""}" data-mon="${entry.ref}" title="${title}">
                 <img class="planner-card-sprite" src="${GAME.sprites.species(species)}" alt="${entry.species}">
-                <span class="planner-card-name">${entry.nickname || species.name}</span>
+                <span class="planner-card-name">${entry.nickname || species.name}${renderGender(genderOf(entry.species, entry.set.gender))}</span>
                 <span class="planner-card-meta">Lv. ${level}</span>
                 ${renderCardAbility(entry.set.ability)}
                 ${renderCardItem(item, true)}
@@ -501,11 +542,27 @@ function renderLine() {
     $(".planner-workspace").removeClass("hide");
     $(".planner-placeholder").addClass("hide");
     $(".planner-trainer-name").text(line.trainer);
+    /*
+     * Nothing to clear on a line with no turns, and a button that looks live
+     * on a blank plan is a promise it cannot keep.
+     */
+    var turns = Object.keys(line.nodes).length;
+    $("#planner-reset-line")
+        .prop("disabled", !turns)
+        .attr("title", turns
+            ? `Clear all ${turns} turn${turns === 1 ? "" : "s"} from this line, leaving it blank. The line itself stays.`
+            : "This line has no turns to clear yet.");
 
     renderFoeParty();
     renderTeamStrip();
     // Re-applied because both strips are rebuilt above.
     applyPartiesFold();
+
+    /*
+     * Predicted switch-ins first, since they change the states below them - and
+     * here because every edit that changes derived state ends in a render.
+     */
+    if (refreshPredictedSwitchIns(line)) saveLines();
 
     /*
      * Every turn's state, computed once and parents-first. Cleared and rebuilt on
@@ -634,6 +691,23 @@ function renderLevel(line, node, state, side, slot) {
                      title="${escapeAttr(hint)}">Lv.${shown}</button>`;
 }
 
+/*
+ * A gender mark beside a name. Worth the few pixels because Attract, Captivate
+ * and Rivalry all turn on it, and none of them says so on the move itself.
+ *
+ * A genderless Pokémon gets nothing - there is nothing to know. A Box entry that
+ * could be either but was never set gets a "?", since that is the one case where
+ * the planner cannot read those moves and you can fix it in a click.
+ */
+function renderGender(gender) {
+    if (gender === "M") return `<span class="planner-gender male" title="Male">&#9794;</span>`;
+    if (gender === "F") return `<span class="planner-gender female" title="Female">&#9792;</span>`;
+    if (gender === "?") {
+        return `<span class="planner-gender unknown" title="Gender not set - Attract, Captivate and Rivalry can't be read for it. Set it in the Box.">?</span>`;
+    }
+    return "";
+}
+
 function renderSlots(line, node, state, side, slots, format) {
     var out = "";
     for (var i = 0; i < slots; i++) {
@@ -665,7 +739,7 @@ function renderSlots(line, node, state, side, slots, format) {
             ${species
                 ? `<img class="planner-sprite" src="${GAME.sprites.species(species)}" alt="">`
                 : `<span class="planner-node-blank">?</span>`}
-            <span class="planner-slot-name">${label}${sub}</span>
+            <span class="planner-slot-name">${label}${ref ? renderGender(slotGender(line, node, side, i)) : ""}${sub}</span>
             ${ref ? renderHp(mon) : ``}
             ${ref ? renderItemTrigger(line, node, state, side, i) : ``}
             ${ref ? renderSpeed(line, node, state, side, i, slots) : ``}
@@ -799,7 +873,8 @@ function renderSlotPicker(line, node, state, side, slot, format, report) {
      */
     var trap = trapReason(line, node, state, side, slot);
     return `<div class="planner-move-column${isPartner ? " ai" : ""}" data-side="${side}" data-slot="${slot}">
-        <span class="planner-move-column-title">${title}${isPartner ? " (AI)" : ""}</span>
+        <span class="planner-move-column-title">${title}${isPartner ? " (AI)" : ""}${
+            renderScoringTrigger(line, node, side, slot)}</span>
         ${renderMoveList(line, node, state, moves, moveAt(node, side, slot), side, slot, report)}
         ${renderAimPicker(line, node, side, slot, format, report)}
         ${renderSelfSwitch(line, node, side, slot)}
@@ -991,11 +1066,29 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
          * turns.
          */
         var damage = plannerDamage(line, node, state, side, slot, name, false, drawnBy);
+        /*
+         * Hidden Power and a Weather Ball in weather are neither the type nor the
+         * power the table lists, and the card was showing both wrong. Resolved
+         * per turn rather than once: weather changes, so the same Weather Ball is
+         * a different move two turns later.
+         */
+        var resolved = resolvedMoveFor(name, activeHolder(line, node, side, slot), state);
+        var shownType = resolved ? resolved.type : move.type;
+        var shownPower = resolved ? resolved.power : move.basePower;
+        /*
+         * A move the game rolls the power for has no single figure to show, and
+         * the table stores Present at 1 - which is not a small power, it is a
+         * placeholder. The span is what is true about it.
+         */
+        var rolled = typeof powerSpanFor === "function" ? powerSpanFor(name) : null;
+        if (rolled) shownPower = `${rolled.min}–${rolled.max}`;
+
         var figure = damage
             ? `<span class="planner-move-dmg${damageClass(damage)}${stopped || blocked ? " denied" : ""}">${damageText(damage)}</span>`
-            : `<span class="planner-move-bp">${move.category === "status" ? "—" : move.basePower}</span>`;
+            : `<span class="planner-move-bp">${move.category === "status" ? "—" : shownPower}</span>`;
 
-        var tooltip = `${move.name} — ${move.category}, ${move.basePower || 0} BP, ${move.accuracy || "—"}% acc`;
+        var tooltip = `${move.name}${resolved ? ` (${resolved.label})` : ""} — ${move.category}, ${shownPower || 0} BP, ${move.accuracy || "—"}% acc`;
+        if (resolved) tooltip = `${resolved.why}\n\n${tooltip}`;
         /*
          * The calculator's own sentence, which names every modifier it applied -
          * and already ends with the KO chance, so that isn't repeated here.
@@ -1008,6 +1101,14 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
          */
         if (damage && damage.hits && damage.hits.max > damage.hits.min) {
             tooltip = `Hits ${damage.hits.min}-${damage.hits.max} times, so the range covers ${damage.hits.min} hits on the worst roll up to ${damage.hits.max} on the best. A KO is only claimed if ${damage.hits.min} hits would do it.\n\n${tooltip}`;
+        }
+        /*
+         * A power the game rolls for itself is a second uncertainty on top of
+         * the damage roll, the same as a hit count - and Present carries a third
+         * on top of that, since a fifth of the time it heals what it hit.
+         */
+        if (damage && damage.mayHeal) {
+            tooltip = `Present rolls its power: 40 BP 40% of the time, 80 BP 30%, 120 BP 10% — so the range runs from the weakest on its worst roll to the strongest on its best. The calculator sentence below is the 40 BP end. The other 20% it heals the target ${damage.mayHeal} HP instead, which is why no KO is claimed here.\n\n${tooltip}`;
         }
         /*
          * What the other side is doing about it, said before the numbers because
@@ -1078,7 +1179,7 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
 
         return `<span class="planner-move ${side}${isSelected ? " selected" : ""}" data-move="${name}" data-side="${side}" data-slot="${slot}"
                       title="${escapeAttr(tooltip)}">
-            <img src="${GAME.sprites.type(move.type)}" alt="">
+            <img src="${GAME.sprites.type(shownType)}" alt="">
             <span class="planner-move-name">${move.name}</span>
             ${figure}
             ${NO_DROP_MOVES.indexOf(move.id) >= 0 ? `<span class="planner-nodrop" title="Platinum Kaizo removes this move's stat drop - it has no drawback here.">nd</span>` : ``}
@@ -1348,6 +1449,12 @@ function renderStateBar(state) {
         parts.push(`<span class="planner-field trickroom" title="${escapeAttr(
             "Trick Room: the slower Pokémon moves first inside each priority bracket. A Quick Attack still goes before a Tackle - only the speed comparison is flipped.\n\nIn this game it lasts until the move is used again rather than running out after five turns."
         )}">Trick Room</span>`);
+    }
+    // Gravity sits beside it for the same reason - it is the field's, not a side's.
+    if (state.gravity) {
+        parts.push(`<span class="planner-field gravity" title="${escapeAttr(
+            "Gravity: everything on the field is grounded. Ground moves hit Flying types and Levitate, and both spike layers reach everything.\n\nIn this game it lasts the rest of the battle rather than five turns, and a second Gravity does nothing.\n\nIts accuracy multiplier and its move bans are not modelled."
+        )}">Gravity</span>`);
     }
     /*
      * A Wish in the air. Shown against the side because it belongs to the slot
@@ -1721,9 +1828,294 @@ function openNodeEditor(nodeId) {
                                     data-volatile="${id}" title="${VOLATILES[id].name}">${VOLATILES[id].short}</button>`;
                 }).join("")
             }</span>
+            ${renderScoringPanel(line, node, inherited, s.side, s.slot)}
         </div>`;
     }).join(""));
     $(".planner-edit-note").val(node.note || "");
+}
+
+/*
+ * What the AI is weighing, for a slot it controls.
+ *
+ * Only in the editor, and only on that slot's own tab. The card says nothing
+ * about scoring: it already carries damage, type icons, health bars and the aim
+ * row, and it is the thing that grew from 185px to 285px and started covering
+ * its neighbours' buttons. Reading the AI is something you go and ask for.
+ *
+ * The verdict is the chance of each move being picked rather than its score,
+ * because a raw score means nothing on its own - it only matters against the
+ * other three moves, and only insofar as it says which one gets picked. The
+ * score is still there, in each row's tooltip, for when you want the why.
+ */
+function renderScoringPanel(line, node, state, side, slot) {
+    // Your own Pokemon are yours to decide; a tag partner is not.
+    if (side === "you" && !isPartnerSlot(line, side, slot)) return "";
+    var target = targetsOf(node, side, slot, moveAt(node, side, slot), aimAt(node, side, slot))[0] || 0;
+
+    var scored = null;
+    try {
+        scored = scoreMovesFor(line, node, state, side, slot, target);
+    } catch (e) {
+        // One bad set shouldn't take the editor down with it.
+        return "";
+    }
+    if (!scored) return "";
+
+    if (!scored.modules.length) {
+        return `<span class="planner-panel-label">What they'll pick</span>
+            <p class="planner-hint">${escapeAttr(scored.trainer)} has no AI flags set, so nothing scores its moves — it picks at random.</p>`;
+    }
+
+    /*
+     * Two names at most in the heading; the rows underneath carry the rest. A
+     * heading where every live move reads "0–100%" says nothing a list of names
+     * wouldn't, so that case says so in words instead.
+     */
+    var winners = scored.winners;
+    var verdict = scored.certain ? winners[0].name
+        : winners.every(function(w) { return w.chanceLo === 0 && w.chanceHi === 1; }) ? "Too close to call"
+        : winners.slice(0, 2).map(function(w) {
+            // Kept whole, so a wrap falls between moves and never inside "0–86%".
+            return `<span class="planner-score-pick">${w.name} ${scoringChanceText(w)}</span>`;
+        }).join(" · ") + (winners.length > 2 ? " · …" : "");
+
+    var rows = scored.rows.map(function(r) {
+        /*
+         * One bar on a 0-100% scale, in two parts: solid up to the chance the
+         * move has in every scenario, lighter on to the most it could have. An
+         * exact chance is all solid. A sliver still has to be visible, or a 1%
+         * move looks the same as a ruled-out one - which is the one difference
+         * the panel exists to show.
+         */
+        var sure = r.chanceLo * 100;
+        var most = r.candidate ? Math.max(1.5, r.chanceHi * 100) : 0;
+        var bars = (sure ? `<span class="planner-score-bar sure" style="left:0;width:${sure.toFixed(1)}%"></span>` : "") +
+            (most > sure ? `<span class="planner-score-bar maybe"
+                  style="left:${sure.toFixed(1)}%;width:${(most - sure).toFixed(1)}%"></span>` : "");
+        return `<span class="planner-score-row${r.candidate ? "" : " ruled-out"}"
+                      title="${escapeAttr(scoringRowTitle(r))}">
+            <span class="planner-score-name"><img src="${GAME.sprites.type(r.type)}" alt="">${r.name}</span>
+            <span class="planner-score-track">${bars}</span>
+            <span class="planner-score-value">${scoringChanceText(r)}</span>
+        </span>`;
+    }).join("");
+
+    return `<span class="planner-panel-label" title="${escapeAttr(
+        "The chance of each move being the one they pick, most likely first.\n\n" +
+        "Most of the game's scoring rules are dice rolls with fixed odds, and the AI takes the highest " +
+        "score and breaks a tie at random - so where every condition is known, this is exact.\n\n" +
+        "Where one isn't (a held item, say), the planner tries it both ways and shows the lowest and highest " +
+        "chance: the solid part of a bar is what the move has either way, the light part what it could have. " +
+        "0% means it cannot be picked however the rolls land.\n\n" +
+        "Modules running for this trainer: " + scored.modules.join(", "))}">What they'll pick &mdash; ${verdict}</span>
+        <span class="planner-scoring">${rows}</span>`;
+}
+
+/*
+ * A chance as the panel writes it. Rounding must never manufacture a certainty:
+ * 0% and 100% are claims - "cannot happen", "always happens" - so a chance
+ * that is merely close to either reads "<1" or ">99" instead.
+ */
+function scoringPercent(p) {
+    if (p === 0) return "0";
+    if (p === 1) return "100";
+    if (p < 0.005) return "<1";
+    if (p > 0.995) return ">99";
+    return String(Math.round(p * 100));
+}
+
+function scoringChanceText(row) {
+    var lo = scoringPercent(row.chanceLo);
+    var hi = scoringPercent(row.chanceHi);
+    return (lo === hi ? lo : lo + "–" + hi) + "%";
+}
+
+// Everything behind a row's number: the score, how it spreads, and what the
+// planner had to assume to get there.
+function scoringRowTitle(r) {
+    var out = [r.name];
+    out.push(r.chanceLo === r.chanceHi
+        ? "Picked " + scoringPercent(r.chanceLo) + "% of the time."
+        : "Picked " + scoringPercent(r.chanceLo) + "% to " + scoringPercent(r.chanceHi) + "% of the time, " +
+          "depending on what the planner can't read.");
+    out.push("");
+    out.push("Score " + (r.lo === r.hi ? scoringSigned(r.lo) : scoringSigned(r.lo) + " to " + scoringSigned(r.hi)));
+    if (r.dist && Object.keys(r.dist).length > 1) {
+        out.push(Object.keys(r.dist).map(Number).sort(function(a, b) { return b - a; }).map(function(s) {
+            return "  " + scoringSigned(s) + " on " + (r.dist[s] * 100).toFixed(1) + "% of rolls";
+        }).join("\n"));
+    }
+    r.breakdown.forEach(function(b) {
+        out.push("  " + b.module + " " + (b.lo === b.hi ? scoringSigned(b.lo)
+            : scoringSigned(b.lo) + " to " + scoringSigned(b.hi)));
+    });
+    if (r.unknowns.length) {
+        out.push("");
+        out.push("Tried both ways:");
+        r.unknowns.slice(0, 4).forEach(function(u) { out.push("  " + u.replace(/^If /, "")); });
+        if (r.unknowns.length > 4) out.push("  … and " + (r.unknowns.length - 4) + " more");
+    }
+    if (r.capped) out.push("\nToo many unknowns to bound - read as anywhere from 0% to 100%.");
+    if (!r.scored) out.push("\nNo scoring data for this move.");
+    return out.join("\n");
+}
+
+function scoringSigned(value) {
+    return (value > 0 ? "+" : value < 0 ? "−" : "") + Math.abs(value);
+}
+
+/*
+ * Scores stay off the card, and it is worth saying why they came back off.
+ *
+ * They were tried there - a small chip between a move name and its damage -
+ * and the row has no third column to give: "Bug Bite" came out as "Bug...".
+ * A number squeezing out the name of the move it describes is a bad trade, and
+ * a raw score reads as noise beside a damage figure anyway, since it means
+ * nothing except against its three siblings. Comparing them is the panel job.
+ *
+ * It also cost a full scoring pass per foe column per card on every render,
+ * for something the card could not fit.
+ */
+
+/*
+ * The way into the scoring from the card: one small button beside the name of a
+ * Pokemon the AI is driving.
+ *
+ * A button rather than the panel itself, because the card has no room for it -
+ * the panel wants 340px against the card's 274px, and the card is already the
+ * thing that grew from 185px to 285px and started covering its neighbours'
+ * buttons. Reading the AI is something you go and ask for; this is the asking.
+ */
+function renderScoringTrigger(line, node, side, slot) {
+    if (side === "you" && !isPartnerSlot(line, side, slot)) return "";
+    if (!monAt(node, side, slot)) return "";
+    if (typeof MOVE_SCORING === "undefined") return "";
+    /*
+     * Ascending bars, because that is what the panel behind it is - a bar per
+     * move. Checked against the font rather than chosen by eye: the tidier
+     * candidates for this (U+25A6, U+2637) are both tofu here.
+     */
+    return `<button class="planner-scoring-btn" data-side="${side}" data-slot="${slot}"
+                    title="What the AI is weighing this turn, and which move it can still pick."
+            >&#9601;&#9604;&#9607;</button>`;
+}
+
+/*
+ * The panel on its own, in the planner's own popup.
+ *
+ * Deliberately not the turn editor. That has status, stat stages, volatiles and
+ * a save button, none of which is what you asked for by pressing this - and it
+ * would be a form to dismiss rather than a thing to read.
+ */
+function openScoringPopup(nodeId, side, slot) {
+    var line = currentLine();
+    var node = line.nodes[nodeId];
+    if (!node) return;
+    var state = computeNodeState(line, nodeId);
+
+    var who = speciesAt(line, node, side, slot);
+    var panel = renderScoringPanel(line, node, state, side, slot);
+    if (!panel) {
+        panel = `<p class="planner-hint">Nothing to score here — this Pokémon has no moves the table knows.</p>`;
+    }
+
+    $("#planner-popup-container").html(`<fieldset class="planner-scoring-popup">
+        <legend align="center">${escapeAttr((who && who.name) || "Their move")}</legend>
+        ${panel}
+        <hr />
+        <span class="buttons">
+            <button id="planner-close-scoring" class="btn planner-btn">Close</button>
+        </span>
+    </fieldset>`).removeClass("hide").show();
+}
+
+/*
+ * Starting over - a new attempt, or a Box imported over the top of an old one.
+ *
+ * Three things can go and they are ticked separately, because they cost very
+ * different amounts to rebuild: the lines are a run’s worth of planning, the
+ * team is a few clicks, and the Box is the run itself and belongs to the Box tab
+ * as much as to this one. Each row says what it holds, and anything already
+ * empty is ticked out and disabled rather than offered.
+ *
+ * The backup sits in the same dialog rather than in the docs, because it is the
+ * only thing standing between a misread checkbox and a lost run.
+ */
+function openResetPopup() {
+    var lines = Object.values(LINES);
+    var won = lines.filter(function(line) { return line.won; }).length;
+    var team = teamKeys().length;
+    var box = boxRoster().length;
+
+    function row(id, label, count, holds, checked) {
+        return `<label class="${count ? "" : "empty"}">
+            <input type="checkbox" class="planner-reset-what" value="${id}"${
+                count && checked ? " checked" : ""}${count ? "" : " disabled"} />
+            ${label} <span class="planner-reset-count">— ${count ? holds : "nothing to clear"}</span>
+        </label>`;
+    }
+
+    $("#planner-popup-container").html(`<fieldset class="planner-reset-popup">
+        <legend align="center">Reset the planner</legend>
+        <p class="planner-hint">Pick what to clear. None of it can be undone, so take the backup
+            first if there is any chance you want it back. The page reloads afterwards.</p>
+        ${row("lines", "Lines", lines.length,
+            `${lines.length} line${lines.length === 1 ? "" : "s"}, ${won} beaten`, true)}
+        ${row("team", "Your team", team,
+            `${team} carried, back to the first six in the Box`, true)}
+        ${row("box", "The Box", box,
+            `${box} Pokémon, the same list the Box tab shows`, false)}
+        <hr />
+        <span class="buttons">
+            <button id="planner-reset-backup" class="btn planner-btn">Back up first</button>
+            <button id="planner-reset-go" class="btn planner-btn">Reset</button>
+            <button id="planner-reset-cancel" class="btn planner-btn">Cancel</button>
+        </span>
+    </fieldset>`).removeClass("hide").show();
+}
+
+/*
+ * Everything the planner keeps, in one file, exactly as it is stored - so
+ * restoring it is putting the three strings back rather than parsing anything.
+ * There is no server here past the static one, so it goes out as a blob.
+ */
+function downloadPlannerBackup() {
+    var stamp = new Date();
+    var data = {
+        savedAt: stamp.toISOString(),
+        lines: localStorage.lines || "{}",
+        customsets: localStorage.customsets || "{}",
+        plannerTeam: localStorage.plannerTeam || null
+    };
+    var url = URL.createObjectURL(new Blob([JSON.stringify(data)], {type: "application/json"}));
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = "planner-backup-" + stamp.toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    // Revoking straight away can cancel the save while it is still being written.
+    setTimeout(function() { URL.revokeObjectURL(url); }, 2000);
+}
+
+/*
+ * Clears what was ticked and reloads. The reload is what makes it honest: the
+ * Box tab holds its own copy of the sets in the DOM, and the team strips and
+ * every open line are derived from what just went - rebuilding all of that by
+ * hand is a list nobody keeps up to date. The tab lives in the URL hash, so the
+ * planner is still the planner on the way back.
+ */
+function applyPlannerReset(what) {
+    if (!what.length) return;
+    if (what.indexOf("lines") >= 0) {
+        // In memory too, so nothing left mid-render saves the old plans back.
+        LINES = {};
+        CURRENT_LINE = "";
+        localStorage.removeItem("lines");
+    }
+    if (what.indexOf("team") >= 0) localStorage.removeItem("plannerTeam");
+    if (what.indexOf("box") >= 0) localStorage.removeItem("customsets");
+    location.reload();
 }
 
 // What each side had coming into the turn being edited, so saving can record
@@ -2313,6 +2705,13 @@ function finishConnectToEmpty(e) {
     var edge = newEdge(CONNECTING.from, node.id, "always");
     line.edges[edge.id] = edge;
 
+    /*
+     * Only once the edge exists, because the new turn's state is inherited
+     * through it - and only then is there anything to notice a corpse in.
+     */
+    invalidateNodeStates();
+    fillPredictedSwitchIns(line, node.id);
+
     CONNECTING = null;
     $(".planner-canvas").removeClass("connecting");
     saveLines();
@@ -2725,6 +3124,13 @@ function initPlanner() {
             node.actions[slot] = {type: "move", value: current === move ? "" : move};
         } else {
             node.foeActions[slot] = {type: "move", value: moveAt(node, "them", slot) === move ? "" : move};
+            /*
+             * A U-turn is not optional about leaving, so the question of who
+             * replaces it arrives with the move rather than waiting to be asked.
+             * The picker is still there to say otherwise.
+             */
+            invalidateNodeStates();
+            fillSelfSwitchTarget(line, node.id, slot);
         }
         saveLines();
         // Both sides feed the state of every turn below this one.
@@ -2784,6 +3190,25 @@ function initPlanner() {
         renderLine();
     });
 
+    /*
+     * Clearing the open line rather than the whole planner. Sat beside Blind
+     * because it belongs to the fight you are looking at, and it says how much
+     * it is about to throw away - a plan you have spent an hour on and one you
+     * started by mistake look identical on the button.
+     */
+    $("#planner-reset-line").on("click", function() {
+        var line = currentLine();
+        if (!line) return;
+        var turns = Object.keys(line.nodes).length;
+        if (!turns) return;
+        if (!confirm(`Clear ${turns} turn${turns === 1 ? "" : "s"} from the line for ${line.name}?` +
+            "\n\nThe line stays, blank. There is no undo.")) return;
+        clearLine(line.id);
+        // The sidebar dims a line with no turns and counts them per split.
+        renderLineList();
+        renderLine();
+    });
+
     $("#planner-toggle-moves").on("click", function() {
         var line = currentLine();
         if (!line) return;
@@ -2794,9 +3219,54 @@ function initPlanner() {
         renderLine();
     });
 
-    // Dragging a card shouldn't start from its move list.
-    $(".planner-canvas").on("mousedown", ".planner-move, .planner-moves-toggle", function(e) {
+    // Dragging a card shouldn't start from its move list, or from its buttons.
+    $(".planner-canvas").on("mousedown", ".planner-move, .planner-moves-toggle, .planner-scoring-btn",
+        function(e) { e.stopPropagation(); });
+
+    // What the AI is weighing, opened from the card.
+    $(".planner-canvas").on("click", ".planner-scoring-btn", function(e) {
         e.stopPropagation();
+        openScoringPopup($(this).closest(".planner-node").attr("data-node"),
+            $(this).attr("data-side"), parseInt($(this).attr("data-slot"), 10) || 0);
+    });
+
+    $(document).on("click", "#planner-close-scoring", function() {
+        $("#planner-popup-container").hide().empty();
+    });
+
+    $(document).on("click", "#planner-reset", function() {
+        openResetPopup();
+    });
+
+    $(document).on("click", "#planner-reset-backup", function() {
+        downloadPlannerBackup();
+    });
+
+    $(document).on("click", "#planner-reset-cancel", function() {
+        $("#planner-popup-container").hide().empty();
+    });
+
+    /*
+     * The last word before anything goes, spelling out what was ticked rather
+     * than asking "are you sure" about a dialog the answer is no longer on.
+     */
+    $(document).on("click", "#planner-reset-go", function() {
+        var picked = $(".planner-reset-what:checked").map(function() {
+            return $(this).val();
+        }).get();
+        if (!picked.length) {
+            alert("Nothing is ticked, so there is nothing to clear.");
+            return;
+        }
+        var what = {
+            lines: "every line, with its branches and beaten ticks",
+            team: "which six you are carrying",
+            box: "the Box - every Pokémon you have caught"
+        };
+        if (!confirm("This clears:\n\n" + picked.map(function(id) {
+            return "  - " + what[id];
+        }).join("\n") + "\n\nThere is no undo. Reset?")) return;
+        applyPlannerReset(picked);
     });
 
     // Delegated, since the editor markup is rebuilt on every open.
@@ -2820,6 +3290,14 @@ function initPlanner() {
 
         edge.label = label;
         edge.condition = condition;
+        /*
+         * "You KO" turns a health band that straddled zero into a certainty, so
+         * this is the moment the turn below can be told who arrives - it could
+         * not be said when the branch was drawn, because the branch is what says
+         * it. Nothing happens on any other condition.
+         */
+        invalidateNodeStates();
+        fillPredictedSwitchIns(line, edge.to);
         saveLines();
         closeEdgeEditor();
         /*
