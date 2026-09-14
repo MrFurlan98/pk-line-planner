@@ -227,7 +227,13 @@ const SCREENS = {
  * table rather than here.
  */
 const SIDE_CONDITIONS = {
-    tailwind: {field: "isTailwind", turns: 3}
+    tailwind: {field: "isTailwind", turns: 3},
+    /*
+     * "Protects the user's side from status conditions for 5 turns" - a real
+     * thing to plan around, and the first thing the AI checks before trying to
+     * status you: 42 of its scoring rules ask about it.
+     */
+    safeguard: {field: "isSafeguard", turns: 5}
 };
 
 /*

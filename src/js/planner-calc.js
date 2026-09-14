@@ -242,7 +242,7 @@ function calcFieldFor(line, state, attacker) {
  * it exists, since Platinum Kaizo deletes a good number of moves outright and a
  * stale plan can still name one.
  */
-function calcMoveFor(moveName, holder, isCrit, hits, power) {
+function calcMoveFor(moveName, holder, isCrit, hits, power, flatPower) {
     var move = findMove(moveName);
     if (!move || move.category === "status") return null;
 
@@ -289,6 +289,15 @@ function calcMoveFor(moveName, holder, isCrit, hits, power) {
     if (power && power !== 1) {
         options.overrides = {basePower: basePower * power};
     }
+    /*
+     * A power the caller has worked out outright, rather than a multiplier: one
+     * end of a random-power move's band. It replaces the table's figure instead
+     * of scaling it, which is the only way to say "40" about a move the table
+     * stores at 1.
+     */
+    if (flatPower) {
+        options.overrides = {basePower: flatPower};
+    }
     return new calc.Move(calcGen(), name, options);
 }
 
@@ -315,6 +324,35 @@ function hitSpanFor(moveName) {
     if (Array.isArray(multi) && multi.length === 2) return {min: multi[0], max: multi[1]};
     if (multi > 1) return {min: multi, max: multi};
     return {min: 1, max: 1};
+}
+
+/*
+ * Moves whose base power the game rolls for itself, and which calc has no case
+ * for - so left alone they come out at the table's own power and read as a flat
+ * 0 on the card.
+ *
+ * Present is the only one this game still has. Straight off its dex text: 40 BP
+ * 40% of the time, 80 BP 30%, 120 BP 10% - and the remaining 20% it *heals* the
+ * target for a quarter of its maximum instead, which is why `healsPct` is here
+ * rather than in move_effects.js (the generator drops anything probabilistic on
+ * purpose, and rightly - but a band can hold what a single number cannot).
+ *
+ * Magnitude, the other one, is deleted in Platinum Kaizo and no set carries it.
+ */
+const RANDOM_POWER_MOVES = {
+    present: {powers: [40, 80, 120], healsPct: 25}
+};
+
+/*
+ * The lowest and highest power a move can land at, as {min, max}, or null for
+ * everything with a fixed one. The same shape as hitSpanFor, and used the same
+ * way: the bottom of the band from the bottom end, the top from the top.
+ */
+function powerSpanFor(moveName) {
+    var move = findMove(moveName);
+    var entry = move && RANDOM_POWER_MOVES[move.id];
+    if (!entry) return null;
+    return {min: entry.powers[0], max: entry.powers[entry.powers.length - 1], heals: entry.healsPct || 0};
 }
 
 /*
@@ -363,7 +401,14 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
 
     var holder = activeHolder(line, node, side, slot);
     var span = hitSpanFor(moveName);
-    var move = calcMoveFor(moveName, holder, isCrit, span.min > 1 ? span.min : 0, power);
+    /*
+     * A random power is a second band stacked on the roll, and it is read the
+     * same way as a hit count: the bottom end from the weakest power on its
+     * worst roll, the top from the strongest on its best.
+     */
+    var powers = powerSpanFor(moveName);
+    var move = calcMoveFor(moveName, holder, isCrit, span.min > 1 ? span.min : 0, power,
+        powers && powers.min);
     if (!move) return null;
 
     /*
@@ -403,8 +448,9 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
          * that isn't one whenever the move can stop short.
          */
         var top = result;
-        if (span.max > span.min) {
-            var wide = calcMoveFor(moveName, holder, isCrit, span.max, power);
+        if (span.max > span.min || (powers && powers.max > powers.min)) {
+            var wide = calcMoveFor(moveName, holder, isCrit, span.max, power,
+                powers && powers.max);
             if (wide) {
                 top = calc.calculate(calcGen(), attacker, defender, wide, field);
                 var topRange = top.range();
@@ -413,6 +459,14 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
         }
 
         var full = defender.maxHP();
+        /*
+         * Present's other face: a fifth of the time it heals what it was aimed
+         * at instead of hitting it. That cannot be folded into the damage band,
+         * which is a band of damage - so it travels beside it, widens the
+         * target's health upwards where the turn is applied, and is the reason a
+         * KO is never certain here however hard the move can land.
+         */
+        var mayHeal = powers && powers.heals ? Math.floor(full * powers.heals / 100) : 0;
         /*
          * What the move costs or gives back its own user.
          *
@@ -465,13 +519,15 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
              * For a 2-5 hit move `kills` is therefore a claim about *two* hits
              * on the worst roll, which is the only version of it that is safe.
              */
-            kills: range[0] >= left.max,
+            kills: !mayHeal && range[0] >= left.max,
             mayKill: range[1] >= left.min,
             // What the move does to its own user: [min, max] in real HP.
             recoil: recoil,
             recovery: recovery,
             // {min, max} times it lands; equal for everything that isn't 2-5.
             hits: span,
+            // Real HP the target may gain instead of losing any of this.
+            mayHeal: mayHeal,
             /*
              * The calculator's own full sentence, which already ends with the KO
              * chance - so that isn't pulled out separately until something needs
@@ -517,6 +573,52 @@ function effectivenessOf(moveName, defender) {
         var mult = row[capitalise(t)];
         return total * (mult === undefined ? 1 : mult);
     }, 1);
+}
+
+/*
+ * Whether the game's type-chart check stops a move against this target outright
+ * - "It doesn't affect..." - so that nothing it carries lands either.
+ *
+ * Which moves are checked is the game's own rule, from
+ * BattleControllerPlayer_CheckTypeChart: every damaging move aimed at somebody
+ * else, and Thunder Wave by name. No other status move is checked at all. So a
+ * Thunder Wave into a Sandshrew does nothing, while Glare, Stun Spore, Static
+ * and Body Slam's paralysis all still reach it - the type immunity belongs to
+ * the move, not to the status.
+ *
+ * Read the way the game's chart reads it: Levitate against Ground unless Mold
+ * Breaker or something has pinned the target down (Gravity, an Iron Ball, which
+ * also ground a Flying type), and Scrappy through a Ghost. Foresight and Miracle
+ * Eye would lift an immunity too, but nothing in a plan can put either on yet.
+ */
+function typeChartStops(line, node, state, side, slot, target, moveName) {
+    var move = findMove(moveName);
+    if (!move) return false;
+    if (move.category === "status" && move.id !== "thunderwave") return false;
+
+    var other = side === "you" ? "them" : "you";
+    var defender = calcPokemonFor(line, node, state, other, target);
+    var chart = (typeof calc !== "undefined" && calc.TYPE_CHART && calc.TYPE_CHART[calcGen()]) || null;
+    if (!defender || !chart) return false;
+
+    var holder = activeHolder(line, node, side, slot);
+    var resolved = resolvedMoveFor(moveName, holder, state);
+    var type = capitalise(resolved ? resolved.type : move.type);
+    var row = chart[type];
+    if (!row) return false;
+
+    var ability = toID((holder && holder.ability) || "");
+    var pinned = !!state.gravity || toID(defender.item || "") === GROUNDING_ITEM;
+    if (type === "Ground" && !pinned && ability !== "moldbreaker" &&
+        toID(defender.ability || "") === "levitate") return true;
+
+    return (defender.types || []).filter(function(t) { return t; }).some(function(t) {
+        var mult = row[capitalise(t)];
+        if (mult !== 0) return false;
+        if (ability === "scrappy" && (type === "Normal" || type === "Fighting")) return false;
+        if (pinned && type === "Ground" && capitalise(t) === "Flying") return false;
+        return true;
+    });
 }
 
 // calc's type chart is keyed by capitalised names; the dex stores them lowercase.
@@ -789,6 +891,39 @@ function switchDamage(line, node, state, set, defSide, defSlot, faintedSlot) {
     var defender = calcPokemonFor(line, node, state, defSide, defSlot);
     if (!attacker || !defender) return {damage: 0, move: ""};
 
+    /*
+     * But not its stat stages. The faint animation runs the game's
+     * CleanupFaintedMon, which puts every stage back to neutral, and the switch-in
+     * AI only asks later, from the replacement menu. Health, item and ability are
+     * left alone - which is why the zero-HP Torrent and the Mystic Water still
+     * count while a Dragon Dance does not.
+     *
+     * Caught on Youngster Dallas: a Totodile charmed twice by a Luvdisc and then
+     * Dragon Dancing fell at -3 Attack, which made its Bite from the corpse a 3
+     * against Water Pulse's 6 and named Whismur. The game had reset it to +0 and
+     * sent Treecko.
+     *
+     * Only for a corpse. A U-turn asks the same question of a Pokémon that is
+     * still standing, and nothing has reset its stages.
+     */
+    if (isFainted(monState(state, deadSide, monAt(node, deadSide, faintedSlot)))) {
+        Object.keys(attacker.boosts).forEach(function(stat) { attacker.boosts[stat] = 0; });
+    }
+    // The same cleanup has run on yours, if it fell too - see predictSwitchIn.
+    if (isFainted(monState(state, defSide, standingAt(node, defSide, defSlot)))) {
+        Object.keys(defender.boosts).forEach(function(stat) { defender.boosts[stat] = 0; });
+    }
+
+    /*
+     * Life Orb and the Metronome item are not in it either, corpse or not. The
+     * routine calls the game's base damage function and its type-chart step and
+     * nothing after them, and those two are applied after - so they never touch
+     * this number, while Expert Belt, which lives inside the type-chart step,
+     * does. calc applies both, and 154 trainer sets carry a Life Orb, so every
+     * one of those fainting read each candidate's damage 30% high.
+     */
+    if (/^(life orb|metronome)$/i.test(attacker.item || "")) attacker.item = undefined;
+
     var holder = activeHolder(line, node, deadSide, faintedSlot);
     var field = calcFieldFor(line, state, deadSide);
     var best = {damage: 0, move: "", raw: 0};
@@ -809,6 +944,29 @@ function switchDamage(line, node, state, set, defSide, defSlot, faintedSlot) {
          */
         var move = calcMoveFor(moveName, holder, false, 1, 0);
         if (!move) return;
+        /*
+         * Table power, whatever the situation. The routine calls the game's
+         * damage function with no power of its own, and that function has no
+         * move-specific cases at all - so a Brine is 65 against a Pokémon on 1
+         * HP, a Facade 70 from a burned corpse, and a Water Spout its full 150
+         * from one on zero HP, where calc would read it at 1.
+         *
+         * calc keys all of these off the move's name, and an override on the
+         * name survives its clone - so renaming the move for this one question
+         * leaves type, category and flags alone and falls through to the table.
+         *
+         * Weather Ball is the one left as calc has it: in the game its power and
+         * ability checks see a Normal move while its effectiveness sees the
+         * weather's type, which calc has no way to hold at once. Four sets.
+         */
+        if (move.named("Brine", "Water Spout", "Facade", "Payback", "Revenge", "Punishment",
+            "Wake-Up Slap", "Smelling Salts")) {
+            move = new calc.Move(calcGen(), move.originalName, {
+                ability: holder ? holder.ability : "",
+                item: holder ? holder.item : "",
+                overrides: Object.assign({}, move.overrides, {name: move.originalName + " (table power)"})
+            });
+        }
         try {
             var range = calc.calculate(calcGen(), attacker, defender, move, field).range();
             if (!range) return;
@@ -973,6 +1131,12 @@ function foldDamage(line, node, state, side, slot, targets, moveName, crits, par
         var berry = resistBerrySpent(line, against, state, other, target, moveName,
             calcPokemonFor(line, against, state, other, target));
         if (mon) damageMon(mon, damage.lo, damage.hi, damage.full);
+        /*
+         * A move that might have healed instead leaves the target anywhere
+         * from its worst hit to a quarter better off, so only the top of the
+         * band moves - the bottom still has to survive the hit landing.
+         */
+        if (mon && damage.mayHeal) healMon(mon, 0, damage.mayHeal);
         if (berry) spendItem(state, other, berry.id, berry.name, "resist");
         /*
          * Endure lets the hit land in full and refuses only the faint, so it is
@@ -1140,4 +1304,225 @@ function damageClass(damage) {
     if (damage.kills) return " kills";
     if (damage.mayKill) return " maykill";
     return "";
+}
+
+/* ------------------------------------------------ facts for the move scoring */
+
+/*
+ * Everything the AI's scoring rules ask about, gathered once per slot.
+ *
+ * The evaluator in planner-scoring.js is deliberately calc-free - it walks a
+ * table of conditions and adds up numbers - so every question that needs a
+ * damage figure, an effectiveness or a speed comparison is answered here, where
+ * calc already lives.
+ *
+ * Damage is the AI's own figure rather than the card's: a single hit, no random
+ * factor, which is the top of calc's roll. That is the same reading the post-KO
+ * switch check uses, and for the same reason - the AI runs one calculation per
+ * move and never multiplies it by a hit count.
+ */
+function scoringFactsFor(line, node, state, side, slot, targetSlot) {
+    var entry = slotSet(line, node, side, slot);
+    var other = side === "you" ? "them" : "you";
+    var attacker = calcPokemonFor(line, node, state, side, slot);
+    var defender = calcPokemonFor(line, node, state, other, targetSlot);
+    if (!entry || !attacker || !defender) return null;
+
+    var holder = activeHolder(line, node, side, slot);
+    var field = calcFieldFor(line, state, side);
+    var userMon = monState(state, side, monAt(node, side, slot));
+    var foeMon = monState(state, other, monAt(node, other, targetSlot));
+
+    function pct(mon, pokemon) {
+        var hp = hpOf(mon);
+        var full = pokemon.maxHP() || 1;
+        // The AI floors this, and several thresholds sit on the boundary.
+        if (!hp) return 100;
+        return Math.floor(Math.max(0, hp.max) * 100 / full);
+    }
+
+    var moves = (entry.set.moves || []).map(function(name) {
+        var move = findMove(name);
+        if (!move) return null;
+        var resolved = resolvedMoveFor(name, holder, state);
+        var type = resolved ? resolved.type : move.type;
+        var out = {
+            name: name,
+            id: move.id,
+            type: type,
+            category: move.category,
+            status: move.category === "status",
+            /*
+             * Effectiveness through the switch AI's own routine, so Levitate,
+             * Scrappy, Mold Breaker and a grounding Iron Ball all read the same
+             * way here as they do there.
+             */
+            eff: switchEffectiveness(type, defender, entry.set.ability, state),
+            damage: 0,
+            kos: false
+        };
+        if (out.status) return out;
+        var calcMove = calcMoveFor(name, holder, false, 1, 0);
+        if (!calcMove) return out;
+        try {
+            var range = calc.calculate(calcGen(), attacker, defender, calcMove, field).range();
+            if (range) {
+                out.damage = range[1];
+                var left = hpOf(foeMon);
+                out.kos = out.damage >= (left ? left.max : defender.maxHP());
+            }
+        } catch (e) {
+            // A set naming something this game hasn't got; the move scores zero.
+        }
+        return out;
+    }).filter(function(x) { return x; });
+
+    var best = moves.reduce(function(top, m) { return Math.max(top, m.damage); }, 0);
+    var order = turnOrder(line, node, node, state, slotCount(line));
+    var mine = -1;
+    var theirs = -1;
+    (order || []).forEach(function(group, i) {
+        (group || []).forEach(function(act) {
+            if (act.side === side && act.slot === slot) mine = i;
+            if (act.side === other && act.slot === targetSlot) theirs = i;
+        });
+    });
+
+    return {
+        moves: moves,
+        bestDamage: best,
+        userHpPct: pct(userMon, attacker),
+        targetHpPct: pct(foeMon, defender),
+        weather: state.weather || "",
+        userAbility: entry.set.ability || "",
+        targetAbility: defender.ability || "",
+        targetStatused: !!foeMon.status,
+        // The non-volatile status on each side, and the volatiles alongside it.
+        // Several rules ask about the *user's* own - Sleep Talk is worth nothing
+        // to a Pokemon that is awake, and says so in two separate modules.
+        userStatus: userMon.status || "",
+        targetStatus: foeMon.status || "",
+        userVolatiles: userMon.volatiles || {},
+        userPerish: userMon.perish || 0,
+        // Anything already in the air on each side - a Future Sight, a Wish.
+        userPending: ((state[side].pending || [])[slot] || []).length > 0,
+        targetPending: ((state[other].pending || [])[targetSlot] || []).length > 0,
+        targetPerish: foeMon.perish || 0,
+        targetVolatiles: foeMon.volatiles || {},
+        targetTypes: (defender.types || []).filter(function(t) { return t; }),
+        userTypes: (attacker.types || []).filter(function(t) { return t; }),
+        // Stat stages both ways, accuracy and evasion included - calc drops those
+        // two because they change no damage, but the AI reads them.
+        userBoosts: userMon.boosts || {},
+        targetBoosts: foeMon.boosts || {},
+        // What is standing on each side of the field.
+        userSide: state[side].hazards || {},
+        targetSide: state[other].hazards || {},
+        trickRoom: !!state.trickRoom,
+        gravity: !!state.gravity,
+        targetPartyMates: livingPartyMatesFor(line, node, state, other, targetSlot),
+        userKnows: (entry.set.moves || []).slice(),
+        // What the other side is carrying, for the rules that ask whether you
+        // have Snatch or Feint - the AI is allowed to see a set it has met.
+        targetKnows: (function() {
+            var them = slotSet(line, node, other, targetSlot);
+            return them ? (them.set.moves || []).slice() : [];
+        })(),
+        // Protect's own counter, which the model already keeps: the second
+        // Protect in a row is half as likely to work and the AI knows it.
+        protectStreak: userMon.protectStreak || 0,
+        /*
+         * The slot beside this one, which only exists in a double. Several rules
+         * ask about an ally's health or moveset, and in a single battle the
+         * honest answer is that there is nobody there - not that it is unknown.
+         */
+        ally: (function() {
+            if (slotCount(line) < 2) return null;
+            var other2 = slot === 0 ? 1 : 0;
+            var mate = slotSet(line, node, side, other2);
+            if (!mate) return null;
+            var mateMon = monState(state, side, monAt(node, side, other2));
+            var hp = hpOf(mateMon);
+            var mateCalc = calcPokemonFor(line, node, state, side, other2);
+            var species = GAME.species()[toID(mate.species)];
+            return {
+                knows: (mate.set.moves || []).slice(),
+                ability: mate.set.ability || "",
+                alive: !hp || hp.max > 0,
+                statused: !!mateMon.status,
+                hpPct: !hp ? 100 : Math.floor(Math.max(0, hp.max) * 100 /
+                    ((mateCalc && mateCalc.maxHP()) || 1)),
+                types: species ? (species.types || []).slice() : []
+            };
+        })(),
+        /*
+         * What the player did last turn. The AI keys several rules off it -
+         * whether it was physical or special, whether it did anything at all -
+         * and the planner has it: the parent turn is the previous turn.
+         */
+        targetLastMove: (function() {
+            var parents = parentEdges(line, node.id);
+            var parent = parents.length ? line.nodes[parents[0].from] : null;
+            if (!parent) return null;
+            var name = moveAt(parent, other, targetSlot);
+            var move = name && findMove(name);
+            if (!move) return null;
+            return {
+                id: move.id,
+                name: move.name,
+                category: move.category,
+                type: move.type,
+                damaging: move.category !== "status",
+                // A move that never went off is one the AI never saw.
+                acted: actedAt(parent, other, targetSlot)
+            };
+        })(),
+        level: numberOr(entry.set.level, 0) || 100,
+        targetLevel: (function() {
+            var them = slotSet(line, node, other, targetSlot);
+            return them ? (numberOr(them.set.level, 0) || 100) : 100;
+        })(),
+        gender: entry.set.gender || "",
+        targetGender: (function() {
+            var them = slotSet(line, node, other, targetSlot);
+            return them ? (them.set.gender || "") : "";
+        })(),
+        userItem: holder ? (holder.item || "") : "",
+        targetItem: defender.item || "",
+        doubles: slotCount(line) > 1,
+        targetTrapped: !!trapReason(line, node, state, other, targetSlot),
+        // -1 when either slot is missing from the order, which reads as unknown.
+        movesFirst: mine >= 0 && theirs >= 0 ? mine < theirs : null,
+        firstTurnOfBattle: !parentEdges(line, node.id).length,
+        firstTurnActive: (userMon.turnsActive || 0) === 0,
+        livingPartyMates: livingPartyMatesFor(line, node, state, side, slot)
+    };
+}
+
+/*
+ * How many other Pokemon the trainer still has in reserve. Several rules turn on
+ * there being none - a Baton Pass with nobody to pass to is worth nothing.
+ */
+function livingPartyMatesFor(line, node, state, side, slot) {
+    var trainer = trainerForSlot(line, side, slot);
+    /*
+     * Your side has no trainer to look up, so it is your carried team - the
+     * same list the switch picker offers, minus anything dead in the run. It
+     * used to fall through to an empty party, which read as "the target has no
+     * other living party members" on every turn: Stealth Rock scored -10 in
+     * Basic against a full team, and every rule asking the question lied.
+     */
+    var party = trainer ? (GAME.partyOrder()[trainer] || [])
+        : side === "you" ? teamRoster().filter(function(e) { return !e.dead; }).map(function(e) { return e.ref; })
+        : [];
+    if (!party.length) return 0;
+    var out = {};
+    for (var i = 0; i < slotCount(line); i++) {
+        var here = standingAt(node, side, i);
+        if (here) out[here] = true;
+    }
+    var mons = (state.mons && state.mons[side]) || {};
+    return party.filter(function(name) {
+        return !out[name] && !isFainted(mons[name]);
+    }).length;
 }

@@ -395,6 +395,13 @@ const MOVE_EFFECTS = {
         "conditional": "Only lands if the two are of opposite genders.",
         "name": "Attract"
     },
+    "safeguard": {
+        "sideCondition": {
+            "field": "isSafeguard",
+            "turns": 5
+        },
+        "name": "Safeguard"
+    },
     "painsplit": {
         "painSplit": true,
         "name": "Pain Split"

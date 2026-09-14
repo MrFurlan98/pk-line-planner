@@ -29,6 +29,12 @@
     border-radius: 5px;
 }
 
+/* Nothing to do, and saying so beats a button that looks live and refuses. */
+.planner-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
 /* Caret shows whether the section it controls is open. */
 #planner-toggle-parties::after {
     content: " \25BE";
@@ -270,6 +276,50 @@
     text-decoration: underline;
 }
 
+/*
+ * The way out of a run. Quieter than the help link above it and sat at the
+ * bottom of the list, because it is the one control here that destroys
+ * something - you should have to go looking for it.
+ */
+.planner-reset-link {
+    display: block;
+    width: 100%;
+    margin-top: 2px;
+    padding: 2px 0;
+    border: none;
+    background: none;
+    color: inherit;
+    font-size: 11px;
+    text-align: center;
+    opacity: 0.45;
+    cursor: pointer;
+}
+
+.planner-reset-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* One line per thing that can go, each with what it would cost. */
+.planner-reset-popup {
+    width: 330px;
+}
+
+.planner-reset-popup label {
+    display: block;
+    margin: 4px 0;
+    cursor: pointer;
+}
+
+.planner-reset-popup label.empty {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.planner-reset-count {
+    opacity: 0.7;
+}
+
 /* foe party */
 
 .planner-main {
@@ -430,7 +480,8 @@
 .planner-ai-flags.hide,
 .planner-box-block.hide,
 .planner-your-party.hide,
-.planner-box-party.hide {
+.planner-box-party.hide,
+.planner-reset-link.hide {
     display: none;
 }
 
@@ -2022,4 +2073,171 @@ button.planner-item-pip.use.stated {
 .planner-field.pending.hurt {
     background: rgba(150, 90, 200, 0.25);
     border-color: rgba(150, 90, 200, 0.55);
+}
+
+/*
+ * The AI move-scoring panel, in the turn editor. Its own layout rather than the
+ * card's move rows: 106px fits the longest names this game has (Self-Destruct)
+ * where the card's column ellipsises them, which is half the reason this is a
+ * panel and not another line on the card.
+ */
+.planner-scoring {
+    display: block;
+    margin-top: 3px;
+}
+
+.planner-score-row {
+    display: grid;
+    grid-template-columns: 106px 1fr 62px;
+    align-items: center;
+    gap: 7px;
+    padding: 2px 0;
+    font-size: 11px;
+    cursor: help;
+}
+
+.planner-score-row:hover {
+    background: rgba(128, 128, 128, 0.15);
+}
+
+.planner-score-row.ruled-out {
+    opacity: 0.45;
+}
+
+.planner-score-name {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.planner-score-name img {
+    height: 11px;
+}
+
+.planner-score-track {
+    position: relative;
+    height: 11px;
+    border-radius: 2px;
+    background: rgba(128, 128, 128, 0.16);
+}
+
+.planner-score-bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-radius: 2px;
+}
+
+/* The chance a move has in every scenario - all of the bar, when it is exact. */
+.planner-score-bar.sure {
+    background: rgba(90, 140, 220, 0.75);
+}
+
+/* What it could have on top, depending on something the planner can't read. */
+.planner-score-bar.maybe {
+    background: rgba(90, 140, 220, 0.3);
+}
+
+.planner-score-pick {
+    white-space: nowrap;
+}
+
+.planner-score-value {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-size: 10px;
+    opacity: 0.85;
+}
+
+/*
+ * The way into the scoring, beside the name of a Pokemon the AI drives. Small
+ * and quiet on purpose: the card is for the plan, and this is a door out of it.
+ */
+.planner-scoring-btn {
+    margin-left: 3px;
+    /* Vertical padding is hit area, not looks: the glyph alone is 7px tall. */
+    padding: 3px 4px;
+    border: none;
+    border-radius: 3px;
+    background: none;
+    color: inherit;
+    font-size: 7px;
+    line-height: 1;
+    letter-spacing: 0;
+    vertical-align: 1px;
+    cursor: pointer;
+    opacity: 0.45;
+}
+
+.planner-scoring-btn:hover {
+    opacity: 1;
+    background: rgba(90, 140, 220, 0.35);
+}
+
+/* Wide enough for the panel's own 98px name column plus its bars. */
+.planner-scoring-popup {
+    width: 360px;
+}
+
+
+/* Sits on the column heading now, beside the Pokemon whose moves these are. */
+.planner-move-column-title .planner-scoring-btn {
+    float: right;
+}
+
+/*
+ * "Beaten" ticks, on a line and on a whole split.
+ *
+ * Quiet until they mean something: an unticked one is barely there, so a list of
+ * fights you have not fought yet reads as a list of fights rather than a column
+ * of empty boxes.
+ */
+.planner-won-line,
+.planner-won-split {
+    flex: 0 0 auto;
+    padding: 0 3px;
+    border: none;
+    background: none;
+    color: inherit;
+    font-size: 10px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.22;
+}
+
+.planner-won-line:hover,
+.planner-won-split:hover {
+    opacity: 0.75;
+}
+
+.planner-won-line.won,
+.planner-won-split.won {
+    opacity: 1;
+    color: #5abe6e;
+}
+
+/*
+ * A fight already behind you. Struck through rather than hidden - it is still
+ * where it was in the run, and the plan that beat it is worth going back to.
+ */
+.planner-line-item.won .planner-line-name {
+    opacity: 0.5;
+    text-decoration: line-through;
+}
+
+/* Still legible when it is also the line you are looking at. */
+.planner-line-item.won.selected .planner-line-name {
+    opacity: 0.75;
+}
+
+.planner-line-group.won .planner-group-name {
+    opacity: 0.55;
+}
+
+.planner-line-group.won .planner-group-count {
+    color: #5abe6e;
+    opacity: 0.9;
 }
