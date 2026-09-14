@@ -587,7 +587,11 @@ function loadDexEntry(entryID) {
                             var species = SPECIES[target.split("/")[1]];
                             var level = $(this).find(".level").html().split(" ")[1];
                             if (level > 0) {
-                                if (level.includes("-")) level = level.split("-")[1];
+                                var moves = getLevelLearnset(species.id, level);
+                                loadSet(`${species.name} (Blank Set)`, "p2", { level: level, moves: moves });
+                                window.location = `#/calc`;
+                            } else if (level && level.includes("-")) {
+                                level = level.split("-")[1];
                                 var moves = getLevelLearnset(species.id, level);
                                 loadSet(`${species.name} (Blank Set)`, "p2", { level: level, moves: moves });
                                 window.location = `#/calc`;

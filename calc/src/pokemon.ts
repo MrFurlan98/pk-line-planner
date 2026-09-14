@@ -101,7 +101,11 @@ export class Pokemon implements State.Pokemon {
       this.stats[stat] = val;
     }
 
-    const curHP = options.curHP || options.originalCurHP || 0;
+    var curHP = options.curHP || options.originalCurHP;
+    if (curHP === undefined) {
+      if (options.curHP === 0) curHP = 0;
+      else curHP = this.rawStats.hp;
+    }
     this.originalCurHP = curHP <= this.rawStats.hp ? curHP : this.rawStats.hp;
     this.status = options.status || '';
     this.toxicCounter = options.toxicCounter || 0;

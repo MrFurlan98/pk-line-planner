@@ -564,6 +564,7 @@ table.field {
     outline: 2px solid var(--fieldset-color);
     border: 3px solid var(--fieldset-color);
     border-radius: 20%;
+    -webkit-touch-callout: none;
 }
 .pokemon-icon:hover {
     cursor: pointer;

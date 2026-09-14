@@ -361,6 +361,20 @@ const LOCATIONS = {
         metLocationId: 17,
         search: true,
     },
+    poketchco: {
+        id: "poketchco",
+        name: "Pokétch Co.",
+        coords: [],
+        sublocations: [],
+        desc: "",
+        encounters: [
+            {'species': 'skitty', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'},
+            {'species': 'glameow', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'},
+            {'species': 'meowth', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'}
+        ],
+        metLocationId: 91,
+        search: true,
+    },
     route204: {
         id: "route204",
         name: "Route 204",
@@ -848,7 +862,7 @@ const LOCATIONS = {
             {'species': 'aron', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
             {'species': 'bonsly', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
             {'species': 'ledyba', 'chance': 14, 'minLevel': 15, 'maxLevel': 15, 'method': 'rocksmash'},
-            {'species': 'magcargo', 'chance': 0, 'minLevel': 0, 'maxLevel': 0, 'method': 'trade', 'trade': {'nickname': 'Chestnut', 'ability': 'vitalspirit', 'nature': 'quiet', 'traded': 'any'}}
+            {'species': 'slugma', 'chance': 0, 'minLevel': 0, 'maxLevel': 0, 'method': 'trade', 'trade': {'nickname': 'Chestnut', 'ability': 'vitalspirit', 'nature': 'quiet', 'traded': 'any'}}
         ],
         metLocationId: 8,
         search: true,
@@ -1043,20 +1057,6 @@ const LOCATIONS = {
         encounters: [],
         metLocationId: 93,
         search: false,
-    },
-    poketchco: {
-        id: "poketchco",
-        name: "Pokétch Co.",
-        coords: [],
-        sublocations: [],
-        desc: "",
-        encounters: [
-            {'species': 'skitty', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'},
-            {'species': 'glameow', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'},
-            {'species': 'meowth', 'chance': 33, 'minLevel': 5, 'maxLevel': 5, 'method': 'gift'}
-        ],
-        metLocationId: 91,
-        search: true,
     },
     route204north: {
         id: "route204north",
