@@ -793,6 +793,171 @@ do, and leaves the decision where it was.
 [pret]: https://github.com/pret/pokeplatinum
 [aidoc]: https://docs.google.com/document/d/1IC1M4x0fo9X6cik8-7vkZTCThl4tMcUbzY8CDpHrfDQ/edit
 
+### AI move scoring
+
+The other half of reading the opponent. The game scores every move against every
+target and picks the highest, and the eleven modules that do the scoring were
+**already in the repo** — `trainer_flags.js` carries them per trainer, and until
+now they only drew badges.
+
+**The data is in.** `tools/gen-move-scoring.js` scrapes
+<https://bparkpk.github.io/PKMoveScoring/> — the Kaizo-specific reference, which
+is authoritative for anything a particular move scores — into
+`src/js/data/move_scoring.js`. That is **464 moves, 6,935 rule groups, 649 KB**,
+and it parses the site with **nothing left over**: the generator's unparsed report
+is empty rather than merely short. (Empty is not the same as right — see *What the
+walk had wrong* below for three things that parsed cleanly and meant the wrong
+thing.)
+
+- **Nesting is by position**, not a tree. The pages express it purely by order —
+  a condition directly under another sits inside it — with no indentation to key
+  off, so any tree built by the scraper would be a guess. Verified on Thunder
+  Wave, whose Doubles-vs-Ally block nests a five-branch Volt Absorb check inside
+  an outer `Otherwise`; both `Otherwise` arms survive and stay distinguishable.
+- **Conditions are interned** and referenced by index. There are **486 distinct
+  conditions**, so writing them out in full spent most of the file
+  repeating one sentence — *"If the effectiveness of the move is 4x"* appears
+  2,276 times. Interning plus dropping the indent took the file from 2,591 KB to
+  571 KB.
+  - That array is also **the evaluator's list of work**: one predicate per entry,
+    and an index with no predicate behind it is a condition the planner cannot
+    answer and should say so about rather than guess.
+- **Half of all outcomes are behind a dice roll** — 3,451 of 6,935. Each roll is
+  the game's own fraction (`176/256`, not the "68.8%" printed beside it) and each
+  is its own draw, so for a move whose conditions are all answered the score is
+  an **exact distribution**, and four of them give an exact chance of each move
+  being picked. That is a certainty about the dice in the same way a damage
+  range is, not the average this file refuses to take everywhere else. Roar's
+  page prints its own total — 12.5% nothing, 50% +2, 37.5% +4 — and the walk
+  reproduces it to the digit.
+
+Things the scrape turned up that were not obvious:
+
+- **The site scores the variable-type moves separately**, as `HP Dark`,
+  `Fire Ball` and so on — the same behaviour the switch AI shows, and which the
+  planner already models. They are kept under compound ids (`hiddenpower:dark`,
+  `weatherball:fire`) so the type survives; falling back to the base move would
+  score a rain-fed Weather Ball as a Normal one.
+- **Two of the site's own index links are broken** — `moveRoarofTime.html` and
+  `moveJudgment.html` 404, while `moveRoarOfTime.html` and `moveJudgement.html`
+  are real pages for two genuinely different moves. Corrected by a small table
+  rather than a clever regex.
+- **`doublesOpponent` and `doublesAlly` are both mapped to `TagStrategy`.** The
+  site splits the doubles logic in two where the flag table has one entry. That
+  is inference from the counts, not something either source states, and the
+  generator prints it every run so it stays visible until someone checks it
+  against a real doubles trainer.
+- The scraped pages are cached under `tools/.cache/` (13 MB, gitignored) so a
+  re-run costs one request rather than 465.
+
+**The evaluator is `src/js/planner-scoring.js`**, fed by `scoringFactsFor` in
+`planner-calc.js`, and shown by the ▁▄▇ button beside an AI-driven Pokémon's
+moves and in the turn editor.
+
+#### What it shows
+
+Settled against a mockup rather than in the abstract — `src/scoring-mockup.html`,
+gitignored beside `doubles-mockup.html` and built on the real stylesheets. The
+mockup still shows the older band-and-marker design.
+
+- **A ranked panel, off the card.** The collapsed card says nothing about
+  scoring. It already carries damage, type icons, health bars and the aim row,
+  and it is the thing that grew from 185px to 285px and started covering its
+  neighbours' buttons. Reading the AI is something you go and ask for.
+- **The verdict is the chance of being picked, not a score.** A raw score means
+  nothing on its own — it only matters against the other three moves. So the
+  panel leads with *"Stealth Rock 78% · Self-Destruct 22%"*, and each row's
+  tooltip carries the score, how it spreads across the rolls, and each module's
+  share.
+- **An unevaluable condition is not a dice roll.** "Does the target hold a King's
+  Rock" has no honest probability, so it is not given one. Each unknown is
+  assumed true in one scenario and false in another — the same answer everywhere
+  it is asked within a scenario — and the chance is shown as the lowest and
+  highest across them: *"Head Smash 14–100%"*. The bar is solid up to what the
+  move has in every scenario and light beyond it. The range still contains the
+  truth, and the panel gets less decisive rather than wrong.
+  - Bounded without enumerating the combinations across moves: a move's chance
+    only rises as its own score does and only falls as a rival's does, so its
+    lowest stochastic envelope against everyone else's highest bounds it from
+    below, and the reverse from above.
+- **A move is ruled out only at a certain 0%** — its best case cannot reach what
+  a rival is guaranteed. The same line the old band verdict drew, and the same
+  only-certainties rule the damage figures follow. Rounding never manufactures
+  one: a chance merely near 0 or 100 reads `<1%` or `>99%`.
+- **Ruled-out moves stay on the list**, dimmed. Hiding them would answer a
+  question the panel is not being asked; *"Roar cannot happen"* is part of what
+  you opened it for.
+- **A tie splits evenly.** The game picks at random among equal top scores, so
+  two moves level at the top are each 50% of that outcome — worked into the
+  chance rather than ordered by position.
+- **Scores are per target**, so a double grows a target column. Singles stay one
+  row per move.
+
+#### What the walk had wrong
+
+Found while building the chances, and each one made the old band *not contain
+the truth* — the one guarantee it existed to give:
+
+- **A gate is not an inline chance.** *"68.8% chance of score +2 and
+  terminate"* rolls the score only; the module ends either way. *"With a 78.1%
+  chance: no scoring change and terminate"* rolls whether the rule fires at all —
+  miss it and the walk carries on to the next rule. Read the first way, that
+  Acid Armor line is a rule that does nothing, and it was read that way: a
+  certain stop at 0 on every roll. 41 groups, and the five with no condition
+  (Stealth Rock, Spikes, Toxic Spikes, Tailwind, Gastro Acid) were skipped
+  outright — Stealth Rock claimed a +1 floor it does not have, which could rule
+  *out* a rival that can actually win. Recover at 75% HP read −3 to 0; it scores
+  +2 on 10.8% of rolls.
+- **A second outcome in the same block is a follow-on.** *"Score +1 and
+  continue"* then *"50% chance of score +1 and terminate"* under one condition is
+  one block carrying on, and the walker skipped the second line as having no
+  condition. 10 groups — Brine, Wring Out, Flail, Reversal, Protect, Detect,
+  Roar, Whirlwind, Me First, Trump Card. The generator now flags them
+  `follows: true`. Four more after a blank line (Defog, Fling, Sunny Day's
+  doubles module twice) have nothing on the page saying which block they belong
+  to, so they are left as an unknown rather than guessed.
+- **"No score change" didn't parse.** The generator matched only "No *scoring*
+  change"; the other spelling was long enough to be filed as commentary, so its
+  *terminate* went with it. Explosion, Self-Destruct and Memento's Basic module
+  says "the user has other living party members: no change and terminate" —
+  lost, the walk ran on into *"the target has other living party members: −10"*.
+  In almost any real fight, the planner said the AI **could not** explode.
+- **Your team never counted as a party.** `livingPartyMatesFor` looked up the
+  trainer's party, and your side has none, so *"the target has no other living
+  party members"* was true on every turn. With the other fixes in but this one
+  not, Roark's lead Bonsly read 60% Self-Destruct and **0% Stealth Rock** (−10 in
+  Basic); with your team counted, it is 78% Stealth Rock, 22% Self-Destruct.
+- **The type-list regex backtracked exponentially.** An empty separator let "or"
+  match inside words (N-*or*-mal), so a list that failed to match was retried every
+  way its letters could be cut. Six types took 20 seconds; Counter and Mirror
+  Coat ask about eight or nine, on a condition any Expert trainer reaches. The
+  tab would have frozen.
+
+Worth keeping from building the mockup: the panel wants **98px for a move name**,
+because `AncientPower` clips at the width the card's own move rows use. That the
+card cannot show these names in full is itself the argument for the panel having
+its own layout rather than reusing the card's.
+
+Two things the docs settle, and the evaluator respects both: the AI **never
+factors accuracy**, and it **does not know your moves until you use one**.
+
+The second shipped wrong at first — the rules asking whether you have Snatch or
+Feint were handed your whole moveset. They now read `seenMoves`, which the fold
+keeps per Pokémon, and the decomp settles what counts as seen:
+
+- **A move is recorded once its user gets as far as using it.**
+  `BattleControllerPlayer_BeforeMove` marks it after sleep, flinching and
+  paralysis have let it through, and *before* accuracy, Protect or the type chart
+  are checked. So a miss, a blocked hit and a Fake Out that fails all give the
+  move away; a flinch doesn't. `TrainerAI_RecordLastMove` copies it into the AI's
+  memory when it next picks a move.
+- **Leaving the field forgets them all** — `BattleAI_ClearKnownMoves`, from both
+  the switch and the faint cleanup — so it clears in `leaveField` with the boosts.
+- **A turn marked *didn't act* is a maybe.** That toggle covers a miss, which is
+  seen, and a full paralysis, which isn't, so the rule is left unknown rather than
+  guessed. The same goes for a Quick Claw holder let through a denial it might
+  not have beaten.
+
 ### Held items that go off
 
 A Berry Juice quietly restoring 20 HP is the difference between a plan that works
@@ -1292,29 +1457,7 @@ costs is the Flying resistances and the Ground immunity.
 
 ---
 
-## Next: history across attempts
-
-Resetting is the normal loop in a Nuzlocke, not an edge case. A planner that
-forgets everything on reset throws away exactly the knowledge that makes the
-next attempt better.
-
-Lines currently live-update from the Box — right for a run in progress, wrong
-for a past attempt. The resolution: **a line is live while its Pokémon still
-exist, and freezes when they don't.**
-
-- Store a light snapshot beside the reference (species, level, moves, item,
-  ability, nature). Resolve live first; fall back to the snapshot and mark the
-  line **historical** — read-only and dimmed.
-- Editing a historical line should be blocked, offering **"Duplicate into
-  current run"** instead, so a past attempt stays an honest record of what was
-  actually done.
-- Optional later: **runs** as a browsable concept, so attempts can be compared
-  side by side. The snapshot already preserves the information; this only
-  organises it.
-
----
-
-## Then: making the builder pleasant
+## Next: making the builder pleasant
 
 - **Rename and duplicate a line** — "Roark, safe" vs "Roark, risky" is how you
   compare plans; today both would just read "Leader Roark".
@@ -1340,154 +1483,18 @@ Each of these wants a line in the "How to use" page once it lands.
   planner doesn't read yet.
 - **Canvas zoom** and keyboard shortcuts (add turn, delete, Esc to close).
 
-### AI move scoring
+### What is still open in move scoring
 
-The other half of reading the opponent. The game scores every move against every
-target and picks the highest, and the eleven modules that do the scoring were
-**already in the repo** — `trainer_flags.js` carries them per trainer, and until
-now they only drew badges.
+Built — see **AI move scoring** above — but two things in it are inference or
+left unknown, and both want checking against the real game rather than more
+reading:
 
-**The data is in.** `tools/gen-move-scoring.js` scrapes
-<https://bparkpk.github.io/PKMoveScoring/> — the Kaizo-specific reference, which
-is authoritative for anything a particular move scores — into
-`src/js/data/move_scoring.js`. That is **464 moves, 6,935 rule groups, 649 KB**,
-and it parses the site with **nothing left over**: the generator's unparsed report
-is empty rather than merely short. (Empty is not the same as right — see *What the
-walk had wrong* below for three things that parsed cleanly and meant the wrong
-thing.)
-
-- **Nesting is by position**, not a tree. The pages express it purely by order —
-  a condition directly under another sits inside it — with no indentation to key
-  off, so any tree built by the scraper would be a guess. Verified on Thunder
-  Wave, whose Doubles-vs-Ally block nests a five-branch Volt Absorb check inside
-  an outer `Otherwise`; both `Otherwise` arms survive and stay distinguishable.
-- **Conditions are interned** and referenced by index. There are **486 distinct
-  conditions**, so writing them out in full spent most of the file
-  repeating one sentence — *"If the effectiveness of the move is 4x"* appears
-  2,276 times. Interning plus dropping the indent took the file from 2,591 KB to
-  571 KB.
-  - That array is also **the evaluator's list of work**: one predicate per entry,
-    and an index with no predicate behind it is a condition the planner cannot
-    answer and should say so about rather than guess.
-- **Half of all outcomes are behind a dice roll** — 3,451 of 6,935. Each roll is
-  the game's own fraction (`176/256`, not the "68.8%" printed beside it) and each
-  is its own draw, so for a move whose conditions are all answered the score is
-  an **exact distribution**, and four of them give an exact chance of each move
-  being picked. That is a certainty about the dice in the same way a damage
-  range is, not the average this file refuses to take everywhere else. Roar's
-  page prints its own total — 12.5% nothing, 50% +2, 37.5% +4 — and the walk
-  reproduces it to the digit.
-
-Things the scrape turned up that were not obvious:
-
-- **The site scores the variable-type moves separately**, as `HP Dark`,
-  `Fire Ball` and so on — the same behaviour the switch AI shows, and which the
-  planner already models. They are kept under compound ids (`hiddenpower:dark`,
-  `weatherball:fire`) so the type survives; falling back to the base move would
-  score a rain-fed Weather Ball as a Normal one.
-- **Two of the site's own index links are broken** — `moveRoarofTime.html` and
-  `moveJudgment.html` 404, while `moveRoarOfTime.html` and `moveJudgement.html`
-  are real pages for two genuinely different moves. Corrected by a small table
-  rather than a clever regex.
-- **`doublesOpponent` and `doublesAlly` are both mapped to `TagStrategy`.** The
-  site splits the doubles logic in two where the flag table has one entry. That
-  is inference from the counts, not something either source states, and the
-  generator prints it every run so it stays visible until someone checks it
-  against a real doubles trainer.
-- The scraped pages are cached under `tools/.cache/` (13 MB, gitignored) so a
-  re-run costs one request rather than 465.
-
-**The evaluator is `src/js/planner-scoring.js`**, fed by `scoringFactsFor` in
-`planner-calc.js`, and shown by the ▁▄▇ button beside an AI-driven Pokémon's
-moves and in the turn editor.
-
-#### What it shows
-
-Settled against a mockup rather than in the abstract — `src/scoring-mockup.html`,
-gitignored beside `doubles-mockup.html` and built on the real stylesheets. The
-mockup still shows the older band-and-marker design.
-
-- **A ranked panel, off the card.** The collapsed card says nothing about
-  scoring. It already carries damage, type icons, health bars and the aim row,
-  and it is the thing that grew from 185px to 285px and started covering its
-  neighbours' buttons. Reading the AI is something you go and ask for.
-- **The verdict is the chance of being picked, not a score.** A raw score means
-  nothing on its own — it only matters against the other three moves. So the
-  panel leads with *"Stealth Rock 78% · Self-Destruct 22%"*, and each row's
-  tooltip carries the score, how it spreads across the rolls, and each module's
-  share.
-- **An unevaluable condition is not a dice roll.** "Does the target hold a King's
-  Rock" has no honest probability, so it is not given one. Each unknown is
-  assumed true in one scenario and false in another — the same answer everywhere
-  it is asked within a scenario — and the chance is shown as the lowest and
-  highest across them: *"Head Smash 14–100%"*. The bar is solid up to what the
-  move has in every scenario and light beyond it. The range still contains the
-  truth, and the panel gets less decisive rather than wrong.
-  - Bounded without enumerating the combinations across moves: a move's chance
-    only rises as its own score does and only falls as a rival's does, so its
-    lowest stochastic envelope against everyone else's highest bounds it from
-    below, and the reverse from above.
-- **A move is ruled out only at a certain 0%** — its best case cannot reach what
-  a rival is guaranteed. The same line the old band verdict drew, and the same
-  only-certainties rule the damage figures follow. Rounding never manufactures
-  one: a chance merely near 0 or 100 reads `<1%` or `>99%`.
-- **Ruled-out moves stay on the list**, dimmed. Hiding them would answer a
-  question the panel is not being asked; *"Roar cannot happen"* is part of what
-  you opened it for.
-- **A tie splits evenly.** The game picks at random among equal top scores, so
-  two moves level at the top are each 50% of that outcome — worked into the
-  chance rather than ordered by position.
-- **Scores are per target**, so a double grows a target column. Singles stay one
-  row per move.
-
-#### What the walk had wrong
-
-Found while building the chances, and each one made the old band *not contain
-the truth* — the one guarantee it existed to give:
-
-- **A gate is not an inline chance.** *"68.8% chance of score +2 and
-  terminate"* rolls the score only; the module ends either way. *"With a 78.1%
-  chance: no scoring change and terminate"* rolls whether the rule fires at all —
-  miss it and the walk carries on to the next rule. Read the first way, that
-  Acid Armor line is a rule that does nothing, and it was read that way: a
-  certain stop at 0 on every roll. 41 groups, and the five with no condition
-  (Stealth Rock, Spikes, Toxic Spikes, Tailwind, Gastro Acid) were skipped
-  outright — Stealth Rock claimed a +1 floor it does not have, which could rule
-  *out* a rival that can actually win. Recover at 75% HP read −3 to 0; it scores
-  +2 on 10.8% of rolls.
-- **A second outcome in the same block is a follow-on.** *"Score +1 and
-  continue"* then *"50% chance of score +1 and terminate"* under one condition is
-  one block carrying on, and the walker skipped the second line as having no
-  condition. 10 groups — Brine, Wring Out, Flail, Reversal, Protect, Detect,
-  Roar, Whirlwind, Me First, Trump Card. The generator now flags them
-  `follows: true`. Four more after a blank line (Defog, Fling, Sunny Day's
-  doubles module twice) have nothing on the page saying which block they belong
-  to, so they are left as an unknown rather than guessed.
-- **"No score change" didn't parse.** The generator matched only "No *scoring*
-  change"; the other spelling was long enough to be filed as commentary, so its
-  *terminate* went with it. Explosion, Self-Destruct and Memento's Basic module
-  says "the user has other living party members: no change and terminate" —
-  lost, the walk ran on into *"the target has other living party members: −10"*.
-  In almost any real fight, the planner said the AI **could not** explode.
-- **Your team never counted as a party.** `livingPartyMatesFor` looked up the
-  trainer's party, and your side has none, so *"the target has no other living
-  party members"* was true on every turn. With the other fixes in but this one
-  not, Roark's lead Bonsly read 60% Self-Destruct and **0% Stealth Rock** (−10 in
-  Basic); with your team counted, it is 78% Stealth Rock, 22% Self-Destruct.
-- **The type-list regex backtracked exponentially.** An empty separator let "or"
-  match inside words (N-*or*-mal), so a list that failed to match was retried every
-  way its letters could be cut. Six types took 20 seconds; Counter and Mirror
-  Coat ask about eight or nine, on a condition any Expert trainer reaches. The
-  tab would have frozen.
-
-Worth keeping from building the mockup: the panel wants **98px for a move name**,
-because `AncientPower` clips at the width the card's own move rows use. That the
-card cannot show these names in full is itself the argument for the panel having
-its own layout rather than reusing the card's.
-
-Two things the docs settle that the evaluator will have to respect: the AI **does
-not know your moves until you use one** and forgets them when you switch out, and
-it **never factors accuracy**.
+- **`doublesOpponent` and `doublesAlly` both map to `TagStrategy`.** Inferred from
+  the counts; the generator prints it every run. Settle it against a real doubles
+  trainer — Twins Liv & Liz.
+- **Four follow-on outcomes after a blank line** — Defog, Fling, and Sunny Day's
+  doubles module twice — have nothing on the page saying which block they belong
+  to, so the walk treats them as unknown and those moves read wider than they are.
 
 ### Mid-turn switching
 

@@ -507,6 +507,12 @@ function emptyMonState() {
              */
             protectStreak: 0,
             /*
+             * The moves the other side's AI has seen this Pokemon use since it
+             * came in, as {moveId: true | "maybe"} - see seeMove. The AI never
+             * reads your moveset, only what you have shown it.
+             */
+            seenMoves: {},
+            /*
              * The level it is fighting at, once a turn has stated one. Null means
              * "whatever its set says", which is the ordinary case. Kept on the
              * Pokemon rather than the slot so it follows a switch out and back,
@@ -786,6 +792,24 @@ function moveFailsNow(state, node, side, slot, moveName) {
     return (mon.turnsActive || 0) > 0;
 }
 
+/*
+ * Records that the other side's AI watched this Pokemon use a move, as `true`,
+ * or as "maybe" where the plan can't say whether it got that far.
+ *
+ * The decomp settles what counts: BattleControllerPlayer_BeforeMove marks a move
+ * used once sleep, flinching and paralysis have let it through, and only before
+ * accuracy, Protect or the type chart are checked. So a miss or a blocked hit
+ * still gives the move away; a flinch doesn't. A maybe never downgrades a sighting.
+ */
+function seeMove(state, side, ref, moveName, certain) {
+    var move = findMove(moveName);
+    if (!ref || !move) return;
+    var mon = monState(state, side, ref);
+    if (!mon.seenMoves) mon.seenMoves = {};
+    if (certain) mon.seenMoves[move.id] = true;
+    else if (!mon.seenMoves[move.id]) mon.seenMoves[move.id] = "maybe";
+}
+
 function flinchesTarget(moveName) {
     var move = findMove(moveName);
     return !!(move && move.id === FAKE_OUT);
@@ -866,7 +890,14 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
             var i = action.slot;
             var other = side === "you" ? "them" : "you";
             if (alreadyGone[side][i]) return;
-            if (!actedAt(parent, side, i)) return;
+            /*
+             * "Didn't act" covers a miss, which the AI still sees, and a flinch or
+             * full paralysis, which it doesn't - so the move is a maybe.
+             */
+            if (!actedAt(parent, side, i)) {
+                seeMove(state, side, monAt(onField, side, i), moveAt(parent, side, i), false);
+                return;
+            }
 
             /*
              * Outsped and killed outright. A Quick Claw holder is spared, since
@@ -893,6 +924,14 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
 
             var move = moveAt(parent, side, i);
             if (!move) return;
+            /*
+             * It got as far as using the move, so the AI has seen it - before the
+             * Fake Out, Protect and type chart checks below, all of which still
+             * show it. A Quick Claw holder let through the denials above may not
+             * have got this far, so it is a maybe.
+             */
+            seeMove(state, side, monAt(onField, side, i), move,
+                !(action.unsure && (goneBefore[side + i] || flinched[side + i] || phazed[side + i])));
             /*
              * A Fake Out that isn't this Pokemon's first turn out does nothing
              * whatsoever - no damage, no flinch. It still costs the turn.
@@ -3252,6 +3291,8 @@ function leaveField(line, parent, state, side, slot) {
     mon.turnsActive = 0;
     // And so does a guaranteed Protect - the streak doesn't survive the switch.
     mon.protectStreak = 0;
+    // The AI forgets every move it saw it use - BattleAI_ClearKnownMoves.
+    mon.seenMoves = {};
     // "unless they switch out" - leaving the field is the whole counterplay.
     mon.perish = 0;
     mon.perishDone = false;

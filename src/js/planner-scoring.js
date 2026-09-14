@@ -374,12 +374,17 @@ function scoringClause(clause, ctx) {
     if (/^If the user has other living party members$/i.test(text)) return facts.livingPartyMates > 0;
 
     m = clause.match(/^the (?:target|foe) (?:doesn't know|does not know) the move ([A-Za-z' -]+)$/i);
-    if (m) return !scoringKnowsOne(facts.targetKnows, m[1]);
+    if (m) {
+        var sawIt = scoringTargetSeen(facts, m[1]);
+        return sawIt === SCORING_UNKNOWN ? SCORING_UNKNOWN : !sawIt;
+    }
     m = clause.match(/^the (?:target|foe) knows the move ([A-Za-z' -]+(?:,\s*[A-Za-z' -]+)*(?:,?\s*or\s+[A-Za-z' -]+)?)$/i);
     if (m) {
-        return String(m[1]).split(/,|\s+or\s+/i).map(function(x) { return x.trim(); })
+        var sightings = String(m[1]).split(/,|\s+or\s+/i).map(function(x) { return x.trim(); })
             .filter(function(x) { return x; })
-            .some(function(name) { return scoringKnowsOne(facts.targetKnows, name); });
+            .map(function(name) { return scoringTargetSeen(facts, name); });
+        if (sightings.indexOf(true) >= 0) return true;
+        return sightings.indexOf(SCORING_UNKNOWN) >= 0 ? SCORING_UNKNOWN : false;
     }
 
     /*
@@ -780,6 +785,19 @@ function scoringHasCondition(state, name) {
 
 function scoringKnows(facts, name) {
     return scoringKnowsOne(facts.userKnows, name);
+}
+
+/*
+ * Whether the AI has watched the target use a move - which is all it ever knows
+ * of your moveset. A turn marked "didn't act" may or may not have shown it, so
+ * that one is unknown rather than guessed either way.
+ */
+function scoringTargetSeen(facts, name) {
+    var want = findMove(name);
+    if (!want) return false;
+    var seen = (facts.targetKnows || {})[want.id];
+    if (seen === "maybe") return SCORING_UNKNOWN;
+    return seen === true;
 }
 
 /*

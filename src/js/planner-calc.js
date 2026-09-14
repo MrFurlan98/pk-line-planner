@@ -1428,12 +1428,12 @@ function scoringFactsFor(line, node, state, side, slot, targetSlot) {
         gravity: !!state.gravity,
         targetPartyMates: livingPartyMatesFor(line, node, state, other, targetSlot),
         userKnows: (entry.set.moves || []).slice(),
-        // What the other side is carrying, for the rules that ask whether you
-        // have Snatch or Feint - the AI is allowed to see a set it has met.
-        targetKnows: (function() {
-            var them = slotSet(line, node, other, targetSlot);
-            return them ? (them.set.moves || []).slice() : [];
-        })(),
+        /*
+         * What the other side has been seen using, for the rules that ask whether
+         * you have Snatch or Feint. Not its moveset: the AI only knows a move once
+         * it has watched it used, and forgets them all when that Pokemon leaves.
+         */
+        targetKnows: foeMon.seenMoves || {},
         // Protect's own counter, which the model already keeps: the second
         // Protect in a row is half as likely to work and the AI knows it.
         protectStreak: userMon.protectStreak || 0,
