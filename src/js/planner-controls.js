@@ -1235,7 +1235,25 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
                 : `<span class="planner-move-bp">${noPower ? "—" : shownPower}</span>`;
         figure = terrainBtn + figure;
 
-        var tooltip = `${move.name}${resolved ? ` (${resolved.label})` : ""} — ${move.category}, ${shownPower || 0} BP, ${move.accuracy || "—"}% acc`;
+        /*
+         * PP left coming into this turn. A range only where a "didn't act" turn
+         * above may or may not have spent some, exactly like health.
+         *
+         * Shown on the row only once some has gone, the way a corrected level is:
+         * the row has no width to spare, and a full count on every move clipped
+         * names as short as "Head Smash". The tooltip always carries it.
+         */
+        var pp = ppLeftFor(line, node, state, side, slot, name);
+        var ppText = !pp ? "" : pp.min === pp.max ? `${pp.max}` : `${pp.min}–${pp.max}`;
+        var ppFigure = !pp || pp.min >= pp.full ? "" : `<span class="planner-move-pp${
+            pp.max === 0 ? " empty" : ""}">${ppText}</span>`;
+
+        var tooltip = `${move.name}${resolved ? ` (${resolved.label})` : ""} — ${move.category}, ${shownPower || 0} BP, ${move.accuracy || "—"}% acc${pp ? `, ${ppText}/${pp.full} PP` : ""}`;
+        if (pp && pp.max === 0) {
+            tooltip = `No PP left, so the game won't let this be picked.\n\n${tooltip}`;
+        } else if (pp && pp.min !== pp.max) {
+            tooltip = `PP is a range because a turn above is marked "didn't act" — a miss spends it, a flinch or full paralysis doesn't.\n\n${tooltip}`;
+        }
         if (resolved) tooltip = `${resolved.why}\n\n${tooltip}`;
         /*
          * The calculator's own sentence, which names every modifier it applied -
@@ -1330,6 +1348,7 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
             <img src="${GAME.sprites.type(shownType)}" alt="">
             <span class="planner-move-name">${move.name}</span>
             ${figure}
+            ${ppFigure}
             ${NO_DROP_MOVES.indexOf(move.id) >= 0 ? `<span class="planner-nodrop" title="Platinum Kaizo removes this move's stat drop - it has no drawback here.">nd</span>` : ``}
         </span>`;
     }).join("");

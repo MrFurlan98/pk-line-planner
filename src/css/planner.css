@@ -1186,6 +1186,25 @@ img.planner-terrain-thumb:not([src]) {
     letter-spacing: -0.02em;
 }
 
+/*
+ * PP left coming into the turn, drawn only once some has been spent - at full it
+ * is context the tooltip already carries, and the row has no width for it. Red at
+ * a certain zero, when the game won't let the move be picked at all.
+ */
+.planner-move-pp {
+    flex: 0 0 auto;
+    font-size: 8px;
+    font-variant-numeric: tabular-nums;
+    font-weight: normal;
+    opacity: 0.75;
+}
+
+.planner-move-pp.empty {
+    opacity: 1;
+    color: #c0392b;
+    font-weight: bold;
+}
+
 /* The slot never got its move off, so none of this lands. Same treatment as the
    struck-through move under the sprite. */
 .planner-move-dmg.denied {

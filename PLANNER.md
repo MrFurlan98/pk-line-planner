@@ -129,7 +129,8 @@ graph, so editing one turn updates everything after it.
 - **Volatiles with a ceiling end at it; the rest never expire.** Confusion runs
   2–5, Encore 4–8, Disable 4–7 — random in the middle, certain at the end — so
   the planner ends them there and the badge counts up to it. Encore can also
-  break early on PP, which isn't tracked, so only its ceiling is relied on.
+  break early on PP; PP is tracked now, but Encore doesn't read it yet, so only
+  its ceiling is relied on.
   Leech Seed, Torment, infatuation and Substitute have no turn limit and are
   cleared only by leaving the field or by hand.
 - **Freeze is the one condition with no ceiling at all** — a flat 20% a turn, so
@@ -984,6 +985,57 @@ keeps per Pokémon, and the decomp settles what counts as seen:
   guessed. The same goes for a Quick Claw holder let through a denial it might
   not have beaten.
 
+### PP
+
+Spent per Pokémon down the line, and kept on the Pokémon's own record rather
+than the slot's — so unlike boosts and volatiles it **survives a switch**, which
+is the game's rule. Every line starts at full; nothing carries between fights.
+
+- **Spent where the game spends it.** `BattleControllerPlayer_DecrementPP` runs
+  in the same before-move sequence that marks a move seen — after sleep,
+  flinching, paralysis and obedience have let it through, before the target,
+  accuracy and Protect checks. So `spendPp` sits beside `seeMove` and follows it
+  exactly: a miss, a blocked hit and a failed Fake Out all cost PP; a flinch and
+  being outsped and killed don't.
+- **A range, like health.** A turn marked *didn't act* covers a miss (spent) and
+  a full paralysis (not), so it raises only the ceiling. Measured: marking
+  Makuhita's first Vital Throw *didn't act* reads `9–10` of 10 on the next turn.
+- **Max PP is `MoveTable_CalcMaxPP`**: base plus a fifth per PP Up, capped at
+  three, rounded down. Base PP comes off this game's dex, and Kaizo changed some
+  of it — **Rock Polish has 1 PP here**, so Aron and Cranidos get one use each.
+  - **PP Ups come from the save file.** The importer reads the byte per move
+    beside the moves in block B (`0x0C`) into `set.data.ppUps`, keyed by move id
+    rather than slot so reordering moves can't hand one move's PP Ups to another.
+    A Box imported before this has none until it is re-imported. Trainer Pokémon
+    never have any — the game builds their moves with zero.
+- **Pressure, per the decomp's own switch on the move's range**, because the
+  ranges aren't treated alike:
+  - one target: +1 if that target has Pressure;
+  - every foe, or the foe's side: +1 per living Pressure over there. **Stealth
+    Rock and Spikes pay it** — `BattleSystem_Defender` hands them a random foe as
+    their target, so the check runs;
+  - every adjacent Pokémon, or the whole field: +1 per living Pressure anywhere
+    but the user, an ally's included — Earthquake, and Sunny Day too;
+  - the user or its own side: nothing, except **Imprison**, which the game
+    special-cases to count the foe's side;
+  - Counter and the other `scripted` moves read `1–2` wherever a Pressure foe is
+    standing. The decomp aims `RANGE_SINGLE_TARGET_SPECIAL` at the user, which
+    would make it a flat 1, but that the dex's `scripted` is exactly that range
+    isn't confirmed — so it abstains rather than guessing. A random-target move
+    is a range for the plainer reason that its target is random.
+  Verified against stubbed abilities in a single and a double: Rock Slide into
+  two Pressure users costs 3, into one costs 2.
+- **On the card, only once some has gone** — a small figure after the damage,
+  red at a certain zero. At full it is context the tooltip already carries
+  (`x/y PP`), and a count on every row clipped names as short as *Head Smash*;
+  the same call the corrected level makes.
+- **A warning only at a certain zero**, because the game won't let the move be
+  picked at all; with every move empty it says *all it can do is Struggle*. A
+  range that merely reaches zero passes silently.
+- **The AI's PP rules are answered.** Four move-scoring conditions ask "the
+  remaining PP of the move is 1 / 2 / 3 / 4 or more"; they were unknowns, and now
+  read the AI's own count — unknown again only where the planner holds a range.
+
 ### Held items that go off
 
 A Berry Juice quietly restoring 20 HP is the difference between a plan that works
@@ -1607,6 +1659,25 @@ super-effective move. That is a real condition and a deterministic one — it is
 out only because the item firing points ask "is the band under a threshold", and
 this asks about the move that just landed. It would fit in `foldDamage` beside
 the Focus Sash, which already works that way. No trainer carries it.
+
+### What PP doesn't do yet
+
+Tracked, displayed and warned about — see **PP** above — but nothing yet *reads*
+it other than the warning and the AI's scoring. In rough order of worth:
+
+- **Encore ending on an empty move.** The decomp's condition check clears Encore
+  the moment the encored move reaches 0 PP; the planner still only knows the
+  8-turn ceiling.
+- **Spite** (−4 to the target's last move), **Leppa Berry** (+10, and
+  `gen-item-effects.js` already prints it as unmatched) and **Grudge** (the move
+  that KO'd the user loses all its PP). All three are certainties and fit
+  `ppUsed` directly.
+- **Struggle is only a warning.** The game forces it when every move is empty;
+  the plan still resolves whatever move was picked.
+- **Transform's 5 PP per copied move**, and the extra Pressure charge on a move
+  bounced by **Magic Coat** or taken by **Snatch** (`BattleSystem_DecPPForPressure`).
+- **No hand-stated PP**, the way `hpSeed` states health — for a line that opens
+  mid-fight, or a Box whose PP Ups were never imported.
 
 ### What is still missing around switching
 

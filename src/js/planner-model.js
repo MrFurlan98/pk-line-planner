@@ -435,9 +435,9 @@ const STATUSES = {
  * `maxTurns` is the point at which the condition is guaranteed gone, the way
  * sleep is after four. Confusion runs 2-5, Encore 4-8, Disable 4-7 - random in
  * the middle, certain at the end - so the planner ends them there rather than
- * carrying them down a line forever. Encore can also break early when the
- * encored move runs out of PP, which isn't tracked, so its ceiling is the only
- * half of it worth relying on.
+ * carrying them down a line forever. Encore also breaks early when the encored
+ * move runs out of PP; PP is tracked, but Encore doesn't read it yet, so its
+ * ceiling is the only half of it relied on.
  *
  * The rest have no turn limit at all: Leech Seed and Torment last until the
  * target switches out, Attract until either side leaves, and a Substitute until
@@ -555,6 +555,13 @@ function emptyMonState() {
              * reads your moveset, only what you have shown it.
              */
             seenMoves: {},
+            /*
+             * PP spent per move this fight, as {moveId: {min, max}} - a range for
+             * the same reason health is one: a turn marked "didn't act" may or may
+             * not have got as far as spending it. Unlike almost everything else
+             * here it survives leaving the field, because PP does.
+             */
+            ppUsed: {},
             /*
              * The level it is fighting at, once a turn has stated one. Null means
              * "whatever its set says", which is the ordinary case. Kept on the
@@ -853,6 +860,111 @@ function seeMove(state, side, ref, moveName, certain) {
     else if (!mon.seenMoves[move.id]) mon.seenMoves[move.id] = "maybe";
 }
 
+/*
+ * PP, spent where the game spends it. BattleControllerPlayer_DecrementPP runs in
+ * the same before-move sequence that marks a move seen - after sleep, flinching,
+ * paralysis and obedience have let it through, and before the target, accuracy
+ * and Protect checks. So it follows seeMove exactly: a miss, a blocked hit and a
+ * failed Fake Out all cost PP, a flinch doesn't, and a turn marked "didn't act"
+ * may or may not have.
+ */
+var PRESSURE = "pressure";
+var STRUGGLE = "struggle";
+var IMPRISON = "imprison";
+
+/*
+ * MoveTable_CalcMaxPP: a fifth of the base per PP Up, capped at three and
+ * rounded down. The base comes off this game's dex, since Kaizo changed some.
+ */
+function maxPpFor(holder, moveName) {
+    var move = findMove(moveName);
+    if (!move || !move.pp || move.id === STRUGGLE) return null;
+    var ups = Math.min(3, Number(holder && holder.ppUps && holder.ppUps[move.id]) || 0);
+    return move.pp + Math.floor(move.pp * 20 * ups / 100);
+}
+
+// PP left coming into a turn, as {min, max, full}, or null when there is none to track.
+function ppLeftFor(line, node, state, side, slot, moveName) {
+    var ref = monAt(node, side, slot);
+    var move = findMove(moveName);
+    var full = ref && maxPpFor(activeHolder(line, node, side, slot), moveName);
+    if (!move || !full) return null;
+    var used = (monState(state, side, ref).ppUsed || {})[move.id] || {min: 0, max: 0};
+    return {min: Math.max(0, full - used.max), max: Math.max(0, full - used.min), full: full};
+}
+
+/*
+ * What one use costs, Pressure included, as {min, max}. Read off the decomp's own
+ * switch on the move's range, because the ranges are not treated alike:
+ *
+ * - a single target costs one more if that target has Pressure;
+ * - every foe, or the foe's side, costs one more per living Pressure over there -
+ *   Stealth Rock and Spikes included, since BattleSystem_Defender hands them a
+ *   random foe as their target;
+ * - every adjacent Pokemon, or the whole field, costs one more per living
+ *   Pressure anywhere but the user, an ally's included - Sunny Day too;
+ * - the user or its own side costs nothing extra, except Imprison, which the
+ *   game special-cases to count the foe's side.
+ *
+ * A move whose target the game settles for itself - Counter's scripted one, a
+ * random one - is a range wherever its choice would change the cost.
+ */
+function ppCostFor(line, onField, state, side, slot, moveName, targets) {
+    var move = findMove(moveName);
+    var other = side === "you" ? "them" : "you";
+    var foes = [[other, 0], [other, 1]];
+    var range = (move && move.target) || "normal";
+
+    function pressured(pair) {
+        var ref = monAt(onField, pair[0], pair[1]);
+        if (!ref || isFainted(monState(state, pair[0], ref))) return false;
+        var holder = activeHolder(line, onField, pair[0], pair[1]);
+        return toID((holder && holder.ability) || "") === PRESSURE;
+    }
+    function perPressure(list) {
+        var n = list.filter(pressured).length;
+        return {min: 1 + n, max: 1 + n};
+    }
+
+    if ((move && move.id === IMPRISON) || range === "allAdjacentFoes" || range === "foeSide") {
+        return perPressure(foes);
+    }
+    if (range === "allAdjacent" || range === "all") {
+        return perPressure(foes.concat([[side, slot === 0 ? 1 : 0]]));
+    }
+    if (range === "self" || /ally/i.test(range)) return {min: 1, max: 1};
+    if (range === "scripted" || range === "randomNormal") {
+        var any = foes.some(pressured);
+        var every = any && foes.every(function(pair) {
+            return !monAt(onField, pair[0], pair[1]) || pressured(pair);
+        });
+        // A scripted move is aimed at its own user when the cost is worked out.
+        return {min: range === "randomNormal" && every ? 2 : 1, max: any ? 2 : 1};
+    }
+    var target = targets && targets.length ? targets[0] : slot;
+    return pressured([other, target]) ? {min: 2, max: 2} : {min: 1, max: 1};
+}
+
+/*
+ * Spends a use of the move. `certain` false leaves the floor where it was and
+ * raises only the ceiling, which is how a maybe widens the range. PP never goes
+ * below zero, and a move already at zero is the validation warning's business.
+ */
+function spendPp(line, onField, state, side, slot, moveName, certain, targets) {
+    var ref = monAt(onField, side, slot);
+    var move = findMove(moveName);
+    var full = ref && maxPpFor(activeHolder(line, onField, side, slot), moveName);
+    if (!move || !full) return;
+    var mon = monState(state, side, ref);
+    if (!mon.ppUsed) mon.ppUsed = {};
+    var used = mon.ppUsed[move.id] || {min: 0, max: 0};
+    var cost = ppCostFor(line, onField, state, side, slot, moveName, targets);
+    mon.ppUsed[move.id] = {
+        min: Math.min(full, used.min + (certain ? cost.min : 0)),
+        max: Math.min(full, used.max + cost.max)
+    };
+}
+
 function flinchesTarget(moveName) {
     var move = findMove(moveName);
     return !!(move && move.id === FAKE_OUT);
@@ -938,7 +1050,11 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
              * full paralysis, which it doesn't - so the move is a maybe.
              */
             if (!actedAt(parent, side, i)) {
-                seeMove(state, side, monAt(onField, side, i), moveAt(parent, side, i), false);
+                var idle = moveAt(parent, side, i);
+                seeMove(state, side, monAt(onField, side, i), idle, false);
+                // PP likewise: a miss spent it, a full paralysis didn't.
+                spendPp(line, onField, state, side, i, idle, false,
+                    targetsOf(onField, side, i, idle, aimAt(parent, side, i), state.redirect[other]));
                 return;
             }
 
@@ -973,8 +1089,16 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
              * show it. A Quick Claw holder let through the denials above may not
              * have got this far, so it is a maybe.
              */
-            seeMove(state, side, monAt(onField, side, i), move,
-                !(action.unsure && (goneBefore[side + i] || flinched[side + i] || phazed[side + i])));
+            var used = !(action.unsure && (goneBefore[side + i] || flinched[side + i] || phazed[side + i]));
+            seeMove(state, side, monAt(onField, side, i), move, used);
+            /*
+             * PP goes at the same point in the game's sequence, so on the same
+             * terms - and before the Fake Out and Protect checks below, which is
+             * why a failed Fake Out or a blocked hit still costs it. Spent on the
+             * move as declared, so a Nature Power pays for itself.
+             */
+            spendPp(line, onField, state, side, i, move, used,
+                targetsOf(onField, side, i, move, aimAt(parent, side, i), state.redirect[other]));
             /*
              * Nature Power is spent as the move it turns into, so everything below -
              * Protect, the type chart, the damage - meets that move instead. A line
@@ -1502,6 +1626,23 @@ function validateNode(line, node, state, report) {
             }
 
             /*
+             * Out of PP, which the game won't let you pick at all. Only a certain
+             * zero: a range that reaches zero is a "didn't act" turn above that
+             * may not have spent anything. With every move empty the one thing
+             * left is Struggle, and that is worth saying instead.
+             */
+            var ppLeft = chosen && ppLeftFor(line, node, state, side, slot, move);
+            if (ppLeft && ppLeft.max === 0) {
+                var anyLeft = (known || []).some(function(m) {
+                    var left = ppLeftFor(line, node, state, side, slot, m);
+                    return !left || left.max > 0;
+                });
+                warn(anyLeft
+                    ? `${name} has no PP left for ${chosen.name}`
+                    : `${name} has no PP left in any move, so all it can do is Struggle`);
+            }
+
+            /*
              * A guard that follows another one. The planner applies it - it is
              * what the plan says happens - but this is the one place a turn rests
              * on a coin flip that nothing else on the card would tell you about,
@@ -1919,8 +2060,10 @@ function activeHolder(line, node, side, slot) {
      * and the IVs for Hidden Power, whose type and power are nothing but IVs.
      */
     if (side === "you" && !isPartnerSlot(line, side, slot)) {
+        // PP Ups too, which only a Box set can carry - trainers never have any.
         return entry ? {id: ref, item: entry.set.item, ability: entry.set.ability,
-                        nature: entry.set.nature, ivs: entry.set.ivs} : null;
+                        nature: entry.set.nature, ivs: entry.set.ivs,
+                        ppUps: entry.set.data ? entry.set.data.ppUps : null} : null;
     }
     return {id: ref, item: entry ? entry.set.item : "", ability: entry ? entry.set.ability : "",
             nature: entry ? entry.set.nature : "", ivs: entry ? entry.set.ivs : null};

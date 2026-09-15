@@ -1391,6 +1391,8 @@ function scoringFactsFor(line, node, state, side, slot, targetSlot) {
              * way here as they do there.
              */
             eff: switchEffectiveness(type, defender, entry.set.ability, state),
+            // What is left before this use, for the rules that ask about it.
+            ppLeft: ppLeftFor(line, node, state, side, slot, name),
             damage: 0,
             kos: false
         };

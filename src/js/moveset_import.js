@@ -155,6 +155,16 @@ function addSavePokemon(array, dead) {
 	var move2 = Object.values(MOVES).find(x => x.num == readUInt16(blockB, 0x2));
 	var move3 = Object.values(MOVES).find(x => x.num == readUInt16(blockB, 0x4));
 	var move4 = Object.values(MOVES).find(x => x.num == readUInt16(blockB, 0x6));
+	/*
+	 * PP Ups sit beside the moves in block B, a byte per move slot. Kept by move id
+	 * rather than by slot, so reordering moves in the Box can't hand one move's PP
+	 * Ups to another, and a forgotten move takes its own with it.
+	 */
+	var ppUps = {};
+	[move1, move2, move3, move4].forEach(function (move, k) {
+		var ups = Math.min(3, blockB[0x0C + k]);
+		if (move && ups) ppUps[move.id] = ups;
+	});
 	var hasNickname = parseInt(BigInt(ivData) >> BigInt(31));
 	var nickname = "";
 	if (hasNickname) {
@@ -187,7 +197,8 @@ function addSavePokemon(array, dead) {
 		id: `${pid.toString(16).padStart(8, "0")}-${Object.values(pokemon.ivs).map(x => x.toString(16).padStart(2, "0")).join("")}-${metAtLevel.toString(16).padStart(2, "0")}`,
 		abilityIndex: pid & 0x1,
 		location: location ? location.name : undefined,
-		dead: dead == true
+		dead: dead == true,
+		ppUps: ppUps
 	};
 
 	addToDex(pokemon);

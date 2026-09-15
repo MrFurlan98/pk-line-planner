@@ -275,6 +275,24 @@ function scoringClause(clause, ctx) {
         return m[1] ? !hit : hit;
     }
 
+    /*
+     * PP left on the move being scored, before this use. The AI reads its own PP
+     * exactly, but the planner carries a range wherever a "didn't act" turn may or
+     * may not have spent some - so only a range wholly on one side answers.
+     */
+    m = clause.match(/^the remaining PP of the move is (\d+)( or more)?$/i);
+    if (m) {
+        var pp = move.ppLeft;
+        var ppAsked = Number(m[1]);
+        if (!pp) return SCORING_UNKNOWN;
+        if (m[2]) {
+            if (pp.min >= ppAsked) return true;
+            return pp.max < ppAsked ? false : SCORING_UNKNOWN;
+        }
+        if (pp.min === ppAsked && pp.max === ppAsked) return true;
+        return ppAsked < pp.min || ppAsked > pp.max ? false : SCORING_UNKNOWN;
+    }
+
     /* --- KO checks --- */
     if (/^If the move can KO the target$/i.test(text)) return move.kos;
     if (/^If the move cannot KO the target$/i.test(text)) return !move.kos;
