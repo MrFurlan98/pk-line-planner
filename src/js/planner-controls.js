@@ -529,6 +529,140 @@ function aiFlagHint(flag) {
 
 /* ------------------------------------------------------------------- canvas */
 
+/*
+ * Nature Power's terrain: a button on the move row, and a picker of platforms.
+ *
+ * The art is the game's own, and each PNG carries an opaque backdrop - palette
+ * index 0, pale blue on most terrains and white on a cave. It is flood-filled
+ * out from the corners rather than matched by colour, which would also punch
+ * holes in any platform that happens to use the same shade. Keyed once per
+ * folder and cached as a data URL; a folder still loading holds its callbacks.
+ */
+var TERRAIN_ART = {};
+
+function terrainArt(folder, done) {
+    var cached = TERRAIN_ART[folder];
+    if (typeof cached === "string") return done(cached);
+    if (cached) return cached.push(done);
+    TERRAIN_ART[folder] = [done];
+    var sources = [].concat(GAME.terrainArt(folder));
+
+    function finish(url) {
+        var waiting = TERRAIN_ART[folder];
+        // A failure is left uncached, so a later render can try again.
+        if (url) TERRAIN_ART[folder] = url;
+        else delete TERRAIN_ART[folder];
+        waiting.forEach(function(cb) { cb(url); });
+    }
+
+    // Each source in turn, since a CDN can refuse one file and serve the rest.
+    (function attempt(i) {
+        if (i >= sources.length) return finish("");
+        var img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = function() {
+            try {
+                finish(keyOutBackdrop(img));
+            } catch (e) {
+                // A canvas the browser won't read back; the picker still works without art.
+                finish("");
+            }
+        };
+        img.onerror = function() { attempt(i + 1); };
+        img.src = sources[i];
+    })(0);
+}
+
+function keyOutBackdrop(img) {
+    var w = img.naturalWidth;
+    var h = img.naturalHeight;
+    var canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    var data = ctx.getImageData(0, 0, w, h);
+    var px = data.data;
+    var r = px[0], g = px[1], b = px[2];
+    var seen = new Uint8Array(w * h);
+    var stack = [[0, 0], [w - 1, 0], [0, h - 1], [w - 1, h - 1]];
+    while (stack.length) {
+        var p = stack.pop();
+        var x = p[0], y = p[1];
+        if (x < 0 || y < 0 || x >= w || y >= h || seen[y * w + x]) continue;
+        seen[y * w + x] = 1;
+        var i = (y * w + x) * 4;
+        if (px[i] !== r || px[i + 1] !== g || px[i + 2] !== b) continue;
+        px[i + 3] = 0;
+        stack.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
+    }
+    ctx.putImageData(data, 0, 0);
+    return canvas.toDataURL("image/png");
+}
+
+// Fills in every platform image under `root` once its art is ready.
+function paintTerrainArt(root) {
+    $(root).find("img[data-terrain-art]").each(function() {
+        var el = this;
+        terrainArt(el.getAttribute("data-terrain-art"), function(url) {
+            if (url) el.setAttribute("src", url);
+        });
+    });
+}
+
+// The button on a Nature Power row: what is picked, or that nothing is yet.
+function renderTerrainButton(line) {
+    var terrain = NATURE_POWER_MOVES[line.terrain];
+    if (!terrain) {
+        return `<button class="planner-terrain-btn unset"
+                        title="Nature Power becomes a different move depending on where the fight is. Click to pick the terrain."
+                >terrain?</button>`;
+    }
+    return `<button class="planner-terrain-btn"
+                    title="${escapeAttr(`${terrain.label}: Nature Power becomes ${terrain.move} here. Click to change.`)}"
+            ><img class="planner-terrain-thumb" data-terrain-art="${terrain.art}" alt="${terrain.label}"></button>`;
+}
+
+function openTerrainPicker() {
+    var line = currentLine();
+    if (!line) return;
+    var tiles = Object.keys(NATURE_POWER_MOVES).map(function(key) {
+        var terrain = NATURE_POWER_MOVES[key];
+        var called = findMove(terrain.move);
+        return `<button class="planner-terrain-tile${line.terrain === key ? " selected" : ""}" data-terrain="${key}">
+            <img class="planner-terrain-art" data-terrain-art="${terrain.art}" alt="">
+            <span class="planner-terrain-name">${terrain.label}</span>
+            <span class="planner-terrain-calls">${called ? `<img src="${GAME.sprites.type(called.type)}" alt=""> ` : ""}${terrain.move}</span>
+        </button>`;
+    }).join("");
+
+    $("#planner-popup-container").html(`<fieldset class="planner-terrain-popup">
+        <legend align="center">Where is this fight?</legend>
+        <p class="planner-hint">Nature Power becomes a different move on each terrain. Match the ground the
+            Pokémon stand on in the battle. It applies to the whole line.</p>
+        <div class="planner-terrain-grid">${tiles}</div>
+        <hr />
+        <span class="buttons">
+            <button id="planner-clear-terrain" class="btn planner-btn">Clear</button>
+            <button id="planner-close-terrain" class="btn planner-btn">Close</button>
+        </span>
+    </fieldset>`).removeClass("hide").show();
+    paintTerrainArt("#planner-popup-container");
+}
+
+/*
+ * A full render rather than a redraw, because the terrain changes what a Nature
+ * Power does and so the health of every turn below it.
+ */
+function setLineTerrain(key) {
+    var line = currentLine();
+    if (!line) return;
+    line.terrain = key;
+    saveLines();
+    $("#planner-popup-container").hide().empty();
+    renderLine();
+}
+
 function renderLine() {
     var line = currentLine();
     $(".planner-canvas-nodes").empty();
@@ -575,6 +709,8 @@ function renderLine() {
         if (visible[id]) renderNode(line.nodes[id], line, visible);
     }
     renderEdges(visible);
+    // The terrain thumbnails on Nature Power rows arrive once their art is keyed out.
+    paintTerrainArt(".planner-canvas-nodes");
 }
 
 function renderNode(node, line, visible) {
@@ -1048,7 +1184,8 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
             return `<span class="planner-move ${side}${isSelected ? " selected" : ""}" data-move="${name}" data-side="${side}" data-slot="${slot}">${name}</span>`;
         }
 
-        var guard = stopped ? null : guardWaiting(name);
+        // A Nature Power meets a Protect as whatever it turns into.
+        var guard = stopped ? null : guardWaiting(calledMoveFor(line, name));
         var blocked = !!(guard && guard.kind === "block" && guard.certain);
 
         /*
@@ -1072,7 +1209,7 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
          * per turn rather than once: weather changes, so the same Weather Ball is
          * a different move two turns later.
          */
-        var resolved = resolvedMoveFor(name, activeHolder(line, node, side, slot), state);
+        var resolved = resolvedMoveFor(name, activeHolder(line, node, side, slot), state, line);
         var shownType = resolved ? resolved.type : move.type;
         var shownPower = resolved ? resolved.power : move.basePower;
         /*
@@ -1083,9 +1220,20 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
         var rolled = typeof powerSpanFor === "function" ? powerSpanFor(name) : null;
         if (rolled) shownPower = `${rolled.min}–${rolled.max}`;
 
+        // A Nature Power with a terrain has a real power, even though it is a status move on paper.
+        var noPower = move.category === "status" && !(resolved && resolved.power);
+        /*
+         * A Nature Power carries its terrain button. With no terrain set the
+         * button stands in for the figure, saying what the move is waiting for
+         * rather than a dash that reads like nothing to calculate.
+         */
+        var terrainBtn = move.id === NATURE_POWER ? renderTerrainButton(line) : "";
         var figure = damage
             ? `<span class="planner-move-dmg${damageClass(damage)}${stopped || blocked ? " denied" : ""}">${damageText(damage)}</span>`
-            : `<span class="planner-move-bp">${move.category === "status" ? "—" : shownPower}</span>`;
+            : resolved && resolved.needsTerrain
+                ? ""
+                : `<span class="planner-move-bp">${noPower ? "—" : shownPower}</span>`;
+        figure = terrainBtn + figure;
 
         var tooltip = `${move.name}${resolved ? ` (${resolved.label})` : ""} — ${move.category}, ${shownPower || 0} BP, ${move.accuracy || "—"}% acc`;
         if (resolved) tooltip = `${resolved.why}\n\n${tooltip}`;
@@ -3190,6 +3338,24 @@ function initPlanner() {
         renderLine();
     });
 
+    // Nature Power's terrain, opened from the move row rather than selecting the move.
+    $(".planner-canvas").on("click", ".planner-terrain-btn", function(e) {
+        e.stopPropagation();
+        openTerrainPicker();
+    });
+
+    $(document).on("click", ".planner-terrain-tile", function() {
+        setLineTerrain($(this).attr("data-terrain"));
+    });
+
+    $(document).on("click", "#planner-clear-terrain", function() {
+        setLineTerrain("");
+    });
+
+    $(document).on("click", "#planner-close-terrain", function() {
+        $("#planner-popup-container").hide().empty();
+    });
+
     /*
      * Clearing the open line rather than the whole planner. Sat beside Blind
      * because it belongs to the fight you are looking at, and it says how much
@@ -3220,7 +3386,7 @@ function initPlanner() {
     });
 
     // Dragging a card shouldn't start from its move list, or from its buttons.
-    $(".planner-canvas").on("mousedown", ".planner-move, .planner-moves-toggle, .planner-scoring-btn",
+    $(".planner-canvas").on("mousedown", ".planner-move, .planner-moves-toggle, .planner-scoring-btn, .planner-terrain-btn",
         function(e) { e.stopPropagation(); });
 
     // What the AI is weighing, opened from the card.

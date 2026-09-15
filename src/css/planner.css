@@ -332,6 +332,105 @@
     font-weight: bold;
 }
 
+/*
+ * Nature Power's terrain, set from the move itself. The platforms are the game's
+ * own pixel art, so they are scaled without smoothing.
+ */
+.planner-terrain-btn {
+    font-size: 10px;
+    padding: 0 4px;
+    margin: 0 4px 0 0;
+    width: auto;
+    border: 1px solid rgba(128, 128, 128, 0.4);
+    border-radius: 3px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    line-height: 14px;
+    vertical-align: middle;
+}
+
+.planner-terrain-btn:hover {
+    background: rgba(128, 128, 128, 0.2);
+}
+
+.planner-terrain-btn.unset {
+    color: #d08a20;
+    border-color: #d08a20;
+    font-style: italic;
+}
+
+.planner-terrain-thumb {
+    width: 32px;
+    height: 16px;
+    vertical-align: middle;
+    image-rendering: pixelated;
+}
+
+.planner-terrain-popup {
+    width: 470px;
+}
+
+.planner-terrain-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.planner-terrain-tile {
+    width: auto;
+    margin: 0;
+    padding: 4px 2px 6px;
+    border: 1px solid rgba(128, 128, 128, 0.35);
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.25;
+}
+
+.planner-terrain-tile:hover {
+    background: rgba(128, 128, 128, 0.18);
+}
+
+.planner-terrain-tile.selected {
+    border-color: #2e9e5b;
+    background: rgba(46, 158, 91, 0.2);
+}
+
+.planner-terrain-tile img.planner-terrain-art {
+    display: block;
+    width: 96px;
+    height: 48px;
+    margin: 0 auto 2px;
+    image-rendering: pixelated;
+}
+
+.planner-terrain-name {
+    display: block;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.planner-terrain-calls {
+    display: block;
+    font-size: 10px;
+    opacity: 0.85;
+}
+
+.planner-terrain-calls img {
+    vertical-align: middle;
+    height: 10px;
+}
+
+/* Painted in once the backdrop has been keyed out; see paintTerrainArt. */
+img.planner-terrain-art:not([src]),
+img.planner-terrain-thumb:not([src]) {
+    visibility: hidden;
+}
+
 .planner-foe-party {
     display: flex;
     flex-wrap: wrap;

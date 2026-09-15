@@ -553,6 +553,8 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
  * read across. The spread reduction still applies, from the game type.
  */
 function damageFor(line, node, state, side, slot, moveName, isCrit, drawnBy) {
+    // A Nature Power is worked out as whatever it turns into on this line's terrain.
+    moveName = calledMoveFor(line, moveName);
     var target = targetsOf(node, side, slot, moveName, aimAt(node, side, slot), drawnBy)[0];
     var other = side === "you" ? "them" : "you";
     /*
@@ -776,9 +778,34 @@ function switchMoveType(move, set, state) {
  * neither of them fixes is the *card*, which was showing a Normal type icon and
  * a base power of 1 for a move that is neither.
  */
-function resolvedMoveFor(moveName, holder, state) {
+function resolvedMoveFor(moveName, holder, state, line) {
     var move = findMove(moveName);
     if (!move) return null;
+
+    /*
+     * Nature Power, only when a line is passed: the card wants the move it turns
+     * into, while the AI's own checks read it as the zero-power move the game's
+     * table says it is, and so leave `line` off.
+     */
+    if (move.id === NATURE_POWER && line) {
+        var terrain = NATURE_POWER_MOVES[line.terrain];
+        if (!terrain) {
+            return {
+                type: move.type,
+                power: 0,
+                needsTerrain: true,
+                label: "no terrain set",
+                why: "Nature Power becomes a different move depending on where the fight is. Pick the terrain in the toolbar to see what it does."
+            };
+        }
+        var called = findMove(terrain.move);
+        return {
+            type: called.type,
+            power: called.basePower,
+            label: terrain.move,
+            why: `On ${terrain.label.toLowerCase()} terrain it becomes ${terrain.move}. Change the terrain in the toolbar and this changes with it.`
+        };
+    }
 
     /*
      * The move keeps its own name on the card. The type *icon* is what changes -

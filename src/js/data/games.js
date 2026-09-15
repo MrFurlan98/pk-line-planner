@@ -79,6 +79,24 @@ const GAMES = {
         species: () => SPECIES,
         sprites: SHOWDOWN_SPRITES,
         /*
+         * The platform a battle's Pokemon stand on, by the decomp's own folder
+         * name. Showdown has nothing that matches, so it comes straight from
+         * pret/pokeplatinum, pinned to one commit so a rename upstream can't
+         * break it. Only Nature Power's terrain picker uses it.
+         *
+         * Two sources, tried in order: jsDelivr first for its caching, then raw
+         * GitHub, because jsDelivr refuses some files outright - rocky/enemy.png
+         * (Mountain) returns 403 there while the rest are served.
+         */
+        terrainArt: function(folder) {
+            var sha = "7a0637607bc070516c20a5bf3a9cd71c76b7a894";
+            var path = `res/graphics/battle/terrain/${folder}/enemy.png`;
+            return [
+                `https://cdn.jsdelivr.net/gh/pret/pokeplatinum@${sha}/${path}`,
+                `https://raw.githubusercontent.com/pret/pokeplatinum/${sha}/${path}`
+            ];
+        },
+        /*
          * Trainer keys in party_order/sets carry placeholders for the rival's
          * starter, which depends on the one you picked in Settings: the key
          * "Barry #1 [{RIVAL_STARTER_1}]" is an alias for whichever of the

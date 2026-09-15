@@ -257,6 +257,32 @@ graph, so editing one turn updates everything after it.
     you ask in the Box and not mid-fight. It also says whether the Pokémon knows
     the move yet. Verified against hand-worked IVs: 26/30/25/22/19/19 gives
     Psychic at 67 BP.
+- **Nature Power is resolved from a terrain the line states.** It was showing no
+  damage at all: it is a status move on paper, and calc's gen-4 code only swaps
+  in the called move when handed `naturePowerTarget`, which nothing passed. What
+  it calls depends on where the fight is — `sTerrainMove` in the decomp, which
+  also has the bridge (Air Slash) the dex's table leaves out — and nothing in the
+  app knows where a trainer stands, so it is never guessed.
+  - **Set from the move itself.** A Nature Power row carries a button — `terrain?`
+    until one is picked, then a thumbnail of the chosen platform — that opens a
+    grid of all twelve terrains. Unset, Nature Power stays a zero-power move. It
+    started as a toolbar dropdown, which was easy to miss and far from the move.
+  - **Each tile shows the platform the Pokémon stand on**, because that is how you
+    recognise a fight's terrain on screen. The art is the decomp's own
+    (`res/graphics/battle/terrain/*/enemy.png`), pinned to one pokeplatinum commit,
+    since Showdown's CDN has nothing that matches. jsDelivr is tried first and raw
+    GitHub second: jsDelivr returns **403 for `rocky/enemy.png`** (Mountain) alone
+    and serves the rest, which only showed up as one blank tile. The
+    PNGs carry an opaque backdrop (palette index 0, which differs per terrain), so
+    `paintTerrainArt` flood-fills it out from the corners on a canvas and caches
+    the result.
+  - **Set, it is that move everywhere the plan looks**: `calledMoveFor` swaps it in
+    inside `resolveMoves`, so Protect, the type chart and the damage all meet the
+    real move, and `damageFor` does the same for the card.
+  - **The AI still reads Nature Power as zero power**, as the game's table has
+    it, so the switch check and the move scoring are left alone.
+  - Earthquake called this way in a double is still aimed at one target — the
+    planner reads spread from the declared move.
 
 [hp]: https://bulbapedia.bulbagarden.net/wiki/Hidden_Power_(move)/Calculation
 - **A guaranteed KO says `KO` rather than a number.** Past the kill the range

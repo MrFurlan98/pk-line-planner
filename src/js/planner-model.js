@@ -145,10 +145,53 @@ function newLine(trainerName) {
         game: GAME.id,
         trainer: trainerName,
         notes: "",
+        // Where the fight happens, which only Nature Power reads. See NATURE_POWER_MOVES.
+        terrain: "",
         nodes: {},
         edges: {},
         view: {x: 0, y: 0}
     };
+}
+
+/*
+ * What Nature Power turns into, by the battle's terrain - sTerrainMove in the
+ * decomp (include/data/terrain/to_move.h). The dex's own table leaves out the
+ * bridge; the decomp has it.
+ *
+ * One entry per terrain rather than per move, so each can show the platform the
+ * Pokemon stand on in that fight, which is how you recognise it. `art` is the
+ * decomp's folder for that platform (sTerrainSpriteSource_EnemySide in
+ * src/battle/terrain.c), whose names don't always match: a building stands on
+ * "indoors", and the bridge borrows the Great Marsh's.
+ *
+ * Nothing in the app knows where a trainer stands, so this is never guessed: a
+ * line with no terrain leaves Nature Power as the zero-power move it is on paper.
+ */
+const NATURE_POWER_MOVES = {
+    building: {label: "Building", art: "indoors", move: "Tri Attack"},
+    plain: {label: "Plain", art: "path", move: "Earthquake"},
+    sand: {label: "Sand", art: "sand", move: "Earthquake"},
+    grass: {label: "Grass", art: "grass", move: "Seed Bomb"},
+    puddle: {label: "Puddle", art: "path_puddles", move: "Seed Bomb"},
+    mountain: {label: "Mountain", art: "rocky", move: "Rock Slide"},
+    cave: {label: "Cave", art: "cave", move: "Rock Slide"},
+    water: {label: "Water", art: "water", move: "Hydro Pump"},
+    snow: {label: "Snow", art: "snow", move: "Blizzard"},
+    ice: {label: "Ice", art: "ice", move: "Ice Beam"},
+    marsh: {label: "Great Marsh", art: "mud", move: "Mud Bomb"},
+    bridge: {label: "Bridge", art: "mud", move: "Air Slash"}
+};
+const NATURE_POWER = "naturepower";
+
+/*
+ * The move a slot actually uses. Only Nature Power differs, and only once the
+ * line says where the fight is; everything else is returned as it came.
+ */
+function calledMoveFor(line, moveName) {
+    var move = findMove(moveName);
+    if (!move || move.id !== NATURE_POWER) return moveName;
+    var terrain = line && NATURE_POWER_MOVES[line.terrain];
+    return terrain ? terrain.move : moveName;
 }
 
 /*
@@ -932,6 +975,12 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
              */
             seeMove(state, side, monAt(onField, side, i), move,
                 !(action.unsure && (goneBefore[side + i] || flinched[side + i] || phazed[side + i])));
+            /*
+             * Nature Power is spent as the move it turns into, so everything below -
+             * Protect, the type chart, the damage - meets that move instead. A line
+             * with no terrain leaves it as it is.
+             */
+            move = calledMoveFor(line, move);
             /*
              * A Fake Out that isn't this Pokemon's first turn out does nothing
              * whatsoever - no damage, no flinch. It still costs the turn.
