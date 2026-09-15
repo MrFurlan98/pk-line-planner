@@ -1211,6 +1211,14 @@ function turnReport(line, node, state) {
      */
     var slots = slotCount(line);
     var scratch = normalizeState(cloneState(state));
+    /*
+     * The field is a copy too, in the same shape applyTurn builds. A U-turn, a
+     * Baton Pass or a Roar writes whoever comes in into the field it is handed,
+     * and handed the turn itself that write landed in the plan: the card went on
+     * to work out the U-turn's damage from the Pokemon it brought in, and the
+     * next save kept the swap.
+     */
+    var field = {mons: (node.mons || []).slice(), foes: (node.foes || []).slice()};
     var alreadyGone = {you: [], them: []};
     ["you", "them"].forEach(function(side) {
         for (var i = 0; i < slots; i++) {
@@ -1222,7 +1230,7 @@ function turnReport(line, node, state) {
      * a single set of figures for all of them - so it shows the ordinary hit and
      * leaves the crit to the health each branch carries away.
      */
-    resolveMoves(line, node, node, scratch, {}, alreadyGone, slots,
+    resolveMoves(line, node, field, scratch, {}, alreadyGone, slots,
         function(side, slot, reason) { report.denied[side + slot] = reason; });
     report.redirect = scratch.redirect || {};
     report.guarding = scratch.guarding || {};
