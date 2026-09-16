@@ -877,9 +877,13 @@ img.planner-terrain-thumb:not([src]) {
  * exist in dark mode. Reading them with a light fallback keeps the planner
  * legible in both themes without duplicating the ruleset.
  */
+/*
+ * 320px rather than the 274 it started at: the PP column (x/y on every move) needs
+ * the room, and at 274 half the move names on a card ran into an ellipsis.
+ */
 .planner-node {
     position: absolute;
-    width: 274px;
+    width: 320px;
     padding: 6px;
     border: 1px solid rgba(128, 128, 128, 0.6);
     border-radius: 5px;
@@ -1090,7 +1094,7 @@ img.planner-terrain-thumb:not([src]) {
 /* Yours left, theirs right - always, so the comparison reads across. */
 .planner-move-columns {
     display: flex;
-    gap: 8px;
+    gap: 6px;
 }
 
 /* Within a side, a double stacks its two Pokémon. */
@@ -1187,16 +1191,21 @@ img.planner-terrain-thumb:not([src]) {
 }
 
 /*
- * PP left coming into the turn, drawn only once some has been spent - at full it
- * is context the tooltip already carries, and the row has no width for it. Red at
- * a certain zero, when the game won't let the move be picked at all.
+ * PP left coming into the turn, as x/y in a right-aligned column of its own at
+ * the end of the row, muted so the damage stays the figure you read first. The
+ * min-width keeps the column lined up down the moveset. Red at a certain zero,
+ * when the game won't let the move be picked at all.
  */
 .planner-move-pp {
     flex: 0 0 auto;
+    min-width: 3em;
+    margin-left: 2px;
+    text-align: right;
     font-size: 8px;
     font-variant-numeric: tabular-nums;
     font-weight: normal;
-    opacity: 0.75;
+    letter-spacing: -0.02em;
+    opacity: 0.55;
 }
 
 .planner-move-pp.empty {

@@ -1025,10 +1025,19 @@ is the game's rule. Every line starts at full; nothing carries between fights.
     is a range for the plainer reason that its target is random.
   Verified against stubbed abilities in a single and a double: Rock Slide into
   two Pressure users costs 3, into one costs 2.
-- **On the card, only once some has gone** — a small figure after the damage,
-  red at a certain zero. At full it is context the tooltip already carries
-  (`x/y PP`), and a count on every row clipped names as short as *Head Smash*;
-  the same call the corrected level makes.
+- **On the card, `x/y` on every move**, muted, in a right-aligned column of its
+  own after the damage figure, and red at a certain zero.
+  - Two earlier versions were dropped. A bare count shown only once PP was spent
+    sat against the damage figure on one row and read as part of it (`24–30 4`);
+    a column on every row reads as a column. A thin bar under the row cost no
+    width but didn't say how much was left.
+  - The price was width, so **the single-battle card grew from 274px to 320px**,
+    with the gap between the two move columns trimmed from 8px to 6px. Measured
+    on the sample line at 274: 20 of 40 move names clipped, the worst by 29px; at
+    320, two — both bold selected rows, by 4px or less. Doubles cards are
+    already 420px and were left alone. Hand-placed lines made at the old width
+    can overlap a little more; arrows and new-turn placement measure the real
+    card, so nothing else needed changing.
 - **A warning only at a certain zero**, because the game won't let the move be
   picked at all; with every move empty it says *all it can do is Struggle*. A
   range that merely reaches zero passes silently.

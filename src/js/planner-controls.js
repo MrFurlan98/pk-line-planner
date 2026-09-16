@@ -1239,14 +1239,15 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
          * PP left coming into this turn. A range only where a "didn't act" turn
          * above may or may not have spent some, exactly like health.
          *
-         * Shown on the row only once some has gone, the way a corrected level is:
-         * the row has no width to spare, and a full count on every move clipped
-         * names as short as "Head Smash". The tooltip always carries it.
+         * Shown as x/y on every move, in a column of its own at the end of the
+         * row. On every move rather than only the spent ones, because a lone
+         * count on one row sat against the damage figure and read as part of it
+         * ("24–30 4"); a full column reads as a column.
          */
         var pp = ppLeftFor(line, node, state, side, slot, name);
         var ppText = !pp ? "" : pp.min === pp.max ? `${pp.max}` : `${pp.min}–${pp.max}`;
-        var ppFigure = !pp || pp.min >= pp.full ? "" : `<span class="planner-move-pp${
-            pp.max === 0 ? " empty" : ""}">${ppText}</span>`;
+        var ppFigure = `<span class="planner-move-pp${pp && pp.max === 0 ? " empty" : ""}">${
+            pp ? `${ppText}/${pp.full}` : ""}</span>`;
 
         var tooltip = `${move.name}${resolved ? ` (${resolved.label})` : ""} — ${move.category}, ${shownPower || 0} BP, ${move.accuracy || "—"}% acc${pp ? `, ${ppText}/${pp.full} PP` : ""}`;
         if (pp && pp.max === 0) {
@@ -2826,7 +2827,7 @@ function dropMonOnEmpty(e) {
     var line = currentLine();
     var canvas = $(".planner-canvas")[0];
     var rect = canvas.getBoundingClientRect();
-    var width = $(".planner-node").outerWidth() || 288;
+    var width = $(".planner-node").outerWidth() || 334;
 
     var node = newNode(
         Math.max(0, e.clientX - rect.left + canvas.scrollLeft - width / 2),
@@ -2859,7 +2860,7 @@ function finishConnectToEmpty(e) {
     var line = currentLine();
     var canvas = $(".planner-canvas")[0];
     var rect = canvas.getBoundingClientRect();
-    var width = $(".planner-node").outerWidth() || 274;
+    var width = $(".planner-node").outerWidth() || 334;
 
     // Arrows enter at the top centre, so drop the card under the cursor there.
     var node = newNode(
