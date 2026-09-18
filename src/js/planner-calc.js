@@ -111,7 +111,14 @@ function calcPokemonFor(line, node, state, side, slot) {
          */
         gender: (function(g) { return g === "?" ? "N" : g; })(genderOf(entry.species, set.gender)),
         ability: set.ability,
-        abilityOn: true,
+        /*
+         * Off for Intimidate, because calc fires it inside every calculation:
+         * whatever faces the holder takes -1 Atk, however long ago the holder
+         * came in. The model already lands it once, on the switch-in, and carries
+         * it in the boosts - so calc's copy stacked a second drop on the Pokemon
+         * that was there, and handed one to every replacement that never saw it.
+         */
+        abilityOn: toID(set.ability || "") !== "intimidate",
         item: held,
         nature: set.nature,
         ivs: calcStatsOf(set.ivs, 31),
