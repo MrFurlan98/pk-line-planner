@@ -186,7 +186,7 @@ function getDupes() {
 
 function getDupedLocations() {
     if (!SETTINGS.dupeTracker) return [];
-    var dupes = SETTINGS.dupes.slice();
+    var dupes = SETTINGS.dupes.slice().filter(x => LOCATIONS[x]);
     var customSets = JSON.parse(localStorage.customsets ?? '{}');
     for (var i in customSets) {
         var species = customSets[i];
