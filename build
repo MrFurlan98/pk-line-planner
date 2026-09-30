@@ -7,9 +7,9 @@ const crypto = require('crypto');
 
 const rootDir = '.';
 
-const VERSION = "1.7.57";
+const VERSION = "1.7.58";
 const CHANGELOG = `
-- Fixed an issue with the calculation for damage colors.
+- Fixed the map not working correctly if a dupe is entered manually.
 
 If you're new here, make sure to check out the Settings tab and set your selected trainer gender and starter Pokémon, in order for the calculator to navigate to the correct rival sets. Good luck, have fun!`
 .trim().replaceAll("\n", "\\n").replaceAll('"', "'");
