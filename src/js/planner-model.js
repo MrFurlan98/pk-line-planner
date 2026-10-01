@@ -3234,9 +3234,45 @@ function aimAt(node, side, slot) {
     return chosen === undefined ? null : chosen;
 }
 
+/*
+ * The format of a line's fight. The game data only knows the pairs somebody
+ * listed, and plenty of trainers stand close enough to catch you together
+ * without being in it - so a line can name a second trainer itself, and that
+ * is the player saying how the fight went rather than something to check.
+ *
+ * Only on top of a single: a fight the data already calls a double, a true
+ * double or a tag battle has both slots spoken for.
+ */
+function lineFormat(line) {
+    var format = battleFormat(line.trainer);
+    if (format.id !== "single" || !line.extraTrainer) return format;
+    return {id: "double", slots: 2, trainers: [line.trainer, line.extraTrainer], added: true};
+}
+
 // How many slots a fight actually uses, so singles stay single.
 function slotCount(line) {
-    return battleFormat(line.trainer).slots;
+    return lineFormat(line).slots;
+}
+
+/*
+ * Joins a second trainer to a line, or with "" sends them away again.
+ *
+ * Leaving empties the second slot on every turn. A single never reads it for
+ * the fight itself, but the seeds and the state fold walk both slots, and a
+ * Pokemon left standing there would go on being statused and boosted unseen.
+ */
+function setExtraTrainer(line, trainerName) {
+    if (trainerName) {
+        line.extraTrainer = trainerName;
+        return;
+    }
+    delete line.extraTrainer;
+    Object.values(line.nodes).forEach(function(node) {
+        node.mons[1] = "";
+        node.foes[1] = "";
+        node.actions[1] = {type: "move", value: ""};
+        node.foeActions[1] = {type: "move", value: ""};
+    });
 }
 
 /*
@@ -3245,12 +3281,12 @@ function slotCount(line) {
  * so anything reading a slot has to know which of the two it is looking at.
  */
 function isPartnerSlot(line, side, slot) {
-    return side === "you" && slot === 1 && battleFormat(line.trainer).id === "tag";
+    return side === "you" && slot === 1 && lineFormat(line).id === "tag";
 }
 
 // The trainer whose party fills a given slot, or "" for your own Box.
 function trainerForSlot(line, side, slot) {
-    var format = battleFormat(line.trainer);
+    var format = lineFormat(line);
     if (side === "you") return isPartnerSlot(line, side, slot) ? format.partner : "";
     return format.trainers[Math.min(slot, format.trainers.length - 1)];
 }
@@ -3271,7 +3307,7 @@ function foeSetFor(line, node, speciesName) {
     if (!speciesName) return null;
     var sets = GAME.setdex()[speciesName];
     if (!sets) return null;
-    var trainers = battleFormat(line.trainer).trainers || [line.trainer];
+    var trainers = lineFormat(line).trainers || [line.trainer];
     for (var i = 0; i < trainers.length; i++) {
         if (sets[trainers[i]]) return sets[trainers[i]];
     }
@@ -4063,8 +4099,10 @@ function hasState(state) {
  */
 function statusBlockActive(line, state) {
     if (!state.you.status) return false;
-    var flags = GAME.aiFlags()[line.trainer];
-    return !!(flags && flags.Harassment);
+    return lineFormat(line).trainers.some(function(trainer) {
+        var flags = GAME.aiFlags()[trainer];
+        return !!(flags && flags.Harassment);
+    });
 }
 
 /* -------------------------------------------------------------- persistence */

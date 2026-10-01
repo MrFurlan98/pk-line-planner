@@ -1127,7 +1127,7 @@ function scoreMovesFor(line, node, state, side, slot, targetSlot) {
     var trainer = trainerForSlot(line, side, slot);
     if (!trainer || typeof MOVE_SCORING === "undefined") return null;
 
-    var format = battleFormat(line.trainer);
+    var format = lineFormat(line);
     var modules = scoringModulesFor(trainer, format);
     var facts = scoringFactsFor(line, node, state, side, slot, targetSlot);
     if (!facts || !facts.moves.length) return null;

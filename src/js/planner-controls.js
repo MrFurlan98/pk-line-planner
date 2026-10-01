@@ -243,6 +243,16 @@ function trainersInSplit(name) {
     return (typeof SPLITS_PK === "undefined" ? null : SPLITS_PK[name]) || [];
 }
 
+// Every trainer some line already covers, counting one added to another's fight.
+function plannedTrainers() {
+    var planned = {};
+    Object.values(LINES).forEach(function(line) {
+        planned[line.trainer] = true;
+        if (line.extraTrainer) planned[line.extraTrainer] = true;
+    });
+    return planned;
+}
+
 function renderSplitList() {
     var list = $(".planner-split-list").empty();
     var names = splitNames();
@@ -250,8 +260,7 @@ function renderSplitList() {
         list.append(`<span class="planner-empty">No split data loaded.</span>`);
         return;
     }
-    var planned = {};
-    Object.values(LINES).forEach(function(line) { planned[line.trainer] = true; });
+    var planned = plannedTrainers();
 
     names.forEach(function(name) {
         var trainers = trainersInSplit(name);
@@ -287,8 +296,7 @@ function setUpSplit(name) {
     var trainers = trainersInSplit(name);
     if (!trainers.length) return;
 
-    var planned = {};
-    Object.values(LINES).forEach(function(line) { planned[line.trainer] = true; });
+    var planned = plannedTrainers();
     var todo = trainers.filter(function(t) { return !planned[t]; });
     if (!todo.length) return;
 
@@ -322,7 +330,7 @@ function renderFoeParty() {
     var strip = $(".planner-foe-party").empty();
     var line = currentLine();
     if (!line) return;
-    var format = battleFormat(line.trainer);
+    var format = lineFormat(line);
 
     format.trainers.forEach(function(trainer, index) {
         // Only worth naming when there is more than one of them.
@@ -663,6 +671,23 @@ function setLineTerrain(key) {
     renderLine();
 }
 
+/*
+ * One button for both directions, because a line has at most one trainer to add.
+ * Hidden where the game data already fills the second slot - a listed pair, a
+ * true double or a tag battle has nowhere to put a third party.
+ */
+function renderExtraTrainerButton(line) {
+    var button = $("#planner-extra-trainer");
+    var fixed = battleFormat(line.trainer).id !== "single";
+    button.toggleClass("hide", fixed);
+    if (fixed) return;
+    button
+        .text(line.extraTrainer ? "Remove trainer" : "Add trainer")
+        .attr("title", line.extraTrainer
+            ? `Take ${line.extraTrainer} back out of this fight, making it a single battle again.`
+            : "Fight a second trainer at the same time, for two that catch you together. Makes this line a double battle.");
+}
+
 function renderLine() {
     var line = currentLine();
     $(".planner-canvas-nodes").empty();
@@ -675,7 +700,8 @@ function renderLine() {
     }
     $(".planner-workspace").removeClass("hide");
     $(".planner-placeholder").addClass("hide");
-    $(".planner-trainer-name").text(line.trainer);
+    $(".planner-trainer-name").text(lineFormat(line).trainers.join(" & "));
+    renderExtraTrainerButton(line);
     /*
      * Nothing to clear on a line with no turns, and a button that looks live
      * on a blank plan is a promise it cannot keep.
@@ -717,7 +743,7 @@ function renderNode(node, line, visible) {
     line = line || currentLine();
     var state = computeNodeState(line, node.id);
     var slots = slotCount(line);
-    var format = battleFormat(line.trainer);
+    var format = lineFormat(line);
     /*
      * What the turn actually does with each slot's move: which lose it to being
      * outsped, flinched or Protected against, where a Follow Me sends the rest,
@@ -1698,8 +1724,11 @@ function renderStateBar(state) {
 function renderStatusBlock(line, node, state) {
     var mine = slotState(line, node, state, "you", 0);
     if (!mine.status) return "";
-    var flags = GAME.aiFlags()[line.trainer];
-    if (!flags || !flags.Harassment) return "";
+    var harasses = lineFormat(line).trainers.some(function(trainer) {
+        var flags = GAME.aiFlags()[trainer];
+        return flags && flags.Harassment;
+    });
+    if (!harasses) return "";
     return `<div class="planner-status-block" title="A Pokémon can only carry one non-volatile status, so this one is immune to anything else they try. This trainer's AI leads with status and disruption.">
         Status locked - ${STATUSES[mine.status].name} blocks theirs
     </div>`;
@@ -2649,6 +2678,37 @@ function openNewLineEditor() {
     select.select2("open");
 }
 
+var extraTrainerPopup = `
+<fieldset class="planner-line-popup">
+    <legend align="center">Add Trainer</legend>
+    <p class="planner-hint">Who else is in this fight? Each trainer takes one slot, as in the game's own two-trainer battles.</p>
+    <select class="planner-trainer-select"></select>
+    <hr />
+    <span class="buttons">
+        <button id="planner-cancel-line" class="btn planner-btn">Cancel</button>
+        <button id="planner-add-extra-trainer" class="btn planner-btn">Add</button>
+    </span>
+</fieldset>`;
+
+/*
+ * The same picker as a new line, minus anyone who can't stand beside this
+ * trainer: themselves, and anyone the game data already ties to a partner.
+ */
+function openExtraTrainerEditor() {
+    var line = currentLine();
+    if (!line) return;
+    $("#planner-popup-container").html(extraTrainerPopup).removeClass("hide").show();
+
+    var select = trainerSelect();
+    trainerList().forEach(function(trainer) {
+        if (trainer.name === line.trainer) return;
+        if (battleFormat(trainer.name).id !== "single") return;
+        select.append(`<option value="${trainer.name}">${trainer.name}</option>`);
+    });
+    select.select2({width: "100%"});
+    select.select2("open");
+}
+
 function closeNewLineEditor() {
     var select = trainerSelect();
     // select2 parks its dropdown outside the container, so it has to be torn
@@ -2779,7 +2839,7 @@ function assignDraggedMon(node, slot) {
      * use either slot, so this doesn't apply there.
      */
     if (MON_DRAG.side === "them" && MON_DRAG.owner !== undefined &&
-        battleFormat(currentLine().trainer).trainers.length > 1) {
+        lineFormat(currentLine()).trainers.length > 1) {
         slot = MON_DRAG.owner;
     }
     if (MON_DRAG.side === "you") {
@@ -2958,6 +3018,40 @@ function initPlanner() {
         var line = addLine(newLine(trainer));
         renderLineList();
         selectLine(line.id);
+    });
+
+    $("#planner-extra-trainer").on("click", function() {
+        var line = currentLine();
+        if (!line) return;
+        if (!line.extraTrainer) {
+            openExtraTrainerEditor();
+            return;
+        }
+        /*
+         * Only worth asking when a turn actually has something in the second
+         * slot, since that is all that goes with them.
+         */
+        var used = Object.values(line.nodes).filter(function(node) {
+            return node.mons[1] || node.foes[1];
+        }).length;
+        if (used && !confirm(`Remove ${line.extraTrainer} from this fight?` +
+            `\n\nThe second slot is emptied on ${used} turn${used === 1 ? "" : "s"}. There is no undo.`)) return;
+        setExtraTrainer(line, "");
+        saveLines();
+        renderLineList();
+        renderLine();
+    });
+
+    $(document).on("click", "#planner-add-extra-trainer", function() {
+        var line = currentLine();
+        var trainer = trainerSelect().val();
+        if (!line || !trainer) return;
+        closeNewLineEditor();
+        setExtraTrainer(line, trainer);
+        saveLines();
+        // The split counts treat a trainer fought here as planned.
+        renderLineList();
+        renderLine();
     });
 
     $("#planner-add-node").on("click", function() {
