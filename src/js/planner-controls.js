@@ -2040,7 +2040,8 @@ function renderScoringPanel(line, node, state, side, slot) {
      * wouldn't, so that case says so in words instead.
      */
     var winners = scored.winners;
-    var verdict = scored.certain ? winners[0].name
+    var verdict = scored.struggle ? "Struggle"
+        : scored.certain ? winners[0].name
         : winners.every(function(w) { return w.chanceLo === 0 && w.chanceHi === 1; }) ? "Too close to call"
         : winners.slice(0, 2).map(function(w) {
             // Kept whole, so a wrap falls between moves and never inside "0–86%".
@@ -2102,6 +2103,8 @@ function scoringChanceText(row) {
 // planner had to assume to get there.
 function scoringRowTitle(r) {
     var out = [r.name];
+    if (r.empty) out.push("No PP left, so it cannot be picked.");
+    else if (r.mayBeEmpty) out.push("May be out of PP by now, in which case it cannot be picked.");
     out.push(r.chanceLo === r.chanceHi
         ? "Picked " + scoringPercent(r.chanceLo) + "% of the time."
         : "Picked " + scoringPercent(r.chanceLo) + "% to " + scoringPercent(r.chanceHi) + "% of the time, " +

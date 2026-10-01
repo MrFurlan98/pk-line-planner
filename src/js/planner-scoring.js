@@ -1177,7 +1177,15 @@ function scoreMovesFor(line, node, state, side, slot, targetSlot) {
             unknowns: scen.unknowns,
             capped: scen.capped,
             env: env,
-            scored: !!entry
+            scored: !!entry,
+            /*
+             * TrainerAI_Init scores every move BattleSystem_CheckInvalidMoves
+             * rejects to 0 before a single rule runs, and an empty move is one
+             * of them. Empty only at a certain zero; a range that merely
+             * reaches it is a move that may or may not be there to pick.
+             */
+            empty: !!move.ppLeft && move.ppLeft.max === 0,
+            mayBeEmpty: !!move.ppLeft && move.ppLeft.min === 0
         };
     });
 
@@ -1191,10 +1199,19 @@ function scoreMovesFor(line, node, state, side, slot, targetSlot) {
     function settle(p) {
         return p < 1e-9 ? 0 : p > 1 - 1e-9 ? 1 : p;
     }
+    /*
+     * An empty move is out of the contest altogether - it is neither picked nor
+     * a rival to the ones that are. One that only may be empty is both at once:
+     * its own floor is zero, and it stands in a rival's way only in that rival's
+     * worst case.
+     */
     rows.forEach(function(r, i) {
-        var others = rows.filter(function(o, j) { return j !== i; });
-        r.chanceLo = settle(pickChance(r.env.low, others.map(function(o) { return o.env.high; })));
-        r.chanceHi = settle(pickChance(r.env.high, others.map(function(o) { return o.env.low; })));
+        var others = rows.filter(function(o, j) { return j !== i && !o.empty; });
+        var surely = others.filter(function(o) { return !o.mayBeEmpty; });
+        r.chanceLo = r.mayBeEmpty ? 0
+            : settle(pickChance(r.env.low, others.map(function(o) { return o.env.high; })));
+        r.chanceHi = r.empty ? 0
+            : settle(pickChance(r.env.high, surely.map(function(o) { return o.env.low; })));
         r.candidate = r.chanceHi > 0;
     });
     rows.sort(function(a, b) {
@@ -1207,6 +1224,8 @@ function scoreMovesFor(line, node, state, side, slot, targetSlot) {
         modules: modules,
         rows: rows,
         winners: winners,
+        // Nothing left to pick, so the game forces Struggle.
+        struggle: rows.every(function(r) { return r.empty; }),
         // One name only when it is picked on every roll and every scenario.
         certain: rows.some(function(r) { return r.chanceLo === 1; })
     };

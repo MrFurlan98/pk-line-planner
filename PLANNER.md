@@ -1044,6 +1044,11 @@ is the game's rule. Every line starts at full; nothing carries between fights.
 - **The AI's PP rules are answered.** Four move-scoring conditions ask "the
   remaining PP of the move is 1 / 2 / 3 / 4 or more"; they were unknowns, and now
   read the AI's own count — unknown again only where the planner holds a range.
+- **An empty move is out of the AI's pick.** `TrainerAI_Init` zeroes the score of
+  everything `BattleSystem_CheckInvalidMoves` rejects before any rule runs, so
+  *What they'll pick* reads 0% for a move at a certain zero and stops counting
+  it as a rival to the others. A range that reaches zero has a floor of 0% and
+  is left out of its rivals' best case only. Every move empty reads *Struggle*.
 
 ### Held items that go off
 
