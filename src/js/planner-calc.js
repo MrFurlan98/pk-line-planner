@@ -1100,10 +1100,16 @@ function sashHolds(line, node, state, side, slot, mon) {
 function foldDamage(line, node, state, side, slot, targets, moveName, crits, parent) {
     // Nothing is subtracted in blind mode, so no HP is ever carried and no bar
     // can appear. The rest of the turn still folds in exactly as it did.
-    if (blindMode()) return;
+    if (blindMode()) return null;
     var other = side === "you" ? "them" : "you";
     var isCrit = !!(crits && crits[side]);
     var backOnUser = null;
+    /*
+     * The targets the hit actually connected with, handed back for the one thing
+     * that needs to know: a Bug Bite eats a berry only off something it touched,
+     * and an immunity that comes from an ability is only visible here.
+     */
+    var connected = [];
     // Rough Skin and Aftermath, summed across every target that charges for them.
     var contactBack = [0, 0];
 
@@ -1197,6 +1203,7 @@ function foldDamage(line, node, state, side, slot, targets, moveName, crits, par
          * settles it - which is the only one for every move that has either.
          */
         if (!backOnUser && !delayed) backOnUser = damage;
+        connected.push(target);
 
         /*
          * And what the target's own skin costs for touching it. Unlike recoil
@@ -1210,7 +1217,7 @@ function foldDamage(line, node, state, side, slot, targets, moveName, crits, par
 
     var user = (backOnUser || contactBack[1] > 0)
         ? ensureHp(line, node, state, side, slot) : null;
-    if (!user) return;
+    if (!user) return connected;
     /*
      * The bands cross over: the user is worst off when it drained least and
      * recoiled most, so the low end of its health takes the high end of the
@@ -1219,6 +1226,7 @@ function foldDamage(line, node, state, side, slot, targets, moveName, crits, par
     if (backOnUser && backOnUser.recoil[1] > 0) damageMon(user, backOnUser.recoil[0], backOnUser.recoil[1], user.hp.full);
     if (contactBack[1] > 0) damageMon(user, contactBack[0], contactBack[1], user.hp.full);
     if (backOnUser && backOnUser.recovery[1] > 0) healMon(user, backOnUser.recovery[0], backOnUser.recovery[1]);
+    return connected;
 }
 
 /*

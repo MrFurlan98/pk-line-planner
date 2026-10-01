@@ -1463,8 +1463,9 @@ function renderItemTrigger(line, node, state, side, slot) {
 
     var spent = itemRecord(state, side, holder.id);
     if (spent) {
-        return `<span class="planner-item-pip spent" title="${escapeAttr(
-            `${spent.name} is gone — it was used earlier on this branch, and it only works once.`)}">${spent.name}</span>`;
+        return `<span class="planner-item-pip spent" title="${escapeAttr(spent.why === "eaten"
+            ? `${spent.name} is gone — ${spent.by || "a Bug Bite"} ate it earlier on this branch, so it never goes off.`
+            : `${spent.name} is gone — it was used earlier on this branch, and it only works once.`)}">${spent.name}</span>`;
     }
 
     var stated = itemStatedAt(node, side, slot);
@@ -1677,6 +1678,12 @@ function renderStateBar(state) {
         for (var who in used) {
             var record = itemRecord(state, side, who);
             if (!record) continue;
+            // Taken rather than used, so it reads differently: the holder got nothing.
+            if (record.why === "eaten") {
+                parts.push(`<span class="planner-field cured ${side}" title="${escapeAttr(
+                    `${who} lost its ${record.name} to ${record.by || "Bug Bite"}, which eats the target's berry and gives the user its effect. ${who} never gets to use it.`)}">${record.name} eaten</span>`);
+                continue;
+            }
             parts.push(`<span class="planner-field cured ${side}" title="${escapeAttr(
                 `${who} used its ${record.name} ${WHY_SPENT[record.why] || "already."}`)}">${record.name} spent</span>`);
         }

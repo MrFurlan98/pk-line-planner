@@ -1137,6 +1137,32 @@ lesson Lunar Dance taught.
   in the output: bag items like Potion and Lemonade matching the healing rule,
   the Choice items read as a +1 stage because the rule shrugged at "by 50%", and
   Enigma Berry stripped of its condition into an unconditional quarter-heal.
+- **Bug Bite and Pluck eat the target's berry**, and the user gets what it does.
+  Run straight after the hit and before the target's own berry gets its chance —
+  a Sitrus bitten off at 60% heals the biter and nobody else. The edges are
+  `BattleSystem_PluckBerry` and `BtlCmd_TryPluck`'s:
+  - the effect is `MOVE_SIDE_EFFECT_ON_HIT` with no check on the target's HP, so
+    **a hit that knocks the target out still eats the berry**;
+  - nothing through a Substitute, and nothing off a Sticky Hold unless the user
+    has Mold Breaker. An ability immunity is only visible to calc, so
+    `foldDamage` hands back the targets it actually connected with;
+  - **any** berry goes, useful or not — a resist berry is simply gone. Berry
+    Juice is not a berry and stays;
+  - a Klutz user takes the berry and gets nothing;
+  - the berry skips its own threshold on the user: heals, cures and the pinch
+    boosts all apply at once. A heal on a full-health user does nothing, and the
+    Figy family's confusion is claimed only where the user was certainly short
+    of full, which is the game's own condition;
+  - **Leppa** gives 10 PP to the move furthest below its maximum, earliest slot
+    on a tie. Where PP ranges leave more than one move in the running, only the
+    ceiling of each rises.
+  - The record's reason is `eaten`, with the move that did it, so the chip reads
+    *Sitrus Berry eaten* rather than *spent*.
+  - Measured on the sample line with Bonsly handed a Sitrus: after an Accelerock
+    and the sand, Makuhita ends the turn on `51–53` with Vital Throw and `60` with
+    Bug Bite, and Bonsly's berry never heals it. Lansat, Starf, Micle, Jaboca,
+    Rowap, Enigma and Custap are taken and nothing is claimed for the user —
+    Starf's stat is random and the planner tracks no crit stage for Lansat.
 
 ### Back to health
 

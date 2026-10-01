@@ -1176,10 +1176,27 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
              * touches the calculator. Absent, the plan still derives every other
              * kind of state - HP is simply never subtracted.
              */
+            // Whoever was still up to be hit, read before the hit takes them down.
+            var standing = affected.filter(function(t) {
+                var ref = monAt(onField, other, t);
+                return ref && !isFainted(monState(state, other, ref));
+            });
+            var connected = null;
             if (typeof foldDamage === "function") {
                 // `parent` is handed over so a Pursuit can find whoever is on
                 // their way out, who is only still standing there in that copy.
-                foldDamage(line, onField, state, side, i, landed, move, crits, parent);
+                connected = foldDamage(line, onField, state, side, i, landed, move, crits, parent);
+            }
+            /*
+             * Bug Bite and Pluck, straight after the hit and before the target's
+             * own berry gets its chance - which is the whole point of them: a
+             * Sitrus Berry bitten off at 60% never heals anybody but the biter.
+             */
+            if (eatsBerry(move)) {
+                standing.forEach(function(t) {
+                    if (connected && connected.indexOf(t) < 0) return;
+                    eatBerry(line, onField, state, side, i, t, move);
+                });
             }
 
             /*
@@ -2153,9 +2170,124 @@ function itemSpent(state, side, ref) {
     return !!itemRecord(state, side, ref);
 }
 
-function spendItem(state, side, ref, name, why) {
+function spendItem(state, side, ref, name, why, by) {
     if (!state.itemsUsed[side]) state.itemsUsed[side] = {};
     state.itemsUsed[side][ref] = {name: name, why: why};
+    // The move that took it, for the one reason that has one.
+    if (by) state.itemsUsed[side][ref].by = by;
+}
+
+/*
+ * Bug Bite and Pluck: the target's berry is gone and the user gets what it does.
+ *
+ * Read off BattleSystem_PluckBerry and BtlCmd_TryPluck in the decomp, which
+ * settle the edges:
+ *
+ * - the effect is MOVE_SIDE_EFFECT_ON_HIT with no check on the target's HP, so a
+ *   hit that knocks the target out still eats its berry;
+ * - nothing is eaten through a Substitute, or off a Sticky Hold that a Mold
+ *   Breaker isn't ignoring;
+ * - any berry at all is taken, whether or not eating it does anything - a
+ *   resist berry is simply gone;
+ * - a Klutz user still takes the berry and gets nothing for it;
+ * - the berry does its work on the *user*, skipping its own threshold: a Sitrus
+ *   heals a quarter of the biter's health, a Lum cures the biter.
+ */
+const BERRY_EATERS = {bugbite: true, pluck: true};
+const STICKY_HOLD = "stickyhold";
+const MOLD_BREAKER = "moldbreaker";
+const KLUTZ = "klutz";
+const LEPPA_BERRY = "leppaberry";
+const LEPPA_PP = 10;
+
+function eatsBerry(moveName) {
+    var move = findMove(moveName);
+    return !!(move && BERRY_EATERS[move.id]);
+}
+
+function eatBerry(line, node, state, side, slot, targetSlot, moveName) {
+    var other = side === "you" ? "them" : "you";
+    var victim = activeHolder(line, node, other, targetSlot);
+    if (!victim || !victim.item) return;
+    var berry = toID(victim.item);
+    // Berry Juice is not a berry, and neither is anything else that heals.
+    if (!/berry$/.test(berry)) return;
+    if (itemSpent(state, other, victim.id)) return;
+    if (monState(state, other, victim.id).volatiles.substitute) return;
+
+    var biter = activeHolder(line, node, side, slot);
+    var biterAbility = toID((biter && biter.ability) || "");
+    if (toID(victim.ability || "") === STICKY_HOLD && biterAbility !== MOLD_BREAKER) return;
+
+    var move = findMove(moveName);
+    var fx = itemEffect(victim.item);
+    var cure = STATUS_CURES[berry];
+    spendItem(state, other, victim.id, (fx && fx.name) || (cure && cure.name) || victim.item,
+        "eaten", move ? move.name : moveName);
+
+    if (!biter || biterAbility === KLUTZ) return;
+    var user = monState(state, side, biter.id);
+    if (isFainted(user)) return;
+
+    if (cure) {
+        if (user.status && (cure.statuses === "all" || (cure.statuses || []).indexOf(user.status) >= 0)) {
+            user.status = "";
+            user.statusTurns = 0;
+            user.toxicTicks = 0;
+        }
+        if ((cure.volatiles || []).indexOf("confusion") >= 0) {
+            delete user.volatiles.confusion;
+            delete user.volatileTurns.confusion;
+        }
+    }
+
+    /*
+     * Leppa hands 10 PP to whichever move is furthest below its maximum, the
+     * earliest slot winning a tie. Where a range leaves more than one move in
+     * the running, each of them *may* have been the one - so only its ceiling
+     * rises, the same way a "didn't act" turn only raises the ceiling of what
+     * was spent.
+     */
+    if (berry === LEPPA_BERRY) {
+        var entry = slotSet(line, node, side, slot);
+        var spent = ((entry && entry.set.moves) || []).map(function(name) {
+            var known = findMove(name);
+            var used = known && user.ppUsed && user.ppUsed[known.id];
+            return used && maxPpFor(biter, name) ? {id: known.id, used: used} : null;
+        }).filter(function(x) { return x && x.used.max > 0; });
+        var floor = spent.reduce(function(top, m) { return Math.max(top, m.used.min); }, 0);
+        var running = spent.filter(function(m) { return m.used.max >= floor; });
+        var exact = running.every(function(m) {
+            return m.used.min === m.used.max && m.used.min === floor;
+        });
+        if (exact) running = running.slice(0, 1);
+        running.forEach(function(m) {
+            user.ppUsed[m.id] = {
+                min: Math.max(0, m.used.min - LEPPA_PP),
+                max: running.length === 1 ? Math.max(0, m.used.max - LEPPA_PP) : m.used.max
+            };
+        });
+    }
+
+    if (!fx) return;
+    if (fx.boost) addBoosts(user.boosts, fx.boost, null);
+    /*
+     * A heal does nothing to a user on full health - and the game doesn't run
+     * the Figy family's confusion either in that case, so it is only claimed
+     * where the user was certainly short of full.
+     */
+    var hp = hpOf(user);
+    if (fx.heal && hp) {
+        var hurt = hp.max < hp.full;
+        var amount = fx.heal.points !== undefined
+            ? fx.heal.points
+            : Math.floor(hp.full * fx.heal.fraction[0] / fx.heal.fraction[1]);
+        healMon(user, amount, amount);
+        if (hurt && fx.confusesNature && dislikesFlavour(biter, fx.confusesNature)) {
+            user.volatiles.confusion = true;
+            user.volatileTurns.confusion = 0;
+        }
+    }
 }
 
 /*
