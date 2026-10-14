@@ -728,6 +728,13 @@ function calculateFinalModsDPP(
     desc.attackerItem = attacker.item;
   }
 
+  // Me First's boost lands here too, after Life Orb and before the random roll
+  // (pret/pokeplatinum, src/battle/battle_script.c).
+  if (move.isMeFirst) {
+    baseDamage = Math.floor(baseDamage * 1.5);
+    desc.isMeFirst = true;
+  }
+
   if (move.named('Pursuit', 'Rage') && field.defenderSide.isSwitching === 'out') {
     baseDamage = Math.floor(baseDamage * 2);
     desc.isSwitching = 'out';

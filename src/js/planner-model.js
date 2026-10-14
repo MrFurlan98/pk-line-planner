@@ -184,14 +184,151 @@ const NATURE_POWER_MOVES = {
 const NATURE_POWER = "naturepower";
 
 /*
- * The move a slot actually uses. Only Nature Power differs, and only once the
- * line says where the fight is; everything else is returned as it came.
+ * The move a slot actually uses. Nature Power differs once the line says where
+ * the fight is; Copycat and Me First differ when `called` - what resolveMoves
+ * worked out they copy this turn - names a move. Everything else, and either of
+ * those when the copy failed or can't be known, is returned as it came: the
+ * zero-power status move it is on paper, which lands nothing.
  */
-function calledMoveFor(line, moveName) {
+function calledMoveFor(line, moveName, called) {
     var move = findMove(moveName);
-    if (!move || move.id !== NATURE_POWER) return moveName;
+    if (!move) return moveName;
+    if (move.id === COPYCAT || move.id === ME_FIRST) {
+        return called && called.move ? called.move : moveName;
+    }
+    if (move.id !== NATURE_POWER) return moveName;
     var terrain = line && NATURE_POWER_MOVES[line.terrain];
     return terrain ? terrain.move : moveName;
+}
+
+/*
+ * Copycat and Me First, the two moves that call another one which the plan can
+ * actually know. Metronome, Assist and Sleep Talk pick at random and stay the
+ * zero-power moves they are on paper.
+ *
+ * Copycat uses "the last used move in the battle" - one record for the whole
+ * fight, not one per Pokemon, and it carries over from turn to turn. The decomp
+ * (BattleControllerPlayer_UpdateMoveBuffers) writes it every time a move gets as
+ * far as its "X used Y!" message, so a miss and a blocked hit still count, and
+ * clears it whenever a Pokemon fails to get that far - asleep, flinched, fully
+ * paralysed. A Pokemon that faints or switches never reaches it and leaves the
+ * record alone.
+ *
+ * Both are +1 in this game, so a Copycat usually goes before anything else and
+ * copies whatever moved *last on the previous turn*. That is what makes it
+ * plannable at all.
+ *
+ * Me First instead reads the move its target picked this turn, and only works if
+ * the target hasn't moved yet (BtlCmd_TryMeFirst). It then lands at 1.5x damage,
+ * which planner-calc.js hands to calc.
+ */
+const COPYCAT = "copycat";
+const ME_FIRST = "mefirst";
+// The record when nothing can say what it holds - a tie, a Quick Claw, a "didn't act".
+const UNKNOWN_MOVE = "?";
+// Move_IsInvoker: what Copycat refuses outright, itself included.
+const INVOKER_MOVES = ["sleeptalk", "copycat", "assist", "mefirst", "mirrormove", "metronome"];
+/*
+ * sCannotMetronomeMoves, which Copycat also checks. Snatch, Covet, Trick and
+ * Switcheroo are deleted in this game and simply never match.
+ */
+const UNCALLABLE_MOVES = ["metronome", "struggle", "sketch", "mimic", "chatter", "sleeptalk",
+    "assist", "mirrormove", "counter", "mirrorcoat", "protect", "detect", "endure",
+    "destinybond", "thief", "followme", "snatch", "helpinghand", "covet", "trick",
+    "focuspunch", "feint", "copycat", "mefirst", "switcheroo"];
+// sMovesAffectedByGravity: under Gravity these can't be called either.
+const GRAVITY_FAILS = ["fly", "bounce", "jumpkick", "hijumpkick", "splash", "magnetrise"];
+/*
+ * sCannotMeFirstMoves. The game compares these by *effect* rather than by move,
+ * and this game turned one of them into a plain hit - so, in the dex's own words,
+ * Me First also can't copy "any move with the effect 'No additional effect'".
+ * That is a lot of moves, and the reason Me First fails far more often here.
+ */
+const ME_FIRST_REFUSES = ["counter", "mirrorcoat", "thief", "covet", "focuspunch", "chatter"];
+const PLAIN_HIT = /^No additional effect/i;
+
+function callsAMove(moveName) {
+    var move = findMove(moveName);
+    return !!(move && (move.id === COPYCAT || move.id === ME_FIRST));
+}
+
+/*
+ * What a Copycat makes of the record as this slot sees it. `heard` is the record
+ * itself: a move, "" for nothing yet, or UNKNOWN_MOVE.
+ */
+function copycatCall(state, heard) {
+    if (heard === UNKNOWN_MOVE) return {from: COPYCAT, status: "unknown"};
+    var move = findMove(heard);
+    if (!move) return {from: COPYCAT, status: "failed", reason: "none"};
+    var refused = INVOKER_MOVES.indexOf(move.id) >= 0 || UNCALLABLE_MOVES.indexOf(move.id) >= 0 ||
+        (state.gravity && GRAVITY_FAILS.indexOf(move.id) >= 0);
+    if (refused) return {from: COPYCAT, status: "failed", reason: "refused", copied: move.name};
+    return {from: COPYCAT, status: "copied", move: heard};
+}
+
+/*
+ * What a Me First makes of its target. `ahead` is whether this slot certainly
+ * moves before the target (true), certainly after it (false), or can't be told
+ * apart from it (null).
+ */
+function meFirstCall(targetMove, ahead) {
+    if (ahead === null) return {from: ME_FIRST, status: "unknown"};
+    if (!ahead) return {from: ME_FIRST, status: "failed", reason: "late"};
+    var move = findMove(targetMove);
+    if (!move) return {from: ME_FIRST, status: "failed", reason: "none"};
+    if (move.category === "status") return {from: ME_FIRST, status: "failed", reason: "status", copied: move.name};
+    if (ME_FIRST_REFUSES.indexOf(move.id) >= 0 || PLAIN_HIT.test(move.effect || "")) {
+        return {from: ME_FIRST, status: "failed", reason: "refused", copied: move.name};
+    }
+    return {from: ME_FIRST, status: "copied", move: targetMove, boost: 1.5};
+}
+
+/*
+ * The turn order cut into runs whose inside order nothing can know, as far as
+ * the last-move record is concerned. A tie is one already. A Quick Claw makes
+ * another: its holder may jump everything ahead of it in its own priority
+ * bracket - never a higher one - so every group from the first of those to the
+ * holder's own is one run.
+ *
+ * Returned per group: the run it belongs to (shared object) and whether it is the
+ * run's last group. `members` leaves out whoever was gone before the turn began.
+ */
+function lastMoveRuns(order, alreadyGone) {
+    var joins = order.map(function() { return false; });
+    order.forEach(function(group, g) {
+        group.forEach(function(action) {
+            if (!action.unsure) return;
+            for (var h = g; h > 0 && order[h - 1][0].priority === action.priority; h--) joins[h] = true;
+        });
+    });
+    var runs = [];
+    var current = null;
+    order.forEach(function(group, g) {
+        if (!current || !joins[g]) current = {members: []};
+        group.forEach(function(action) {
+            if (!alreadyGone[action.side][action.slot]) current.members.push(action.side + action.slot);
+        });
+        runs[g] = current;
+    });
+    return runs;
+}
+
+/*
+ * The record once a run is over. A single mark is the answer; several that agree
+ * are too, whichever order they went in; several that don't can't be told apart.
+ */
+function settleLastMove(run, marks, before) {
+    var left = run.members.filter(function(key) { return marks[key] !== undefined; })
+        .map(function(key) { return marks[key]; });
+    if (!left.length) return before;
+    var first = left[0];
+    var same = left.every(function(mark) {
+        if (mark === first) return true;
+        var a = findMove(mark);
+        var b = findMove(first);
+        return !!(a && b && a.id === b.id);
+    });
+    return same ? first : UNKNOWN_MOVE;
 }
 
 /*
@@ -1008,6 +1145,8 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
      * end-of-turn sweep in applyTurn doesn't switch them in a second time.
      */
     state.selfSwitched = {};
+    // What each Copycat and Me First turned into, for the card and the damage.
+    state.called = {};
 
     /*
      * Turn order is settled once, here, and never revisited - this generation
@@ -1015,7 +1154,38 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
      * bites from the following one. A Pokemon brought in mid-turn by a U-turn
      * therefore doesn't get a place in the order, which is right: it hasn't moved.
      */
-    turnOrder(line, parent, onField, state, slots).forEach(function(group) {
+    var order = turnOrder(line, parent, onField, state, slots);
+
+    /*
+     * The last-move record, kept as the order plays out. Each slot leaves a mark
+     * - the move it used, "" for getting stopped before it could, UNKNOWN_MOVE
+     * where nothing can say which - and the record moves on once a whole run of
+     * the order is done, since inside a run nobody knows who went last.
+     */
+    var runs = lastMoveRuns(order, alreadyGone);
+    var marks = {};
+    var groupOf = {};
+    order.forEach(function(group, g) {
+        group.forEach(function(action) { groupOf[action.side + action.slot] = g; });
+    });
+
+    function callFor(side, i, g, moveName) {
+        if (findMove(moveName).id === COPYCAT) {
+            // Anyone sharing its run may or may not have gone first.
+            return copycatCall(state, runs[g].members.length > 1 ? UNKNOWN_MOVE : state.lastMove);
+        }
+        var other = side === "you" ? "them" : "you";
+        var t = targetsOf(onField, side, i, moveName, aimAt(parent, side, i), state.redirect[other])[0];
+        var ref = monAt(onField, other, t);
+        var tg = groupOf[other + t];
+        // A switch is not a move, and nor is being gone.
+        if (tg === undefined || !ref || alreadyGone[other][t] || isFainted(monState(state, other, ref))) {
+            return meFirstCall("", true);
+        }
+        return meFirstCall(moveAt(parent, other, t), runs[tg] === runs[g] ? null : g < tg);
+    }
+
+    order.forEach(function(group, g) {
         /*
          * One snapshot per group, taken before any of its members move. Slots on
          * the same priority and speed are simultaneous, so neither can be denied
@@ -1050,6 +1220,8 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
              * full paralysis, which it doesn't - so the move is a maybe.
              */
             if (!actedAt(parent, side, i)) {
+                // A miss writes the record and a full paralysis clears it.
+                marks[side + i] = UNKNOWN_MOVE;
                 var idle = moveAt(parent, side, i);
                 seeMove(state, side, monAt(onField, side, i), idle, false);
                 // PP likewise: a miss spent it, a full paralysis didn't.
@@ -1068,6 +1240,7 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
             }
             // Flinched by something that already moved this turn.
             if (flinched[side + i] && !action.unsure) {
+                marks[side + i] = "";
                 if (onDenied) onDenied(side, i, "flinched");
                 return;
             }
@@ -1102,9 +1275,27 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
             /*
              * Nature Power is spent as the move it turns into, so everything below -
              * Protect, the type chart, the damage - meets that move instead. A line
-             * with no terrain leaves it as it is.
+             * with no terrain leaves it as it is. Copycat and Me First likewise,
+             * having paid their own PP above.
              */
-            move = calledMoveFor(line, move);
+            var called = callsAMove(move) ? callFor(side, i, g, move) : null;
+            if (called) state.called[side + i] = called;
+            move = calledMoveFor(line, move, called);
+            /*
+             * The record takes the move as used - a called move as itself, and a
+             * failed Copycat as Copycat, which is what stops the next one copying
+             * anything.
+             */
+            marks[side + i] = !used || (called && called.status === "unknown") ? UNKNOWN_MOVE : move;
+            /*
+             * A copy that failed does nothing, and one nothing can settle does
+             * nothing here either: the same abstention a Nature Power with no
+             * terrain makes. A branch is how you say which move it really was.
+             */
+            if (called && called.status !== "copied") {
+                if (onDenied) onDenied(side, i, called.status === "unknown" ? "callUnknown" : "callFailed");
+                return;
+            }
             /*
              * A Fake Out that isn't this Pokemon's first turn out does nothing
              * whatsoever - no damage, no flinch. It still costs the turn.
@@ -1272,6 +1463,8 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
             if (carried) receivePassed(monState(state, change.side, change.incoming), carried);
             state.selfSwitched[change.side + change.slot] = true;
         });
+
+        if (runs[g + 1] !== runs[g]) state.lastMove = settleLastMove(runs[g], marks, state.lastMove);
     });
 }
 
@@ -1339,7 +1532,7 @@ function receivePassed(mon, carried) {
  * picked would be quoting a number that never happens.
  */
 function turnReport(line, node, state) {
-    var report = {denied: {}, redirect: {}, guarding: {}};
+    var report = {denied: {}, redirect: {}, guarding: {}, called: {}};
     if (typeof foldDamage !== "function") return report;
     /*
      * Blind mode runs this too, which it did not when the only thing here was
@@ -1375,6 +1568,7 @@ function turnReport(line, node, state) {
         function(side, slot, reason) { report.denied[side + slot] = reason; });
     report.redirect = scratch.redirect || {};
     report.guarding = scratch.guarding || {};
+    report.called = scratch.called || {};
     return report;
 }
 
@@ -1762,7 +1956,7 @@ function validateEdge(line, edge) {
         var damage = plannerDamage(line, node, state, killer, slot, move,
             condition.id === "youcritko" || condition.id === "theycritko" ||
             condition.id === "youcrit" || condition.id === "theycrit",
-            report.redirect[victim]);
+            report.redirect[victim], report.called && report.called[killer + slot]);
         if (!damage) continue;
         anyChecked = true;
         if (needsKill ? damage.mayKill : !damage.kills) anyPossible = true;
@@ -1927,6 +2121,12 @@ function emptyState() {
          * to say why there is sand on a turn nobody asked for sand on.
          */
         weatherSource: "",
+        /*
+         * The last move used by anyone, which is what Copycat copies - see
+         * COPYCAT. Empty at the start of a fight, where nothing has been used
+         * yet; UNKNOWN_MOVE once the turn order or a "didn't act" leaves it open.
+         */
+        lastMove: "",
         ambiguous: false,
         // A curing berry only works once, so spent ones are remembered per Pokémon.
         itemsUsed: {you: {}, them: {}}
@@ -1938,13 +2138,20 @@ function normalizeState(state) {
     if (state.trickRoom === undefined) state.trickRoom = false;
     if (state.gravity === undefined) state.gravity = false;
     /*
-     * Guards, redirection and mid-turn switches all belong to a single turn, so
-     * nothing carries them in. Cleared rather than defaulted, in case an override
-     * was ever saved with a turn's worth of them still on it.
+     * An override saved before the record existed starts a line mid-fight, so
+     * something has very likely been used already - just nothing says what.
+     */
+    if (state.lastMove === undefined) state.lastMove = UNKNOWN_MOVE;
+    /*
+     * Guards, redirection, mid-turn switches and what a Copycat copied all belong
+     * to a single turn, so nothing carries them in. Cleared rather than
+     * defaulted, in case an override was ever saved with a turn's worth of them
+     * still on it.
      */
     state.guarding = null;
     state.redirect = null;
     state.selfSwitched = null;
+    state.called = null;
     ["you", "them"].forEach(function(side) {
         if (!state[side]) return;
         if (!state[side].pending) state[side].pending = [[], []];
@@ -3850,6 +4057,7 @@ function applyTurn(line, parent, node, state, condition) {
     state.guarding = null;
     state.redirect = null;
     state.selfSwitched = null;
+    state.called = null;
 
     /*
      * The first of a held item's two chances: the moves have landed, so anything

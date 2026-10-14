@@ -43,6 +43,7 @@ export interface RawDesc {
   isPowerSpot?: boolean;
   isWonderRoom?: boolean;
   isSwitching?: 'out' | 'in';
+  isMeFirst?: boolean;
   moveBP?: number;
   moveName: string;
   moveTurns?: string;
@@ -952,6 +953,9 @@ function buildDescription(description: RawDesc, attacker: Pokemon, defender: Pok
   }
   if (description.isSwitching) {
     output += 'switching boosted ';
+  }
+  if (description.isMeFirst) {
+    output += 'Me First ';
   }
   output += description.moveName + ' ';
   if (description.moveBP && description.moveType) {

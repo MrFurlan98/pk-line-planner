@@ -255,7 +255,7 @@ function calcFieldFor(line, state, attacker) {
  * it exists, since Platinum Kaizo deletes a good number of moves outright and a
  * stale plan can still name one.
  */
-function calcMoveFor(moveName, holder, isCrit, hits, power, flatPower) {
+function calcMoveFor(moveName, holder, isCrit, hits, power, flatPower, meFirst) {
     var move = findMove(moveName);
     if (!move || move.category === "status") return null;
 
@@ -311,6 +311,12 @@ function calcMoveFor(moveName, holder, isCrit, hits, power, flatPower) {
     if (flatPower) {
         options.overrides = {basePower: flatPower};
     }
+    /*
+     * Me First's 1.5x is on the damage, not the power, and goes on before the
+     * random roll - so calc applies it in place (gen4.ts), rather than this
+     * scaling the finished range and drifting a point on the rounding.
+     */
+    if (meFirst) options.isMeFirst = true;
     return new calc.Move(calcGen(), name, options);
 }
 
@@ -404,7 +410,7 @@ function absorbedBy(line, node, state, side, slot, moveName, maxHP) {
  * do nothing, which is worth saying outright rather than quietly falling back to
  * base power and reading like an ordinary move nobody has worked out yet.
  */
-function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCrit, power) {
+function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCrit, power, meFirst) {
     var attacker = calcPokemonFor(line, node, state, side, slot);
     if (!attacker) return null;
 
@@ -421,7 +427,7 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
      */
     var powers = powerSpanFor(moveName);
     var move = calcMoveFor(moveName, holder, isCrit, span.min > 1 ? span.min : 0, power,
-        powers && powers.min);
+        powers && powers.min, meFirst);
     if (!move) return null;
 
     /*
@@ -463,7 +469,7 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
         var top = result;
         if (span.max > span.min || (powers && powers.max > powers.min)) {
             var wide = calcMoveFor(moveName, holder, isCrit, span.max, power,
-                powers && powers.max);
+                powers && powers.max, meFirst);
             if (wide) {
                 top = calc.calculate(calcGen(), attacker, defender, wide, field);
                 var topRange = top.range();
@@ -559,9 +565,13 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
  * the one across from the user, which is the matchup the card is laid out to be
  * read across. The spread reduction still applies, from the game type.
  */
-function damageFor(line, node, state, side, slot, moveName, isCrit, drawnBy) {
-    // A Nature Power is worked out as whatever it turns into on this line's terrain.
-    moveName = calledMoveFor(line, moveName);
+function damageFor(line, node, state, side, slot, moveName, isCrit, drawnBy, called) {
+    /*
+     * A Nature Power is worked out as whatever it turns into on this line's
+     * terrain, and a Copycat or Me First as whatever `called` - the turn report's
+     * answer for this slot - says it copied.
+     */
+    moveName = calledMoveFor(line, moveName, called);
     var target = targetsOf(node, side, slot, moveName, aimAt(node, side, slot), drawnBy)[0];
     var other = side === "you" ? "them" : "you";
     /*
@@ -570,7 +580,8 @@ function damageFor(line, node, state, side, slot, moveName, isCrit, drawnBy) {
      * this card is who the slot still shows.
      */
     var power = pursuitPower(moveName, node, other, target);
-    return damageAgainst(line, node, state, side, slot, target, moveName, isCrit, power);
+    return damageAgainst(line, node, state, side, slot, target, moveName, isCrit, power,
+        !!(called && called.boost));
 }
 
 /*
@@ -785,9 +796,68 @@ function switchMoveType(move, set, state) {
  * neither of them fixes is the *card*, which was showing a Normal type icon and
  * a base power of 1 for a move that is neither.
  */
-function resolvedMoveFor(moveName, holder, state, line) {
+/*
+ * What a Copycat or Me First shows on the card, in the same shape as the rest of
+ * resolvedMoveFor. A copy that went through shows the copied move's type and
+ * power; one that failed, or that nothing can settle, says why it does nothing.
+ */
+function calledMoveLabel(move, called) {
+    var copycat = move.id === COPYCAT;
+    var none = {type: move.type, power: 0};
+    if (!called) {
+        return Object.assign(none, {
+            label: "copies when used",
+            why: copycat
+                ? "Uses the last move anyone used in the battle. Pick it to see what that is on this turn."
+                : "Uses the move its target picked this turn, at 1.5x damage, if the target hasn't moved yet. Pick it to see what it gets."
+        });
+    }
+    if (called.status === "copied") {
+        var got = findMove(called.move);
+        return {
+            type: got ? got.type : move.type,
+            power: got ? got.basePower : 0,
+            category: got ? got.category : move.category,
+            label: `copies ${got ? got.name : called.move}`,
+            why: copycat
+                ? `Copies ${got ? got.name : called.move}, the last move used before it. Copycat is +1 here, so that is usually whatever moved last on the previous turn.`
+                : `Copies ${got ? got.name : called.move}, the move its target picked, at 1.5x damage. It moves first, so the target hasn't used it yet.`
+        };
+    }
+    if (called.status === "unknown") {
+        return Object.assign(none, {
+            label: "can't tell",
+            why: copycat
+                ? `Nothing can say what this copies. The last move used depends on an order nothing settles: a speed tie, a Quick Claw, or a turn marked "didn't act" (a miss counts, a full paralysis doesn't). The plan leaves it doing nothing rather than guessing.`
+                : "Nothing can say whether this goes before its target: a speed tie or a Quick Claw. The plan leaves it doing nothing rather than guessing."
+        });
+    }
+    var FAILS = {
+        none: copycat
+            ? "Nothing has been used in this fight yet, so Copycat fails."
+            : "Its target isn't using a move this turn, so Me First fails.",
+        refused: copycat
+            ? `The last move used was ${called.copied}, which Copycat can't copy, so it fails.`
+            : `Its target picked ${called.copied}, which Me First can't copy. That includes every move with no additional effect in this game, so it fails.`,
+        late: "Its target moves first, so there is nothing left to copy and Me First fails.",
+        status: `Its target picked ${called.copied}, a status move. Me First only copies attacks, so it fails.`
+    };
+    return Object.assign(none, {label: "fails", why: FAILS[called.reason] || "It fails here."});
+}
+
+function resolvedMoveFor(moveName, holder, state, line, called) {
     var move = findMove(moveName);
     if (!move) return null;
+
+    /*
+     * Copycat and Me First, likewise only for the card. `called` is the turn
+     * report's answer, and only the chosen move has one: what a move copies
+     * depends on where it falls in the order, and a move nobody picked has no
+     * place in it.
+     */
+    if ((move.id === COPYCAT || move.id === ME_FIRST) && line) {
+        return calledMoveLabel(move, called);
+    }
 
     /*
      * Nature Power, only when a line is passed: the card wants the move it turns
@@ -1122,6 +1192,9 @@ function foldDamage(line, node, state, side, slot, targets, moveName, crits, par
     var move = findMove(moveName);
     var delayed = move && typeof MOVE_EFFECTS !== "undefined" && MOVE_EFFECTS[move.id] &&
         MOVE_EFFECTS[move.id].delayed;
+    // `moveName` is already what a Me First copied; this is only its boost.
+    var call = state.called && state.called[side + slot];
+    var meFirst = !!(call && call.boost);
 
     targets.forEach(function(target) {
         /*
@@ -1132,7 +1205,7 @@ function foldDamage(line, node, state, side, slot, targets, moveName, crits, par
          */
         var power = parent ? pursuitPower(moveName, parent, other, target) : 0;
         var against = power ? parent : node;
-        var damage = damageAgainst(line, against, state, side, slot, target, moveName, isCrit, power);
+        var damage = damageAgainst(line, against, state, side, slot, target, moveName, isCrit, power, meFirst);
         if (!damage) return;
         if (delayed) {
             /*
@@ -1300,9 +1373,9 @@ function dampOnField(line, node, blocker) {
  * cache key short of the whole turn would eventually serve a stale number, and a
  * stale number here is worse than a slow one.
  */
-function plannerDamage(line, node, state, side, slot, moveName, isCrit, drawnBy) {
+function plannerDamage(line, node, state, side, slot, moveName, isCrit, drawnBy, called) {
     if (!moveName || typeof calc === "undefined" || blindMode()) return null;
-    return damageFor(line, node, state, side, slot, moveName, isCrit, drawnBy);
+    return damageFor(line, node, state, side, slot, moveName, isCrit, drawnBy, called);
 }
 
 /*

@@ -1209,9 +1209,14 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
         if (!move) {
             return `<span class="planner-move ${side}${isSelected ? " selected" : ""}" data-move="${name}" data-side="${side}" data-slot="${slot}">${name}</span>`;
         }
+        /*
+         * What a Copycat or Me First copies this turn. Only the chosen move has
+         * an answer, since only it has a place in the turn order.
+         */
+        var called = isSelected && report && report.called ? report.called[side + slot] : null;
 
-        // A Nature Power meets a Protect as whatever it turns into.
-        var guard = stopped ? null : guardWaiting(calledMoveFor(line, name));
+        // A Nature Power or a Copycat meets a Protect as whatever it turns into.
+        var guard = stopped ? null : guardWaiting(calledMoveFor(line, name, called));
         var blocked = !!(guard && guard.kind === "block" && guard.certain);
 
         /*
@@ -1228,14 +1233,14 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
          * than in a figure that would then mean different things on different
          * turns.
          */
-        var damage = plannerDamage(line, node, state, side, slot, name, false, drawnBy);
+        var damage = plannerDamage(line, node, state, side, slot, name, false, drawnBy, called);
         /*
          * Hidden Power and a Weather Ball in weather are neither the type nor the
          * power the table lists, and the card was showing both wrong. Resolved
          * per turn rather than once: weather changes, so the same Weather Ball is
          * a different move two turns later.
          */
-        var resolved = resolvedMoveFor(name, activeHolder(line, node, side, slot), state, line);
+        var resolved = resolvedMoveFor(name, activeHolder(line, node, side, slot), state, line, called);
         var shownType = resolved ? resolved.type : move.type;
         var shownPower = resolved ? resolved.power : move.basePower;
         /*
@@ -1275,7 +1280,7 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
         var ppFigure = `<span class="planner-move-pp${pp && pp.max === 0 ? " empty" : ""}">${
             pp ? `${ppText}/${pp.full}` : ""}</span>`;
 
-        var tooltip = `${move.name}${resolved ? ` (${resolved.label})` : ""} — ${move.category}, ${shownPower || 0} BP, ${move.accuracy || "—"}% acc${pp ? `, ${ppText}/${pp.full} PP` : ""}`;
+        var tooltip = `${move.name}${resolved ? ` (${resolved.label})` : ""} — ${(resolved && resolved.category) || move.category}, ${shownPower || 0} BP, ${move.accuracy || "—"}% acc${pp ? `, ${ppText}/${pp.full} PP` : ""}`;
         if (pp && pp.max === 0) {
             tooltip = `No PP left, so the game won't let this be picked.\n\n${tooltip}`;
         } else if (pp && pp.min !== pp.max) {

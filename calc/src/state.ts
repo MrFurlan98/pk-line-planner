@@ -34,6 +34,7 @@ export namespace State {
     hits?: number;
     timesUsed?: number;
     timesUsedWithMetronome?: number;
+    isMeFirst?: boolean;
     overrides?: Partial<I.Move>;
   }
 

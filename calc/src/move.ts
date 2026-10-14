@@ -31,6 +31,8 @@ export class Move implements State.Move {
   struggleRecoil: boolean;
   isCrit: boolean;
   isStellarFirstUse: boolean;
+  // Called by Me First, which multiplies the damage by 1.5 (gen 4 only).
+  isMeFirst: boolean;
   drain?: [number, number];
   priority: number;
   dropsStats?: number;
@@ -146,6 +148,7 @@ export class Move implements State.Move {
       // These don't *always* crit (255/256 chance), but for the purposes of the calc they do
       gen.num === 1 && ['crabhammer', 'razorleaf', 'slash', 'karate chop'].includes(data.id);
     this.isStellarFirstUse = !!options.isStellarFirstUse;
+    this.isMeFirst = !!options.isMeFirst;
     this.drain = data.drain;
     this.flags = data.flags;
     // The calc doesn't currently care about negative priority moves so we simply default to 0
@@ -186,6 +189,7 @@ export class Move implements State.Move {
       useMax: this.useMax,
       isCrit: this.isCrit,
       isStellarFirstUse: this.isStellarFirstUse,
+      isMeFirst: this.isMeFirst,
       hits: this.hits,
       timesUsed: this.timesUsed,
       timesUsedWithMetronome: this.timesUsedWithMetronome,

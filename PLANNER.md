@@ -454,6 +454,52 @@ So both halves are code:
   until the speed group finishes — two Pokémon moving at the same instant can't
   flinch each other out of a move, exactly as with a KO.
 
+### Copying a move: Copycat and Me First
+
+The two move-calling moves the plan can actually know; Metronome, Assist and
+Sleep Talk pick at random and stay the zero-power moves they are on paper. Few
+sets carry them (4 Copycat, 6 Me First), but where they are, the call is the
+whole move. Both resolve the way Nature Power does: they pay their own PP, then
+`calledMoveFor` swaps in the copy before Protect, the type chart and the damage.
+
+- **Copycat reads one record for the whole battle**, `state.lastMove`, carried
+  down the line like the weather. The decomp
+  (`BattleControllerPlayer_UpdateMoveBuffers`) writes it whenever a move gets as
+  far as its "X used Y!" message, so a miss or a blocked hit counts, and clears
+  it when a Pokémon is stopped before that: asleep, flinched or fully paralysed.
+  A Pokémon that faints first or switches leaves it alone.
+- **Both are +1 here**, so a Copycat nearly always goes first and copies whatever
+  moved *last on the previous turn*, unless something at +1 or higher moved
+  ahead of it this turn. On the first turn of a fight it fails: nothing has been
+  used yet.
+- **It fails on what Metronome can't call** (`sCannotMetronomeMoves`, so Protect,
+  Endure, Counter, Follow Me and so on), on another move-caller, and under
+  Gravity on the moves Gravity bans. A failed Copycat goes into the record as
+  Copycat, which is what stops the next one copying anything.
+- **Me First reads its target's chosen move** and works only if the target hasn't
+  moved yet (`BtlCmd_TryMeFirst`): it fails against a status move, a switch, or a
+  target that moves first. **This game turned one of its exclusions into a plain
+  hit**, and the game compares exclusions by effect, so, in the dex's own words,
+  it also can't copy "any move with the effect 'No additional effect'". Tackle,
+  Hydro Pump and Return are all out.
+- **Me First's 1.5× is applied inside calc**, not to the finished range: the
+  game multiplies the damage after Life Orb and *before* the random roll, so
+  scaling the rolls afterwards would be a point out. `gen4.ts` takes an
+  `isMeFirst` flag on the move, and calc's sentence says "Me First".
+- **Nothing settles it when the order doesn't.** A speed tie, a Quick Claw that
+  could jump its own priority bracket (never a higher one), or a turn marked
+  "didn't act" (a miss writes the record, a full paralysis clears it) leaves the
+  record unknown. Copycat then lands nothing, which is the same abstention an
+  unset Nature Power makes, and the card says why.
+- **On the card**, only the chosen move has an answer, because only it has a place
+  in the turn order. The turn report carries what it copied: the row takes the
+  copied move's type icon and damage, the tooltip names the move, and a failed
+  copy strikes the slot through with the reason.
+- **Not yet:** a copied U-turn or Baton Pass has nowhere to say who comes in,
+  since the switch-in picker follows the declared move. Nor is there a way to
+  *state* what an unknown Copycat copied. A branch can't carry it yet, so the
+  plan stays silent rather than guessing.
+
 ### Refusing the turn: Protect, Detect, Endure and Follow Me
 
 The other four moves that had to be code rather than data. None of them is in the
