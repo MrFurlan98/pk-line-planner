@@ -490,15 +490,39 @@ whole move. Both resolve the way Nature Power does: they pay their own PP, then
   could jump its own priority bracket (never a higher one), or a turn marked
   "didn't act" (a miss writes the record, a full paralysis clears it) leaves the
   record unknown. Copycat then lands nothing, which is the same abstention an
-  unset Nature Power makes, and the card says why.
+  unset Nature Power makes, and the card says why. A Me First tied with its
+  target abstains the same way.
 - **On the card**, only the chosen move has an answer, because only it has a place
   in the turn order. The turn report carries what it copied: the row takes the
   copied move's type icon and damage, the tooltip names the move, and a failed
   copy strikes the slot through with the reason.
-- **Not yet:** a copied U-turn or Baton Pass has nowhere to say who comes in,
-  since the switch-in picker follows the declared move. Nor is there a way to
-  *state* what an unknown Copycat copied. A branch can't carry it yet, so the
-  plan stays silent rather than guessing.
+- **You can say what it copied.** A chosen Copycat or Me First always carries a
+  **✎** button on its row, orange while the order can't tell and green once you
+  have answered. It is there even when the order settles the copy, because the
+  order working one out doesn't make it what the game did. It opens a picker and
+  the answer goes in the turn's `calledSeed`, per slot like `itemSeed`. It can be
+  a move, "it failed" (`CALL_FAILED`), or "turn order decides" to hand it back.
+  Like every seed it wins over the arithmetic: a stated copy holds even where
+  the order would settle it differently.
+  A stated move still goes through the game's own refusals, so a stated Protect
+  still fails. The copy folds in like a worked-out one: damage, Protect, and the
+  record the next Copycat reads.
+- **The picker offers the likely moves first.** While the record is unknown the
+  model keeps a list of what it might hold, `state.lastMoveMaybe`: every mark in
+  the unsettled run, with a "didn't act" contributing both its move and "cleared".
+  A Copycat sharing a run adds the record before the run and its run-mates'
+  moves. Under that, for a Copycat, comes every other move on the field, because
+  the list is a help, not a limit. It is worked out with the slot's own statement
+  set aside, so changing an answer offers the same choices as giving one.
+- **A copied U-turn or Baton Pass switches.** The fold switches on the move as
+  called, not as declared, and the card's "who comes in?" button and the
+  missing-switch warning both follow a copy, whether stated or worked out.
+  Naming who comes in behind a worked-out copy also *states* the copy in
+  `calledSeed`. The reason: `standingAt`, `copyTurnInto` and the rest read only
+  the turn, not the state, and they need to see the switch as well. Taking the
+  statement back, or changing it to something that doesn't switch, clears the
+  switch-in it brought. A foe's copied U-turn gets its switch-in filled by the
+  AI's rule, as a declared one does.
 
 ### Refusing the turn: Protect, Detect, Endure and Follow Me
 

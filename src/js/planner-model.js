@@ -226,6 +226,8 @@ const COPYCAT = "copycat";
 const ME_FIRST = "mefirst";
 // The record when nothing can say what it holds - a tie, a Quick Claw, a "didn't act".
 const UNKNOWN_MOVE = "?";
+// A turn's calledSeed saying the copy did nothing at all.
+const CALL_FAILED = "-";
 // Move_IsInvoker: what Copycat refuses outright, itself included.
 const INVOKER_MOVES = ["sleeptalk", "copycat", "assist", "mefirst", "mirrormove", "metronome"];
 /*
@@ -256,8 +258,8 @@ function callsAMove(moveName) {
  * What a Copycat makes of the record as this slot sees it. `heard` is the record
  * itself: a move, "" for nothing yet, or UNKNOWN_MOVE.
  */
-function copycatCall(state, heard) {
-    if (heard === UNKNOWN_MOVE) return {from: COPYCAT, status: "unknown"};
+function copycatCall(state, heard, maybe) {
+    if (heard === UNKNOWN_MOVE) return {from: COPYCAT, status: "unknown", maybe: maybe || []};
     var move = findMove(heard);
     if (!move) return {from: COPYCAT, status: "failed", reason: "none"};
     var refused = INVOKER_MOVES.indexOf(move.id) >= 0 || UNCALLABLE_MOVES.indexOf(move.id) >= 0 ||
@@ -272,7 +274,7 @@ function copycatCall(state, heard) {
  * apart from it (null).
  */
 function meFirstCall(targetMove, ahead) {
-    if (ahead === null) return {from: ME_FIRST, status: "unknown"};
+    if (ahead === null) return {from: ME_FIRST, status: "unknown", maybe: targetMove ? [targetMove] : []};
     if (!ahead) return {from: ME_FIRST, status: "failed", reason: "late"};
     var move = findMove(targetMove);
     if (!move) return {from: ME_FIRST, status: "failed", reason: "none"};
@@ -281,6 +283,45 @@ function meFirstCall(targetMove, ahead) {
         return {from: ME_FIRST, status: "failed", reason: "refused", copied: move.name};
     }
     return {from: ME_FIRST, status: "copied", move: targetMove, boost: 1.5};
+}
+
+// What this turn states a slot's Copycat or Me First copied, or "" for nothing stated.
+function calledSeedAt(node, side, slot) {
+    var seed = node && node.calledSeed && node.calledSeed[side];
+    return (seed && seed[slot]) || "";
+}
+
+/*
+ * A stated copy in place of the one the order works out. The move still goes
+ * through the game's own refusals - you are saying what the record held, or that
+ * the Me First went first, and the game still won't copy a Protect - while
+ * CALL_FAILED is you saying it did nothing, full stop.
+ */
+function statedCall(state, from, stated) {
+    var call = stated === CALL_FAILED ? {from: from, status: "failed", reason: "stated"}
+        : from === COPYCAT ? copycatCall(state, stated)
+        : meFirstCall(stated, true);
+    call.stated = true;
+    return call;
+}
+
+/*
+ * Adds moves to a list of what the record might hold, once each. "" stays in as
+ * its own answer - something cleared the record - and two spellings of one move
+ * are one move.
+ */
+function addMaybeMoves(list, moves) {
+    (moves || []).forEach(function(name) {
+        if (name === UNKNOWN_MOVE) return;
+        var move = findMove(name);
+        var id = move ? move.id : name;
+        var seen = list.some(function(other) {
+            var known = findMove(other);
+            return (known ? known.id : other) === id;
+        });
+        if (!seen) list.push(name);
+    });
+    return list;
 }
 
 /*
@@ -329,6 +370,23 @@ function settleLastMove(run, marks, before) {
         return !!(a && b && a.id === b.id);
     });
     return same ? first : UNKNOWN_MOVE;
+}
+
+/*
+ * And what an unknown record might be holding, so a Copycat that can't tell has
+ * something to offer when you say which it was. Every member's mark is a
+ * candidate, since any of them may have gone last - and an unknown mark brings
+ * its own candidates along. Null when the record is known.
+ */
+function settleLastMoveMaybe(run, marks, maybes, settled, before) {
+    if (settled !== UNKNOWN_MOVE) return null;
+    var left = run.members.filter(function(key) { return marks[key] !== undefined; });
+    if (!left.length) return before;
+    var list = [];
+    left.forEach(function(key) {
+        addMaybeMoves(list, marks[key] === UNKNOWN_MOVE ? maybes[key] : [marks[key]]);
+    });
+    return list;
 }
 
 /*
@@ -437,6 +495,15 @@ function newNode(x, y) {
          * bring. Empty means the move still lands and nobody has been named yet.
          */
         switchAfter: {you: ["", ""], them: ["", ""]},
+        /*
+         * What a Copycat or Me First copied on this turn, stated: a move, or
+         * CALL_FAILED for "it did nothing", or "" to leave it to the turn order.
+         * For the turns the order can't settle - a tie, a Quick Claw, a "didn't
+         * act" upstream - where the planner otherwise leaves the move landing
+         * nothing. Like every seed it overrules the arithmetic rather than asking
+         * it, so a stated copy holds even where the order would say otherwise.
+         */
+        calledSeed: {you: ["", ""], them: ["", ""]},
         stateOverride: null,
         // Move pickers start open so a fresh turn can be filled in, then get
         // collapsed away once it's decided.
@@ -1164,15 +1231,32 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
      */
     var runs = lastMoveRuns(order, alreadyGone);
     var marks = {};
+    // What an UNKNOWN_MOVE mark might really be, for the record's candidates.
+    var maybes = {};
     var groupOf = {};
     order.forEach(function(group, g) {
         group.forEach(function(action) { groupOf[action.side + action.slot] = g; });
     });
 
     function callFor(side, i, g, moveName) {
-        if (findMove(moveName).id === COPYCAT) {
-            // Anyone sharing its run may or may not have gone first.
-            return copycatCall(state, runs[g].members.length > 1 ? UNKNOWN_MOVE : state.lastMove);
+        var from = findMove(moveName).id;
+        // You saying what it copied beats the order saying it can't tell.
+        var stated = calledSeedAt(parent, side, i);
+        if (stated) return statedCall(state, from, stated);
+        if (from === COPYCAT) {
+            if (runs[g].members.length <= 1) return copycatCall(state, state.lastMove, state.lastMoveMaybe);
+            /*
+             * Anyone sharing its run may or may not have gone first, so it copies
+             * either the record as the turn found it or one of theirs.
+             */
+            var maybe = addMaybeMoves([], state.lastMove === UNKNOWN_MOVE
+                ? state.lastMoveMaybe : [state.lastMove]);
+            runs[g].members.forEach(function(key) {
+                if (key === side + i) return;
+                var mate = moveAt(parent, key.slice(0, -1), parseInt(key.slice(-1), 10));
+                if (mate && !callsAMove(mate)) addMaybeMoves(maybe, [calledMoveFor(line, mate, null)]);
+            });
+            return copycatCall(state, UNKNOWN_MOVE, maybe);
         }
         var other = side === "you" ? "them" : "you";
         var t = targetsOf(onField, side, i, moveName, aimAt(parent, side, i), state.redirect[other])[0];
@@ -1223,6 +1307,7 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
                 // A miss writes the record and a full paralysis clears it.
                 marks[side + i] = UNKNOWN_MOVE;
                 var idle = moveAt(parent, side, i);
+                maybes[side + i] = idle ? [calledMoveFor(line, idle, null), ""] : [""];
                 seeMove(state, side, monAt(onField, side, i), idle, false);
                 // PP likewise: a miss spent it, a full paralysis didn't.
                 spendPp(line, onField, state, side, i, idle, false,
@@ -1287,6 +1372,8 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
              * anything.
              */
             marks[side + i] = !used || (called && called.status === "unknown") ? UNKNOWN_MOVE : move;
+            if (!used) maybes[side + i] = [move, ""];
+            else if (called && called.status === "unknown") maybes[side + i] = called.maybe;
             /*
              * A copy that failed does nothing, and one nothing can settle does
              * nothing here either: the same abstention a Nature Power with no
@@ -1408,7 +1495,7 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
              * group for the same reason, so only something strictly slower finds
              * the newcomer standing there.
              */
-            var leaving = selfSwitchTarget(parent, side, i);
+            var leaving = switchesUserOut(move) ? selfSwitchTarget(parent, side, i) : "";
             if (leaving) {
                 newSwitches.push({side: side, slot: i, incoming: leaving,
                     passes: !!(switchesUserOut(move) || {}).passesBoosts});
@@ -1464,7 +1551,11 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
             state.selfSwitched[change.side + change.slot] = true;
         });
 
-        if (runs[g + 1] !== runs[g]) state.lastMove = settleLastMove(runs[g], marks, state.lastMove);
+        if (runs[g + 1] !== runs[g]) {
+            var settled = settleLastMove(runs[g], marks, state.lastMove);
+            state.lastMoveMaybe = settleLastMoveMaybe(runs[g], marks, maybes, settled, state.lastMoveMaybe);
+            state.lastMove = settled;
+        }
     });
 }
 
@@ -2127,6 +2218,12 @@ function emptyState() {
          * yet; UNKNOWN_MOVE once the turn order or a "didn't act" leaves it open.
          */
         lastMove: "",
+        /*
+         * While the record is UNKNOWN_MOVE, the moves it might be holding - ""
+         * among them for "something cleared it". Only the Copycat picker reads
+         * it, to offer those first; null whenever the record is known.
+         */
+        lastMoveMaybe: null,
         ambiguous: false,
         // A curing berry only works once, so spent ones are remembered per Pokémon.
         itemsUsed: {you: {}, them: {}}
@@ -2142,6 +2239,7 @@ function normalizeState(state) {
      * something has very likely been used already - just nothing says what.
      */
     if (state.lastMove === undefined) state.lastMove = UNKNOWN_MOVE;
+    if (state.lastMoveMaybe === undefined) state.lastMoveMaybe = null;
     /*
      * Guards, redirection, mid-turn switches and what a Copycat copied all belong
      * to a single turn, so nothing carries them in. Cleared rather than
@@ -3062,6 +3160,22 @@ function switchesUserOut(moveName) {
     return (fx && fx.switchesUser) || null;
 }
 
+/*
+ * The move that switches this slot's user out, as far as the turn itself says:
+ * the declared one, or a U-turn or Baton Pass its Copycat or Me First is stated
+ * to have copied. A copy the order works out on its own isn't here - that takes
+ * the state - which is why naming who comes in behind one also states the copy
+ * (see the switch picker). That keeps everything that reads only the turn, such
+ * as who is standing there afterwards, agreeing with the fold.
+ */
+function switchingMoveAt(node, side, slot) {
+    var move = moveAt(node, side, slot);
+    if (switchesUserOut(move)) return move;
+    if (!callsAMove(move)) return "";
+    var stated = calledSeedAt(node, side, slot);
+    return stated && stated !== CALL_FAILED && switchesUserOut(stated) ? stated : "";
+}
+
 function switchAfterAt(node, side, slot) {
     var after = node && node.switchAfter && node.switchAfter[side];
     return (after && after[slot]) || "";
@@ -3102,7 +3216,7 @@ function phazedInto(node, side, slot, slots) {
  * replaces it.
  */
 function selfSwitchTarget(node, side, slot) {
-    if (!switchesUserOut(moveAt(node, side, slot))) return "";
+    if (!switchingMoveAt(node, side, slot)) return "";
     if (!actedAt(node, side, slot)) return "";
     if (switchTargetAt(node, side, slot)) return "";
     return switchAfterAt(node, side, slot);
@@ -3391,17 +3505,50 @@ function predictAtFaint(line, nodeId, slot, corpse) {
 function fillSelfSwitchTarget(line, nodeId, slot) {
     var node = line.nodes[nodeId];
     if (!node) return false;
-    if (!switchesUserOut(moveAt(node, "them", slot))) return false;
+    var move = moveAt(node, "them", slot);
+    // A Copycat or Me First that copies a U-turn leaves just the same.
+    if (!switchesUserOut(move) && !callsAMove(move)) return false;
     if (!actedAt(node, "them", slot)) return false;
     if (switchTargetAt(node, "them", slot)) return false;
     if (switchAfterAt(node, "them", slot)) return false;
 
-    var pick = predictSwitchIn(line, node, computeNodeState(line, nodeId), slot);
+    var state = computeNodeState(line, nodeId);
+    var report = callsAMove(move) ? turnReport(line, node, state) : null;
+    var leaving = leavingMoveAt(node, "them", slot, report);
+    if (!leaving) return false;
+
+    var pick = predictSwitchIn(line, node, state, slot);
     if (!pick) return false;
     if (!node.switchAfter) node.switchAfter = {you: ["", ""], them: ["", ""]};
     node.switchAfter.them[slot] = pick.name;
+    stateCopiedSwitch(node, "them", slot, leaving);
     invalidateNodeStates();
     return true;
+}
+
+/*
+ * The move taking this slot's user off the field on this turn, declared or
+ * copied. Unlike switchingMoveAt this sees a copy the turn order works out as
+ * well as a stated one, so it needs the turn report - the card's question of
+ * whether to ask who comes in.
+ */
+function leavingMoveAt(node, side, slot, report) {
+    var own = switchingMoveAt(node, side, slot);
+    if (own) return own;
+    var call = report && report.called && report.called[side + slot];
+    return call && call.status === "copied" && switchesUserOut(call.move) ? call.move : "";
+}
+
+/*
+ * Naming who comes in behind a copied U-turn is saying the copy was a U-turn, so
+ * it is written down as one. Without that, everything that reads only the turn -
+ * who is standing there afterwards, what a copied turn starts from - would have
+ * to rerun the turn order to know a switch happened.
+ */
+function stateCopiedSwitch(node, side, slot, leaving) {
+    if (!callsAMove(moveAt(node, side, slot)) || !switchesUserOut(leaving)) return;
+    if (!node.calledSeed) node.calledSeed = {you: ["", ""], them: ["", ""]};
+    node.calledSeed[side][slot] = leaving;
 }
 
 /*

@@ -2392,3 +2392,83 @@ button.planner-item-pip.use.stated {
     color: #5abe6e;
     opacity: 0.9;
 }
+
+/*
+ * What a Copycat or Me First copied, stated from the card when the turn order
+ * can't settle it. Shares the Nature Power terrain button's look, since both are
+ * "this move needs one more answer" sitting in the same place on the row.
+ */
+.planner-call-btn {
+    font-size: 10px;
+    padding: 0 4px;
+    margin: 0 4px 0 0;
+    width: auto;
+    flex: 0 0 auto;
+    border: 1px solid rgba(128, 128, 128, 0.4);
+    border-radius: 3px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    line-height: 14px;
+    vertical-align: middle;
+}
+
+.planner-call-btn:hover {
+    background: rgba(128, 128, 128, 0.2);
+}
+
+.planner-call-btn.unset {
+    color: #d08a20;
+    border-color: #d08a20;
+    font-style: italic;
+}
+
+.planner-call-btn.stated {
+    border-color: #2e9e5b;
+}
+
+.planner-call-popup {
+    width: 420px;
+}
+
+.planner-call-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.planner-call-heading {
+    font-size: 11px;
+    opacity: 0.8;
+    margin: 4px 0;
+}
+
+.planner-call-tile {
+    width: auto;
+    margin: 0;
+    padding: 4px 4px;
+    border: 1px solid rgba(128, 128, 128, 0.35);
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+    font-size: 12px;
+    line-height: 1.25;
+}
+
+.planner-call-tile:hover {
+    background: rgba(128, 128, 128, 0.18);
+}
+
+.planner-call-tile.selected {
+    border-color: #2e9e5b;
+    background: rgba(46, 158, 91, 0.2);
+}
+
+.planner-call-tile img {
+    vertical-align: middle;
+    height: 12px;
+    margin-right: 3px;
+}

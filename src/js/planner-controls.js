@@ -631,6 +631,143 @@ function renderTerrainButton(line) {
             ><img class="planner-terrain-thumb" data-terrain-art="${terrain.art}" alt="${terrain.label}"></button>`;
 }
 
+/*
+ * The button on a Copycat or Me First row, for saying what it copied. On every
+ * chosen one, not just where the order can't settle it: the order working out a
+ * copy doesn't make it what happened in the game, and the statement is how you
+ * say so. Only its colour changes - orange while nothing can tell, green once
+ * you have said.
+ */
+function renderCallButton(called, side, slot) {
+    if (!called) return "";
+    var got = called.status === "copied" ? findMove(called.move) : null;
+    var unknown = !called.stated && called.status === "unknown";
+    var hint = called.stated
+        ? `You said this ${got ? `copies ${got.name}` : "does nothing"} on this turn. Click to change it, or to hand it back to the turn order.`
+        : unknown
+            ? "The turn order can't say what this copies. Click to say what it did."
+            : `The turn order says this ${got ? `copies ${got.name}` : "fails"}. Click to say it did something else.`;
+    /*
+     * Kept to one character: the row has no room for a second move name beside
+     * its own, and doesn't need one - its type icon and damage are already the
+     * copied move's. The title says the rest.
+     */
+    return `<button class="planner-call-btn${called.stated ? " stated" : unknown ? " unset" : ""}"
+                    data-side="${side}" data-slot="${slot}"
+                    title="${escapeAttr(hint)}">&#9998;</button>`;
+}
+
+var EDITING_CALL = null;
+
+/*
+ * The picker behind that button. What the record might be holding comes first -
+ * the model keeps a list while it can't tell - and then, for a Copycat, the rest
+ * of what is on the field, since a list worked out from the order is a help and
+ * never a cage: your word is the one that counts.
+ *
+ * The list is worked out with this slot's own statement set aside, so changing
+ * an answer offers the same choices as giving one did.
+ */
+function openCallPicker(nodeId, side, slot) {
+    var line = currentLine();
+    var node = line.nodes[nodeId];
+    if (!node) return;
+    var declared = findMove(moveAt(node, side, slot));
+    if (!declared) return;
+    var stated = calledSeedAt(node, side, slot);
+
+    var saved = node.calledSeed;
+    node.calledSeed = {you: ((saved || {}).you || ["", ""]).slice(), them: ((saved || {}).them || ["", ""]).slice()};
+    node.calledSeed[side][slot] = "";
+    var call;
+    try {
+        call = turnReport(line, node, computeNodeState(line, nodeId)).called[side + slot] || {};
+    } finally {
+        node.calledSeed = saved;
+    }
+
+    /*
+     * Me First only ever copies its target's move, so that is the one choice
+     * whatever the order says - including when it says Me First went too late.
+     */
+    var other = side === "you" ? "them" : "you";
+    var aimed = targetsOf(node, side, slot, declared.name, aimAt(node, side, slot))[0];
+    var likely = addMaybeMoves([], declared.id === ME_FIRST ? [moveAt(node, other, aimed)]
+        : call.status === "copied" ? [call.move] : call.maybe)
+        .filter(function(name) { return name && findMove(name); });
+    var settled = call.status !== "unknown";
+    var others = [];
+    if (declared.id === COPYCAT) {
+        ["you", "them"].forEach(function(s) {
+            for (var i = 0; i < slotCount(line); i++) {
+                slotMovesFor(line, node, s, i).forEach(function(name) {
+                    var move = findMove(name);
+                    if (!move || callsAMove(name)) return;
+                    if (likely.concat(others).some(function(m) { return findMove(m).id === move.id; })) return;
+                    others.push(name);
+                });
+            }
+        });
+    }
+
+    EDITING_CALL = {node: nodeId, side: side, slot: slot};
+    function tile(name) {
+        var move = findMove(name);
+        var chosen = stated && stated !== CALL_FAILED && findMove(stated) && findMove(stated).id === move.id;
+        return `<button class="planner-call-tile${chosen ? " selected" : ""}" data-call="${escapeAttr(name)}">
+            <img src="${GAME.sprites.type(move.type)}" alt="">${move.name}</button>`;
+    }
+    var copycat = declared.id === COPYCAT;
+    $("#planner-popup-container").html(`<fieldset class="planner-call-popup">
+        <legend align="center">What did ${declared.name} do?</legend>
+        <p class="planner-hint">${copycat
+            ? `Copycat uses the last move anyone used. ${settled
+                ? "The turn order works out which, but if the game did something else, say so"
+                : "The turn order can't say which that was here, so say what it copied"} - it lands as that move, and the next Copycat copies it in turn.`
+            : `Me First uses its target's move at 1.5x, but only if it goes first. ${settled
+                ? "The turn order works out whether it did, but if the game went the other way, say so."
+                : "The turn order can't say whether it did, so say what happened."}`}</p>
+        ${likely.length ? `<div class="planner-call-heading">${!copycat ? "Its target's move"
+            : settled ? "The turn order says" : "Could have been"}</div>
+            <div class="planner-call-grid">${likely.map(tile).join("")}</div>` : ""}
+        ${others.length ? `<div class="planner-call-heading">Anything else on the field</div>
+            <div class="planner-call-grid">${others.map(tile).join("")}</div>` : ""}
+        <hr />
+        <span class="buttons">
+            <button id="planner-fail-call" class="btn planner-btn${stated === CALL_FAILED ? " active" : ""}"
+                    title="${escapeAttr(copycat ? "Nothing had been used, or the last move was one Copycat can't copy." : "Its target moved first, or picked something Me First can't copy.")}">It failed</button>
+            <button id="planner-clear-call" class="btn planner-btn">Turn order decides</button>
+            <button id="planner-cancel-call" class="btn planner-btn">Cancel</button>
+        </span>
+    </fieldset>`).removeClass("hide").show();
+}
+
+/*
+ * A full render, because what a Copycat copied moves the damage, the record the
+ * next one reads and - for a U-turn - who is standing there afterwards.
+ */
+function setCalledSeed(value) {
+    var line = currentLine();
+    var edit = EDITING_CALL;
+    var node = edit && line && line.nodes[edit.node];
+    $("#planner-popup-container").hide().empty();
+    EDITING_CALL = null;
+    if (!node) return;
+    var before = switchingMoveAt(node, edit.side, edit.slot);
+    if (!node.calledSeed) node.calledSeed = {you: ["", ""], them: ["", ""]};
+    node.calledSeed[edit.side][edit.slot] = value || "";
+    /*
+     * Whoever was named behind a copied U-turn came in because of that U-turn,
+     * so a different answer takes them back out. A declared U-turn keeps its own.
+     */
+    if (before && !switchingMoveAt(node, edit.side, edit.slot)) setSwitchAfter(node, edit.side, edit.slot, "");
+    invalidateNodeStates();
+    // Theirs gets its switch-in filled by the game's own rule, as a U-turn picked on the card does.
+    if (edit.side === "them") fillSelfSwitchTarget(line, node.id, edit.slot);
+    saveLines();
+    renderLine();
+}
+
 function openTerrainPicker() {
     var line = currentLine();
     if (!line) return;
@@ -946,8 +1083,9 @@ function renderWarnings(line, node, state, report) {
     ["you", "them"].forEach(function(side) {
         for (var slot = 0; slot < slots; slot++) {
             var ref = monAt(node, side, slot);
-            var move = findMove(moveAt(node, side, slot));
-            if (!ref || !move || !switchesUserOut(move.name)) continue;
+            // A copied U-turn leaves just the same, once the order settles the copy.
+            var move = findMove(leavingMoveAt(node, side, slot, report));
+            if (!ref || !move) continue;
             if (!actedAt(node, side, slot)) continue;
             if (switchTargetAt(node, side, slot)) continue;
             if (switchAfterAt(node, side, slot)) continue;
@@ -1007,23 +1145,34 @@ function renderMovePickers(line, node, state, slots, format, report) {
     </div>`;
 }
 
+// The moveset of whoever is in a slot, from whichever roster it came from.
+function slotMovesFor(line, node, side, slot) {
+    var ref = monAt(node, side, slot);
+    if (!ref) return [];
+    var set;
+    if (side === "you" && !isPartnerSlot(line, side, slot)) {
+        var entry = boxEntry(ref);
+        set = entry && entry.set;
+    } else if (side === "you") {
+        set = trainerSet(trainerForSlot(line, "you", slot), ref);
+    } else {
+        set = foeSetFor(line, node, ref);
+    }
+    return set && set.moves ? set.moves : [];
+}
+
 function renderSlotPicker(line, node, state, side, slot, format, report) {
     var ref = monAt(node, side, slot);
     var isPartner = side === "you" && slot === 1 && format.id === "tag";
-    var moves = [];
+    var moves = slotMovesFor(line, node, side, slot);
     var title;
 
     if (side === "you" && !isPartner) {
         var entry = ref ? boxEntry(ref) : null;
-        moves = entry && entry.set.moves ? entry.set.moves : [];
         title = entry ? (entry.nickname || entry.species) : "Yours";
     } else if (isPartner) {
-        var pset = trainerSet(trainerForSlot(line, "you", slot), ref);
-        moves = pset && pset.moves ? pset.moves : [];
         title = ref ? (GAME.species()[toID(ref)] || {}).name || ref : "Partner";
     } else {
-        var set = foeSetFor(line, node, ref);
-        moves = set && set.moves ? set.moves : [];
         title = ref ? (GAME.species()[toID(ref)] || {}).name || ref : "Theirs";
     }
 
@@ -1039,7 +1188,7 @@ function renderSlotPicker(line, node, state, side, slot, format, report) {
             renderScoringTrigger(line, node, side, slot)}</span>
         ${renderMoveList(line, node, state, moves, moveAt(node, side, slot), side, slot, report)}
         ${renderAimPicker(line, node, side, slot, format, report)}
-        ${renderSelfSwitch(line, node, side, slot)}
+        ${renderSelfSwitch(line, node, side, slot, report)}
         <button class="planner-switch-btn${side === "them" ? " them" : ""}${switching ? " active" : ""}${trap && !switching ? " trapped" : ""}"
                 data-side="${side}" data-slot="${slot}"
                 title="${trap ? trapHint(trap) : "Switch instead of attacking. The turn is given up, so whoever comes in takes the hit."}">&#8646; ${trap ? "Trapped" : "Switch"}</button>
@@ -1054,11 +1203,12 @@ function renderSlotPicker(line, node, state, side, slot, format, report) {
  * next to it. That one is "switch *instead* of attacking"; this one is "the move
  * already happened, and it has taken this Pokémon off the field."
  */
-function renderSelfSwitch(line, node, side, slot) {
+function renderSelfSwitch(line, node, side, slot, report) {
     if (switchTargetAt(node, side, slot)) return "";
 
     var move = moveAt(node, side, slot);
-    var own = switchesUserOut(move);
+    // A Copycat or Me First copying a U-turn or Baton Pass asks the same question.
+    var own = leavingMoveAt(node, side, slot, report);
     // Being dragged out by the other side's Roar asks the same question.
     var blown = own ? null : phazedInto(node, side, slot, slotCount(line));
     if (!own && !blown) return "";
@@ -1074,7 +1224,9 @@ function renderSelfSwitch(line, node, side, slot) {
         }
     }
 
-    var cause = own ? findMove(move).name : findMove(moveAt(node, side === "you" ? "them" : "you", blown.by)).name;
+    var cause = !own ? findMove(moveAt(node, side === "you" ? "them" : "you", blown.by)).name
+        : callsAMove(move) ? `${findMove(move).name}'s ${findMove(own).name}`
+        : findMove(own).name;
     var hint;
     if (own) {
         hint = incoming
@@ -1258,7 +1410,8 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
          * button stands in for the figure, saying what the move is waiting for
          * rather than a dash that reads like nothing to calculate.
          */
-        var terrainBtn = move.id === NATURE_POWER ? renderTerrainButton(line) : "";
+        var terrainBtn = move.id === NATURE_POWER ? renderTerrainButton(line)
+            : renderCallButton(called, side, slot);
         var figure = damage
             ? `<span class="planner-move-dmg${damageClass(damage)}${stopped || blocked ? " denied" : ""}">${damageText(damage)}</span>`
             : resolved && resolved.needsTerrain
@@ -2437,6 +2590,8 @@ function renderPickerOptions(list, options, current, emptyText) {
  * written to, so `EDITING_SWITCH_AFTER` is the whole of the difference.
  */
 var EDITING_SWITCH_AFTER = false;
+// The move that took the user off the field, when the picker is answering one.
+var EDITING_SWITCH_LEAVING = "";
 
 function openSwitchEditor(nodeId, side, slot, afterMove) {
     var line = currentLine();
@@ -2451,11 +2606,15 @@ function openSwitchEditor(nodeId, side, slot, afterMove) {
      * The move responsible is this slot's own when it switches itself out, and
      * the *other* side's when a Roar is dragging it out.
      */
-    var forced = afterMove && !switchesUserOut(moveAt(node, side, EDITING_SWITCH_SLOT))
+    var declared = moveAt(node, side, EDITING_SWITCH_SLOT);
+    var report = afterMove && callsAMove(declared)
+        ? turnReport(line, node, computeNodeState(line, nodeId)) : null;
+    EDITING_SWITCH_LEAVING = afterMove ? leavingMoveAt(node, side, EDITING_SWITCH_SLOT, report) : "";
+    var forced = afterMove && !EDITING_SWITCH_LEAVING
         ? phazedInto(node, side, EDITING_SWITCH_SLOT, slotCount(line)) : null;
     var move = !afterMove ? null
         : forced ? findMove(moveAt(node, side === "you" ? "them" : "you", forced.by))
-        : findMove(moveAt(node, side, EDITING_SWITCH_SLOT));
+        : findMove(EDITING_SWITCH_LEAVING);
 
     $("#planner-popup-container").html(switchEditorPopup).removeClass("hide").show();
     $(".planner-switch-popup legend").text(afterMove
@@ -2553,6 +2712,7 @@ function closeSwitchEditor() {
     EDITING_SWITCH_NODE = "";
     EDITING_SWITCH_SIDE = "you";
     EDITING_SWITCH_SLOT = 0;
+    EDITING_SWITCH_LEAVING = "";
 }
 
 // Writes to whichever side's action the picker was opened for.
@@ -3312,8 +3472,15 @@ function initPlanner() {
         var line = currentLine();
         var node = line.nodes[EDITING_SWITCH_NODE];
         if (!node) return closeSwitchEditor();
-        if (EDITING_SWITCH_AFTER) setSwitchAfter(node, EDITING_SWITCH_SIDE, EDITING_SWITCH_SLOT, $(this).attr("data-mon"));
-        else setSideAction(node, EDITING_SWITCH_SIDE, {type: "switch", value: $(this).attr("data-mon")});
+        if (EDITING_SWITCH_AFTER) {
+            setSwitchAfter(node, EDITING_SWITCH_SIDE, EDITING_SWITCH_SLOT, $(this).attr("data-mon"));
+            // Behind a Copycat's U-turn, this is also saying the copy was a U-turn.
+            if (EDITING_SWITCH_LEAVING) {
+                stateCopiedSwitch(node, EDITING_SWITCH_SIDE, EDITING_SWITCH_SLOT, EDITING_SWITCH_LEAVING);
+            }
+        } else {
+            setSideAction(node, EDITING_SWITCH_SIDE, {type: "switch", value: $(this).attr("data-mon")});
+        }
         saveLines();
         closeSwitchEditor();
         // Switching changes who is out for every turn after this one.
@@ -3467,6 +3634,30 @@ function initPlanner() {
         renderLine();
     });
 
+    // What a Copycat or Me First copied, likewise from the move row.
+    $(".planner-canvas").on("click", ".planner-call-btn", function(e) {
+        e.stopPropagation();
+        openCallPicker($(this).closest(".planner-node").attr("data-node"),
+            $(this).attr("data-side"), parseInt($(this).attr("data-slot"), 10) || 0);
+    });
+
+    $(document).on("click", ".planner-call-tile", function() {
+        setCalledSeed($(this).attr("data-call"));
+    });
+
+    $(document).on("click", "#planner-fail-call", function() {
+        setCalledSeed(CALL_FAILED);
+    });
+
+    $(document).on("click", "#planner-clear-call", function() {
+        setCalledSeed("");
+    });
+
+    $(document).on("click", "#planner-cancel-call", function() {
+        $("#planner-popup-container").hide().empty();
+        EDITING_CALL = null;
+    });
+
     // Nature Power's terrain, opened from the move row rather than selecting the move.
     $(".planner-canvas").on("click", ".planner-terrain-btn", function(e) {
         e.stopPropagation();
@@ -3515,7 +3706,7 @@ function initPlanner() {
     });
 
     // Dragging a card shouldn't start from its move list, or from its buttons.
-    $(".planner-canvas").on("mousedown", ".planner-move, .planner-moves-toggle, .planner-scoring-btn, .planner-terrain-btn",
+    $(".planner-canvas").on("mousedown", ".planner-move, .planner-moves-toggle, .planner-scoring-btn, .planner-terrain-btn, .planner-call-btn",
         function(e) { e.stopPropagation(); });
 
     // What the AI is weighing, opened from the card.

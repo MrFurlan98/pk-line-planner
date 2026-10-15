@@ -819,7 +819,9 @@ function calledMoveLabel(move, called) {
             power: got ? got.basePower : 0,
             category: got ? got.category : move.category,
             label: `copies ${got ? got.name : called.move}`,
-            why: copycat
+            why: called.stated
+                ? `Copies ${got ? got.name : called.move}${copycat ? "" : ", at 1.5x damage"} — you said so, and that wins over the turn order. Click the button beside it to change or clear it.`
+                : copycat
                 ? `Copies ${got ? got.name : called.move}, the last move used before it. Copycat is +1 here, so that is usually whatever moved last on the previous turn.`
                 : `Copies ${got ? got.name : called.move}, the move its target picked, at 1.5x damage. It moves first, so the target hasn't used it yet.`
         };
@@ -828,8 +830,8 @@ function calledMoveLabel(move, called) {
         return Object.assign(none, {
             label: "can't tell",
             why: copycat
-                ? `Nothing can say what this copies. The last move used depends on an order nothing settles: a speed tie, a Quick Claw, or a turn marked "didn't act" (a miss counts, a full paralysis doesn't). The plan leaves it doing nothing rather than guessing.`
-                : "Nothing can say whether this goes before its target: a speed tie or a Quick Claw. The plan leaves it doing nothing rather than guessing."
+                ? `Nothing can say what this copies. The last move used depends on an order nothing settles: a speed tie, a Quick Claw, or a turn marked "didn't act" (a miss counts, a full paralysis doesn't). The plan leaves it doing nothing rather than guessing — click the button beside it to say what it copied.`
+                : "Nothing can say whether this goes before its target: a speed tie or a Quick Claw. The plan leaves it doing nothing rather than guessing — click the button beside it to say what happened."
         });
     }
     var FAILS = {
@@ -840,6 +842,7 @@ function calledMoveLabel(move, called) {
             ? `The last move used was ${called.copied}, which Copycat can't copy, so it fails.`
             : `Its target picked ${called.copied}, which Me First can't copy. That includes every move with no additional effect in this game, so it fails.`,
         late: "Its target moves first, so there is nothing left to copy and Me First fails.",
+        stated: "You said it does nothing on this turn, and that wins over the turn order. Click the button beside it to change or clear it.",
         status: `Its target picked ${called.copied}, a status move. Me First only copies attacks, so it fails.`
     };
     return Object.assign(none, {label: "fails", why: FAILS[called.reason] || "It fails here."});
