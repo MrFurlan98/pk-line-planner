@@ -201,7 +201,8 @@ graph, so editing one turn updates everything after it.
     only-certainties rule the 2–5 hit moves follow.
   - **The AI is left reading it as a 1-power move**, because that is what the
     game does: its damage function takes the table's power, and every
-    base-power-1 move is thrown out of the post-KO switch comparison outright.
+    base-power-1 move skips the post-KO switch's damage sum — though not its
+    comparison; see the carry-over bug under step two.
   - Magnitude is the only other move of this shape, and Kaizo deletes it.
 - **Gen 4 in this fork *is* Platinum Kaizo.** `calc/src/data/moves.ts` builds its
   gen-4 table by patching DPP with the hack's changes and deleting the moves it
@@ -803,11 +804,35 @@ Black Belt Daniel's Primeape corpse makes Dunsparce's Drill Run read *exactly*
   becomes Meowth's best at 5, and Skitty's 6 takes it — which is what the game
   did. 55 sets carry a multi-hit move, and Kaizo made **Shadow Claw** one of them
   (2–5 hits at 25 BP, 16 sets), so this was not a rare miss.
-- **Step two throws away the base-power-1 moves** — Low Kick, Grass Knot, Counter,
-  Super Fang, Endeavor, Fling, the OHKO moves and the rest. It is the game's own
-  data rather than a judgement, and it cuts oddly: Explosion, Eruption and Sucker
-  Punch are all kept. They still count for step one, so a Low Kick is a
-  super-effective Fighting move for the filter and worth zero for the ranking.
+- **Step two skips the damage sum for base-power-1 moves** — Low Kick, Grass Knot,
+  Counter, Super Fang, Endeavor, Fling, the OHKO moves and the rest. It is the
+  game's own data rather than a judgement, and it cuts oddly: Explosion, Eruption
+  and Sucker Punch are all kept. They still count for step one, so a Low Kick is
+  a super-effective Fighting move for the filter.
+  - **Bug: skipped is not zero.** One score variable runs through the whole
+    step — party order, then move order — and the comparison sits *outside* the
+    power-1 check, so a skipped move is judged on whatever the variable already
+    held. An empty move slot does the same. Within step two that is always a
+    figure already compared, so it changes nothing — except at the very start,
+    where the variable still holds **step one's last type score**. So a power-1
+    move in the first candidate's first slot scores a type score out of
+    nowhere — 80 for a neutral matchup, which beats most low-level hits.
+    `predictSwitchIn` runs step one as the game's passes rather than a sort to
+    know that leftover: each pass scores everyone not yet ruled out, and the
+    last one scored is the last candidate eliminated. Caught on **Scientist
+    Jonathon**: with Aron, Anorith and Omanyte down, Machop's Fissure carried
+    Onix's 80 against a Psyduck, beat Onix's 59 Self-Destruct from the Anorith
+    corpse, and the game sent Machop where the planner had said Onix. With
+    Omanyte alive the leftover is its 60, which still wins by one.
+  - **A status move scores 2, not 0** — the write-up says 0. The damage
+    function finds no stat to use and returns its closing `+ 2`, which the
+    type-chart step then scales (STAB from the corpse's types, matchups in
+    integer steps that never round below 1, an immunity or Levitate zeroing
+    it). So a living Aron with Spikes ahead of Machop leaves 2 for the Fissure,
+    not the leftover, and Onix comes in instead.
+  - **Step one never takes a score of 0**, since the best starts at 0 and has
+    to be beaten — so a candidate whose own types are wholly walled sits out
+    step one even holding a super-effective move.
   - **Read off this game's move table rather than transcribed as a list of
     names**, because the two disagree and the data is right. Kaizo rebuilt
     **Sheer Cold** into a plain 70-power freezing Ice move, so it is no longer an

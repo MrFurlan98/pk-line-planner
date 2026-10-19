@@ -968,11 +968,14 @@ function switchSuperEffectiveMove(set, defender, state) {
 }
 
 /*
- * Whether step two throws this move away. The rule is exactly "the move is
- * stored with a base power of 1", which is why it cuts in such odd places: Low
- * Kick and Grass Knot are out, while Explosion, Eruption and Sucker Punch are
- * all in. They still count for step *one* - a Low Kick is a super-effective
- * Fighting move for the filter and worth zero damage for the ranking.
+ * Whether step two skips this move's damage sum. The rule is exactly "the move
+ * is stored with a base power of 1", which is why it cuts in such odd places:
+ * Low Kick and Grass Knot are out, while Explosion, Eruption and Sucker Punch
+ * are all in. They still count for step *one* - a Low Kick is a super-effective
+ * Fighting move for the filter.
+ *
+ * Skipped is not the same as scoring nothing, though: the move is still
+ * compared, on whatever the running score held before it. See `switchDamage`.
  *
  * Read off this game's own move table rather than transcribed as a list of
  * names, because the two disagree and the data is right. Platinum Kaizo rebuilt
@@ -981,8 +984,53 @@ function switchSuperEffectiveMove(set, defender, state) {
  * excluded, which the vanilla write-up's list happens not to mention. Reading
  * the field gets both right for free, and survives the next rebalance.
  */
-function switchIgnoresDamage(move) {
-    return move.category === "status" || move.basePower === 1;
+function switchCarriesScore(move) {
+    return move.basePower === 1;
+}
+
+/*
+ * What a status move scores in step two. Not 0, which is what the write-up says
+ * and what calc would answer: the game's damage function runs on it like any
+ * other move, finds no attacking stat to work with, and returns its closing
+ * `+ 2`. The type-chart step then treats that 2 as damage - STAB from the
+ * fainted Pokémon's types, each matchup in integer steps that never round below
+ * 1 - and an immunity or Levitate zeroes it.
+ *
+ * Small, and rarely the winner, but it is what a power-1 move behind it
+ * inherits: an Aron with Spikes ahead of a Machop's Fissure leaves 2 there, not
+ * the leftover type score.
+ *
+ * The game applies the two matchups in its type table's order rather than the
+ * defender's, which only changes the answer for a STAB status move into a dual
+ * type that both resists and is weak to it.
+ */
+function switchStatusScore(moveType, attacker, defender, state) {
+    var type = capitalise(moveType);
+    var ability = toID(attacker.ability || "");
+    if (ability === "normalize") type = "Normal";
+    var score = 2;
+    if ((attacker.types || []).some(function(t) { return t && capitalise(t) === type; })) {
+        score = ability === "adaptability" ? score * 2 : Math.floor(score * 15 / 10);
+    }
+    var chart = (typeof calc !== "undefined" && calc.TYPE_CHART && calc.TYPE_CHART[calcGen()]) || null;
+    var row = chart && chart[type];
+    var pinned = !!(state && state.gravity) || toID(defender.item || "") === GROUNDING_ITEM;
+    var types = (defender.types || []).filter(function(t) { return t; });
+    if (types.length === 2 && types[0] === types[1]) types = [types[0]];
+    for (var i = 0; row && i < types.length; i++) {
+        var mult = row[capitalise(types[i])];
+        if (mult === undefined || mult === 1) continue;
+        if (!mult) {
+            // The same two ways through an immunity the super-effective check reads.
+            if (ability === "scrappy" && (type === "Normal" || type === "Fighting")) continue;
+            if (pinned && type === "Ground" && capitalise(types[i]) === "Flying") continue;
+            return 0;
+        }
+        score = Math.max(1, Math.floor(score * mult));
+    }
+    if (type === "Ground" && !pinned && ability !== "moldbreaker" &&
+        toID(defender.ability || "") === "levitate") return 0;
+    return score;
 }
 
 /*
@@ -997,12 +1045,19 @@ function switchIgnoresDamage(move) {
  * the zero health the plan already worked out for it.
  *
  * Only reached when nothing in the party has a super-effective move.
+ *
+ * `carry` is the running score as it stood before this candidate - step one's
+ * leftover for the first, the previous candidate's last move for the rest - and
+ * the result hands the new one back as `carry`. A base-power-1 move or an empty
+ * slot leaves it untouched and is judged on it; `carried` marks a best that
+ * came from there rather than from a sum of its own.
  */
-function switchDamage(line, node, state, set, defSide, defSlot, faintedSlot) {
+function switchDamage(line, node, state, set, defSide, defSlot, faintedSlot, carry) {
+    carry = carry || 0;
     var deadSide = defSide === "you" ? "them" : "you";
     var attacker = calcPokemonFor(line, node, state, deadSide, faintedSlot);
     var defender = calcPokemonFor(line, node, state, defSide, defSlot);
-    if (!attacker || !defender) return {damage: 0, move: ""};
+    if (!attacker || !defender) return {damage: 0, move: "", carry: carry};
 
     /*
      * But not its stat stages. The faint animation runs the game's
@@ -1039,11 +1094,15 @@ function switchDamage(line, node, state, set, defSide, defSlot, faintedSlot) {
 
     var holder = activeHolder(line, node, deadSide, faintedSlot);
     var field = calcFieldFor(line, state, deadSide);
-    var best = {damage: 0, move: "", raw: 0};
-
-    (set.moves || []).forEach(function(moveName) {
-        var found = findMove(moveName);
-        if (!found || switchIgnoresDamage(found)) return;
+    /*
+     * One move's score, as {score, raw} - or null where the game would leave the
+     * running score as it was.
+     */
+    function scoreOf(moveName, found) {
+        if (found.category === "status") {
+            var flat = switchStatusScore(switchMoveType(found, set, state), attacker, defender, state);
+            return {score: flat, raw: flat};
+        }
         /*
          * One hit, always. The AI runs a single damage calculation per move and
          * never multiplies it by a hit count - but calc settles a 2-5 hit move
@@ -1056,7 +1115,7 @@ function switchDamage(line, node, state, set, defSide, defSlot, faintedSlot) {
          * the right way round, which is what the game actually did.
          */
         var move = calcMoveFor(moveName, holder, false, 1, 0);
-        if (!move) return;
+        if (!move) return null;
         /*
          * Table power, whatever the situation. The routine calls the game's
          * damage function with no power of its own, and that function has no
@@ -1082,7 +1141,7 @@ function switchDamage(line, node, state, set, defSide, defSlot, faintedSlot) {
         }
         try {
             var range = calc.calculate(calcGen(), attacker, defender, move, field).range();
-            if (!range) return;
+            if (!range) return {score: 0, raw: 0};
             /*
              * The top of the roll, because the AI's damage figure carries no
              * random factor at all and the maximum is what a 100% roll is.
@@ -1091,16 +1150,27 @@ function switchDamage(line, node, state, set, defSide, defSlot, faintedSlot) {
              * reading 711 wraps twice down to 199. Rare below high levels, and
              * near-guaranteed on an Explosion at the top of the game.
              */
-            var wrapped = ((range[1] % 256) + 256) % 256;
-            if (wrapped > best.damage) {
-                best.damage = wrapped;
-                best.raw = range[1];
-                best.move = moveName;
-            }
+            return {score: ((range[1] % 256) + 256) % 256, raw: range[1]};
         } catch (e) {
             // One unresolvable move shouldn't cost the whole prediction.
+            return null;
         }
-    });
+    }
+
+    var best = {damage: 0, move: "", raw: 0, carried: false};
+    var score = carry;
+    // All four slots, since an empty one carries the score the same way.
+    for (var i = 0; i < 4; i++) {
+        var moveName = (set.moves || [])[i] || "";
+        var found = moveName ? findMove(moveName) : null;
+        var hit = found && !switchCarriesScore(found) ? scoreOf(moveName, found) : null;
+        if (hit) score = hit.score;
+        // Compared whether or not it was scored - which is the whole bug.
+        if (score > best.damage) {
+            best = {damage: score, move: moveName, raw: hit ? hit.raw : score, carried: !hit};
+        }
+    }
+    best.carry = score;
     return best;
 }
 

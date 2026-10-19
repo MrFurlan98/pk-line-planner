@@ -3326,29 +3326,64 @@ function predictSwitchIn(line, node, state, slot) {
         };
     });
 
-    // Step one. The filter is the existence of the move; the ranking is typing.
-    var pool = reads.filter(function(x) { return x.seMove; });
-    if (pool.length) {
-        pool.sort(function(a, b) {
-            if (b.score !== a.score) return b.score - a.score;
-            return a.order - b.order;
+    /*
+     * Step one, run the way the game runs it rather than as a sort, because the
+     * way it runs leaves something behind that step two picks up.
+     *
+     * The filter is the existence of the move; the ranking is typing. Each pass
+     * scores everyone not yet ruled out, takes the best - the first in party
+     * order on a tie - and either sends it or rules it out for lacking a
+     * super-effective move. A score of 0 is never taken at all, since the best
+     * starts at 0 and has to be beaten, so a candidate whose types are wholly
+     * walled sits out step one even holding a super-effective move.
+     *
+     * `leftover` is the last score the passes computed. The game keeps it in the
+     * same variable step two scores moves into - see below.
+     */
+    var ruledOut = {};
+    var leftover = 0;
+    for (;;) {
+        var best = null;
+        reads.forEach(function(read) {
+            if (ruledOut[read.order]) return;
+            leftover = read.score;
+            if (read.score > (best ? best.score : 0)) best = read;
         });
-        pool[0].step = 1;
-        return pool[0];
+        if (!best) break;
+        if (best.seMove) {
+            best.step = 1;
+            return best;
+        }
+        ruledOut[best.order] = true;
     }
 
     /*
      * Step two. Reached only when nothing in the party holds a super-effective
      * move, and fired from the Pokemon that just left rather than from the one
      * being considered - see `switchDamage`, where that lives.
+     *
+     * Bug: one score runs through the whole step, party order then move order,
+     * starting from step one's leftover. A base-power-1 move - Fissure, Counter,
+     * Low Kick - skips the damage sum but not the comparison, so it is judged on
+     * whatever the score already held. Only the first such move ahead of any
+     * real one can matter, and only from the first candidate: anything later
+     * carries a figure that was itself already compared.
+     *
+     * Caught on Scientist Jonathon: with Aron, Anorith and Omanyte down, Machop
+     * leads the party with Fissure in its first slot, which carried Onix's type
+     * score of 80 against Psyduck. Onix's Self-Destruct off the fainted Anorith
+     * came to less, and the game sent Machop where the planner had said Onix.
      */
+    var carry = leftover;
     reads.forEach(function(read) {
         var set = trainerSet(trainer, read.name);
         if (!set) return;
-        var hit = switchDamage(line, node, state, set, "you", yours, slot);
+        var hit = switchDamage(line, node, state, set, "you", yours, slot, carry);
         read.damage = hit.damage;
         read.damageMove = hit.move;
         read.rawDamage = hit.raw;
+        read.carried = hit.carried;
+        carry = hit.carry;
     });
     reads.sort(function(a, b) {
         if (b.damage !== a.damage) return b.damage - a.damage;
