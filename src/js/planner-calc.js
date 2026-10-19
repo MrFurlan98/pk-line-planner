@@ -410,13 +410,16 @@ function absorbedBy(line, node, state, side, slot, moveName, maxHP) {
  * do nothing, which is worth saying outright rather than quietly falling back to
  * base power and reading like an ordinary move nobody has worked out yet.
  */
-function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCrit, power, meFirst) {
+function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCrit, power, meFirst, reactive) {
     var attacker = calcPokemonFor(line, node, state, side, slot);
     if (!attacker) return null;
 
     var other = side === "you" ? "them" : "you";
     var defender = calcPokemonFor(line, node, state, other, targetSlot);
     if (!defender) return null;
+
+    // Metal Burst, Counter and Mirror Coat: what came in, multiplied, not a roll.
+    if (reactiveMove(moveName)) return reactiveDamage(line, node, state, other, targetSlot, moveName, defender, reactive);
 
     var holder = activeHolder(line, node, side, slot);
     var span = hitSpanFor(moveName);
@@ -467,6 +470,16 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
          * that isn't one whenever the move can stop short.
          */
         var top = result;
+        /*
+         * The one hit a Metal Burst or Counter answers, which for a multi-hit
+         * move is the last rather than the total. Every hit is the same roll, so
+         * it is the fewest-hits band split evenly - not calc asked for one hit,
+         * which it ignores on a fixed two-hitter like Double Kick. Triple Kick's
+         * hits grow and Present's may not be a hit at all, so neither can say.
+         */
+        var lastHit = {lo: range[0], hi: range[1]};
+        if (powers || toID(moveName) === "triplekick") lastHit = {uneven: true};
+        else if (span.min > 1) lastHit = {lo: Math.floor(range[0] / span.min), hi: Math.floor(range[1] / span.min)};
         if (span.max > span.min || (powers && powers.max > powers.min)) {
             var wide = calcMoveFor(moveName, holder, isCrit, span.max, power,
                 powers && powers.max, meFirst);
@@ -547,6 +560,8 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
             hits: span,
             // Real HP the target may gain instead of losing any of this.
             mayHeal: mayHeal,
+            // What a Metal Burst or Counter would have to answer.
+            lastHit: lastHit,
             /*
              * The calculator's own full sentence, which already ends with the KO
              * chance - so that isn't pulled out separately until something needs
@@ -561,18 +576,57 @@ function damageAgainst(line, node, state, side, slot, targetSlot, moveName, isCr
 }
 
 /*
+ * A Metal Burst, Counter or Mirror Coat's damage, in the shape damageAgainst
+ * returns: the hit it answers, multiplied, as a band - because the hit was a
+ * band. `reactive` is the turn's answer from reactiveCall; without one, or with
+ * one that failed or abstained, there is no honest number and the card falls
+ * back to its label.
+ *
+ * No type chart, no crit, no STAB, no roll of its own: the game turns all of
+ * that off and hands over a flat figure, which is all this is.
+ */
+function reactiveDamage(line, node, state, side, slot, moveName, defender, reactive) {
+    if (!reactive || reactive.status !== "ok") return null;
+    var full = defender.maxHP();
+    var left = hpOf(monState(state, side, monAt(node, side, slot))) || {min: full, max: full};
+    var move = findMove(moveName);
+    var source = findMove(reactive.fromMove);
+    var spec = reactiveMove(moveName);
+    var took = reactive.took.lo === reactive.took.hi ? `${reactive.took.lo}` : `${reactive.took.lo}-${reactive.took.hi}`;
+    var dealt = reactive.lo === reactive.hi ? `${reactive.lo}` : `${reactive.lo}-${reactive.hi}`;
+    return {
+        lo: reactive.lo,
+        hi: reactive.hi,
+        full: full,
+        loPct: reactive.lo * 100 / full,
+        hiPct: reactive.hi * 100 / full,
+        kills: reactive.lo >= left.max,
+        mayKill: reactive.hi >= left.min,
+        recoil: [0, 0],
+        recovery: [0, 0],
+        hits: {min: 1, max: 1},
+        mayHeal: 0,
+        lastHit: {lo: reactive.lo, hi: reactive.hi},
+        desc: `${move.name}: ${spec.num / spec.den}x the ${took} HP ${source ? source.name : reactive.fromMove} took off it = ${dealt} (${
+            Math.round(reactive.lo * 100 / full)} - ${Math.round(reactive.hi * 100 / full)}%)`
+    };
+}
+
+/*
  * A spread move lands on both opposing slots; the number on the card is against
  * the one across from the user, which is the matchup the card is laid out to be
  * read across. The spread reduction still applies, from the game type.
  */
-function damageFor(line, node, state, side, slot, moveName, isCrit, drawnBy, called) {
+function damageFor(line, node, state, side, slot, moveName, isCrit, drawnBy, called, reactive) {
     /*
      * A Nature Power is worked out as whatever it turns into on this line's
      * terrain, and a Copycat or Me First as whatever `called` - the turn report's
      * answer for this slot - says it copied.
      */
     moveName = calledMoveFor(line, moveName, called);
-    var target = targetsOf(node, side, slot, moveName, aimAt(node, side, slot), drawnBy)[0];
+    // A Metal Burst lands on whoever hit it, whatever it was aimed at.
+    var target = reactive && reactive.status === "ok" ? reactive.target
+        : targetsOf(node, side, slot, moveName, aimAt(node, side, slot), drawnBy)[0];
     var other = side === "you" ? "them" : "you";
     /*
      * A Pursuit aimed at a slot that is switching away this turn catches it on
@@ -581,7 +635,7 @@ function damageFor(line, node, state, side, slot, moveName, isCrit, drawnBy, cal
      */
     var power = pursuitPower(moveName, node, other, target);
     return damageAgainst(line, node, state, side, slot, target, moveName, isCrit, power,
-        !!(called && called.boost));
+        !!(called && called.boost), reactive);
 }
 
 /*
@@ -848,9 +902,51 @@ function calledMoveLabel(move, called) {
     return Object.assign(none, {label: "fails", why: FAILS[called.reason] || "It fails here."});
 }
 
-function resolvedMoveFor(moveName, holder, state, line, called) {
+/*
+ * What a Metal Burst, Counter or Mirror Coat shows on the card, in the same shape
+ * as calledMoveLabel. The figure is the damage when there is one; otherwise this
+ * says what it is waiting on, or why it does nothing.
+ */
+function reactiveMoveLabel(move, reactive) {
+    var spec = REACTIVE_MOVES[move.id];
+    var times = spec.num / spec.den;
+    var kind = spec.category ? `${spec.category} hit` : "hit";
+    var none = {type: move.type, power: "—"};
+    if (!reactive) {
+        return Object.assign(none, {
+            label: "returns what it takes",
+            why: `Hits back with ${times}x the last ${kind} its user took this turn, at whoever landed it — no type chart, no roll of its own. Pick it to see what that comes to here.`
+        });
+    }
+    if (reactive.status === "ok") {
+        var source = findMove(reactive.fromMove);
+        return {
+            type: move.type,
+            power: "—",
+            label: `returns ${times}x`,
+            why: `Returns ${times}x the ${source ? source.name : reactive.fromMove} that landed on it earlier this turn, at whoever used it. The range is that hit's range, multiplied — no type chart, no roll of its own.`
+        };
+    }
+    var WHY = {
+        unhit: `Nothing has landed a ${kind} on its user by the time it moves this turn, so it fails. It has to be hit first, on the same turn.`,
+        ally: "The last hit it took came from its own side, so it fails.",
+        fainted: "Whoever hit it is already down, so it has nobody to hit back and fails.",
+        tied: "Something moves at the same instant it does — a speed tie — and may or may not hit it first, which decides what it has to return. The plan leaves it doing nothing rather than guessing.",
+        quickclaw: "A Quick Claw makes the order uncertain, and whether it moves after the hit decides what it has to return. The plan leaves it doing nothing rather than guessing.",
+        uneven: "The hit it would return was a Triple Kick or a Present, and nothing settles how big that hit was. The plan leaves it doing nothing rather than guessing."
+    };
+    return Object.assign(none, {
+        label: reactive.status === "unknown" ? "can't tell" : "fails",
+        why: WHY[reactive.why] || "It fails here."
+    });
+}
+
+function resolvedMoveFor(moveName, holder, state, line, called, reactive) {
     var move = findMove(moveName);
     if (!move) return null;
+
+    // Metal Burst, Counter and Mirror Coat, for the card only, like the copies.
+    if (line && reactiveMove(moveName)) return reactiveMoveLabel(move, reactive);
 
     /*
      * Copycat and Me First, likewise only for the card. `called` is the turn
@@ -1233,6 +1329,31 @@ function sashHolds(line, node, state, side, slot, mon) {
 }
 
 /*
+ * Writes a hit into the turn's log, as the game stores it for a Metal Burst,
+ * Counter or Mirror Coat to answer: the last hit's full size rather than the HP
+ * it took - except that a Sash or Endure trims it to whatever left the target on
+ * 1. Called before the hit comes off, so `mon` still holds the health going in.
+ *
+ * Only the target's surviving rolls matter, since nothing dead hits back, so the
+ * top of the band never reaches past what would have left it on 1 either. A hit
+ * into a Substitute is never written, and that is the game too.
+ */
+function logHit(state, from, to, move, damage, mon, trimmed, behindSub) {
+    if (!state.hitLog || !move || behindSub) return;
+    var last = damage.lastHit || {lo: damage.lo, hi: damage.hi};
+    var entry = {from: from, to: to, move: move.name, category: move.category, uneven: !!last.uneven,
+        lo: last.lo || 0, hi: last.hi || 0};
+    // Present may heal instead, which stores nothing - so it can't be relied on.
+    if (damage.mayHeal) entry.uneven = true;
+    var hp = mon && hpOf(mon);
+    if (hp && !entry.uneven) {
+        if (trimmed) entry.lo = Math.min(entry.lo, Math.max(0, hp.min - 1));
+        entry.hi = Math.max(entry.lo, Math.min(entry.hi, Math.max(0, hp.max - 1)));
+    }
+    state.hitLog.push(entry);
+}
+
+/*
  * Takes a move's damage off everything it lands on. This is the hook applyTurn
  * calls, and the only route by which HP ever goes down.
  *
@@ -1268,6 +1389,7 @@ function foldDamage(line, node, state, side, slot, targets, moveName, crits, par
     // `moveName` is already what a Me First copied; this is only its boost.
     var call = state.called && state.called[side + slot];
     var meFirst = !!(call && call.boost);
+    var reactive = state.reactive && state.reactive[side + slot];
 
     targets.forEach(function(target) {
         /*
@@ -1278,7 +1400,7 @@ function foldDamage(line, node, state, side, slot, targets, moveName, crits, par
          */
         var power = parent ? pursuitPower(moveName, parent, other, target) : 0;
         var against = power ? parent : node;
-        var damage = damageAgainst(line, against, state, side, slot, target, moveName, isCrit, power, meFirst);
+        var damage = damageAgainst(line, against, state, side, slot, target, moveName, isCrit, power, meFirst, reactive);
         if (!damage) return;
         if (delayed) {
             /*
@@ -1322,6 +1444,10 @@ function foldDamage(line, node, state, side, slot, targets, moveName, crits, par
          */
         var berry = resistBerrySpent(line, against, state, other, target, moveName,
             calcPokemonFor(line, against, state, other, target));
+        var guard = guardAt(state, other, target);
+        logHit(state, side + slot, other + target, move, damage, mon,
+            !!sash || !!(guard && guard.kind === "endure"),
+            !!(monState(state, other, monAt(against, other, target)).volatiles || {}).substitute);
         if (mon) damageMon(mon, damage.lo, damage.hi, damage.full);
         /*
          * A move that might have healed instead leaves the target anywhere
@@ -1336,7 +1462,6 @@ function foldDamage(line, node, state, side, slot, targets, moveName, crits, par
          * A Protect never reaches here at all - resolveMoves took the target off
          * the list before the move was applied.
          */
-        var guard = guardAt(state, other, target);
         if (mon && guard && guard.kind === "endure") endureMon(mon);
         // Same floor, different reason - and the Sash is gone once it is used.
         if (mon && sash && mon.hp.min < 1) {
@@ -1446,9 +1571,9 @@ function dampOnField(line, node, blocker) {
  * cache key short of the whole turn would eventually serve a stale number, and a
  * stale number here is worse than a slow one.
  */
-function plannerDamage(line, node, state, side, slot, moveName, isCrit, drawnBy, called) {
+function plannerDamage(line, node, state, side, slot, moveName, isCrit, drawnBy, called, reactive) {
     if (!moveName || typeof calc === "undefined" || blindMode()) return null;
-    return damageFor(line, node, state, side, slot, moveName, isCrit, drawnBy, called);
+    return damageFor(line, node, state, side, slot, moveName, isCrit, drawnBy, called, reactive);
 }
 
 /*

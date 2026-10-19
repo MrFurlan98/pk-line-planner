@@ -1366,6 +1366,8 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
          * an answer, since only it has a place in the turn order.
          */
         var called = isSelected && report && report.called ? report.called[side + slot] : null;
+        // Likewise what a Metal Burst, Counter or Mirror Coat hits back with.
+        var reacting = isSelected && report && report.reactive ? report.reactive[side + slot] : null;
 
         // A Nature Power or a Copycat meets a Protect as whatever it turns into.
         var guard = stopped ? null : guardWaiting(calledMoveFor(line, name, called));
@@ -1385,14 +1387,14 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
          * than in a figure that would then mean different things on different
          * turns.
          */
-        var damage = plannerDamage(line, node, state, side, slot, name, false, drawnBy, called);
+        var damage = plannerDamage(line, node, state, side, slot, name, false, drawnBy, called, reacting);
         /*
          * Hidden Power and a Weather Ball in weather are neither the type nor the
          * power the table lists, and the card was showing both wrong. Resolved
          * per turn rather than once: weather changes, so the same Weather Ball is
          * a different move two turns later.
          */
-        var resolved = resolvedMoveFor(name, activeHolder(line, node, side, slot), state, line, called);
+        var resolved = resolvedMoveFor(name, activeHolder(line, node, side, slot), state, line, called, reacting);
         var shownType = resolved ? resolved.type : move.type;
         var shownPower = resolved ? resolved.power : move.basePower;
         /*

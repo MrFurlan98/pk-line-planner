@@ -1038,6 +1038,103 @@ function endureMon(mon) {
     if (mon.hp.max < 1) mon.hp.max = 1;
 }
 
+/*
+ * The moves that hit back with what their user took, rather than with any power
+ * of their own: Metal Burst any hit at 1.5x, Counter a physical one at 2x,
+ * Mirror Coat a special one at 2x. All three are stored at base power 1, so
+ * calc has nothing to work with and they read as nothing at all.
+ *
+ * Straight from the decomp (BattleControllerPlayer_UpdateHP and the TryMetalBurst
+ * / Counter / MirrorCoat commands):
+ *
+ *   - What is stored is the *last* hit the user took this turn - one hit, so the
+ *     last of a multi-hit move - at its full size rather than the HP it took.
+ *     Only a Sash or Endure trims it, to whatever left the user on 1.
+ *   - A hit into a Substitute stores nothing, and the store is wiped at the top
+ *     of every turn, so the hit has to land on the user, on this turn, before it
+ *     moves. Nothing stored and the move fails.
+ *   - It goes back at whoever landed that hit - not at whoever was aimed at - and
+ *     fails if that one is already down, or is on its own side.
+ *   - The type chart is switched off for it, so a Counter reaches a Ghost.
+ *
+ * Kaizo puts all three at negative priority, so they nearly always go after the
+ * hit they answer - which is what makes them modellable rather than a guess.
+ */
+const REACTIVE_MOVES = {
+    metalburst: {num: 15, den: 10, category: null},
+    counter: {num: 2, den: 1, category: "physical"},
+    mirrorcoat: {num: 2, den: 1, category: "special"}
+};
+
+function reactiveMove(moveName) {
+    var move = findMove(moveName);
+    return (move && REACTIVE_MOVES[move.id]) || null;
+}
+
+/*
+ * What a Metal Burst, Counter or Mirror Coat returns on this turn, worked out as
+ * the turn plays out: {status: "ok", target, lo, hi, took, from, fromMove}, or
+ * {status: "failed" | "unknown", why}.
+ *
+ * "unknown" is the turn order abstaining, the way it does for a Copycat. Anything
+ * that might land on the user at the same instant - a tie, or a Quick Claw on
+ * either side - may or may not have hit first, and that decides whether there is
+ * anything to return at all. A branch is how you say which way it went.
+ */
+function reactiveCall(line, onField, parent, state, order, g, action, moveName) {
+    var spec = reactiveMove(moveName);
+    var side = action.side;
+    var i = action.slot;
+    var other = side === "you" ? "them" : "you";
+    if (action.unsure) return {status: "unknown", why: "quickclaw"};
+
+    // Anyone still to move who might get the hit in first.
+    for (var h = g; h < order.length; h++) {
+        var later = order[h].some(function(a) {
+            if (a.side === side) return false;
+            if (h > g && !a.unsure) return false;
+            if (!actedAt(parent, a.side, a.slot)) return false;
+            var theirs = moveAt(parent, a.side, a.slot);
+            var found = theirs && findMove(theirs);
+            if (!found || found.category === "status") return false;
+            if (spec.category && found.category !== spec.category) return false;
+            return targetsOf(onField, a.side, a.slot, theirs, aimAt(parent, a.side, a.slot),
+                state.redirect && state.redirect[side]).indexOf(i) >= 0;
+        });
+        if (later) return {status: "unknown", why: h === g ? "tied" : "quickclaw"};
+    }
+
+    var hits = (state.hitLog || []).filter(function(hit) {
+        return hit.to === side + i && (!spec.category || hit.category === spec.category);
+    });
+    if (!hits.length) return {status: "failed", why: "unhit"};
+    var last = hits[hits.length - 1];
+    // Two hits landing at the same instant: nothing says which was the last.
+    var together = hits.filter(function(hit) { return hit.group === last.group && hit.from !== last.from; });
+    if (together.length) return {status: "unknown", why: "tied"};
+    // A Triple Kick or a Present: no telling what its last hit was.
+    if (last.uneven) return {status: "unknown", why: "uneven"};
+
+    var fromSide = last.from.slice(0, -1);
+    var fromSlot = parseInt(last.from.slice(-1), 10);
+    if (fromSide === side) return {status: "failed", why: "ally"};
+    if (isFainted(monState(state, fromSide, monAt(onField, fromSide, fromSlot)))) {
+        return {status: "failed", why: "fainted"};
+    }
+    // A Follow Me on that side still draws it, as long as its user is standing.
+    var drawn = state.redirect && state.redirect[other];
+    var target = drawn !== undefined && drawn !== null ? drawn : fromSlot;
+    return {
+        status: "ok",
+        target: target,
+        lo: Math.floor(last.lo * spec.num / spec.den),
+        hi: Math.floor(last.hi * spec.num / spec.den),
+        took: {lo: last.lo, hi: last.hi},
+        from: last.from,
+        fromMove: last.move
+    };
+}
+
 // Whether a move does nothing at all this turn, before anything is applied.
 function moveFailsNow(state, node, side, slot, moveName) {
     var move = findMove(moveName);
@@ -1214,6 +1311,12 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
     state.selfSwitched = {};
     // What each Copycat and Me First turned into, for the card and the damage.
     state.called = {};
+    /*
+     * Every hit that landed, in the order it landed, for a Metal Burst, Counter
+     * or Mirror Coat to answer - and what each of those answered with.
+     */
+    state.hitLog = [];
+    state.reactive = {};
 
     /*
      * Turn order is settled once, here, and never revisited - this generation
@@ -1410,10 +1513,24 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
             }
             if (redirectsMoves(move)) newDraws[side] = i;
 
+            /*
+             * A Metal Burst, Counter or Mirror Coat goes where the hit came from,
+             * or nowhere. Settled here, from the hits already folded in above it.
+             */
+            var reacting = reactiveMove(move)
+                ? reactiveCall(line, onField, parent, state, order, g, action, move) : null;
+            if (reacting) {
+                state.reactive[side + i] = reacting;
+                if (reacting.status !== "ok") {
+                    if (onDenied) onDenied(side, i, reacting.status === "unknown" ? "reactiveUnknown" : "reactiveFailed");
+                    return;
+                }
+            }
+
             // The aim is a decision on the turn, so it is read from `parent`;
             // `onField` only knows who is standing where after the switches.
-            var targets = targetsOf(onField, side, i, move, aimAt(parent, side, i),
-                state.redirect[other]);
+            var targets = reacting ? [reacting.target] : targetsOf(onField, side, i, move,
+                aimAt(parent, side, i), state.redirect[other]);
 
             /*
              * What is left after the Protects. A block takes the target off the
@@ -1461,9 +1578,12 @@ function resolveMoves(line, parent, onField, state, crits, alreadyGone, slots, o
             });
             var connected = null;
             if (typeof foldDamage === "function") {
+                var logged = state.hitLog.length;
                 // `parent` is handed over so a Pursuit can find whoever is on
                 // their way out, who is only still standing there in that copy.
                 connected = foldDamage(line, onField, state, side, i, landed, move, crits, parent);
+                // Stamped with the group, so a tie between two hits can be seen.
+                for (var k = logged; k < state.hitLog.length; k++) state.hitLog[k].group = g;
             }
             /*
              * Bug Bite and Pluck, straight after the hit and before the target's
@@ -1623,7 +1743,7 @@ function receivePassed(mon, carried) {
  * picked would be quoting a number that never happens.
  */
 function turnReport(line, node, state) {
-    var report = {denied: {}, redirect: {}, guarding: {}, called: {}};
+    var report = {denied: {}, redirect: {}, guarding: {}, called: {}, reactive: {}};
     if (typeof foldDamage !== "function") return report;
     /*
      * Blind mode runs this too, which it did not when the only thing here was
@@ -1660,6 +1780,7 @@ function turnReport(line, node, state) {
     report.redirect = scratch.redirect || {};
     report.guarding = scratch.guarding || {};
     report.called = scratch.called || {};
+    report.reactive = scratch.reactive || {};
     return report;
 }
 
@@ -2047,7 +2168,8 @@ function validateEdge(line, edge) {
         var damage = plannerDamage(line, node, state, killer, slot, move,
             condition.id === "youcritko" || condition.id === "theycritko" ||
             condition.id === "youcrit" || condition.id === "theycrit",
-            report.redirect[victim], report.called && report.called[killer + slot]);
+            report.redirect[victim], report.called && report.called[killer + slot],
+            report.reactive && report.reactive[killer + slot]);
         if (!damage) continue;
         anyChecked = true;
         if (needsKill ? damage.mayKill : !damage.kills) anyPossible = true;
@@ -2250,6 +2372,8 @@ function normalizeState(state) {
     state.redirect = null;
     state.selfSwitched = null;
     state.called = null;
+    state.hitLog = null;
+    state.reactive = null;
     ["you", "them"].forEach(function(side) {
         if (!state[side]) return;
         if (!state[side].pending) state[side].pending = [[], []];
@@ -4240,6 +4364,9 @@ function applyTurn(line, parent, node, state, condition) {
     state.redirect = null;
     state.selfSwitched = null;
     state.called = null;
+    // What was taken this turn is gone by the next, which is the game's own wipe.
+    state.hitLog = null;
+    state.reactive = null;
 
     /*
      * The first of a held item's two chances: the moves have landed, so anything

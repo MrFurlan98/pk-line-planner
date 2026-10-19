@@ -204,6 +204,34 @@ graph, so editing one turn updates everything after it.
     base-power-1 move skips the post-KO switch's damage sum — though not its
     comparison; see the carry-over bug under step two.
   - Magnitude is the only other move of this shape, and Kaizo deletes it.
+- **Metal Burst, Counter and Mirror Coat hit back with what came in.** calc
+  keeps all three at 0 BP and returns `0–0`, which the card read as an
+  *immunity* — a confident `0`, and nothing folded into the turn — noticed on
+  **Ruin Maniac Darius**, whose Shieldon carries Metal Burst. They are now
+  worked out as the turn plays out, from a log of
+  every hit that lands (`state.hitLog`, wiped each turn like the game's own).
+  The rules are the decomp's, not the base game's folklore:
+  - **The last hit only, at its full size.** Metal Burst returns 1.5x of any
+    hit, Counter 2x of a physical one, Mirror Coat 2x of a special one. What is
+    stored is the hit as rolled rather than the HP it took — only a Sash or
+    Endure trims it, to whatever left the user on 1. For a multi-hit move it is
+    the last hit, so one hit's band; Triple Kick's grows each hit and Present's
+    may heal instead, so after either the move abstains.
+  - **At whoever landed it, through the type chart's off switch.** It goes back
+    at the last attacker whatever it was aimed at, a Follow Me on that side
+    still draws it, and the script turns type checks off — so a Counter reaches
+    a Ghost.
+  - **It fails** when nothing landed on the user earlier in the turn, when the
+    hit went into a Substitute, when the attacker is already down, or when the
+    last hit came from its own side.
+  - **It abstains** — does nothing, and says why on the card — when anything
+    that might hit it moves at the same instant or carries a Quick Claw, or
+    when it carries one itself. Whether it moves after the hit decides what it
+    has to return, and the turn order can't say. Kaizo's negative priority
+    makes this rare: Metal Burst is −2, Counter and Mirror Coat −5.
+  - The damage is a band because the hit was: the hit's range, multiplied. It
+    then lands like any other hit — a Sash, Endure or Protect on the target
+    still applies.
 - **Gen 4 in this fork *is* Platinum Kaizo.** `calc/src/data/moves.ts` builds its
   gen-4 table by patching DPP with the hack's changes and deleting the moves it
   removes, and `species.ts` does the same to base stats. So a plain
