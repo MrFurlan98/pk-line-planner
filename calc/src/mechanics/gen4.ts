@@ -98,7 +98,7 @@ export function calculateDPP(
     desc.moveType = move.type;
   } else if (move.named('Judgment') && attacker.item && attacker.item.includes('Plate')) {
     move.type = getItemBoostType(attacker.item)!;
-  } else if (move.named('Natural Gift') && attacker.item?.endsWith('Berry')) {
+  } else if (move.named('Natural Gift') && (attacker.item?.endsWith('Berry') || attacker.item?.endsWith('RageCandyBar'))) {
     const gift = getNaturalGift(gen, attacker.item)!;
     move.type = gift.t;
     move.bp = gift.p;
