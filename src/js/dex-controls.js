@@ -586,14 +586,29 @@ function loadDexEntry(entryID) {
                         if (e.ctrlKey && $(this).find(".level").length) {
                             var species = SPECIES[target.split("/")[1]];
                             var level = $(this).find(".level").html().split(" ")[1];
+                            var ivs = {};
+                            switch (SETTINGS.encounterIVs) {
+                                case "all31":
+                                    ivs = { hp: 31, at: 31, df: 31, sa: 31, sd: 31, sp: 31 };
+                                    break;
+                                case "all15":
+                                    ivs = { hp: 15, at: 15, df: 15, sa: 15, sd: 15, sp: 15 };
+                                    break;
+                                case "all0":
+                                    ivs = { hp: 0, at: 0, df: 0, sa: 0, sd: 0, sp: 0 };
+                                    break;
+                                case "worstCase":
+                                    ivs = { hp: 0, at: 31, df: 0, sa: 31, sd: 0, sp: 31 };
+                                    break;
+                            }
                             if (level > 0) {
                                 var moves = getLevelLearnset(species.id, level);
-                                loadSet(`${species.name} (Blank Set)`, "p2", { level: level, moves: moves });
+                                loadSet(`${species.name} (Blank Set)`, "p2", { level: level, moves: moves, ivs: ivs });
                                 window.location = `#/calc`;
                             } else if (level && level.includes("-")) {
                                 level = level.split("-")[1];
                                 var moves = getLevelLearnset(species.id, level);
-                                loadSet(`${species.name} (Blank Set)`, "p2", { level: level, moves: moves });
+                                loadSet(`${species.name} (Blank Set)`, "p2", { level: level, moves: moves, ivs: ivs });
                                 window.location = `#/calc`;
                             } else {
                                 window.location = `#/dex/${target}`;

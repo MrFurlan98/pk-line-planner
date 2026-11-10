@@ -1627,6 +1627,9 @@ function loadSet(set, side, overrides) {
 			var move = MOVES[overrides.moves[i]];
 			$(`#${side} .move${parseInt(i) + 1} .move-selector`).val(move.calcName).change();
 		}
+		if (overrides.ivs) for (var stat in overrides.ivs) {
+			$(`#${side} .${stat} input.ivs`).val(overrides.ivs[stat]).change();
+		}
 	}
 }
 

@@ -3,6 +3,7 @@ SETTINGS = {
     starter: "Turtwig",
     dupeTracker: true,
     showAIFlags: true,
+    encounterIVs: "all31",
     dupes: [],
     luaScript: "PK_Script"
 };
@@ -25,6 +26,7 @@ $(document).ready(function() {
     $(`#${prefersDarkTheme ? "dark" : "light"}:radio[name='theme']`).prop("checked", true).change();
     $(`#dupeTracker`).prop("checked", SETTINGS.dupeTracker).change();
     $(`#showAIFlags`).prop("checked", SETTINGS.showAIFlags).change();
+    $(`#${SETTINGS.encounterIVs}:radio[name='encounterIVs']`).prop("checked", true).change();
     $("#dupes").val(SETTINGS.dupes.join("\n")).change().prop("disabled", !SETTINGS.dupeTracker);
     $(`#${SETTINGS.luaScript.toLowerCase()}:radio[name='luaScript']`).prop("checked", true).change();
 
@@ -54,6 +56,10 @@ $(document).ready(function() {
         } else {
             $(".ai-flags-box").addClass("hide");
         }
+        saveSettings();
+    });
+    $("input:radio[name='encounterIVs']").change(function () {
+    	SETTINGS.encounterIVs = $(this).attr("id");
         saveSettings();
     });
     $("textarea#dupes").change(function () {
