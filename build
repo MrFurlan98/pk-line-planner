@@ -10,7 +10,7 @@ const rootDir = '.';
 const VERSION = "1.7.60";
 const CHANGELOG = `
 - Added more item data to the Dex. (Pluck effect, Fling base power and effect, and Natural Gift type and base power)
-	- Also added lists of Natural Gift berries to their corresponding type pages.
+  - Also added lists of Natural Gift berries to their corresponding type pages.
 - Added options for encounter IV presets. (you can Ctrl+click on an encounter in a location to calc against it, with the moves it has at that level)
 - Fixed Fuego Ironworks trainers not enabling Sun.
 
