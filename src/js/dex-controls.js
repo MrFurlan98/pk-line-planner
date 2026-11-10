@@ -642,6 +642,10 @@ function loadDexEntry(entryID) {
                 <span class="name">${item.name}</span>
                 <span class="description">${item.desc}</span>
                 ${machineMove ? `<span class="move">Move: <span data-target="move/${machineMove.id}">${machineMove.name}</span></span>` : ""}
+                ${item.pluck !== "None" ? `<span class="pluck"><span data-target="move/pluck">Pluck</span> effect: ${item.pluck}</span>` : ""}
+                ${item.fling[1] ? `<span class="fling"><span data-target="move/fling">Fling</span> base power: ${item.fling[1]}</span>` : ""}
+                ${item.fling[0] !== "None" ? `<span class="fling"><span data-target="move/fling">Fling</span> effect: ${item.fling[0]}</span>` : ""}
+                ${item.naturalGift[0] ? `<span class="naturalGift"><span data-target="move/naturalgift">Natural Gift</span>: ${item.naturalGift[0]} base power, <span data-target="type/${TYPES[item.naturalGift[1]].id}">${TYPES[item.naturalGift[1]].name}</span> type</span>` : ""}
             </div>
             <div class="list">
                 <ul class="list-nav">
@@ -733,6 +737,7 @@ function loadDexEntry(entryID) {
             break;
         case "type":
             var type = TYPES[id];
+            var naturalGiftItems = Object.values(ITEMS).filter(x => x.naturalGift[1] == id);
             var html = `
             <div class="info">
                 <span class="name">${type.name} Type</span>
@@ -740,6 +745,17 @@ function loadDexEntry(entryID) {
                 <span class="weak">Weaknesses: ${type.weak.map(t => `<span data-target="type/${TYPES[t].id}"><img src="/img/dex/icon/types/${TYPES[t].id}.png"></span>`).join(" ") || `<i>None</i>`}</span>
                 <span class="resist">Resistances: ${type.resist.map(t => `<span data-target="type/${TYPES[t].id}"><img src="/img/dex/icon/types/${TYPES[t].id}.png"></span>`).join(" ") || `<i>None</i>`}</span>
                 <span class="immune">Immunities: ${type.immune.map(t => `<span data-target="type/${TYPES[t].id}"><img src="/img/dex/icon/types/${TYPES[t].id}.png"></span>`).join(" ") || `<i>None</i>`}</span>
+                <span class="naturalGift">Natural Gift items:
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>Item</th>
+                                <th>Base Power</th>
+                            </tr>
+                            ${naturalGiftItems.map(x => `<tr><td><span data-target="item/${x.id}"><img src="/img/dex/icon/items/${x.id}.png">${x.name}</span></td><td>${x.naturalGift[0]}</td></tr>`).join(" ")}
+                        </tbody>
+                    </table>
+                </span>
             </div>
             <div class="list">
                 <ul class="list-nav">

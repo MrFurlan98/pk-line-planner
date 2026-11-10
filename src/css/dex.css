@@ -608,6 +608,12 @@
             margin-left: 12px;
             font-size: 12pt;
         }
+        .pluck, .fling, .naturalGift {
+            display: block;
+            margin-top: 16px;
+            margin-left: 12px;
+            font-size: 11pt;
+        }
     }
     .list {
         .results {
@@ -694,11 +700,19 @@
             margin: 16px 12px;
             height: 32px;
         }
-        .weak, .resist, .immune {
+        .weak, .resist, .immune, .naturalGift {
             display: block;
             margin-top: 16px;
             margin-left: 12px;
             font-size: 12pt;
+
+            table, th, td {
+                border: 1px solid;
+                border-collapse: collapse;
+                font-size: 1em;
+                padding: 3px;
+                margin-top: 16px;
+            }
         }
     }
     .list {
