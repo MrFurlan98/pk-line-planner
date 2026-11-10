@@ -981,6 +981,14 @@ function search(term) {
                         <span class="desc">${desc}</span>
                     </li>`);
                 break;
+            case "type":
+                var type = TYPES[id];
+                if (type.id.includes(term)) results.append(`
+                    <li class="type" data-target="type/${type.id}">
+                        <span class="icon"><img src="/img/dex/icon/types/${type.id}.png"></span>
+                        <span class="name"> ${type.name} Type</span>
+                    </li>`);
+                break;
             default:
                 if (id.includes(term)) results.append(`<li data-target="${target}">${target}</li>`);
                 break;
@@ -1013,7 +1021,7 @@ $(document).ready(function() {
                 TOTAL_RESULTS = Object.keys(LOCATIONS).filter(x => LOCATIONS[x].search).map(x => `location/${x}`);
                 break;
             default:
-                TOTAL_RESULTS = [...Object.keys(SPECIES).map(x => `species/${x}`).slice(1), ...Object.keys(MOVES).map(x => `move/${x}`), ...Object.keys(ITEMS).filter(x => ITEMS[x].search).map(x => `item/${x}`), ...Object.keys(ABILITIES).map(x => `ability/${x}`), ...Object.keys(NATURES).map(x => `nature/${x}`), ...Object.keys(LOCATIONS).filter(x => LOCATIONS[x].search).map(x => `location/${x}`)];
+                TOTAL_RESULTS = [...Object.keys(SPECIES).map(x => `species/${x}`).slice(1), ...Object.keys(MOVES).map(x => `move/${x}`), ...Object.keys(ITEMS).filter(x => ITEMS[x].search).map(x => `item/${x}`), ...Object.keys(ABILITIES).map(x => `ability/${x}`), ...Object.keys(NATURES).map(x => `nature/${x}`), ...Object.keys(LOCATIONS).filter(x => LOCATIONS[x].search).map(x => `location/${x}`), ...Object.keys(TYPES).map(x => `type/${x}`)];
                 break;
         }
         $(".dex-searchbar").val("").trigger("input").select();
