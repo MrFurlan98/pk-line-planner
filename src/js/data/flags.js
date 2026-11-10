@@ -527,6 +527,10 @@ const FLAGS_PK = {
             "Pokémon Breeder Johnny",
             // Valor Lakefront
             "Galactic Io #2",
+            // Fuego Ironworks
+            "Worker Dillan",
+            "Worker Holden",
+            "Worker Conrad",
             // Iron Island
             "Galactic Sao",
             "Galactic Neso #1",
