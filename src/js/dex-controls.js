@@ -561,7 +561,7 @@ function loadDexEntry(entryID) {
                             }
                             dangerStyle += "); color: black;";
                         }
-                        if (["gift", "egg", "trade", "casino"].includes(encounter.method)) {
+                        if (["gift", "egg", "trade", "casino", "contest"].includes(encounter.method)) {
                             danger = [];
                             dangerStyle = "";
                         }

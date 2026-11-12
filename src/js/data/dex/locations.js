@@ -1243,7 +1243,7 @@ const LOCATIONS = {
         name: "Valley Windworks",
         coords: [[8, 16]],
         sublocations: [],
-        desc: "",
+        desc: "The static <span data-target=\"species/drifloon\">Drifloon</span> is only available after Byron is defeated.",
         encounters: [
             {'species': 'spearow', 'chance': 20, 'minLevel': 17, 'maxLevel': 17, 'method': 'grass', 'time': 'morning'},
             {'species': 'hoppip', 'chance': 20, 'minLevel': 17, 'maxLevel': 17, 'method': 'grass', 'time': 'morning'},
@@ -1310,7 +1310,8 @@ const LOCATIONS = {
             {'species': 'elekid', 'chance': 5, 'minLevel': 17, 'maxLevel': 17, 'method': 'honeylocal'},
             {'species': 'pichu', 'chance': 20, 'minLevel': 8, 'maxLevel': 8, 'method': 'honeylocal'},
             {'species': 'pikachu', 'chance': 40, 'minLevel': 17, 'maxLevel': 17, 'method': 'honeylocal'},
-            {'species': 'pachirisu', 'chance': 35, 'minLevel': 15, 'maxLevel': 15, 'method': 'honeylocal'}
+            {'species': 'pachirisu', 'chance': 35, 'minLevel': 15, 'maxLevel': 15, 'method': 'honeylocal'},
+            {'species': 'drifloon', 'chance': 0, 'minLevel': 15, 'maxLevel': 15, 'method': 'static'}
         ],
         metLocationId: 47,
         search: true,
@@ -2061,16 +2062,6 @@ const LOCATIONS = {
         metLocationId: 56,
         search: true,
     },
-    contesthall: {
-        id: "contesthall",
-        name: "Contest Hall",
-        coords: [],
-        sublocations: [],
-        desc: "",
-        encounters: [],
-        metLocationId: 97,
-        search: false,
-    },
     poffinhouse: {
         id: "poffinhouse",
         name: "Poffin House",
@@ -2086,7 +2077,7 @@ const LOCATIONS = {
         name: "Route 209",
         coords: [[18, 17], [17, 18], [18, 18]],
         sublocations: [],
-        desc: "",
+        desc: "The static <span data-target=\"species/spiritomb\">Spiritomb</span> is only available after Byron is defeated, and requires the <span data-target=\"item/oddkeystone\">Odd Keystone</span>.",
         encounters: [
             {'species': 'kricketune', 'chance': 20, 'minLevel': 36, 'maxLevel': 36, 'method': 'grass', 'time': 'morning'},
             {'species': 'mareep', 'chance': 20, 'minLevel': 36, 'maxLevel': 36, 'method': 'grass', 'time': 'morning'},
@@ -2166,7 +2157,8 @@ const LOCATIONS = {
             {'species': 'beautifly', 'chance': 15, 'minLevel': 35, 'maxLevel': 35, 'method': 'honeylocal'},
             {'species': 'dustox', 'chance': 15, 'minLevel': 35, 'maxLevel': 35, 'method': 'honeylocal'},
             {'species': 'mothim', 'chance': 15, 'minLevel': 40, 'maxLevel': 40, 'method': 'honeylocal'},
-            {'species': 'butterfree', 'chance': 15, 'minLevel': 40, 'maxLevel': 40, 'method': 'honeylocal'}
+            {'species': 'butterfree', 'chance': 15, 'minLevel': 40, 'maxLevel': 40, 'method': 'honeylocal'},
+            {'species': 'spiritomb', 'chance': 0, 'minLevel': 25, 'maxLevel': 25, 'method': 'static'}
         ],
         metLocationId: 24,
         search: true,
@@ -4346,8 +4338,10 @@ const LOCATIONS = {
         name: "ROTOM's Room",
         coords: [],
         sublocations: [],
-        desc: "",
-        encounters: [],
+        desc: "The static <span data-target=\"species/rotom\">Rotom</span> is only available at night.",
+        encounters: [
+            {'species': 'rotom', 'chance': 0, 'minLevel': 30, 'maxLevel': 30, 'method': 'static'}
+        ],
         metLocationId: 121,
         search: true,
     },
@@ -6038,6 +6032,22 @@ const LOCATIONS = {
         metLocationId: 38,
         search: true,
     },
+    contesthall: {
+        id: "contesthall",
+        name: "Contest Hall",
+        coords: [],
+        sublocations: [],
+        desc: "Master Rank Contest rewards are only available after defeating Volkner.<br /><br /><b>Coolness</b> contests reward a <span data-target=\"species/charizard\">Charizard</span> with the unique moves: <span data-target=\"move/crosschop\">Cross Chop</span>, <span data-target=\"move/roost\">Roost</span>, <span data-target=\"move/twister\">Twister</span>, <span data-target=\"move/skyattack\">Sky Attack</span>.<br /><br /><b>Beauty</b> contests reward a <span data-target=\"species/milotic\">Milotic</span> with the unique moves: <span data-target=\"move/aurasphere\">Aura Sphere</span>, <span data-target=\"move/moonlight\">Moonlight</span>.<br /><br /><b>Cuteness</b> contests reward a <span data-target=\"species/kangaskhan\">Kangaskhan</span> with the unique moves: <span data-target=\"move/fakeout\">Fake Out</span>, <span data-target=\"move/milkdrink\">Milk Drink</span>.<br /><br /><b>Cleverness</b> contests reward an <span data-target=\"species/alakazam\">Alakazam</span> with the unique move: <span data-target=\"move/earthpower\">Earth Power</span>.<br /><br /><b>Toughness</b> contests reward a <span data-target=\"species/steelix\">Steelix</span> with the unique moves: <span data-target=\"move/glare\">Glare</span>, <span data-target=\"move/headsmash\">Head Smash</span>.",
+        encounters: [
+            {'species': 'charizard', 'chance': 0, 'minLevel': 5, 'maxLevel': 5, 'method': 'contest'},
+            {'species': 'milotic', 'chance': 0, 'minLevel': 5, 'maxLevel': 5, 'method': 'contest'},
+            {'species': 'kangaskhan', 'chance': 0, 'minLevel': 5, 'maxLevel': 5, 'method': 'contest'},
+            {'species': 'alakazam', 'chance': 0, 'minLevel': 5, 'maxLevel': 5, 'method': 'contest'},
+            {'species': 'steelix', 'chance': 0, 'minLevel': 5, 'maxLevel': 5, 'method': 'contest'}
+        ],
+        metLocationId: 97,
+        search: true,
+    },
     route221: {
         id: "route221",
         name: "Route 221",
@@ -7224,6 +7234,78 @@ const LOCATIONS = {
             {'species': 'dusknoir', 'chance': 1, 'minLevel': 66, 'maxLevel': 66, 'method': 'grass', 'time': 'night'}
         ],
         metLocationId: -1,
+        search: true,
+    },
+    veritycavern: {
+        id: "veritycavern",
+        name: "Verity Cavern",
+        coords: [],
+        sublocations: [],
+        desc: "The static <span data-target=\"species/mesprit\">Mesprit</span> is only available after Cyrus #4 is defeated.",
+        encounters: [
+            {'species': 'mesprit', 'chance': 0, 'minLevel': 50, 'maxLevel': 50, 'method': 'static'}
+        ],
+        metLocationId: 87,
+        search: true,
+    },
+    valorcavern: {
+        id: "valorcavern",
+        name: "Valor Cavern",
+        coords: [],
+        sublocations: [],
+        desc: "The static <span data-target=\"species/azelf\">Azelf</span> is only available after Cyrus #4 is defeated.",
+        encounters: [
+            {'species': 'azelf', 'chance': 0, 'minLevel': 50, 'maxLevel': 50, 'method': 'static'}
+        ],
+        metLocationId: 88,
+        search: true,
+    },
+    acuitycavern: {
+        id: "acuitycavern",
+        name: "Acuity Cavern",
+        coords: [],
+        sublocations: [],
+        desc: "The static <span data-target=\"species/uxie\">Uxie</span> is only available after Cyrus #4 is defeated.",
+        encounters: [
+            {'species': 'uxie', 'chance': 0, 'minLevel': 50, 'maxLevel': 50, 'method': 'static'}
+        ],
+        metLocationId: 89,
+        search: true,
+    },
+    rockpeakruins: {
+        id: "rockpeakruins",
+        name: "Rock Peak Ruins",
+        coords: [],
+        sublocations: [],
+        desc: "The static <span data-target=\"species/regirock\">Regirock</span> is only available after Cyrus #4 is defeated.",
+        encounters: [
+            {'species': 'regirock', 'chance': 0, 'minLevel': 30, 'maxLevel': 30, 'method': 'static'}
+        ],
+        metLocationId: 125,
+        search: true,
+    },
+    icebergruins: {
+        id: "icebergruins",
+        name: "Iceberg Ruins",
+        coords: [],
+        sublocations: [],
+        desc: "The static <span data-target=\"species/regice\">Regice</span> is only available after Cyrus #4 is defeated.",
+        encounters: [
+            {'species': 'regice', 'chance': 0, 'minLevel': 30, 'maxLevel': 30, 'method': 'static'}
+        ],
+        metLocationId: 124,
+        search: true,
+    },
+    ironruins: {
+        id: "ironruins",
+        name: "Iron Ruins",
+        coords: [],
+        sublocations: [],
+        desc: "The static <span data-target=\"species/registeel\">Registeel</span> is only available after Cyrus #4 is defeated.",
+        encounters: [
+            {'species': 'registeel', 'chance': 0, 'minLevel': 30, 'maxLevel': 30, 'method': 'static'}
+        ],
+        metLocationId: 123,
         search: true,
     },
     victoryroad: {
