@@ -585,6 +585,8 @@ const BERRIES: {[berry: string]: {t: I.TypeName; p: number}} = {
   'Wepear Berry': {t: 'Electric', p: 90},
   'Wiki Berry': {t: 'Rock', p: 80},
   'Yache Berry': {t: 'Ice', p: 80},
+
+  'RageCandyBar': {t: '???', p: 270}, // Temporary, the patch will fix this
 };
 
 export const ITEMS = [[], RBY, GSC, ADV, PK, BW, XY, SM, SS, SV];

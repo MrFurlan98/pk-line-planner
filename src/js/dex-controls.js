@@ -561,7 +561,7 @@ function loadDexEntry(entryID) {
                             }
                             dangerStyle += "); color: black;";
                         }
-                        if (["gift", "egg", "trade", "casino"].includes(encounter.method)) {
+                        if (["gift", "egg", "trade", "casino", "contest"].includes(encounter.method)) {
                             danger = [];
                             dangerStyle = "";
                         }
@@ -586,14 +586,29 @@ function loadDexEntry(entryID) {
                         if (e.ctrlKey && $(this).find(".level").length) {
                             var species = SPECIES[target.split("/")[1]];
                             var level = $(this).find(".level").html().split(" ")[1];
+                            var ivs = {};
+                            switch (SETTINGS.encounterIVs) {
+                                case "all31":
+                                    ivs = { hp: 31, at: 31, df: 31, sa: 31, sd: 31, sp: 31 };
+                                    break;
+                                case "all15":
+                                    ivs = { hp: 15, at: 15, df: 15, sa: 15, sd: 15, sp: 15 };
+                                    break;
+                                case "all0":
+                                    ivs = { hp: 0, at: 0, df: 0, sa: 0, sd: 0, sp: 0 };
+                                    break;
+                                case "worstCase":
+                                    ivs = { hp: 0, at: 31, df: 0, sa: 31, sd: 0, sp: 31 };
+                                    break;
+                            }
                             if (level > 0) {
                                 var moves = getLevelLearnset(species.id, level);
-                                loadSet(`${species.name} (Blank Set)`, "p2", { level: level, moves: moves });
+                                loadSet(`${species.name} (Blank Set)`, "p2", { level: level, moves: moves, ivs: ivs });
                                 window.location = `#/calc`;
                             } else if (level && level.includes("-")) {
                                 level = level.split("-")[1];
                                 var moves = getLevelLearnset(species.id, level);
-                                loadSet(`${species.name} (Blank Set)`, "p2", { level: level, moves: moves });
+                                loadSet(`${species.name} (Blank Set)`, "p2", { level: level, moves: moves, ivs: ivs });
                                 window.location = `#/calc`;
                             } else {
                                 window.location = `#/dex/${target}`;
@@ -642,6 +657,10 @@ function loadDexEntry(entryID) {
                 <span class="name">${item.name}</span>
                 <span class="description">${item.desc}</span>
                 ${machineMove ? `<span class="move">Move: <span data-target="move/${machineMove.id}">${machineMove.name}</span></span>` : ""}
+                ${item.pluck !== "None" ? `<span class="pluck"><span data-target="move/pluck">Pluck</span> effect: ${item.pluck}</span>` : ""}
+                ${item.fling[1] ? `<span class="fling"><span data-target="move/fling">Fling</span> base power: ${item.fling[1]}</span>` : ""}
+                ${item.fling[0] !== "None" ? `<span class="fling"><span data-target="move/fling">Fling</span> effect: ${item.fling[0]}</span>` : ""}
+                ${item.naturalGift[0] ? `<span class="naturalGift"><span data-target="move/naturalgift">Natural Gift</span>: ${item.naturalGift[0]} base power, <span data-target="type/${TYPES[item.naturalGift[1]].id}">${TYPES[item.naturalGift[1]].name}</span> type</span>` : ""}
             </div>
             <div class="list">
                 <ul class="list-nav">
@@ -736,6 +755,7 @@ function loadDexEntry(entryID) {
             break;
         case "type":
             var type = TYPES[id];
+            var naturalGiftItems = Object.values(ITEMS).filter(x => x.naturalGift[1] == id);
             var html = `
             <div class="info">
                 <span class="name">${type.name} Type</span>
@@ -743,6 +763,17 @@ function loadDexEntry(entryID) {
                 <span class="weak">Weaknesses: ${type.weak.map(t => `<span data-target="type/${TYPES[t].id}"><img src="/img/dex/icon/types/${TYPES[t].id}.png"></span>`).join(" ") || `<i>None</i>`}</span>
                 <span class="resist">Resistances: ${type.resist.map(t => `<span data-target="type/${TYPES[t].id}"><img src="/img/dex/icon/types/${TYPES[t].id}.png"></span>`).join(" ") || `<i>None</i>`}</span>
                 <span class="immune">Immunities: ${type.immune.map(t => `<span data-target="type/${TYPES[t].id}"><img src="/img/dex/icon/types/${TYPES[t].id}.png"></span>`).join(" ") || `<i>None</i>`}</span>
+                <span class="naturalGift">Natural Gift items:
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>Item</th>
+                                <th>Base Power</th>
+                            </tr>
+                            ${naturalGiftItems.map(x => `<tr><td><span data-target="item/${x.id}"><img src="/img/dex/icon/items/${x.id}.png">${x.name}</span></td><td>${x.naturalGift[0]}</td></tr>`).join(" ")}
+                        </tbody>
+                    </table>
+                </span>
             </div>
             <div class="list">
                 <ul class="list-nav">
@@ -953,6 +984,14 @@ function search(term) {
                         <span class="desc">${desc}</span>
                     </li>`);
                 break;
+            case "type":
+                var type = TYPES[id];
+                if (type.id.includes(term)) results.append(`
+                    <li class="type" data-target="type/${type.id}">
+                        <span class="icon"><img src="/img/dex/icon/types/${type.id}.png"></span>
+                        <span class="name"> ${type.name} Type</span>
+                    </li>`);
+                break;
             default:
                 if (id.includes(term)) results.append(`<li data-target="${target}">${target}</li>`);
                 break;
@@ -985,7 +1024,7 @@ $(document).ready(function() {
                 TOTAL_RESULTS = Object.keys(LOCATIONS).filter(x => LOCATIONS[x].search).map(x => `location/${x}`);
                 break;
             default:
-                TOTAL_RESULTS = [...Object.keys(SPECIES).map(x => `species/${x}`).slice(1), ...Object.keys(MOVES).map(x => `move/${x}`), ...Object.keys(ITEMS).filter(x => ITEMS[x].search).map(x => `item/${x}`), ...Object.keys(ABILITIES).map(x => `ability/${x}`), ...Object.keys(NATURES).map(x => `nature/${x}`), ...Object.keys(LOCATIONS).filter(x => LOCATIONS[x].search).map(x => `location/${x}`)];
+                TOTAL_RESULTS = [...Object.keys(SPECIES).map(x => `species/${x}`).slice(1), ...Object.keys(MOVES).map(x => `move/${x}`), ...Object.keys(ITEMS).filter(x => ITEMS[x].search).map(x => `item/${x}`), ...Object.keys(ABILITIES).map(x => `ability/${x}`), ...Object.keys(NATURES).map(x => `nature/${x}`), ...Object.keys(LOCATIONS).filter(x => LOCATIONS[x].search).map(x => `location/${x}`), ...Object.keys(TYPES).map(x => `type/${x}`)];
                 break;
         }
         $(".dex-searchbar").val("").trigger("input").select();

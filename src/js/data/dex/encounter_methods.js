@@ -35,6 +35,10 @@ const ENCOUNTER_METHODS = {
         id: "honeylocal",
         name: "Honey Tree (Local Table)"
     },
+    static: {
+        id: "static",
+        name: "Static"
+    },
     trade: {
         id: "trade",
         name: "Trade"
@@ -58,6 +62,10 @@ const ENCOUNTER_METHODS = {
     vending: {
         id: "vending",
         name: "Vending Machine"
+    },
+    contest: {
+        id: "contest",
+        name: "Master Contest Rewards"
     },
     special: {
         id: "special",

@@ -1688,6 +1688,14 @@
                 <input class="visually-hidden" type="checkbox" id="showAIFlags" checked="checked" />
                 <label class="btn btn-xxxwide btn-right" for="showAIFlags">AI Flags</label>
             </span>
+            <p class="label" align="center">Encounter IVs</p>
+            <span aria-labelledby="selectAIFlagsInstruction" role="checkbox" title="How to set the IVs for encounters?">
+                <div hidden id="selectAIFlagsInstruction">How to set the IVs for encounters?</div>
+                <input class="visually-hidden" type="radio" name="encounterIVs" value="All 31" id="all31" checked="checked" /><label class="btn btn-left" for="all31">All 31</label>
+                <input class="visually-hidden" type="radio" name="encounterIVs" value="All 15" id="all15" /><label class="btn btn-mid" for="all15">All 15</label>
+                <input class="visually-hidden" type="radio" name="encounterIVs" value="All 0" id="all0" /><label class="btn btn-mid" for="all0">All 0</label>
+                <input class="visually-hidden" type="radio" name="encounterIVs" value="31 Offensive/0 Defensive" id="worstCase" /><label class="btn btn-xxxxwide btn-right" for="worstCase">31 Offensive/0 Defensive</label>
+            </span>
             <hr />
             <p class="label" align="center">Lua Script</p>
             <span class="starterSelection" aria-labelledby="selectLuaScriptInstruction" role="radiogroup" title="Select your preferred Lua script.">

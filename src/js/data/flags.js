@@ -168,6 +168,8 @@ const FLAGS_PK = {
             "Galactic Mercury #3": {},
             // Oreburgh Gate
             "Veteran Grant": {},
+            // Fuego Ironworks
+            "Worker Conrad": {},
             // Route 222
             "Belle & Pa Scout & Atticus": {},
             "Pokéfan Sheen": {},
@@ -527,6 +529,10 @@ const FLAGS_PK = {
             "Pokémon Breeder Johnny",
             // Valor Lakefront
             "Galactic Io #2",
+            // Fuego Ironworks
+            "Worker Dillan",
+            "Worker Holden",
+            "Worker Conrad",
             // Iron Island
             "Galactic Sao",
             "Galactic Neso #1",

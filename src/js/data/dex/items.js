@@ -5,6 +5,9 @@ const ITEMS = {
         name: "Master Ball",
         calcName: "Master Ball",
         desc: "Used for catching Pokémon. Has a guaranteed catch rate.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     ultraball: {
@@ -13,6 +16,9 @@ const ITEMS = {
         name: "Ultra Ball",
         calcName: "Ultra Ball",
         desc: "Used for catching Pokémon. Modifies the catch rate by 2x.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     greatball: {
@@ -21,6 +27,9 @@ const ITEMS = {
         name: "Great Ball",
         calcName: "Great Ball",
         desc: "Used for catching Pokémon. Modifies the catch rate by 1.5x.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     pokeball: {
@@ -29,6 +38,9 @@ const ITEMS = {
         name: "Poké Ball",
         calcName: "Poké Ball",
         desc: "Used for catching Pokémon.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     safariball: {
@@ -37,6 +49,9 @@ const ITEMS = {
         name: "Safari Ball",
         calcName: "Safari Ball",
         desc: "Used for catching Pokémon. Modifies the catch rate by 1.5x, only usable in the <span data-target=\"location/greatmarsh\">Great Marsh.</span>",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     netball: {
@@ -45,6 +60,9 @@ const ITEMS = {
         name: "Net Ball",
         calcName: "Net Ball",
         desc: "Used for catching Pokémon. Modifies the catch rate by 3.5x if used on a <span data-target=\"type/water\">Water</span> or <span data-target=\"type/bug\">Bug</span> type Pokémon.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     diveball: {
@@ -53,6 +71,9 @@ const ITEMS = {
         name: "Dive Ball",
         calcName: "Dive Ball",
         desc: "Used for catching Pokémon. Modifies the catch rate by 3.5x if used while surfing or fishing.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     nestball: {
@@ -61,6 +82,9 @@ const ITEMS = {
         name: "Nest Ball",
         calcName: "Nest Ball",
         desc: "Used for catching Pokémon. Its catch rate modifier increases the lower the Pokémon's level is.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     repeatball: {
@@ -69,6 +93,9 @@ const ITEMS = {
         name: "Repeat Ball",
         calcName: "Repeat Ball",
         desc: "Used for catching Pokémon. Has an increased catch rate if the Pokémon is registered in the trainer's Pokédex.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     timerball: {
@@ -77,6 +104,9 @@ const ITEMS = {
         name: "Timer Ball",
         calcName: "Timer Ball",
         desc: "Used for catching Pokémon. Its catch rate modifier increases the longer the battle lasts.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     luxuryball: {
@@ -85,6 +115,9 @@ const ITEMS = {
         name: "Luxury Ball",
         calcName: "Luxury Ball",
         desc: "Used for catching Pokémon. Doubles the rate at which the Pokémon's friendship increases.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     premierball: {
@@ -93,6 +126,9 @@ const ITEMS = {
         name: "Premier Ball",
         calcName: "Premier Ball",
         desc: "Used for catching Pokémon.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     duskball: {
@@ -101,6 +137,9 @@ const ITEMS = {
         name: "Dusk Ball",
         calcName: "Dusk Ball",
         desc: "Used for catching Pokémon. Modifies the catch rate by 3x if used in a cave or at night.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     healball: {
@@ -109,6 +148,9 @@ const ITEMS = {
         name: "Heal Ball",
         calcName: "Heal Ball",
         desc: "Used for catching Pokémon. Heals the Pokémon upon capture, restoring its HP, PP, and curing its status condition.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     quickball: {
@@ -117,6 +159,9 @@ const ITEMS = {
         name: "Quick Ball",
         calcName: "Quick Ball",
         desc: "Used for catching Pokémon. Modifies the catch rate by 5x on the first turn of a battle.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     cherishball: {
@@ -125,6 +170,9 @@ const ITEMS = {
         name: "Cherish Ball",
         calcName: "Cherish Ball",
         desc: "Used in special distribution events.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: true
     },
     potion: {
@@ -133,7 +181,10 @@ const ITEMS = {
         name: "Potion",
         calcName: "Potion",
         desc: "Restores 20 HP.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     antidote: {
         num: 18,
@@ -141,7 +192,10 @@ const ITEMS = {
         name: "Antidote",
         calcName: "Antidote",
         desc: "Cures a Pokémon's Poison.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     burnheal: {
         num: 19,
@@ -149,7 +203,10 @@ const ITEMS = {
         name: "Burn Heal",
         calcName: "Burn Heal",
         desc: "Cures a Pokémon's Burn.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     iceheal: {
         num: 20,
@@ -157,7 +214,10 @@ const ITEMS = {
         name: "Ice Heal",
         calcName: "Ice Heal",
         desc: "Cures a Pokémon's Freeze.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     awakening: {
         num: 21,
@@ -165,7 +225,10 @@ const ITEMS = {
         name: "Awakening",
         calcName: "Awakening",
         desc: "Cures a Pokémon's Sleep.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     parlyzheal: {
         num: 22,
@@ -173,7 +236,10 @@ const ITEMS = {
         name: "Parlyz Heal",
         calcName: "Parlyz Heal",
         desc: "Cures a Pokémon's Paralysis.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     fullrestore: {
         num: 23,
@@ -181,7 +247,10 @@ const ITEMS = {
         name: "Full Restore",
         calcName: "Full Restore",
         desc: "Fully restores a Pokémon's HP and cures its status condition.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     maxpotion: {
         num: 24,
@@ -189,7 +258,10 @@ const ITEMS = {
         name: "Max Potion",
         calcName: "Max Potion",
         desc: "Fully restores a Pokémon's HP.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     hyperpotion: {
         num: 25,
@@ -197,7 +269,10 @@ const ITEMS = {
         name: "Hyper Potion",
         calcName: "Hyper Potion",
         desc: "Restores 200 HP.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     superpotion: {
         num: 26,
@@ -205,7 +280,10 @@ const ITEMS = {
         name: "Super Potion",
         calcName: "Super Potion",
         desc: "Restores 50 HP.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     fullheal: {
         num: 27,
@@ -213,7 +291,10 @@ const ITEMS = {
         name: "Full Heal",
         calcName: "Full Heal",
         desc: "Cures a Pokémon's status condition.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     revive: {
         num: 28,
@@ -221,7 +302,10 @@ const ITEMS = {
         name: "Revive",
         calcName: "Revive",
         desc: "Revives a fainted Pokémon, restoring 50% of its total HP.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     maxrevive: {
         num: 29,
@@ -229,7 +313,10 @@ const ITEMS = {
         name: "Max Revive",
         calcName: "Max Revive",
         desc: "Revives a fainted Pokémon, fully restoring its HP.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     freshwater: {
         num: 30,
@@ -237,7 +324,10 @@ const ITEMS = {
         name: "Fresh Water",
         calcName: "Fresh Water",
         desc: "Restores 50 HP.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     sodapop: {
         num: 31,
@@ -245,7 +335,10 @@ const ITEMS = {
         name: "Soda Pop",
         calcName: "Soda Pop",
         desc: "Restores 60 HP.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     lemonade: {
         num: 32,
@@ -253,7 +346,10 @@ const ITEMS = {
         name: "Lemonade",
         calcName: "Lemonade",
         desc: "Restores 80 HP.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     moomoomilk: {
         num: 33,
@@ -261,7 +357,10 @@ const ITEMS = {
         name: "Moomoo Milk",
         calcName: "Moomoo Milk",
         desc: "Restores 100 HP.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     energypowder: {
         num: 34,
@@ -269,7 +368,10 @@ const ITEMS = {
         name: "EnergyPowder",
         calcName: "EnergyPowder",
         desc: "Restores 50 HP, but lowers friendship.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     energyroot: {
         num: 35,
@@ -277,7 +379,10 @@ const ITEMS = {
         name: "Energy Root",
         calcName: "Energy Root",
         desc: "Restores 200 HP, but lowers friendship.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     healpowder: {
         num: 36,
@@ -285,7 +390,10 @@ const ITEMS = {
         name: "Heal Powder",
         calcName: "Heal Powder",
         desc: "Cures a Pokémon's status condition, but lowers friendship.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     revivalherb: {
         num: 37,
@@ -293,7 +401,10 @@ const ITEMS = {
         name: "Revival Herb",
         calcName: "Revival Herb",
         desc: "Revives a fainted Pokémon, fully restoring its HP, but lowers friendship.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     ether: {
         num: 38,
@@ -301,7 +412,10 @@ const ITEMS = {
         name: "Ether",
         calcName: "Ether",
         desc: "Restores 10 PP to one of the Pokémon's moves.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     maxether: {
         num: 39,
@@ -309,7 +423,10 @@ const ITEMS = {
         name: "Max Ether",
         calcName: "Max Ether",
         desc: "Fully restores PP to one of the Pokémon's moves.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     elixir: {
         num: 40,
@@ -317,7 +434,10 @@ const ITEMS = {
         name: "Elixir",
         calcName: "Elixir",
         desc: "Restores 10 PP to all of the Pokémon's moves.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     maxelixir: {
         num: 41,
@@ -325,7 +445,10 @@ const ITEMS = {
         name: "Max Elixir",
         calcName: "Max Elixir",
         desc: "Fully restores PP to all of the Pokémon's moves.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     lavacookie: {
         num: 42,
@@ -333,7 +456,10 @@ const ITEMS = {
         name: "Lava Cookie",
         calcName: "Lava Cookie",
         desc: "A consumable held item that cures the Pokémon's status condition.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     berryjuice: {
         num: 43,
@@ -341,6 +467,9 @@ const ITEMS = {
         name: "Berry Juice",
         calcName: "Berry Juice",
         desc: "A consumable held item that restores 20 HP if the Pokémon's HP falls below 50%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     sacredash: {
@@ -349,7 +478,10 @@ const ITEMS = {
         name: "Sacred Ash",
         calcName: "Sacred Ash",
         desc: "Revives all fainted Pokémon, fully restoring their HP.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     hpup: {
         num: 45,
@@ -357,7 +489,10 @@ const ITEMS = {
         name: "HP Up",
         calcName: "HP Up",
         desc: "Adds 10 HP EVs to the Pokémon, up to a cap of 100.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     protein: {
         num: 46,
@@ -365,7 +500,10 @@ const ITEMS = {
         name: "Protein",
         calcName: "Protein",
         desc: "Adds 10 Attack EVs to the Pokémon, up to a cap of 100.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     iron: {
         num: 47,
@@ -373,7 +511,10 @@ const ITEMS = {
         name: "Iron",
         calcName: "Iron",
         desc: "Adds 10 Defense EVs to the Pokémon, up to a cap of 100.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     carbos: {
         num: 48,
@@ -381,7 +522,10 @@ const ITEMS = {
         name: "Carbos",
         calcName: "Carbos",
         desc: "Adds 10 Speed EVs to the Pokémon, up to a cap of 100.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     calcium: {
         num: 49,
@@ -389,7 +533,10 @@ const ITEMS = {
         name: "Calcium",
         calcName: "Calcium",
         desc: "Adds 10 Special Attack EVs to the Pokémon, up to a cap of 100.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     rarecandy: {
         num: 50,
@@ -397,7 +544,10 @@ const ITEMS = {
         name: "Rare Candy",
         calcName: "Rare Candy",
         desc: "Raises the Pokémon's level by 1.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     ppup: {
         num: 51,
@@ -405,7 +555,10 @@ const ITEMS = {
         name: "PP Up",
         calcName: "PP Up",
         desc: "I will not stoop this low.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     zinc: {
         num: 52,
@@ -413,7 +566,10 @@ const ITEMS = {
         name: "Zinc",
         calcName: "Zinc",
         desc: "Adds 10 Special Defense EVs to the Pokémon, up to a cap of 100.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     ppmax: {
         num: 53,
@@ -421,7 +577,10 @@ const ITEMS = {
         name: "PP Max",
         calcName: "PP Max",
         desc: "Okay, maybe I did.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     oldgateau: {
         num: 54,
@@ -429,7 +588,10 @@ const ITEMS = {
         name: "Old Gateau",
         calcName: "Old Gateau",
         desc: "A consumable held item that cures the Pokémon's status condition.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     guardspec: {
         num: 55,
@@ -437,7 +599,10 @@ const ITEMS = {
         name: "Guard Spec.",
         calcName: "Guard Spec.",
         desc: "Heh, nice try.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     direhit: {
         num: 56,
@@ -445,7 +610,10 @@ const ITEMS = {
         name: "Dire Hit",
         calcName: "Dire Hit",
         desc: "Heh, nice try.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     xattack: {
         num: 57,
@@ -453,7 +621,10 @@ const ITEMS = {
         name: "X Attack",
         calcName: "X Attack",
         desc: "Heh, nice try.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     xdefend: {
         num: 58,
@@ -461,7 +632,10 @@ const ITEMS = {
         name: "X Defend",
         calcName: "X Defend",
         desc: "Heh, nice try.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     xspeed: {
         num: 59,
@@ -469,7 +643,10 @@ const ITEMS = {
         name: "X Speed",
         calcName: "X Speed",
         desc: "Heh, nice try.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     xaccuracy: {
         num: 60,
@@ -477,7 +654,10 @@ const ITEMS = {
         name: "X Accuracy",
         calcName: "X Accuracy",
         desc: "Heh, nice try.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     xspecial: {
         num: 61,
@@ -485,7 +665,10 @@ const ITEMS = {
         name: "X Special",
         calcName: "X Special",
         desc: "Heh, nice try.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     xspdef: {
         num: 62,
@@ -493,7 +676,10 @@ const ITEMS = {
         name: "X Sp. Def",
         calcName: "X Sp. Def",
         desc: "Heh, nice try.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     pokedoll: {
         num: 63,
@@ -501,7 +687,10 @@ const ITEMS = {
         name: "Poké Doll",
         calcName: "Poké Doll",
         desc: "Allows the player to escape a wild battle.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     fluffytail: {
         num: 64,
@@ -509,7 +698,10 @@ const ITEMS = {
         name: "Fluffy Tail",
         calcName: "Fluffy Tail",
         desc: "Allows the player to escape a wild battle.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     blueflute: {
         num: 65,
@@ -517,7 +709,10 @@ const ITEMS = {
         name: "Blue Flute",
         calcName: "Blue Flute",
         desc: "Cures a Pokémon's Sleep in battle.",
-        search: false
+        pluck: "None",
+        fling: ["Cures Sleep", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     yellowflute: {
         num: 66,
@@ -525,7 +720,10 @@ const ITEMS = {
         name: "Yellow Flute",
         calcName: "Yellow Flute",
         desc: "Cures a Pokémon's confusion.",
-        search: false
+        pluck: "None",
+        fling: ["Cures Paralysis", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     redflute: {
         num: 67,
@@ -533,7 +731,10 @@ const ITEMS = {
         name: "Red Flute",
         calcName: "Red Flute",
         desc: "Cures a Pokémon's infatuation.",
-        search: false
+        pluck: "None",
+        fling: ["Cures Burn", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     blackflute: {
         num: 68,
@@ -541,7 +742,10 @@ const ITEMS = {
         name: "Black Flute",
         calcName: "Black Flute",
         desc: "Decreases wild Pokémon encounter rates by 50% until a map transition takes place.",
-        search: false
+        pluck: "None",
+        fling: ["Cures all status", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     whiteflute: {
         num: 69,
@@ -549,7 +753,10 @@ const ITEMS = {
         name: "White Flute",
         calcName: "White Flute",
         desc: "Increases wild Pokémon encounter rates by 50% until a map transition takes place.",
-        search: false
+        pluck: "None",
+        fling: ["Restores lowered stats", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     berserkgene: {
         num: 70,
@@ -557,6 +764,9 @@ const ITEMS = {
         name: "Berserk Gene",
         calcName: "Berserk Gene",
         desc: "A consumable held item that increases the Attack stat of the Pokémon immediately.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     ragecandybar: {
@@ -565,6 +775,9 @@ const ITEMS = {
         name: "RageCandyBar",
         calcName: "RageCandyBar",
         desc: "A consumable held item that restores 100 HP if the Pokémon's HP falls below 50%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [250, "mystery"],
         search: true
     },
     redshard: {
@@ -573,7 +786,10 @@ const ITEMS = {
         name: "Red Shard",
         calcName: "Red Shard",
         desc: "Can be exchanged with Move Tutors to teach Pokémon some exclusive moves.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     blueshard: {
         num: 73,
@@ -581,7 +797,10 @@ const ITEMS = {
         name: "Blue Shard",
         calcName: "Blue Shard",
         desc: "Can be exchanged with Move Tutors to teach Pokémon some exclusive moves.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     yellowshard: {
         num: 74,
@@ -589,7 +808,10 @@ const ITEMS = {
         name: "Yellow Shard",
         calcName: "Yellow Shard",
         desc: "Can be exchanged with Move Tutors to teach Pokémon some exclusive moves.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     greenshard: {
         num: 75,
@@ -597,7 +819,10 @@ const ITEMS = {
         name: "Green Shard",
         calcName: "Green Shard",
         desc: "Can be exchanged with Move Tutors to teach Pokémon some exclusive moves.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     superrepel: {
         num: 76,
@@ -605,7 +830,10 @@ const ITEMS = {
         name: "Super Repel",
         calcName: "Super Repel",
         desc: "Prevents wild Pokémon encounters that are lower than the lead Pokémon's level for 200 steps.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     maxrepel: {
         num: 77,
@@ -613,7 +841,10 @@ const ITEMS = {
         name: "Max Repel",
         calcName: "Max Repel",
         desc: "Prevents wild Pokémon encounters that are lower than the lead Pokémon's level for 250 steps.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     escaperope: {
         num: 78,
@@ -621,7 +852,10 @@ const ITEMS = {
         name: "Escape Rope",
         calcName: "Escape Rope",
         desc: "If used inside a cave or dungeon, warps the player to its entrance.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     repel: {
         num: 79,
@@ -629,7 +863,10 @@ const ITEMS = {
         name: "Repel",
         calcName: "Repel",
         desc: "Prevents wild Pokémon encounters that are lower than the lead Pokémon's level for 100 steps.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     sunstone: {
         num: 80,
@@ -637,6 +874,9 @@ const ITEMS = {
         name: "Sun Stone",
         calcName: "Sun Stone",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     moonstone: {
@@ -645,6 +885,9 @@ const ITEMS = {
         name: "Moon Stone",
         calcName: "Moon Stone",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     firestone: {
@@ -653,6 +896,9 @@ const ITEMS = {
         name: "Fire Stone",
         calcName: "Fire Stone",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     thunderstone: {
@@ -661,6 +907,9 @@ const ITEMS = {
         name: "Thunderstone",
         calcName: "Thunderstone",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     waterstone: {
@@ -669,6 +918,9 @@ const ITEMS = {
         name: "Water Stone",
         calcName: "Water Stone",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     leafstone: {
@@ -677,6 +929,9 @@ const ITEMS = {
         name: "Leaf Stone",
         calcName: "Leaf Stone",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     tinymushroom: {
@@ -685,7 +940,10 @@ const ITEMS = {
         name: "TinyMushroom",
         calcName: "TinyMushroom",
         desc: "This item serves no purpose except to be sold.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     bigmushroom: {
         num: 87,
@@ -693,7 +951,10 @@ const ITEMS = {
         name: "Big Mushroom",
         calcName: "Big Mushroom",
         desc: "This item serves no purpose except to be sold.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     pearl: {
         num: 88,
@@ -701,7 +962,10 @@ const ITEMS = {
         name: "Pearl",
         calcName: "Pearl",
         desc: "This item serves no purpose except to be sold.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     bigpearl: {
         num: 89,
@@ -709,7 +973,10 @@ const ITEMS = {
         name: "Big Pearl",
         calcName: "Big Pearl",
         desc: "This item serves no purpose except to be sold.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     stardust: {
         num: 90,
@@ -717,7 +984,10 @@ const ITEMS = {
         name: "Stardust",
         calcName: "Stardust",
         desc: "This item serves no purpose except to be sold.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     starpiece: {
         num: 91,
@@ -725,7 +995,10 @@ const ITEMS = {
         name: "Star Piece",
         calcName: "Star Piece",
         desc: "This item serves no purpose except to be sold.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     bignugget: {
         num: 92,
@@ -733,7 +1006,10 @@ const ITEMS = {
         name: "Big Nugget",
         calcName: "Big Nugget",
         desc: "This item serves no purpose except to be sold.",
-        search: false
+        pluck: "None",
+        fling: ["None", 250],
+        naturalGift: [0, -1],
+        search: true
     },
     heartscale: {
         num: 93,
@@ -741,7 +1017,10 @@ const ITEMS = {
         name: "Heart Scale",
         calcName: "Heart Scale",
         desc: "Can be exchanged with the Move Reminder to teach Pokémon a previously learned move.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     honey: {
         num: 94,
@@ -749,7 +1028,10 @@ const ITEMS = {
         name: "Honey",
         calcName: "Honey",
         desc: "Used to attract wild Pokémon. Can be used in tall grass, caves, while surfing, or on Honey trees.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     growthmulch: {
         num: 95,
@@ -757,7 +1039,10 @@ const ITEMS = {
         name: "Growth Mulch",
         calcName: "Growth Mulch",
         desc: "This item is unobtainable.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     dampmulch: {
         num: 96,
@@ -765,7 +1050,10 @@ const ITEMS = {
         name: "Damp Mulch",
         calcName: "Damp Mulch",
         desc: "This item is unobtainable.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     stablemulch: {
         num: 97,
@@ -773,7 +1061,10 @@ const ITEMS = {
         name: "Stable Mulch",
         calcName: "Stable Mulch",
         desc: "This item is unobtainable.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     gooeymulch: {
         num: 98,
@@ -781,7 +1072,10 @@ const ITEMS = {
         name: "Gooey Mulch",
         calcName: "Gooey Mulch",
         desc: "This item is unobtainable.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     rootfossil: {
         num: 99,
@@ -789,6 +1083,9 @@ const ITEMS = {
         name: "Root Fossil",
         calcName: "Root Fossil",
         desc: "This item is unobtainable.",
+        pluck: "None",
+        fling: ["None", 100],
+        naturalGift: [0, -1],
         search: true
     },
     clawfossil: {
@@ -797,6 +1094,9 @@ const ITEMS = {
         name: "Claw Fossil",
         calcName: "Claw Fossil",
         desc: "This item is unobtainable.",
+        pluck: "None",
+        fling: ["None", 100],
+        naturalGift: [0, -1],
         search: true
     },
     helixfossil: {
@@ -805,6 +1105,9 @@ const ITEMS = {
         name: "Helix Fossil",
         calcName: "Helix Fossil",
         desc: "This item is unobtainable.",
+        pluck: "None",
+        fling: ["None", 100],
+        naturalGift: [0, -1],
         search: true
     },
     domefossil: {
@@ -813,6 +1116,9 @@ const ITEMS = {
         name: "Dome Fossil",
         calcName: "Dome Fossil",
         desc: "This item is unobtainable.",
+        pluck: "None",
+        fling: ["None", 100],
+        naturalGift: [0, -1],
         search: true
     },
     oldamber: {
@@ -821,6 +1127,9 @@ const ITEMS = {
         name: "Old Amber",
         calcName: "Old Amber",
         desc: "This item is unobtainable.",
+        pluck: "None",
+        fling: ["None", 100],
+        naturalGift: [0, -1],
         search: true
     },
     armorfossil: {
@@ -829,6 +1138,9 @@ const ITEMS = {
         name: "Armor Fossil",
         calcName: "Armor Fossil",
         desc: "Can be revived into <span data-target=\"species/shieldon\">Shieldon</span> at the Oreburgh Mining Museum.",
+        pluck: "None",
+        fling: ["None", 100],
+        naturalGift: [0, -1],
         search: true
     },
     skullfossil: {
@@ -837,6 +1149,9 @@ const ITEMS = {
         name: "Skull Fossil",
         calcName: "Skull Fossil",
         desc: "Can be revived into <span data-target=\"species/cranidos\">Cranidos</span> at the Oreburgh Mining Museum.",
+        pluck: "None",
+        fling: ["None", 100],
+        naturalGift: [0, -1],
         search: true
     },
     rarebone: {
@@ -845,6 +1160,9 @@ const ITEMS = {
         name: "Rare Bone",
         calcName: "Rare Bone",
         desc: "This item serves no purpose except to be sold.",
+        pluck: "None",
+        fling: ["None", 100],
+        naturalGift: [0, -1],
         search: true
     },
     shinystone: {
@@ -853,6 +1171,9 @@ const ITEMS = {
         name: "Shiny Stone",
         calcName: "Shiny Stone",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 80],
+        naturalGift: [0, -1],
         search: true
     },
     duskstone: {
@@ -861,6 +1182,9 @@ const ITEMS = {
         name: "Dusk Stone",
         calcName: "Dusk Stone",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 80],
+        naturalGift: [0, -1],
         search: true
     },
     dawnstone: {
@@ -869,6 +1193,9 @@ const ITEMS = {
         name: "Dawn Stone",
         calcName: "Dawn Stone",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 80],
+        naturalGift: [0, -1],
         search: true
     },
     ovalstone: {
@@ -877,6 +1204,9 @@ const ITEMS = {
         name: "Oval Stone",
         calcName: "Oval Stone",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 80],
+        naturalGift: [0, -1],
         search: true
     },
     oddkeystone: {
@@ -885,7 +1215,10 @@ const ITEMS = {
         name: "Odd Keystone",
         calcName: "Odd Keystone",
         desc: "Used to summon <span data-target=\"species/spiritomb\">Spiritomb</span>.",
-        search: false
+        pluck: "None",
+        fling: ["None", 80],
+        naturalGift: [0, -1],
+        search: true
     },
     griseousorb: {
         num: 112,
@@ -893,6 +1226,9 @@ const ITEMS = {
         name: "Griseous Orb",
         calcName: "Griseous Orb",
         desc: "Can be held by <span data-target=\"species/giratina\">Giratina</span> to transform it into its <span data-target=\"species/giratinaorigin\">Origin forme</span>, and increase the power of its <span data-target=\"type/dragon\">Dragon</span> and <span data-target=\"type/ghost\">Ghost</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 60],
+        naturalGift: [0, -1],
         search: true
     },
     adamantorb: {
@@ -901,6 +1237,9 @@ const ITEMS = {
         name: "Adamant Orb",
         calcName: "Adamant Orb",
         desc: "Can be held by <span data-target=\"species/dialga\">Dialga</span> to increase the power of its <span data-target=\"type/dragon\">Dragon</span> and <span data-target=\"type/steel\">Steel</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 60],
+        naturalGift: [0, -1],
         search: true
     },
     lustrousorb: {
@@ -909,6 +1248,9 @@ const ITEMS = {
         name: "Lustrous Orb",
         calcName: "Lustrous Orb",
         desc: "Can be held by <span data-target=\"species/dialga\">Dialga</span> to increase the power of its <span data-target=\"type/dragon\">Dragon</span> and <span data-target=\"type/water\">Water</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 60],
+        naturalGift: [0, -1],
         search: true
     },
     grassmail: {
@@ -917,6 +1259,9 @@ const ITEMS = {
         name: "Grass Mail",
         calcName: "Grass Mail",
         desc: "This item serves no purpose.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     flamemail: {
@@ -925,6 +1270,9 @@ const ITEMS = {
         name: "Flame Mail",
         calcName: "Flame Mail",
         desc: "This item serves no purpose.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     bubblemail: {
@@ -933,6 +1281,9 @@ const ITEMS = {
         name: "Bubble Mail",
         calcName: "Bubble Mail",
         desc: "This item serves no purpose.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     bloommail: {
@@ -941,6 +1292,9 @@ const ITEMS = {
         name: "Bloom Mail",
         calcName: "Bloom Mail",
         desc: "This item serves no purpose.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tunnelmail: {
@@ -949,6 +1303,9 @@ const ITEMS = {
         name: "Tunnel Mail",
         calcName: "Tunnel Mail",
         desc: "This item serves no purpose.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     steelmail: {
@@ -957,6 +1314,9 @@ const ITEMS = {
         name: "Steel Mail",
         calcName: "Steel Mail",
         desc: "This item serves no purpose.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     heartmail: {
@@ -965,6 +1325,9 @@ const ITEMS = {
         name: "Heart Mail",
         calcName: "Heart Mail",
         desc: "This item serves no purpose.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     snowmail: {
@@ -973,6 +1336,9 @@ const ITEMS = {
         name: "Snow Mail",
         calcName: "Snow Mail",
         desc: "This item serves no purpose.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     spacemail: {
@@ -981,6 +1347,9 @@ const ITEMS = {
         name: "Space Mail",
         calcName: "Space Mail",
         desc: "This item serves no purpose.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     airmail: {
@@ -989,6 +1358,9 @@ const ITEMS = {
         name: "Air Mail",
         calcName: "Air Mail",
         desc: "This item serves no purpose.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     mosaicmail: {
@@ -997,6 +1369,9 @@ const ITEMS = {
         name: "Mosaic Mail",
         calcName: "Mosaic Mail",
         desc: "This item serves no purpose.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     brickmail: {
@@ -1005,6 +1380,9 @@ const ITEMS = {
         name: "Brick Mail",
         calcName: "Brick Mail",
         desc: "This item serves no purpose.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     cheriberry: {
@@ -1013,6 +1391,9 @@ const ITEMS = {
         name: "Cheri Berry",
         calcName: "Cheri Berry",
         desc: "A consumable held item that cures the Pokémon's Paralysis.",
+        pluck: "Cures Paralysis",
+        fling: ["Cures Paralysis", 10],
+        naturalGift: [60, "fire"],
         search: true
     },
     chestoberry: {
@@ -1021,6 +1402,9 @@ const ITEMS = {
         name: "Chesto Berry",
         calcName: "Chesto Berry",
         desc: "A consumable held item that cures the Pokémon's Sleep.",
+        pluck: "Cures Sleep",
+        fling: ["Cures Sleep", 10],
+        naturalGift: [60, "water"],
         search: true
     },
     pechaberry: {
@@ -1029,6 +1413,9 @@ const ITEMS = {
         name: "Pecha Berry",
         calcName: "Pecha Berry",
         desc: "A consumable held item that cures the Pokémon's Poison.",
+        pluck: "Cures Poison",
+        fling: ["Cures Poison", 10],
+        naturalGift: [60, "electric"],
         search: true
     },
     rawstberry: {
@@ -1037,6 +1424,9 @@ const ITEMS = {
         name: "Rawst Berry",
         calcName: "Rawst Berry",
         desc: "A consumable held item that cures the Pokémon's Burn.",
+        pluck: "Cures Burn",
+        fling: ["Cures Burn", 10],
+        naturalGift: [60, "grass"],
         search: true
     },
     aspearberry: {
@@ -1045,6 +1435,9 @@ const ITEMS = {
         name: "Aspear Berry",
         calcName: "Aspear Berry",
         desc: "A consumable held item that cures the Pokémon's Freeze.",
+        pluck: "Cures Freeze",
+        fling: ["Cures Freeze", 10],
+        naturalGift: [60, "ice"],
         search: true
     },
     leppaberry: {
@@ -1053,6 +1446,9 @@ const ITEMS = {
         name: "Leppa Berry",
         calcName: "Leppa Berry",
         desc: "A consumable held item that restores 10 PP to one of the Pokémon's moves.",
+        pluck: "Restores 10 PP",
+        fling: ["Restores 10 PP", 10],
+        naturalGift: [60, "fighting"],
         search: true
     },
     oranberry: {
@@ -1061,6 +1457,9 @@ const ITEMS = {
         name: "Oran Berry",
         calcName: "Oran Berry",
         desc: "A consumable held item that restores 10 HP if the Pokémon's HP falls below 50%.",
+        pluck: "Restores 10 HP",
+        fling: ["Restores 10 HP", 10],
+        naturalGift: [60, "poison"],
         search: true
     },
     persimberry: {
@@ -1069,6 +1468,9 @@ const ITEMS = {
         name: "Persim Berry",
         calcName: "Persim Berry",
         desc: "A consumable held item that cures the Pokémon's confusion.",
+        pluck: "Cures Confusion",
+        fling: ["Cures Confusion", 10],
+        naturalGift: [60, "ground"],
         search: true
     },
     lumberry: {
@@ -1077,6 +1479,9 @@ const ITEMS = {
         name: "Lum Berry",
         calcName: "Lum Berry",
         desc: "A consumable held item that cures the Pokémon's status condition.",
+        pluck: "Cures all status",
+        fling: ["Cures all status", 10],
+        naturalGift: [60, "flying"],
         search: true
     },
     sitrusberry: {
@@ -1085,6 +1490,9 @@ const ITEMS = {
         name: "Sitrus Berry",
         calcName: "Sitrus Berry",
         desc: "A consumable held item that restores 25% HP if the Pokémon's HP falls below 50%.",
+        pluck: "Restores 25% HP",
+        fling: ["Restores 25% HP", 10],
+        naturalGift: [60, "psychic"],
         search: true
     },
     figyberry: {
@@ -1093,6 +1501,9 @@ const ITEMS = {
         name: "Figy Berry",
         calcName: "Figy Berry",
         desc: "A consumable held item that restores 12.5% HP if the Pokémon's HP falls below 50%, but confuses Pokémon with a -Atk nature.",
+        pluck: "Restores 8% HP (confuses Pokémon with a -Atk nature)",
+        fling: ["Restores 8% HP (confuses Pokémon with a -Atk nature)", 10],
+        naturalGift: [60, "bug"],
         search: true
     },
     wikiberry: {
@@ -1101,6 +1512,9 @@ const ITEMS = {
         name: "Wiki Berry",
         calcName: "Wiki Berry",
         desc: "A consumable held item that restores 12.5% HP if the Pokémon's HP falls below 50%, but confuses Pokémon with a -SpA nature.",
+        pluck: "Restores 8% HP (confuses Pokémon with a -SpA nature)",
+        fling: ["Restores 8% HP (confuses Pokémon with a -SpA nature)", 10],
+        naturalGift: [60, "rock"],
         search: true
     },
     magoberry: {
@@ -1109,6 +1523,9 @@ const ITEMS = {
         name: "Mago Berry",
         calcName: "Mago Berry",
         desc: "A consumable held item that restores 12.5% HP if the Pokémon's HP falls below 50%, but confuses Pokémon with a -Spe nature.",
+        pluck: "Restores 8% HP (confuses Pokémon with a -Spe nature)",
+        fling: ["Restores 8% HP (confuses Pokémon with a -Spe nature)", 10],
+        naturalGift: [60, "ghost"],
         search: true
     },
     aguavberry: {
@@ -1117,6 +1534,9 @@ const ITEMS = {
         name: "Aguav Berry",
         calcName: "Aguav Berry",
         desc: "A consumable held item that restores 12.5% HP if the Pokémon's HP falls below 50%, but confuses Pokémon with a -SpD nature.",
+        pluck: "Restores 8% HP (confuses Pokémon with a -SpD nature)",
+        fling: ["Restores 8% HP (confuses Pokémon with a -SpD nature)", 10],
+        naturalGift: [60, "dragon"],
         search: true
     },
     iapapaberry: {
@@ -1125,6 +1545,9 @@ const ITEMS = {
         name: "Iapapa Berry",
         calcName: "Iapapa Berry",
         desc: "A consumable held item that restores 12.5% HP if the Pokémon's HP falls below 50%, but confuses Pokémon with a -Def nature.",
+        pluck: "Restores 8% HP (confuses Pokémon with a -Def nature)",
+        fling: ["Restores 8% HP (confuses Pokémon with a -Def nature)", 10],
+        naturalGift: [60, "dark"],
         search: true
     },
     razzberry: {
@@ -1133,6 +1556,9 @@ const ITEMS = {
         name: "Razz Berry",
         calcName: "Razz Berry",
         desc: "Can only be used to make Poffins.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "steel"],
         search: true
     },
     blukberry: {
@@ -1141,6 +1567,9 @@ const ITEMS = {
         name: "Bluk Berry",
         calcName: "Bluk Berry",
         desc: "Can only be used to make Poffins.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "fire"],
         search: true
     },
     nanabberry: {
@@ -1149,6 +1578,9 @@ const ITEMS = {
         name: "Nanab Berry",
         calcName: "Nanab Berry",
         desc: "Can only be used to make Poffins.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "water"],
         search: true
     },
     wepearberry: {
@@ -1157,6 +1589,9 @@ const ITEMS = {
         name: "Wepear Berry",
         calcName: "Wepear Berry",
         desc: "Can only be used to make Poffins.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "electric"],
         search: true
     },
     pinapberry: {
@@ -1165,6 +1600,9 @@ const ITEMS = {
         name: "Pinap Berry",
         calcName: "Pinap Berry",
         desc: "Can only be used to make Poffins.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "grass"],
         search: true
     },
     pomegberry: {
@@ -1173,6 +1611,9 @@ const ITEMS = {
         name: "Pomeg Berry",
         calcName: "Pomeg Berry",
         desc: "Raises the Pokémon's friendship, but lowers its HP EV by 10.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "ice"],
         search: true
     },
     kelpsyberry: {
@@ -1181,6 +1622,9 @@ const ITEMS = {
         name: "Kelpsy Berry",
         calcName: "Kelpsy Berry",
         desc: "Raises the Pokémon's friendship, but lowers its Attack EV by 10.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "fighting"],
         search: true
     },
     qualotberry: {
@@ -1189,6 +1633,9 @@ const ITEMS = {
         name: "Qualot Berry",
         calcName: "Qualot Berry",
         desc: "Raises the Pokémon's friendship, but lowers its Defense EV by 10.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "poison"],
         search: true
     },
     hondewberry: {
@@ -1197,6 +1644,9 @@ const ITEMS = {
         name: "Hondew Berry",
         calcName: "Hondew Berry",
         desc: "Raises the Pokémon's friendship, but lowers its Special Attack EV by 10.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "ground"],
         search: true
     },
     grepaberry: {
@@ -1205,6 +1655,9 @@ const ITEMS = {
         name: "Grepa Berry",
         calcName: "Grepa Berry",
         desc: "Raises the Pokémon's friendship, but lowers its Special Defense EV by 10.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "flying"],
         search: true
     },
     tamatoberry: {
@@ -1213,6 +1666,9 @@ const ITEMS = {
         name: "Tamato Berry",
         calcName: "Tamato Berry",
         desc: "Raises the Pokémon's friendship, but lowers its Speed EV by 10.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "psychic"],
         search: true
     },
     cornnberry: {
@@ -1221,6 +1677,9 @@ const ITEMS = {
         name: "Cornn Berry",
         calcName: "Cornn Berry",
         desc: "Can only be used to make Poffins.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "bug"],
         search: true
     },
     magostberry: {
@@ -1229,6 +1688,9 @@ const ITEMS = {
         name: "Magost Berry",
         calcName: "Magost Berry",
         desc: "Can only be used to make Poffins.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "rock"],
         search: true
     },
     rabutaberry: {
@@ -1237,6 +1699,9 @@ const ITEMS = {
         name: "Rabuta Berry",
         calcName: "Rabuta Berry",
         desc: "Can only be used to make Poffins.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "ghost"],
         search: true
     },
     nomelberry: {
@@ -1245,6 +1710,9 @@ const ITEMS = {
         name: "Nomel Berry",
         calcName: "Nomel Berry",
         desc: "Can only be used to make Poffins.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "dragon"],
         search: true
     },
     spelonberry: {
@@ -1253,6 +1721,9 @@ const ITEMS = {
         name: "Spelon Berry",
         calcName: "Spelon Berry",
         desc: "Can only be used to make Poffins.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "dark"],
         search: true
     },
     pamtreberry: {
@@ -1261,6 +1732,9 @@ const ITEMS = {
         name: "Pamtre Berry",
         calcName: "Pamtre Berry",
         desc: "Can only be used to make Poffins.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [70, "steel"],
         search: true
     },
     watmelberry: {
@@ -1269,6 +1743,9 @@ const ITEMS = {
         name: "Watmel Berry",
         calcName: "Watmel Berry",
         desc: "Can only be used to make Poffins.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [80, "fire"],
         search: true
     },
     durinberry: {
@@ -1277,6 +1754,9 @@ const ITEMS = {
         name: "Durin Berry",
         calcName: "Durin Berry",
         desc: "Can only be used to make Poffins.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [80, "water"],
         search: true
     },
     belueberry: {
@@ -1285,6 +1765,9 @@ const ITEMS = {
         name: "Belue Berry",
         calcName: "Belue Berry",
         desc: "Can only be used to make Poffins.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [80, "electric"],
         search: true
     },
     occaberry: {
@@ -1293,6 +1776,9 @@ const ITEMS = {
         name: "Occa Berry",
         calcName: "Occa Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/fire\">Fire</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "fire"],
         search: true
     },
     passhoberry: {
@@ -1301,6 +1787,9 @@ const ITEMS = {
         name: "Passho Berry",
         calcName: "Passho Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/water\">Water</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "water"],
         search: true
     },
     wacanberry: {
@@ -1309,6 +1798,9 @@ const ITEMS = {
         name: "Wacan Berry",
         calcName: "Wacan Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/electric\">Electric</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "electric"],
         search: true
     },
     rindoberry: {
@@ -1317,6 +1809,9 @@ const ITEMS = {
         name: "Rindo Berry",
         calcName: "Rindo Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/grass\">Grass</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "grass"],
         search: true
     },
     yacheberry: {
@@ -1325,6 +1820,9 @@ const ITEMS = {
         name: "Yache Berry",
         calcName: "Yache Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/ice\">Ice</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "ice"],
         search: true
     },
     chopleberry: {
@@ -1333,6 +1831,9 @@ const ITEMS = {
         name: "Chople Berry",
         calcName: "Chople Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/fighting\">Fighting</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "fighting"],
         search: true
     },
     kebiaberry: {
@@ -1341,6 +1842,9 @@ const ITEMS = {
         name: "Kebia Berry",
         calcName: "Kebia Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/poison\">Poison</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "poison"],
         search: true
     },
     shucaberry: {
@@ -1349,6 +1853,9 @@ const ITEMS = {
         name: "Shuca Berry",
         calcName: "Shuca Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/ground\">Ground</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "ground"],
         search: true
     },
     cobaberry: {
@@ -1357,6 +1864,9 @@ const ITEMS = {
         name: "Coba Berry",
         calcName: "Coba Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/flying\">Flying</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "flying"],
         search: true
     },
     payapaberry: {
@@ -1365,6 +1875,9 @@ const ITEMS = {
         name: "Payapa Berry",
         calcName: "Payapa Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/psychic\">Psychic</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "psychic"],
         search: true
     },
     tangaberry: {
@@ -1373,6 +1886,9 @@ const ITEMS = {
         name: "Tanga Berry",
         calcName: "Tanga Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/bug\">Bug</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "bug"],
         search: true
     },
     chartiberry: {
@@ -1381,6 +1897,9 @@ const ITEMS = {
         name: "Charti Berry",
         calcName: "Charti Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/rock\">Rock</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "rock"],
         search: true
     },
     kasibberry: {
@@ -1389,6 +1908,9 @@ const ITEMS = {
         name: "Kasib Berry",
         calcName: "Kasib Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/ghost\">Ghost</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "ghost"],
         search: true
     },
     habanberry: {
@@ -1397,6 +1919,9 @@ const ITEMS = {
         name: "Haban Berry",
         calcName: "Haban Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/dragon\">Dragon</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "dragon"],
         search: true
     },
     colburberry: {
@@ -1405,6 +1930,9 @@ const ITEMS = {
         name: "Colbur Berry",
         calcName: "Colbur Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/dark\">Dark</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "dark"],
         search: true
     },
     babiriberry: {
@@ -1413,6 +1941,9 @@ const ITEMS = {
         name: "Babiri Berry",
         calcName: "Babiri Berry",
         desc: "A consumable held item that reduces damage taken from a Super-Effective <span data-target=\"type/steel\">Steel</span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "steel"],
         search: true
     },
     chilanberry: {
@@ -1421,6 +1952,9 @@ const ITEMS = {
         name: "Chilan Berry",
         calcName: "Chilan Berry",
         desc: "A consumable held item that reduces damage taken from a <span data-target=\"type/\"></span> attack by 50%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [60, "normal"],
         search: true
     },
     liechiberry: {
@@ -1429,6 +1963,9 @@ const ITEMS = {
         name: "Liechi Berry",
         calcName: "Liechi Berry",
         desc: "A consumable held item that increases the Attack stat of the Pokémon by 1 stage if its HP falls below 25%.",
+        pluck: "+1 Atk",
+        fling: ["+1 Atk", 10],
+        naturalGift: [80, "grass"],
         search: true
     },
     ganlonberry: {
@@ -1437,6 +1974,9 @@ const ITEMS = {
         name: "Ganlon Berry",
         calcName: "Ganlon Berry",
         desc: "A consumable held item that increases the Defense stat of the Pokémon by 1 stage immediately.",
+        pluck: "+1 Def",
+        fling: ["+1 Def", 10],
+        naturalGift: [80, "ice"],
         search: true
     },
     salacberry: {
@@ -1445,6 +1985,9 @@ const ITEMS = {
         name: "Salac Berry",
         calcName: "Salac Berry",
         desc: "A consumable held item that increases the Speed stat of the Pokémon by 1 stage if its HP falls below 25%.",
+        pluck: "+1 Spe",
+        fling: ["+1 Spe", 10],
+        naturalGift: [80, "fighting"],
         search: true
     },
     petayaberry: {
@@ -1453,6 +1996,9 @@ const ITEMS = {
         name: "Petaya Berry",
         calcName: "Petaya Berry",
         desc: "A consumable held item that increases the Special Attack stat of the Pokémon by 1 stage if its HP falls below 25%.",
+        pluck: "+1 SpA",
+        fling: ["+1 SpA", 10],
+        naturalGift: [80, "poison"],
         search: true
     },
     apicotberry: {
@@ -1461,6 +2007,9 @@ const ITEMS = {
         name: "Apicot Berry",
         calcName: "Apicot Berry",
         desc: "A consumable held item that increases the Special Defense stat of the Pokémon immediately.",
+        pluck: "+1 SpD",
+        fling: ["+1 SpD", 10],
+        naturalGift: [80, "ground"],
         search: true
     },
     lansatberry: {
@@ -1469,6 +2018,9 @@ const ITEMS = {
         name: "Lansat Berry",
         calcName: "Lansat Berry",
         desc: "A consumable held item that raises the Pokémon's critical hit ratio by 2 stages if its HP falls below 25%.",
+        pluck: "+1 critical hit ratio",
+        fling: ["+1 critical hit ratio", 10],
+        naturalGift: [80, "flying"],
         search: true
     },
     starfberry: {
@@ -1477,6 +2029,9 @@ const ITEMS = {
         name: "Starf Berry",
         calcName: "Starf Berry",
         desc: "A consumable held item that increases a random stat of the Pokémon by 2 stages if its HP falls below 25%.",
+        pluck: "+2 to a random stat",
+        fling: ["+2 to a random stat", 10],
+        naturalGift: [80, "psychic"],
         search: true
     },
     enigmaberry: {
@@ -1485,6 +2040,9 @@ const ITEMS = {
         name: "Enigma Berry",
         calcName: "Enigma Berry",
         desc: "A consumable held item that restores 25% HP if the Pokémon gets attacked by a Super-Effective move.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [80, "bug"],
         search: true
     },
     micleberry: {
@@ -1493,6 +2051,9 @@ const ITEMS = {
         name: "Micle Berry",
         calcName: "Micle Berry",
         desc: "A consumable held item that increases the accuracy of the Pokémon's next move by 20% if its HP falls below 25%.",
+        pluck: "Increases the next move's accuracy by 1.2x",
+        fling: ["Increases the next move's accuracy by 1.2x", 10],
+        naturalGift: [80, "rock"],
         search: true
     },
     custapberry: {
@@ -1501,6 +2062,9 @@ const ITEMS = {
         name: "Custap Berry",
         calcName: "Custap Berry",
         desc: "A consumable held item that causes the Pokémon's next move to move first in its priority bracket if its HP falls below 25%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [80, "ghost"],
         search: true
     },
     jabocaberry: {
@@ -1509,6 +2073,9 @@ const ITEMS = {
         name: "Jaboca Berry",
         calcName: "Jaboca Berry",
         desc: "A consumable held item that damages Pokémon that attack the holder with a <span data-target=\"category/physical\">Physical</span> move by 1/6 of their total HP.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [80, "dragon"],
         search: true
     },
     rowapberry: {
@@ -1517,6 +2084,9 @@ const ITEMS = {
         name: "Rowap Berry",
         calcName: "Rowap Berry",
         desc: "A consumable held item that damages Pokémon that attack the holder with a <span data-target=\"category/special\">Special</span> move by 1/6 of their total HP.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [80, "dark"],
         search: true
     },
     brightpowder: {
@@ -1525,6 +2095,9 @@ const ITEMS = {
         name: "BrightPowder",
         calcName: "Bright Powder",
         desc: "A held item that decreases the accuracy of moves targeting the holder by 11%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     whiteherb: {
@@ -1533,6 +2106,9 @@ const ITEMS = {
         name: "White Herb",
         calcName: "White Herb",
         desc: "A consumable held item that restores any negative stats.",
+        pluck: "None",
+        fling: ["Restores lowered stats", 10],
+        naturalGift: [0, -1],
         search: true
     },
     machobrace: {
@@ -1541,6 +2117,9 @@ const ITEMS = {
         name: "Macho Brace",
         calcName: "Macho Brace",
         desc: "A held item that halves the Pokémon's Speed stat.",
+        pluck: "None",
+        fling: ["None", 60],
+        naturalGift: [0, -1],
         search: true
     },
     expshare: {
@@ -1549,7 +2128,10 @@ const ITEMS = {
         name: "Exp. Share",
         calcName: "Exp. Share",
         desc: "A held item that causes the Pokémon to gain 50% of the total experience gained when defeating an enemy Pokémon.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     quickclaw: {
         num: 217,
@@ -1557,6 +2139,9 @@ const ITEMS = {
         name: "Quick Claw",
         calcName: "Quick Claw",
         desc: "A held item that has a 20% chance to cause the Pokémon's moves to move first in their priority bracket.",
+        pluck: "None",
+        fling: ["None", 80],
+        naturalGift: [0, -1],
         search: true
     },
     soothebell: {
@@ -1565,7 +2150,10 @@ const ITEMS = {
         name: "Soothe Bell",
         calcName: "Soothe Bell",
         desc: "A held item that causes the Pokémon to gain 50% more friendship.",
-        search: false
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
+        search: true
     },
     mentalherb: {
         num: 219,
@@ -1573,6 +2161,9 @@ const ITEMS = {
         name: "Mental Herb",
         calcName: "Mental Herb",
         desc: "A consumable held item that cures a Pokémon's infatuation.",
+        pluck: "None",
+        fling: ["Cures infatuation", 10],
+        naturalGift: [0, -1],
         search: true
     },
     choiceband: {
@@ -1581,6 +2172,9 @@ const ITEMS = {
         name: "Choice Band",
         calcName: "Choice Band",
         desc: "A held item that increases the Attack stat of the Pokémon by 50%, but locks it into only being able to use the first move it used.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     kingsrock: {
@@ -1589,6 +2183,9 @@ const ITEMS = {
         name: "King's Rock",
         calcName: "King's Rock",
         desc: "A held item that gives certain moves a 10% chance to flinch.",
+        pluck: "None",
+        fling: ["Causes flinch", 30],
+        naturalGift: [0, -1],
         search: true
     },
     silverpowder: {
@@ -1597,6 +2194,9 @@ const ITEMS = {
         name: "SilverPowder",
         calcName: "Silver Powder",
         desc: "A held item that increases the power of <span data-target=\"type/bug\">Bug</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     amuletcoin: {
@@ -1605,7 +2205,10 @@ const ITEMS = {
         name: "Amulet Coin",
         calcName: "Amulet Coin",
         desc: "A held item that doubles the amount of money obtained after winning a trainer battle, if the Pokémon took part in the battle.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     cleansetag: {
         num: 224,
@@ -1613,7 +2216,10 @@ const ITEMS = {
         name: "Cleanse Tag",
         calcName: "Cleanse Tag",
         desc: "A held item that decreases wild Pokémon encounter rates by 33%, if the Pokémon is the first member of the party.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     souldew: {
         num: 225,
@@ -1621,6 +2227,9 @@ const ITEMS = {
         name: "Soul Dew",
         calcName: "Soul Dew",
         desc: "Can be held by <span data-target=\"species/latios\">Latios</span> or <span data-target=\"species/latias\">Latias</span> to increase their Special Attack and Special Defense stats by 50%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     deepseatooth: {
@@ -1629,6 +2238,9 @@ const ITEMS = {
         name: "DeepSeaTooth",
         calcName: "Deep Sea Tooth",
         desc: "Can be held by <span data-target=\"species/clamperl\">Clamperl</span> to increase its Special Attack stat by 100%.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     deepseascale: {
@@ -1637,6 +2249,9 @@ const ITEMS = {
         name: "DeepSeaScale",
         calcName: "Deep Sea Scale",
         desc: "Can be held by <span data-target=\"species/clamperl\">Clamperl</span> to increase its Special Defense stat by 100%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     smokeball: {
@@ -1645,7 +2260,10 @@ const ITEMS = {
         name: "Smoke Ball",
         calcName: "Smoke Ball",
         desc: "A held item that allows the Pokémon to flee or use <span data-target=\"move/teleport\">Teleport</span> even if trapped.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     everstone: {
         num: 229,
@@ -1653,7 +2271,10 @@ const ITEMS = {
         name: "Everstone",
         calcName: "Everstone",
         desc: "A held item that prevents the Pokémon from evolving.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     focusband: {
         num: 230,
@@ -1661,6 +2282,9 @@ const ITEMS = {
         name: "Focus Band",
         calcName: "Focus Band",
         desc: "A held item that has a 10% chance to allow the Pokémon to survive a fatal attack with 1 HP.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     luckyegg: {
@@ -1669,7 +2293,10 @@ const ITEMS = {
         name: "Lucky Egg",
         calcName: "Lucky Egg",
         desc: "A held item that causes the Pokémon to gain 50% more experience.",
-        search: false
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
+        search: true
     },
     scopelens: {
         num: 232,
@@ -1677,6 +2304,9 @@ const ITEMS = {
         name: "Scope Lens",
         calcName: "Scope Lens",
         desc: "A held item that raises the Pokémon's critical hit ratio by 1 stage.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     metalcoat: {
@@ -1685,6 +2315,9 @@ const ITEMS = {
         name: "Metal Coat",
         calcName: "Metal Coat",
         desc: "A held item that increases the power of <span data-target=\"type/steel\">Steel</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     leftovers: {
@@ -1693,6 +2326,9 @@ const ITEMS = {
         name: "Leftovers",
         calcName: "Leftovers",
         desc: "A held item that heals the user by 1/16 of its total HP at the end of every turn.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     dragonscale: {
@@ -1701,6 +2337,9 @@ const ITEMS = {
         name: "Dragon Scale",
         calcName: "Dragon Scale",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     lightball: {
@@ -1709,6 +2348,9 @@ const ITEMS = {
         name: "Light Ball",
         calcName: "Light Ball",
         desc: "Can be held by <span data-target=\"species/pikachu\">Pikachu</span> to increase the power of its moves by 100%.",
+        pluck: "None",
+        fling: ["Causes Paralysis", 30],
+        naturalGift: [0, -1],
         search: true
     },
     softsand: {
@@ -1717,6 +2359,9 @@ const ITEMS = {
         name: "Soft Sand",
         calcName: "Soft Sand",
         desc: "A held item that increases the power of <span data-target=\"type/ground\">Ground</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     hardstone: {
@@ -1725,6 +2370,9 @@ const ITEMS = {
         name: "Hard Stone",
         calcName: "Hard Stone",
         desc: "A held item that increases the power of <span data-target=\"type/rock\">Rock</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 100],
+        naturalGift: [0, -1],
         search: true
     },
     miracleseed: {
@@ -1733,6 +2381,9 @@ const ITEMS = {
         name: "Miracle Seed",
         calcName: "Miracle Seed",
         desc: "A held item that increases the power of <span data-target=\"type/grass\">Grass</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     blackglasses: {
@@ -1741,6 +2392,9 @@ const ITEMS = {
         name: "BlackGlasses",
         calcName: "Black Glasses",
         desc: "A held item that increases the power of <span data-target=\"type/dark\">Dark</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     blackbelt: {
@@ -1749,6 +2403,9 @@ const ITEMS = {
         name: "Black Belt",
         calcName: "Black Belt",
         desc: "A held item that increases the power of <span data-target=\"type/fighting\">Fighting</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     magnet: {
@@ -1757,6 +2414,9 @@ const ITEMS = {
         name: "Magnet",
         calcName: "Magnet",
         desc: "A held item that increases the power of <span data-target=\"type/electric\">Electric</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     mysticwater: {
@@ -1765,6 +2425,9 @@ const ITEMS = {
         name: "Mystic Water",
         calcName: "Mystic Water",
         desc: "A held item that increases the power of <span data-target=\"type/water\">Water</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     sharpbeak: {
@@ -1773,6 +2436,9 @@ const ITEMS = {
         name: "Sharp Beak",
         calcName: "Sharp Beak",
         desc: "A held item that increases the power of <span data-target=\"type/flying\">Flying</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 50],
+        naturalGift: [0, -1],
         search: true
     },
     poisonbarb: {
@@ -1781,6 +2447,9 @@ const ITEMS = {
         name: "Poison Barb",
         calcName: "Poison Barb",
         desc: "A held item that increases the power of <span data-target=\"type/poison\">Poison</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["Causes Poison", 70],
+        naturalGift: [0, -1],
         search: true
     },
     nevermeltice: {
@@ -1789,6 +2458,9 @@ const ITEMS = {
         name: "NeverMeltIce",
         calcName: "Never-Melt Ice",
         desc: "A held item that increases the power of <span data-target=\"type/ice\">Ice</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     spelltag: {
@@ -1797,6 +2469,9 @@ const ITEMS = {
         name: "Spell Tag",
         calcName: "Spell Tag",
         desc: "A held item that increases the power of <span data-target=\"type/ghost\">Ghost</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     twistedspoon: {
@@ -1805,6 +2480,9 @@ const ITEMS = {
         name: "TwistedSpoon",
         calcName: "Twisted Spoon",
         desc: "A held item that increases the power of <span data-target=\"type/psychic\">Psychic</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     charcoal: {
@@ -1813,6 +2491,9 @@ const ITEMS = {
         name: "Charcoal",
         calcName: "Charcoal",
         desc: "A held item that increases the power of <span data-target=\"type/fire\">Fire</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     dragonfang: {
@@ -1821,6 +2502,9 @@ const ITEMS = {
         name: "Dragon Fang",
         calcName: "Dragon Fang",
         desc: "A held item that increases the power of <span data-target=\"type/dragon\">Dragon</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 70],
+        naturalGift: [0, -1],
         search: true
     },
     silkscarf: {
@@ -1829,6 +2513,9 @@ const ITEMS = {
         name: "Silk Scarf",
         calcName: "Silk Scarf",
         desc: "A held item that increases the power of <span data-target=\"type/normal\">Normal</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     upgrade: {
@@ -1837,6 +2524,9 @@ const ITEMS = {
         name: "Up-Grade",
         calcName: "Up-Grade",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     shellbell: {
@@ -1845,6 +2535,9 @@ const ITEMS = {
         name: "Shell Bell",
         calcName: "Shell Bell",
         desc: "A held item that heals the Pokémon by 1/8 of any damage it deals.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     seaincense: {
@@ -1853,6 +2546,9 @@ const ITEMS = {
         name: "Sea Incense",
         calcName: "Sea Incense",
         desc: "A held item that increases the power of <span data-target=\"type/water\">Water</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     laxincense: {
@@ -1861,6 +2557,9 @@ const ITEMS = {
         name: "Lax Incense",
         calcName: "Lax Incense",
         desc: "A held item that decreases the accuracy of moves targeting the holder by 11%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     luckypunch: {
@@ -1869,6 +2568,9 @@ const ITEMS = {
         name: "Lucky Punch",
         calcName: "Lucky Punch",
         desc: "Can be held by <span data-target=\"species/chansey\">Chansey</span> to raise its critical hit ratio by 2 stages.",
+        pluck: "None",
+        fling: ["None", 40],
+        naturalGift: [0, -1],
         search: true
     },
     metalpowder: {
@@ -1877,6 +2579,9 @@ const ITEMS = {
         name: "Metal Powder",
         calcName: "Metal Powder",
         desc: "Can be held by <span data-target=\"species/ditto\">Ditto</span> to increase its Defense stat by 100%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     thickclub: {
@@ -1885,6 +2590,9 @@ const ITEMS = {
         name: "Thick Club",
         calcName: "Thick Club",
         desc: "Can be held by <span data-target=\"species/cubone\">Cubone</span> or <span data-target=\"species/marowak\">Marowak</span> to increase their Attack stat by 100%.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     leek: {
@@ -1893,6 +2601,9 @@ const ITEMS = {
         name: "Leek",
         calcName: "Leek",
         desc: "Can be held by <span data-target=\"species/farfetchd\">Farfetch’d</span> to raise its critical hit ratio by 2 stages.",
+        pluck: "None",
+        fling: ["None", 60],
+        naturalGift: [0, -1],
         search: true
     },
     redscarf: {
@@ -1901,7 +2612,10 @@ const ITEMS = {
         name: "Red Scarf",
         calcName: "Red Scarf",
         desc: "A held item that raises the Pokémon's Coolness stat in the first round of a Super Contest.",
-        search: false
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
+        search: true
     },
     bluescarf: {
         num: 261,
@@ -1909,7 +2623,10 @@ const ITEMS = {
         name: "Blue Scarf",
         calcName: "Blue Scarf",
         desc: "A held item that raises the Pokémon's Beauty stat in the first round of a Super Contest.",
-        search: false
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
+        search: true
     },
     pinkscarf: {
         num: 262,
@@ -1917,7 +2634,10 @@ const ITEMS = {
         name: "Pink Scarf",
         calcName: "Pink Scarf",
         desc: "A held item that raises the Pokémon's Cuteness stat in the first round of a Super Contest.",
-        search: false
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
+        search: true
     },
     greenscarf: {
         num: 263,
@@ -1925,7 +2645,10 @@ const ITEMS = {
         name: "Green Scarf",
         calcName: "Green Scarf",
         desc: "A held item that raises the Pokémon's Cleverness stat in the first round of a Super Contest.",
-        search: false
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
+        search: true
     },
     yellowscarf: {
         num: 264,
@@ -1933,7 +2656,10 @@ const ITEMS = {
         name: "Yellow Scarf",
         calcName: "Yellow Scarf",
         desc: "A held item that raises the Pokémon's Toughness stat in the first round of a Super Contest.",
-        search: false
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
+        search: true
     },
     widelens: {
         num: 265,
@@ -1941,6 +2667,9 @@ const ITEMS = {
         name: "Wide Lens",
         calcName: "Wide Lens",
         desc: "A held item that increases the accuracy of the Pokémon's moves by 10%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     muscleband: {
@@ -1949,6 +2678,9 @@ const ITEMS = {
         name: "Muscle Band",
         calcName: "Muscle Band",
         desc: "A held item that increases the power of <span data-target=\"category/physical\">Physical</span> moves by 10%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     wiseglasses: {
@@ -1957,6 +2689,9 @@ const ITEMS = {
         name: "Wise Glasses",
         calcName: "Wise Glasses",
         desc: "A held item that increases the power of <span data-target=\"category/special\">Special</span> moves by 10%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     expertbelt: {
@@ -1965,6 +2700,9 @@ const ITEMS = {
         name: "Expert Belt",
         calcName: "Expert Belt",
         desc: "A held item that increases the power of Super-Effective moves by 20%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     lightclay: {
@@ -1973,6 +2711,9 @@ const ITEMS = {
         name: "Light Clay",
         calcName: "Light Clay",
         desc: "A held item that increases the duration of <span data-target=\"move/reflect\">Reflect</span> and <span data-target=\"move/lightscreen\">Light Screen</span> to 8 turns.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     lifeorb: {
@@ -1981,6 +2722,9 @@ const ITEMS = {
         name: "Life Orb",
         calcName: "Life Orb",
         desc: "A held item that increases the power of the Pokémon's moves by 30%, but damages it by 10% of its total HP at the end of every turn.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     powerherb: {
@@ -1989,6 +2733,9 @@ const ITEMS = {
         name: "Power Herb",
         calcName: "Power Herb",
         desc: "A consumable held item that causes the Pokémon to skip the charging turn of a move that would otherwise have one.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     toxicorb: {
@@ -1997,6 +2744,9 @@ const ITEMS = {
         name: "Toxic Orb",
         calcName: "Toxic Orb",
         desc: "A held item that badly poisons the Pokémon at the end of the turn.",
+        pluck: "None",
+        fling: ["Causes Toxic Poison", 30],
+        naturalGift: [0, -1],
         search: true
     },
     flameorb: {
@@ -2005,6 +2755,9 @@ const ITEMS = {
         name: "Flame Orb",
         calcName: "Flame Orb",
         desc: "A held item that burns the Pokémon at the end of the turn.",
+        pluck: "None",
+        fling: ["Causes Burn", 30],
+        naturalGift: [0, -1],
         search: true
     },
     quickpowder: {
@@ -2013,6 +2766,9 @@ const ITEMS = {
         name: "Quick Powder",
         calcName: "Quick Powder",
         desc: "Can be held by <span data-target=\"species/ditto\">Ditto</span> to increase its Speed stat by 100%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     focussash: {
@@ -2021,6 +2777,9 @@ const ITEMS = {
         name: "Focus Sash",
         calcName: "Focus Sash",
         desc: "A consumable held item that allows the Pokémon to survive a fatal attack from full HP with 1 HP.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     zoomlens: {
@@ -2029,6 +2788,9 @@ const ITEMS = {
         name: "Zoom Lens",
         calcName: "Zoom Lens",
         desc: "A held item that increases the accuracy of the Pokémon's moves by 20% against targets that already used a move.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     metronome: {
@@ -2037,6 +2799,9 @@ const ITEMS = {
         name: "Metronome",
         calcName: "Metronome",
         desc: "A held item that increases the power of a Pokémon's move by 10% for every consecutive turn where it is used, up to a maximum of 100%.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     ironball: {
@@ -2045,6 +2810,9 @@ const ITEMS = {
         name: "Iron Ball",
         calcName: "Iron Ball",
         desc: "A held item that halves the Pokémon's Speed stat, and grounds it.",
+        pluck: "None",
+        fling: ["None", 130],
+        naturalGift: [0, -1],
         search: true
     },
     laggingtail: {
@@ -2053,6 +2821,9 @@ const ITEMS = {
         name: "Lagging Tail",
         calcName: "Lagging Tail",
         desc: "A held item that causes the Pokémon's moves to move last in their priority bracket.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     destinyknot: {
@@ -2061,6 +2832,9 @@ const ITEMS = {
         name: "Destiny Knot",
         calcName: "Destiny Knot",
         desc: "A held item that causes a Pokémon that infatuates the holder to also become infatuated.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     blacksludge: {
@@ -2069,6 +2843,9 @@ const ITEMS = {
         name: "Black Sludge",
         calcName: "Black Sludge",
         desc: "A held item that heals <span data-target=\"type/poison\">Poison</span> type Pokémon by 1/16 of their total HP at the end of every turn, but damages non-<span data-target=\"type/poison\">Poison</span> type Pokémon by 1/8 of their total HP at the end of every turn.",
+        pluck: "None",
+        fling: ["None", 30],
+        naturalGift: [0, -1],
         search: true
     },
     icyrock: {
@@ -2077,6 +2854,9 @@ const ITEMS = {
         name: "Icy Rock",
         calcName: "Icy Rock",
         desc: "A held item that increases the duration of hail to 12 turns.",
+        pluck: "None",
+        fling: ["None", 40],
+        naturalGift: [0, -1],
         search: true
     },
     smoothrock: {
@@ -2085,6 +2865,9 @@ const ITEMS = {
         name: "Smooth Rock",
         calcName: "Smooth Rock",
         desc: "A held item that increases the duration of sandstorm to 12 turns.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     heatrock: {
@@ -2093,6 +2876,9 @@ const ITEMS = {
         name: "Heat Rock",
         calcName: "Heat Rock",
         desc: "A held item that increases the duration of sun to 12 turns.",
+        pluck: "None",
+        fling: ["None", 60],
+        naturalGift: [0, -1],
         search: true
     },
     damprock: {
@@ -2101,6 +2887,9 @@ const ITEMS = {
         name: "Damp Rock",
         calcName: "Damp Rock",
         desc: "A held item that increases the duration of rain to 12 turns.",
+        pluck: "None",
+        fling: ["None", 60],
+        naturalGift: [0, -1],
         search: true
     },
     gripclaw: {
@@ -2109,6 +2898,9 @@ const ITEMS = {
         name: "Grip Claw",
         calcName: "Grip Claw",
         desc: "A held item that causes binding moves to last for 5 turns.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     choicescarf: {
@@ -2117,6 +2909,9 @@ const ITEMS = {
         name: "Choice Scarf",
         calcName: "Choice Scarf",
         desc: "A held item that increases the Speed stat of the Pokémon by 50%, but locks it into only being able to use the first move it used.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     stickybarb: {
@@ -2125,6 +2920,9 @@ const ITEMS = {
         name: "Sticky Barb",
         calcName: "Sticky Barb",
         desc: "A held item that damages the Pokémon by 12.5% of its total HP at the end of every turn, and transfers to any other Pokémon that attacks the holder with a contact move and is not holding an item.",
+        pluck: "None",
+        fling: ["None", 80],
+        naturalGift: [0, -1],
         search: true
     },
     powerbracer: {
@@ -2133,6 +2931,9 @@ const ITEMS = {
         name: "Power Bracer",
         calcName: "Power Bracer",
         desc: "A held item that halves the Pokémon's Speed stat.",
+        pluck: "None",
+        fling: ["None", 70],
+        naturalGift: [0, -1],
         search: true
     },
     powerbelt: {
@@ -2141,6 +2942,9 @@ const ITEMS = {
         name: "Power Belt",
         calcName: "Power Belt",
         desc: "A held item that halves the Pokémon's Speed stat.",
+        pluck: "None",
+        fling: ["None", 70],
+        naturalGift: [0, -1],
         search: true
     },
     powerlens: {
@@ -2149,6 +2953,9 @@ const ITEMS = {
         name: "Power Lens",
         calcName: "Power Lens",
         desc: "A held item that halves the Pokémon's Speed stat.",
+        pluck: "None",
+        fling: ["None", 70],
+        naturalGift: [0, -1],
         search: true
     },
     powerband: {
@@ -2157,6 +2964,9 @@ const ITEMS = {
         name: "Power Band",
         calcName: "Power Band",
         desc: "A held item that halves the Pokémon's Speed stat.",
+        pluck: "None",
+        fling: ["None", 70],
+        naturalGift: [0, -1],
         search: true
     },
     poweranklet: {
@@ -2165,6 +2975,9 @@ const ITEMS = {
         name: "Power Anklet",
         calcName: "Power Anklet",
         desc: "A held item that halves the Pokémon's Speed stat.",
+        pluck: "None",
+        fling: ["None", 70],
+        naturalGift: [0, -1],
         search: true
     },
     powerweight: {
@@ -2173,6 +2986,9 @@ const ITEMS = {
         name: "Power Weight",
         calcName: "Power Weight",
         desc: "A held item that halves the Pokémon's Speed stat.",
+        pluck: "None",
+        fling: ["None", 70],
+        naturalGift: [0, -1],
         search: true
     },
     shedshell: {
@@ -2181,6 +2997,9 @@ const ITEMS = {
         name: "Shed Shell",
         calcName: "Shed Shell",
         desc: "A held item that allows the Pokémon to flee or use <span data-target=\"move/teleport\">Teleport</span> even if trapped.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     bigroot: {
@@ -2189,6 +3008,9 @@ const ITEMS = {
         name: "Big Root",
         calcName: "Big Root",
         desc: "A held item that increases the healing the Pokémon gets from draining moves by 30%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     choicespecs: {
@@ -2197,6 +3019,9 @@ const ITEMS = {
         name: "Choice Specs",
         calcName: "Choice Specs",
         desc: "A held item that increases the Special Attack stat of the Pokémon by 50%, but locks it into only being able to use the first move it used.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     flameplate: {
@@ -2205,6 +3030,9 @@ const ITEMS = {
         name: "Flame Plate",
         calcName: "Flame Plate",
         desc: "A held item that increases the power of <span data-target=\"type/fire\">Fire</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/fire\">Fire</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     splashplate: {
@@ -2213,6 +3041,9 @@ const ITEMS = {
         name: "Splash Plate",
         calcName: "Splash Plate",
         desc: "A held item that increases the power of <span data-target=\"type/water\">Water</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/water\">Water</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     zapplate: {
@@ -2221,6 +3052,9 @@ const ITEMS = {
         name: "Zap Plate",
         calcName: "Zap Plate",
         desc: "A held item that increases the power of <span data-target=\"type/electric\">Electric</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/electric\">Electric</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     meadowplate: {
@@ -2229,6 +3063,9 @@ const ITEMS = {
         name: "Meadow Plate",
         calcName: "Meadow Plate",
         desc: "A held item that increases the power of <span data-target=\"type/grass\">Grass</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/grass\">Grass</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     icicleplate: {
@@ -2237,6 +3074,9 @@ const ITEMS = {
         name: "Icicle Plate",
         calcName: "Icicle Plate",
         desc: "A held item that increases the power of <span data-target=\"type/ice\">Ice</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/ice\">Ice</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     fistplate: {
@@ -2245,6 +3085,9 @@ const ITEMS = {
         name: "Fist Plate",
         calcName: "Fist Plate",
         desc: "A held item that increases the power of <span data-target=\"type/fighting\">Fighting</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/fighting\">Fighting</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     toxicplate: {
@@ -2253,6 +3096,9 @@ const ITEMS = {
         name: "Toxic Plate",
         calcName: "Toxic Plate",
         desc: "A held item that increases the power of <span data-target=\"type/poison\">Poison</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/poison\">Poison</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     earthplate: {
@@ -2261,6 +3107,9 @@ const ITEMS = {
         name: "Earth Plate",
         calcName: "Earth Plate",
         desc: "A held item that increases the power of <span data-target=\"type/ground\">Ground</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/ground\">Ground</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     skyplate: {
@@ -2269,6 +3118,9 @@ const ITEMS = {
         name: "Sky Plate",
         calcName: "Sky Plate",
         desc: "A held item that increases the power of <span data-target=\"type/flying\">Flying</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/flying\">Flying</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     mindplate: {
@@ -2277,6 +3129,9 @@ const ITEMS = {
         name: "Mind Plate",
         calcName: "Mind Plate",
         desc: "A held item that increases the power of <span data-target=\"type/psychic\">Psychic</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/psychic\">Psychic</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     insectplate: {
@@ -2285,6 +3140,9 @@ const ITEMS = {
         name: "Insect Plate",
         calcName: "Insect Plate",
         desc: "A held item that increases the power of <span data-target=\"type/bug\">Bug</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/bug\">Bug</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     stoneplate: {
@@ -2293,6 +3151,9 @@ const ITEMS = {
         name: "Stone Plate",
         calcName: "Stone Plate",
         desc: "A held item that increases the power of <span data-target=\"type/rock\">Rock</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/rock\">Rock</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     spookyplate: {
@@ -2301,6 +3162,9 @@ const ITEMS = {
         name: "Spooky Plate",
         calcName: "Spooky Plate",
         desc: "A held item that increases the power of <span data-target=\"type/ghost\">Ghost</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/ghost\">Ghost</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     dracoplate: {
@@ -2309,6 +3173,9 @@ const ITEMS = {
         name: "Draco Plate",
         calcName: "Draco Plate",
         desc: "A held item that increases the power of <span data-target=\"type/dragon\">Dragon</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/dragon\">Dragon</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     dreadplate: {
@@ -2317,6 +3184,9 @@ const ITEMS = {
         name: "Dread Plate",
         calcName: "Dread Plate",
         desc: "A held item that increases the power of <span data-target=\"type/dark\">Dark</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/dark\">Dark</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     ironplate: {
@@ -2325,6 +3195,9 @@ const ITEMS = {
         name: "Iron Plate",
         calcName: "Iron Plate",
         desc: "A held item that increases the power of <span data-target=\"type/steel\">Steel</span> type moves by 50%. Can be held by <span data-target=\"species/arceus\">Arceus</span> to change its type and the type of its <span data-target=\"move/judgement\">Judgement</span> to the <span data-target=\"type/steel\">Steel</span> type.",
+        pluck: "None",
+        fling: ["None", 90],
+        naturalGift: [0, -1],
         search: true
     },
     oddincense: {
@@ -2333,6 +3206,9 @@ const ITEMS = {
         name: "Odd Incense",
         calcName: "Odd Incense",
         desc: "A held item that increases the power of <span data-target=\"type/psychic\">Psychic</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     rockincense: {
@@ -2341,6 +3217,9 @@ const ITEMS = {
         name: "Rock Incense",
         calcName: "Rock Incense",
         desc: "A held item that increases the power of <span data-target=\"type/rock\">Rock</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     fullincense: {
@@ -2349,6 +3228,9 @@ const ITEMS = {
         name: "Full Incense",
         calcName: "Full Incense",
         desc: "A held item that causes the Pokémon's moves to move last in their priority bracket.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     waveincense: {
@@ -2357,6 +3239,9 @@ const ITEMS = {
         name: "Wave Incense",
         calcName: "Wave Incense",
         desc: "A held item that increases the power of <span data-target=\"type/water\">Water</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     roseincense: {
@@ -2365,6 +3250,9 @@ const ITEMS = {
         name: "Rose Incense",
         calcName: "Rose Incense",
         desc: "A held item that increases the power of <span data-target=\"type/grass\">Grass</span> type moves by 20%.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     luckincense: {
@@ -2373,7 +3261,10 @@ const ITEMS = {
         name: "Luck Incense",
         calcName: "Luck Incense",
         desc: "A held item that doubles the amount of money obtained after winning a trainer battle, if the Pokémon took part in the battle.",
-        search: false
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
+        search: true
     },
     pureincense: {
         num: 320,
@@ -2381,7 +3272,10 @@ const ITEMS = {
         name: "Pure Incense",
         calcName: "Pure Incense",
         desc: "A held item that decreases wild Pokémon encounter rates by 33%, if the Pokémon is the first member of the party.",
-        search: false
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
+        search: true
     },
     protector: {
         num: 321,
@@ -2389,6 +3283,9 @@ const ITEMS = {
         name: "Protector",
         calcName: "Protector",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 80],
+        naturalGift: [0, -1],
         search: true
     },
     electirizer: {
@@ -2397,6 +3294,9 @@ const ITEMS = {
         name: "Electirizer",
         calcName: "Electirizer",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 80],
+        naturalGift: [0, -1],
         search: true
     },
     magmarizer: {
@@ -2405,6 +3305,9 @@ const ITEMS = {
         name: "Magmarizer",
         calcName: "Magmarizer",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 80],
+        naturalGift: [0, -1],
         search: true
     },
     dubiousdisc: {
@@ -2413,6 +3316,9 @@ const ITEMS = {
         name: "Dubious Disc",
         calcName: "Dubious Disc",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 50],
+        naturalGift: [0, -1],
         search: true
     },
     reapercloth: {
@@ -2421,6 +3327,9 @@ const ITEMS = {
         name: "Reaper Cloth",
         calcName: "Reaper Cloth",
         desc: "Used to evolve certain Pokémon.",
+        pluck: "None",
+        fling: ["None", 10],
+        naturalGift: [0, -1],
         search: true
     },
     razorclaw: {
@@ -2429,6 +3338,9 @@ const ITEMS = {
         name: "Razor Claw",
         calcName: "Razor Claw",
         desc: "A held item that raises the Pokémon's critical hit ratio by 1 stage.",
+        pluck: "None",
+        fling: ["None", 80],
+        naturalGift: [0, -1],
         search: true
     },
     razorfang: {
@@ -2437,6 +3349,9 @@ const ITEMS = {
         name: "Razor Fang",
         calcName: "Razor Fang",
         desc: "A held item that gives certain moves a 10% chance to flinch.",
+        pluck: "None",
+        fling: ["Causes flinch", 30],
+        naturalGift: [0, -1],
         search: true
     },
     tm01: {
@@ -2445,6 +3360,9 @@ const ITEMS = {
         name: "TM01",
         calcName: "TM01",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/focuspunch\">Focus Punch</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm02: {
@@ -2453,6 +3371,9 @@ const ITEMS = {
         name: "TM02",
         calcName: "TM02",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/dragonclaw\">Dragon Claw</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm03: {
@@ -2461,6 +3382,9 @@ const ITEMS = {
         name: "TM03",
         calcName: "TM03",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/waterpulse\">Water Pulse</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm04: {
@@ -2469,6 +3393,9 @@ const ITEMS = {
         name: "TM04",
         calcName: "TM04",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/calmmind\">Calm Mind</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm05: {
@@ -2477,6 +3404,9 @@ const ITEMS = {
         name: "TM05",
         calcName: "TM05",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/roar\">Roar</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm06: {
@@ -2485,6 +3415,9 @@ const ITEMS = {
         name: "TM06",
         calcName: "TM06",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/toxic\">Toxic</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm07: {
@@ -2493,6 +3426,9 @@ const ITEMS = {
         name: "TM07",
         calcName: "TM07",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/aurorabeam\">Aurora Beam</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm08: {
@@ -2501,6 +3437,9 @@ const ITEMS = {
         name: "TM08",
         calcName: "TM08",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/vitalthrow\">Vital Throw</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm09: {
@@ -2509,6 +3448,9 @@ const ITEMS = {
         name: "TM09",
         calcName: "TM09",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/bulletseed\">Bullet Seed</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm10: {
@@ -2517,6 +3459,9 @@ const ITEMS = {
         name: "TM10",
         calcName: "TM10",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/hiddenpower\">Hidden Power</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm11: {
@@ -2525,6 +3470,9 @@ const ITEMS = {
         name: "TM11",
         calcName: "TM11",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/sunnyday\">Sunny Day</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm12: {
@@ -2533,6 +3481,9 @@ const ITEMS = {
         name: "TM12",
         calcName: "TM12",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/faintattack\">Faint Attack</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm13: {
@@ -2541,6 +3492,9 @@ const ITEMS = {
         name: "TM13",
         calcName: "TM13",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/icebeam\">Ice Beam</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm14: {
@@ -2549,6 +3503,9 @@ const ITEMS = {
         name: "TM14",
         calcName: "TM14",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/blizzard\">Blizzard</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm15: {
@@ -2557,6 +3514,9 @@ const ITEMS = {
         name: "TM15",
         calcName: "TM15",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/snore\">Snore</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm16: {
@@ -2565,6 +3525,9 @@ const ITEMS = {
         name: "TM16",
         calcName: "TM16",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/lightscreen\">Light Screen</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm17: {
@@ -2573,6 +3536,9 @@ const ITEMS = {
         name: "TM17",
         calcName: "TM17",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/tackle\">Tackle</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm18: {
@@ -2581,6 +3547,9 @@ const ITEMS = {
         name: "TM18",
         calcName: "TM18",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/raindance\">Rain Dance</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm19: {
@@ -2589,6 +3558,9 @@ const ITEMS = {
         name: "TM19",
         calcName: "TM19",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/gigadrain\">Giga Drain</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm20: {
@@ -2597,6 +3569,9 @@ const ITEMS = {
         name: "TM20",
         calcName: "TM20",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/safeguard\">Safeguard</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm21: {
@@ -2605,6 +3580,9 @@ const ITEMS = {
         name: "TM21",
         calcName: "TM21",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/frustration\">Frustration</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm22: {
@@ -2613,6 +3591,9 @@ const ITEMS = {
         name: "TM22",
         calcName: "TM22",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/solarbeam\">SolarBeam</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm23: {
@@ -2621,6 +3602,9 @@ const ITEMS = {
         name: "TM23",
         calcName: "TM23",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/irontail\">Iron Tail</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm24: {
@@ -2629,6 +3613,9 @@ const ITEMS = {
         name: "TM24",
         calcName: "TM24",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/thunderbolt\">Thunderbolt</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm25: {
@@ -2637,6 +3624,9 @@ const ITEMS = {
         name: "TM25",
         calcName: "TM25",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/thunder\">Thunder</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm26: {
@@ -2645,6 +3635,9 @@ const ITEMS = {
         name: "TM26",
         calcName: "TM26",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/earthquake\">Earthquake</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm27: {
@@ -2653,6 +3646,9 @@ const ITEMS = {
         name: "TM27",
         calcName: "TM27",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/return\">Return</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm28: {
@@ -2661,6 +3657,9 @@ const ITEMS = {
         name: "TM28",
         calcName: "TM28",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/dig\">Dig</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm29: {
@@ -2669,6 +3668,9 @@ const ITEMS = {
         name: "TM29",
         calcName: "TM29",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/psychic\">Psychic</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm30: {
@@ -2677,6 +3679,9 @@ const ITEMS = {
         name: "TM30",
         calcName: "TM30",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/shadowball\">Shadow Ball</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm31: {
@@ -2685,6 +3690,9 @@ const ITEMS = {
         name: "TM31",
         calcName: "TM31",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/brickbreak\">Brick Break</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm32: {
@@ -2693,6 +3701,9 @@ const ITEMS = {
         name: "TM32",
         calcName: "TM32",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/doubleteam\">Double Team</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm33: {
@@ -2701,6 +3712,9 @@ const ITEMS = {
         name: "TM33",
         calcName: "TM33",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/reflect\">Reflect</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm34: {
@@ -2709,6 +3723,9 @@ const ITEMS = {
         name: "TM34",
         calcName: "TM34",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/shockwave\">Shock Wave</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm35: {
@@ -2717,6 +3734,9 @@ const ITEMS = {
         name: "TM35",
         calcName: "TM35",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/flamethrower\">Flamethrower</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm36: {
@@ -2725,6 +3745,9 @@ const ITEMS = {
         name: "TM36",
         calcName: "TM36",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/sludgebomb\">Sludge Bomb</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm37: {
@@ -2733,6 +3756,9 @@ const ITEMS = {
         name: "TM37",
         calcName: "TM37",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/sandstorm\">Sandstorm</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm38: {
@@ -2741,6 +3767,9 @@ const ITEMS = {
         name: "TM38",
         calcName: "TM38",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/fireblast\">Fire Blast</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm39: {
@@ -2749,6 +3778,9 @@ const ITEMS = {
         name: "TM39",
         calcName: "TM39",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/rocktomb\">Rock Tomb</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm40: {
@@ -2757,6 +3789,9 @@ const ITEMS = {
         name: "TM40",
         calcName: "TM40",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/aerialace\">Aerial Ace</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm41: {
@@ -2765,6 +3800,9 @@ const ITEMS = {
         name: "TM41",
         calcName: "TM41",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/torment\">Torment</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm42: {
@@ -2773,6 +3811,9 @@ const ITEMS = {
         name: "TM42",
         calcName: "TM42",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/facade\">Facade</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm43: {
@@ -2781,6 +3822,9 @@ const ITEMS = {
         name: "TM43",
         calcName: "TM43",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/secretpower\">Secret Power</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm44: {
@@ -2789,6 +3833,9 @@ const ITEMS = {
         name: "TM44",
         calcName: "TM44",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/rest\">Rest</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm45: {
@@ -2797,6 +3844,9 @@ const ITEMS = {
         name: "TM45",
         calcName: "TM45",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/attract\">Attract</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm46: {
@@ -2805,6 +3855,9 @@ const ITEMS = {
         name: "TM46",
         calcName: "TM46",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/thief\">Thief</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm47: {
@@ -2813,6 +3866,9 @@ const ITEMS = {
         name: "TM47",
         calcName: "TM47",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/steelwing\">Steel Wing</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm48: {
@@ -2821,6 +3877,9 @@ const ITEMS = {
         name: "TM48",
         calcName: "TM48",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/skillswap\">Skill Swap</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm49: {
@@ -2829,6 +3888,9 @@ const ITEMS = {
         name: "TM49",
         calcName: "TM49",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/drillrun\">Drill Run</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm50: {
@@ -2837,6 +3899,9 @@ const ITEMS = {
         name: "TM50",
         calcName: "TM50",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/overheat\">Overheat</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm51: {
@@ -2845,6 +3910,9 @@ const ITEMS = {
         name: "TM51",
         calcName: "TM51",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/roost\">Roost</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm52: {
@@ -2853,6 +3921,9 @@ const ITEMS = {
         name: "TM52",
         calcName: "TM52",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/focusblast\">Focus Blast</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm53: {
@@ -2861,6 +3932,9 @@ const ITEMS = {
         name: "TM53",
         calcName: "TM53",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/energyball\">Energy Ball</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm54: {
@@ -2869,6 +3943,9 @@ const ITEMS = {
         name: "TM54",
         calcName: "TM54",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/falseswipe\">False Swipe</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm55: {
@@ -2877,6 +3954,9 @@ const ITEMS = {
         name: "TM55",
         calcName: "TM55",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/brine\">Brine</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm56: {
@@ -2885,6 +3965,9 @@ const ITEMS = {
         name: "TM56",
         calcName: "TM56",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/fling\">Fling</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm57: {
@@ -2893,6 +3976,9 @@ const ITEMS = {
         name: "TM57",
         calcName: "TM57",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/chargebeam\">Charge Beam</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm58: {
@@ -2901,6 +3987,9 @@ const ITEMS = {
         name: "TM58",
         calcName: "TM58",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/endure\">Endure</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm59: {
@@ -2909,6 +3998,9 @@ const ITEMS = {
         name: "TM59",
         calcName: "TM59",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/dragonpulse\">Dragon Pulse</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm60: {
@@ -2917,6 +4009,9 @@ const ITEMS = {
         name: "TM60",
         calcName: "TM60",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/drainpunch\">Drain Punch</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm61: {
@@ -2925,6 +4020,9 @@ const ITEMS = {
         name: "TM61",
         calcName: "TM61",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/willowisp\">Will-O-Wisp</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm62: {
@@ -2933,6 +4031,9 @@ const ITEMS = {
         name: "TM62",
         calcName: "TM62",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/silverwind\">Silver Wind</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm63: {
@@ -2941,6 +4042,9 @@ const ITEMS = {
         name: "TM63",
         calcName: "TM63",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/embargo\">Embargo</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm64: {
@@ -2949,6 +4053,9 @@ const ITEMS = {
         name: "TM64",
         calcName: "TM64",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/explosion\">Explosion</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm65: {
@@ -2957,6 +4064,9 @@ const ITEMS = {
         name: "TM65",
         calcName: "TM65",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/shadowclaw\">Shadow Claw</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm66: {
@@ -2965,6 +4075,9 @@ const ITEMS = {
         name: "TM66",
         calcName: "TM66",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/payback\">Payback</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm67: {
@@ -2973,6 +4086,9 @@ const ITEMS = {
         name: "TM67",
         calcName: "TM67",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/recycle\">Recycle</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm68: {
@@ -2981,6 +4097,9 @@ const ITEMS = {
         name: "TM68",
         calcName: "TM68",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/gigaimpact\">Giga Impact</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm69: {
@@ -2989,6 +4108,9 @@ const ITEMS = {
         name: "TM69",
         calcName: "TM69",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/rockpolish\">Rock Polish</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm70: {
@@ -2997,6 +4119,9 @@ const ITEMS = {
         name: "TM70",
         calcName: "TM70",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/flash\">Flash</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm71: {
@@ -3005,6 +4130,9 @@ const ITEMS = {
         name: "TM71",
         calcName: "TM71",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/stoneedge\">Stone Edge</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm72: {
@@ -3013,6 +4141,9 @@ const ITEMS = {
         name: "TM72",
         calcName: "TM72",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/avalanche\">Avalanche</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm73: {
@@ -3021,6 +4152,9 @@ const ITEMS = {
         name: "TM73",
         calcName: "TM73",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/thunderwave\">Thunder Wave</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm74: {
@@ -3029,6 +4163,9 @@ const ITEMS = {
         name: "TM74",
         calcName: "TM74",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/gyroball\">Gyro Ball</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm75: {
@@ -3037,6 +4174,9 @@ const ITEMS = {
         name: "TM75",
         calcName: "TM75",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/swordsdance\">Swords Dance</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm76: {
@@ -3045,6 +4185,9 @@ const ITEMS = {
         name: "TM76",
         calcName: "TM76",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/stealthrock\">Stealth Rock</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm77: {
@@ -3053,6 +4196,9 @@ const ITEMS = {
         name: "TM77",
         calcName: "TM77",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/psychup\">Psych Up</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm78: {
@@ -3061,6 +4207,9 @@ const ITEMS = {
         name: "TM78",
         calcName: "TM78",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/captivate\">Captivate</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm79: {
@@ -3069,6 +4218,9 @@ const ITEMS = {
         name: "TM79",
         calcName: "TM79",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/darkpulse\">Dark Pulse</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm80: {
@@ -3077,6 +4229,9 @@ const ITEMS = {
         name: "TM80",
         calcName: "TM80",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/rockslide\">Rock Slide</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm81: {
@@ -3085,6 +4240,9 @@ const ITEMS = {
         name: "TM81",
         calcName: "TM81",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/xscissor\">X-Scissor</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm82: {
@@ -3093,6 +4251,9 @@ const ITEMS = {
         name: "TM82",
         calcName: "TM82",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/sleeptalk\">Sleep Talk</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm83: {
@@ -3101,6 +4262,9 @@ const ITEMS = {
         name: "TM83",
         calcName: "TM83",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/naturalgift\">Natural Gift</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm84: {
@@ -3109,6 +4273,9 @@ const ITEMS = {
         name: "TM84",
         calcName: "TM84",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/poisonjab\">Poison Jab</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm85: {
@@ -3117,6 +4284,9 @@ const ITEMS = {
         name: "TM85",
         calcName: "TM85",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/dreameater\">Dream Eater</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm86: {
@@ -3125,6 +4295,9 @@ const ITEMS = {
         name: "TM86",
         calcName: "TM86",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/grassknot\">Grass Knot</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm87: {
@@ -3133,6 +4306,9 @@ const ITEMS = {
         name: "TM87",
         calcName: "TM87",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/swagger\">Swagger</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm88: {
@@ -3141,6 +4317,9 @@ const ITEMS = {
         name: "TM88",
         calcName: "TM88",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/pluck\">Pluck</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm89: {
@@ -3149,6 +4328,9 @@ const ITEMS = {
         name: "TM89",
         calcName: "TM89",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/uturn\">U-turn</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm90: {
@@ -3157,6 +4339,9 @@ const ITEMS = {
         name: "TM90",
         calcName: "TM90",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/substitute\">Substitute</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm91: {
@@ -3165,6 +4350,9 @@ const ITEMS = {
         name: "TM91",
         calcName: "TM91",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/flashcannon\">Flash Cannon</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     tm92: {
@@ -3173,6 +4361,9 @@ const ITEMS = {
         name: "TM92",
         calcName: "TM92",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/miracleeye\">Miracle Eye</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     hm01: {
@@ -3181,6 +4372,9 @@ const ITEMS = {
         name: "HM01",
         calcName: "HM01",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/cut\">Cut</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     hm02: {
@@ -3189,6 +4383,9 @@ const ITEMS = {
         name: "HM02",
         calcName: "HM02",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/fly\">Fly</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     hm03: {
@@ -3197,6 +4394,9 @@ const ITEMS = {
         name: "HM03",
         calcName: "HM03",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/surf\">Surf</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     hm04: {
@@ -3205,6 +4405,9 @@ const ITEMS = {
         name: "HM04",
         calcName: "HM04",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/strength\">Strength</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     hm05: {
@@ -3213,6 +4416,9 @@ const ITEMS = {
         name: "HM05",
         calcName: "HM05",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/defog\">Defog</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     hm06: {
@@ -3221,6 +4427,9 @@ const ITEMS = {
         name: "HM06",
         calcName: "HM06",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/rocksmash\">Rock Smash</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     hm07: {
@@ -3229,6 +4438,9 @@ const ITEMS = {
         name: "HM07",
         calcName: "HM07",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/waterfall\">Waterfall</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     hm08: {
@@ -3237,6 +4449,9 @@ const ITEMS = {
         name: "HM08",
         calcName: "HM08",
         desc: "Can be used to teach a compatible Pokémon the move <span data-target=\"move/rockclimb\">Rock Climb</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     explorerkit: {
@@ -3245,6 +4460,9 @@ const ITEMS = {
         name: "Explorer Kit",
         calcName: "Explorer Kit",
         desc: "This item is unobtainable.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     galacticcard: {
@@ -3253,6 +4471,9 @@ const ITEMS = {
         name: "Galactic Card",
         calcName: "Galactic Card",
         desc: "This item is unobtainable.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     rulebook: {
@@ -3261,6 +4482,9 @@ const ITEMS = {
         name: "Rule Book",
         calcName: "Rule Book",
         desc: "This item is unobtainable.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     pokeradar: {
@@ -3269,6 +4493,9 @@ const ITEMS = {
         name: "Poké Radar",
         calcName: "Poké Radar",
         desc: "https://bulbapedia.bulbagarden.net/wiki/Poké_Radar",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     pointcard: {
@@ -3277,6 +4504,9 @@ const ITEMS = {
         name: "Point Card",
         calcName: "Point Card",
         desc: "Holds the player's BP.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     journal: {
@@ -3285,6 +4515,9 @@ const ITEMS = {
         name: "Journal",
         calcName: "Journal",
         desc: "Keeps a list of the player's activities.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     sealcase: {
@@ -3293,6 +4526,9 @@ const ITEMS = {
         name: "Seal Case",
         calcName: "Seal Case",
         desc: "Holds the player's seals.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     fashioncase: {
@@ -3301,6 +4537,9 @@ const ITEMS = {
         name: "Fashion Case",
         calcName: "Fashion Case",
         desc: "Holds the player's accessories.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     sealbag: {
@@ -3309,6 +4548,9 @@ const ITEMS = {
         name: "Seal Bag",
         calcName: "Seal Bag",
         desc: "This item is unobtainable.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     palpad: {
@@ -3317,6 +4559,9 @@ const ITEMS = {
         name: "Pal Pad",
         calcName: "Pal Pad",
         desc: "What exactly are you looking for? Did you really expect me to add a description for an item that, while technically does exist, can't be used?",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     workskey: {
@@ -3325,6 +4570,9 @@ const ITEMS = {
         name: "Works Key",
         calcName: "Works Key",
         desc: "Unlocks the door to <span data-target=\"location/valleywindworks\">Valley Windworks</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     oldcharm: {
@@ -3333,6 +4581,9 @@ const ITEMS = {
         name: "Old Charm",
         calcName: "Old Charm",
         desc: "Story-related item.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     galactickey: {
@@ -3341,6 +4592,9 @@ const ITEMS = {
         name: "Galactic Key",
         calcName: "Galactic Key",
         desc: "Unlocks doors in <span data-target=\"location/teamgalactichq\">Team Galactic HQ</span>.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     redchain: {
@@ -3349,6 +4603,9 @@ const ITEMS = {
         name: "Red Chain",
         calcName: "Red Chain",
         desc: "This item is unobtainable.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     townmap: {
@@ -3357,7 +4614,10 @@ const ITEMS = {
         name: "Town Map",
         calcName: "Town Map",
         desc: "Opens the map.",
-        search: false
+        pluck: "Cures all status",
+        fling: ["Causes flinch", 120],
+        naturalGift: [0, -1],
+        search: true
     },
     vsseeker: {
         num: 443,
@@ -3365,6 +4625,9 @@ const ITEMS = {
         name: "Vs. Seeker",
         calcName: "Vs. Seeker",
         desc: "This item is unobtainable.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     coincase: {
@@ -3373,6 +4636,9 @@ const ITEMS = {
         name: "Coin Case",
         calcName: "Coin Case",
         desc: "Holds the player's coins.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     oldrod: {
@@ -3381,6 +4647,9 @@ const ITEMS = {
         name: "Old Rod",
         calcName: "Old Rod",
         desc: "Allows the player to encounter wild Pokémon by fishing.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     goodrod: {
@@ -3389,6 +4658,9 @@ const ITEMS = {
         name: "Good Rod",
         calcName: "Good Rod",
         desc: "Allows the player to encounter wild Pokémon by fishing.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     superrod: {
@@ -3397,6 +4669,9 @@ const ITEMS = {
         name: "Super Rod",
         calcName: "Super Rod",
         desc: "Allows the player to encounter wild Pokémon by fishing.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     sprayduck: {
@@ -3405,6 +4680,9 @@ const ITEMS = {
         name: "Sprayduck",
         calcName: "Sprayduck",
         desc: "Allows the player to water berries.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     poffincase: {
@@ -3413,6 +4691,9 @@ const ITEMS = {
         name: "Poffin Case",
         calcName: "Poffin Case",
         desc: "Holds the player's Poffins.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     bicycle: {
@@ -3421,7 +4702,10 @@ const ITEMS = {
         name: "Bicycle",
         calcName: "Bicycle",
         desc: "Allows the player to move faster, jump over ramps, and ride up slopes.",
-        search: false
+        pluck: "None",
+        fling: ["None", 150],
+        naturalGift: [0, -1],
+        search: true
     },
     suitekey: {
         num: 451,
@@ -3429,6 +4713,9 @@ const ITEMS = {
         name: "Suite Key",
         calcName: "Suite Key",
         desc: "Story-related item.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     oaksletter: {
@@ -3437,6 +4724,9 @@ const ITEMS = {
         name: "Oak's Letter",
         calcName: "Oak's Letter",
         desc: "Event-related item.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     lunarwing: {
@@ -3445,6 +4735,9 @@ const ITEMS = {
         name: "Lunar Wing",
         calcName: "Lunar Wing",
         desc: "Event-related item.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     membercard: {
@@ -3453,6 +4746,9 @@ const ITEMS = {
         name: "Member Card",
         calcName: "Member Card",
         desc: "Event-related item.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     azureflute: {
@@ -3461,6 +4757,9 @@ const ITEMS = {
         name: "Azure Flute",
         calcName: "Azure Flute",
         desc: "Event-related item that big Pikachu does not want you to know about.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     ssticket: {
@@ -3469,6 +4768,9 @@ const ITEMS = {
         name: "S.S. Ticket",
         calcName: "S.S. Ticket",
         desc: "Event-related item.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     contestpass: {
@@ -3477,6 +4779,9 @@ const ITEMS = {
         name: "Contest Pass",
         calcName: "Contest Pass",
         desc: "This item is unobtainable.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     magmastone: {
@@ -3485,6 +4790,9 @@ const ITEMS = {
         name: "Magma Stone",
         calcName: "Magma Stone",
         desc: "This item is unobtainable.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     parcel: {
@@ -3493,6 +4801,9 @@ const ITEMS = {
         name: "Parcel",
         calcName: "Parcel",
         desc: "This isn't yours, no peeking!",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     coupon1: {
@@ -3501,6 +4812,9 @@ const ITEMS = {
         name: "Coupon 1",
         calcName: "Coupon 1",
         desc: "VG9t",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     coupon2: {
@@ -3509,6 +4823,9 @@ const ITEMS = {
         name: "Coupon 2",
         calcName: "Coupon 2",
         desc: "b3Jy",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     coupon3: {
@@ -3517,6 +4834,9 @@ const ITEMS = {
         name: "Coupon 3",
         calcName: "Coupon 3",
         desc: "b3cu",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     storagekey: {
@@ -3525,6 +4845,9 @@ const ITEMS = {
         name: "Storage Key",
         calcName: "Storage Key",
         desc: "This item is unobtainable.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     secretpotion: {
@@ -3533,6 +4856,9 @@ const ITEMS = {
         name: "SecretPotion",
         calcName: "SecretPotion",
         desc: "Heals a <span data-target=\"species/psyduck\">Psyduck</span>'s headache, or an <span data-target=\"species/ampharos\">Ampharos</span>'s sickness.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     vsrecorder: {
@@ -3541,6 +4867,9 @@ const ITEMS = {
         name: "Vs. Recorder",
         calcName: "Vs. Recorder",
         desc: "...",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     gracidea: {
@@ -3549,6 +4878,9 @@ const ITEMS = {
         name: "Gracidea",
         calcName: "Gracidea",
         desc: "Event-related item.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
     secretkey: {
@@ -3557,6 +4889,9 @@ const ITEMS = {
         name: "Secret Key",
         calcName: "Secret Key",
         desc: "Unlocks the door to <span data-target=\"species/rotom\">Rotom</span>'s Room.",
+        pluck: "None",
+        fling: ["None", 0],
+        naturalGift: [0, -1],
         search: false
     },
 };
