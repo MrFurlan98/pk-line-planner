@@ -935,44 +935,62 @@ function renderNode(node, line, visible) {
  * but marked so it never reads as an instruction you control.
  */
 /*
- * Who moves first, shown against the slot.
+ * Where this slot moves in the turn, as a number: 1 goes first.
  *
- * Priority bracket beats speed, and Platinum Kaizo rebalanced the brackets, so a
- * slot can be first while being slower - which is worth saying rather than
- * leaving to be inferred from two numbers. A tie is called a tie: it is genuinely
- * random, and no plan should rest on it.
+ * Taken straight from turnOrder, the same order the fold resolves moves in, so
+ * the badge can never disagree with the arithmetic. It used to compare each
+ * slot only against the one across from it, which in a double said nothing
+ * about the other two.
+ *
+ * Priority bracket beats speed, and Platinum Kaizo rebalanced the brackets, so
+ * a non-zero bracket is shown beside the number - that is usually why a slower
+ * Pokémon is ahead. A tie shares its number with an "=", since it is genuinely
+ * random and no plan should rest on it, and a Quick Claw gets a "?" for the
+ * same reason. A slot that is switching gets nothing: it doesn't move.
  */
 function renderSpeed(line, node, state, side, slot, slots) {
     if (typeof speedFor !== "function" || blindMode()) return "";
     if (!monAt(node, side, slot)) return "";
 
-    var other = side === "you" ? "them" : "you";
-    var against = monAt(node, other, slot) ? slot : (monAt(node, other, 0) ? 0 : 1);
-    if (!monAt(node, other, against)) return "";
+    var groups = turnOrder(line, node, node, state, slots);
+    var acting = groups.reduce(function(n, g) { return n + g.length; }, 0);
+    // Nobody to be ahead of or behind.
+    if (acting < 2) return "";
 
-    var mine = speedFor(line, node, state, side, slot);
-    var theirs = speedFor(line, node, state, other, against);
-    if (!mine || !theirs) return "";
+    var place = 1;
+    var rank = 0;
+    var mine = null;
+    var tied = false;
+    var listed = [];
+    groups.forEach(function(group) {
+        group.forEach(function(action) {
+            var who = speciesAt(line, node, action.side, action.slot);
+            var name = action.side === "you" && !isPartnerSlot(line, "you", action.slot)
+                ? ((boxEntry(monAt(node, "you", action.slot)) || {}).nickname || (who && who.name))
+                : (who && who.name);
+            listed.push(`${place}${group.length > 1 ? "=" : ""}. ${name || monAt(node, action.side, action.slot)}` +
+                `${action.side === "them" ? " (foe)" : ""} - speed ${action.speed || "?"}` +
+                `${action.priority ? `, priority ${action.priority > 0 ? "+" : ""}${action.priority}` : ""}` +
+                `${action.unsure ? ", Quick Claw" : ""}${action.last ? ", always last in its bracket" : ""}`);
+            if (action.side === side && action.slot === slot) {
+                mine = action;
+                rank = place;
+                tied = group.length > 1;
+            }
+        });
+        place += group.length;
+    });
+    if (!mine) return "";
 
-    var myPrio = movePriority(moveAt(node, side, slot));
-    var theirPrio = movePriority(moveAt(node, other, against));
+    var anyUnsure = groups.some(function(g) { return g.some(function(a) { return a.unsure; }); });
+    var hint = `Moves ${rank}${tied ? " (tied)" : ""} of ${acting} this turn.\n\n` + listed.join("\n") +
+        (state.trickRoom ? "\n\nTrick Room is up, so the slower one moves first within a bracket." : "") +
+        (tied ? "\n\nA tie is settled at random, so don't build the plan on it." : "") +
+        (anyUnsure ? "\n\nA Quick Claw can jump the whole queue 20% of the time, so this order isn't certain." : "");
 
-    // Under Trick Room the slower one goes first - but only within a bracket.
-    var reversed = !!state.trickRoom;
-    var faster = myPrio !== theirPrio
-        ? myPrio > theirPrio
-        : (reversed ? mine < theirs : mine > theirs);
-    var tied = myPrio === theirPrio && mine === theirs;
-    var byPriority = myPrio !== theirPrio;
-
-    var hint = `Speed ${mine} against ${theirs}` +
-        (byPriority ? `, but the brackets decide it: priority ${myPrio > 0 ? "+" : ""}${myPrio} against ${theirPrio > 0 ? "+" : ""}${theirPrio}.` : ".") +
-        (reversed && !byPriority ? " Trick Room is up, so the slower one moves first." : "") +
-        (tied ? " A tie is settled at random, so don't build the plan on it." : "");
-
-    if (tied) return `<span class="planner-speed tie" title="${escapeAttr(hint)}">= SPD</span>`;
-    return `<span class="planner-speed ${faster ? "fast" : "slow"}" title="${escapeAttr(hint)}">${
-        faster ? "&#9650;" : "&#9660;"} ${byPriority ? "PRI" : "SPD"}</span>`;
+    var cls = tied ? "tie" : rank === 1 ? "fast" : rank === acting ? "slow" : "mid";
+    var prio = mine.priority ? ` <small>${mine.priority > 0 ? "+" : ""}${mine.priority}</small>` : "";
+    return `<span class="planner-speed ${cls}" title="${escapeAttr(hint)}">${rank}${tied ? "=" : ""}${mine.unsure ? "?" : ""}${prio}</span>`;
 }
 
 /*

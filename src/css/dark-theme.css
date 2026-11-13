@@ -209,4 +209,5 @@ input.select2-input {
 
 /* Planner speed markers, lightened for a dark card. */
 .planner-speed.fast { color: #7ddc84; }
+.planner-speed.mid  { color: #e0c070; }
 .planner-speed.slow { color: #ff7b6b; }

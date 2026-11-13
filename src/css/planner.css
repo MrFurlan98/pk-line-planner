@@ -1400,20 +1400,32 @@ img.planner-terrain-thumb:not([src]) {
 }
 
 /*
- * Who moves first. Deliberately quiet - it is context for reading the card, not
- * a decision in its own right - and a tie says so rather than picking a winner.
+ * Where the slot moves in the turn, as a number. A small outlined badge so the
+ * digit reads at a glance across all four slots of a double, without competing
+ * with the name. A tie says so rather than picking a winner.
  */
 .planner-speed {
     display: inline-block;
-    font-size: 8px;
-    letter-spacing: 0.02em;
+    min-width: 11px;
+    font-size: 9px;
+    font-weight: bold;
+    line-height: 11px;
+    text-align: center;
     padding: 0 2px;
-    border-radius: 2px;
+    border: 1px solid currentColor;
+    border-radius: 6px;
     cursor: help;
     opacity: 0.85;
 }
 
+/* The priority bracket beside the number, when it isn't zero. */
+.planner-speed small {
+    font-size: 7px;
+    font-weight: normal;
+}
+
 .planner-speed.fast { color: #2f9e44; }
+.planner-speed.mid  { color: #b08b2e; }
 .planner-speed.slow { color: #c0392b; }
 .planner-speed.tie  { color: #8a8a8a; }
 
