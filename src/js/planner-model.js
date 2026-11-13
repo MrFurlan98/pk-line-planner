@@ -3656,6 +3656,91 @@ function predictAtFaint(line, nodeId, slot, corpse) {
 }
 
 /*
+ * Who comes in if the foe in `slot` falls on this turn - the Pokémon a KO here
+ * baits out, shown on the card before any branch is drawn.
+ *
+ * Asked the way predictAtFaint asks it, from the end of this turn: the turn is
+ * folded into a copy of its state against a stand-in for the turn below, the
+ * foe's health is put to zero, and the switch rule runs. Nothing on the plan is
+ * touched, and drawing the KO branch still fills the real turn the usual way.
+ *
+ * The one thing the plan can't say yet is whether the foe got its move off
+ * before it fell - that depends on who outsped whom and on the roll, which is
+ * exactly what the branch settles. A move like Screech on your Pokémon can
+ * change the answer, so both are asked, and if they disagree the card says
+ * nothing rather than guess.
+ *
+ * Returns {name, alt} - `alt` set when the two disagree, so the card can say
+ * why it abstained - or null when there is nobody to send or nothing to read.
+ */
+var BAIT_CACHE = {};
+
+function baitedSwitchIn(line, nodeId, slot) {
+    var key = nodeId + ":" + slot;
+    if (BAIT_CACHE[key] !== undefined) return BAIT_CACHE[key];
+    var node = line.nodes[nodeId];
+    var result = null;
+    try {
+        var foe = node ? standingAt(node, "them", slot) : "";
+        var start = foe ? computeNodeState(line, nodeId) : null;
+        if (start && !isFainted(monState(start, "them", foe))) {
+            var acted = baitAfter(line, node, slot, foe, false);
+            // Only worth the second fold when the foe has a move that could land.
+            var couldAct = !switchTargetAt(node, "them", slot) &&
+                actedAt(node, "them", slot) && moveAt(node, "them", slot);
+            var denied = couldAct ? baitAfter(line, node, slot, foe, true) : acted;
+            if (acted && denied) {
+                result = acted.name === denied.name
+                    ? {name: acted.name}
+                    : {name: "", alt: [acted.name, denied.name]};
+            }
+        }
+    } catch (e) {
+        // A preview is never worth breaking the card over.
+        result = null;
+    }
+    BAIT_CACHE[key] = result;
+    return result;
+}
+
+/*
+ * One fold of the turn for baitedSwitchIn, with or without the foe's own move.
+ * `node.skipped` is borrowed for the second and always put back.
+ */
+function baitAfter(line, node, slot, foe, denyFoe) {
+    var slots = slotCount(line);
+    var savedSkipped = node.skipped;
+    if (denyFoe) {
+        node.skipped = cloneState(node.skipped || {you: [false, false], them: [false, false]});
+        if (!node.skipped.them) node.skipped.them = [false, false];
+        node.skipped.them[slot] = true;
+    }
+    try {
+        var blank = function() { return {type: "move", value: ""}; };
+        // The turn below as it would stand: everybody who is out once the switches are done.
+        var ghost = Object.assign({}, node, {
+            mons: [0, 1].map(function(i) { return i < slots ? standingAt(node, "you", i) : ""; }),
+            foes: [0, 1].map(function(i) { return i < slots ? standingAt(node, "them", i) : ""; }),
+            actions: [blank(), blank()],
+            foeActions: [blank(), blank()],
+            switchAfter: null,
+            skipped: null,
+            predictedFoes: null
+        });
+        var state = normalizeState(cloneState(computeNodeState(line, node.id)));
+        applyTurn(line, node, ghost, state, null);
+
+        var mon = ensureHp(line, ghost, state, "them", slot) || monState(state, "them", foe);
+        mon.hp = {min: 0, max: 0, full: (mon.hp && mon.hp.full) || 1};
+
+        var pick = predictSwitchIn(line, ghost, state, slot);
+        return pick && pick.name !== foe ? pick : null;
+    } finally {
+        node.skipped = savedSkipped;
+    }
+}
+
+/*
  * The other way a foe leaves: its own U-turn. Nobody is dead, so there is no
  * corpse to notice - the move simply takes it off the field and the plan has to
  * say who arrives. The same rule answers it, so the picker is filled in rather
@@ -4540,6 +4625,7 @@ var STATE_CACHE = {};
 
 function invalidateNodeStates() {
     STATE_CACHE = {};
+    BAIT_CACHE = {};
 }
 
 function computeNodeState(line, nodeId, seen) {

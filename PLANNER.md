@@ -1042,6 +1042,18 @@ mockup still shows the older band-and-marker design.
   chance rather than ordered by position.
 - **Scores are per target**, so a double grows a target column. Singles stay one
   row per move.
+- **A certain pick fills itself in.** Where one move is picked at 100% — every
+  roll, every scenario — an empty AI slot gets that move, drawn dashed and
+  italic and marked `auto` on the action. `refreshCertainMoves` re-checks every
+  render, parents first and in step with the predicted switch-ins, so a fill is
+  updated or withdrawn when the plan above it changes. Only the planner's own
+  fills are touched: picking a move replaces the action and drops the mark, and
+  clearing a fill marks the slot `declined` so it stays empty. In a double with
+  no aim the move must be certain against every opponent. It abstains under
+  Encore, Disable, Torment or a Choice lock, none of which the scoring reads.
+- **Scored before the pick.** The facts' turn order takes priority from each
+  slot's chosen move, so the scoring slot's own move is blanked while it is
+  scored — otherwise a filled-in Quick Attack would change its own score.
 
 #### What the walk had wrong
 

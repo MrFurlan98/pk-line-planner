@@ -860,6 +860,19 @@ function renderLine() {
      * here because every edit that changes derived state ends in a render.
      */
     if (refreshPredictedSwitchIns(line)) saveLines();
+    /*
+     * Then the AI moves the scoring is certain of. The two feed each other - a
+     * filled move can settle a KO, and a predicted switch-in brings a new
+     * moveset to score - so they go round until neither changes anything. Each
+     * pass is parents-first, so this settles in a pass or two; the cap is only
+     * there so a pathological plan can't hang the page.
+     */
+    for (var pass = 0; pass < 4; pass++) {
+        var filled = refreshCertainMoves(line);
+        var predicted = filled && refreshPredictedSwitchIns(line);
+        if (filled || predicted) saveLines();
+        if (!filled && !predicted) break;
+    }
 
     /*
      * Every turn's state, computed once and parents-first. Cleared and rebuilt on
@@ -1007,6 +1020,33 @@ function renderGender(gender) {
     return "";
 }
 
+/*
+ * A small icon in a foe slot's corner: who the trainer sends in if this one
+ * falls on this turn. It is the same rule that fills the turn below once a KO
+ * branch is drawn, asked early, so you can see what a KO here baits out before
+ * committing to it.
+ *
+ * Abstains when the answer hinges on whether the foe got its move off first -
+ * that is the roll and the speed a branch is drawn to settle.
+ */
+function renderBait(line, node, slot) {
+    var bait = baitedSwitchIn(line, node.id, slot);
+    if (!bait) return "";
+    var foe = standingAt(node, "them", slot);
+    var foeName = (GAME.species()[toID(foe)] || {}).name || foe;
+    if (!bait.name) {
+        var names = bait.alt.map(function(n) { return (GAME.species()[toID(n)] || {}).name || n; });
+        return `<span class="planner-bait unsure"
+                      title="${escapeAttr(`If ${foeName} falls this turn, who comes in depends on whether it moved first: ${names[0]} if it did, ${names[1]} if it didn't.`)}">?</span>`;
+    }
+    var species = GAME.species()[toID(bait.name)];
+    var name = species ? species.name : bait.name;
+    var hint = `KO ${foeName} this turn and the AI sends in ${name}.`;
+    return `<span class="planner-bait" title="${escapeAttr(hint)}">${species
+        ? `<img src="${GAME.sprites.speciesIcon(species)}" alt="${escapeAttr(name)}">`
+        : name}</span>`;
+}
+
 function renderSlots(line, node, state, side, slots, format) {
     var out = "";
     for (var i = 0; i < slots; i++) {
@@ -1038,6 +1078,7 @@ function renderSlots(line, node, state, side, slots, format) {
             ${species
                 ? `<img class="planner-sprite" src="${GAME.sprites.species(species)}" alt="">`
                 : `<span class="planner-node-blank">?</span>`}
+            ${side === "them" && ref ? renderBait(line, node, i) : ``}
             <span class="planner-slot-name">${label}${ref ? renderGender(slotGender(line, node, side, i)) : ""}${sub}</span>
             ${ref ? renderHp(mon) : ``}
             ${ref ? renderItemTrigger(line, node, state, side, i) : ``}
@@ -1355,11 +1396,14 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
         return first;
     }
 
+    var auto = isAutoMove(node, side, slot);
     return moves.map(function(name) {
         var move = findMove(name);
         var isSelected = selected === name;
+        // A pick the planner filled in rather than one you chose, said on the card.
+        var pickClass = isSelected ? (auto ? " selected auto" : " selected") : "";
         if (!move) {
-            return `<span class="planner-move ${side}${isSelected ? " selected" : ""}" data-move="${name}" data-side="${side}" data-slot="${slot}">${name}</span>`;
+            return `<span class="planner-move ${side}${pickClass}" data-move="${name}" data-side="${side}" data-slot="${slot}">${name}</span>`;
         }
         /*
          * What a Copycat or Me First copies this turn. Only the chosen move has
@@ -1524,13 +1568,16 @@ function renderMoveList(line, node, state, moves, selected, side, slot, report) 
                 tooltip = `Does nothing at all — it can't touch this Pokémon.\n\n${tooltip}`;
             }
         }
+        if (isSelected && auto) {
+            tooltip = `Filled in by the planner: the AI's scoring picks this move on every roll. Pick another to overrule it, or click it to clear it and leave the slot empty.\n\n${tooltip}`;
+        }
         if (saidSo) {
             tooltip = `This move never goes off on this turn, so none of it lands — the turn is marked "didn't act".\n\n${tooltip}`;
         } else if (WHY[reason]) {
             tooltip = `${WHY[reason]}\n\n${tooltip}`;
         }
 
-        return `<span class="planner-move ${side}${isSelected ? " selected" : ""}" data-move="${name}" data-side="${side}" data-slot="${slot}"
+        return `<span class="planner-move ${side}${pickClass}" data-move="${name}" data-side="${side}" data-slot="${slot}"
                       title="${escapeAttr(tooltip)}">
             <img src="${GAME.sprites.type(shownType)}" alt="">
             <span class="planner-move-name">${move.name}</span>
@@ -3564,12 +3611,20 @@ function initPlanner() {
         var move = $(this).attr("data-move");
         var slot = parseInt($(this).attr("data-slot"), 10) || 0;
 
-        if ($(this).attr("data-side") === "you") {
-            // Clicking the chosen move again clears it.
-            var current = moveAt(node, "you", slot);
-            node.actions[slot] = {type: "move", value: current === move ? "" : move};
+        /*
+         * Clicking the chosen move again clears it. Clearing one the planner
+         * filled in is saying it got that wrong, so the slot is marked declined
+         * and left empty rather than filled straight back in on the next render.
+         */
+        var side = $(this).attr("data-side");
+        var clearing = moveAt(node, side, slot) === move;
+        var next = {type: "move", value: clearing ? "" : move};
+        if (clearing && isAutoMove(node, side, slot)) next.declined = true;
+
+        if (side === "you") {
+            node.actions[slot] = next;
         } else {
-            node.foeActions[slot] = {type: "move", value: moveAt(node, "them", slot) === move ? "" : move};
+            node.foeActions[slot] = next;
             /*
              * A U-turn is not optional about leaving, so the question of who
              * replaces it arrives with the move rather than waiting to be asked.

@@ -1129,7 +1129,21 @@ function scoreMovesFor(line, node, state, side, slot, targetSlot) {
 
     var format = lineFormat(line);
     var modules = scoringModulesFor(trainer, format);
-    var facts = scoringFactsFor(line, node, state, side, slot, targetSlot);
+    /*
+     * Scored as the AI sees it: before it has picked. The turn order the facts
+     * read takes priority from each slot's chosen move, so a pick left in place
+     * would feed back into its own scoring - a Quick Attack filled in moves the
+     * user first, which changes what scores, which can un-pick the Quick Attack.
+     */
+    var actions = side === "you" ? node.actions : node.foeActions;
+    var own = actions[slot];
+    actions[slot] = {type: "move", value: ""};
+    var facts;
+    try {
+        facts = scoringFactsFor(line, node, state, side, slot, targetSlot);
+    } finally {
+        actions[slot] = own;
+    }
     if (!facts || !facts.moves.length) return null;
 
     var rows = facts.moves.map(function(move) {
@@ -1229,4 +1243,102 @@ function scoreMovesFor(line, node, state, side, slot, targetSlot) {
         // One name only when it is picked on every roll and every scenario.
         certain: rows.some(function(r) { return r.chanceLo === 1; })
     };
+}
+
+/*
+ * Choice items lock the holder into whatever it used last, and Encore, Disable
+ * and Torment overrule or narrow the pick - none of which the scoring reads. A
+ * certainty the game would then override is not one, so these abstain.
+ */
+var CHOICE_ITEMS = ["choiceband", "choicescarf", "choicespecs"];
+var PICK_OVERRIDING_VOLATILES = ["encore", "disable", "torment"];
+
+/*
+ * The move a slot the AI drives is certain to pick this turn, or "".
+ *
+ * Certain means picked on every roll and in every scenario the planner had to
+ * try both ways - the panel's single-name verdict, never its "most likely". In a
+ * double the AI weighs every opponent, so with no aim stated the same move has
+ * to be certain against each of them: whichever it ends up aiming at, that move
+ * wins.
+ */
+function certainMoveFor(line, node, state, side, slot) {
+    if (side === "you" && !isPartnerSlot(line, side, slot)) return "";
+    var ref = monAt(node, side, slot);
+    if (!ref || !trainerForSlot(line, side, slot)) return "";
+    var mon = monState(state, side, ref);
+    if (isFainted(mon)) return "";
+    var volatiles = mon.volatiles || {};
+    if (PICK_OVERRIDING_VOLATILES.some(function(v) { return volatiles[v]; })) return "";
+    var holder = activeHolder(line, node, side, slot);
+    if (CHOICE_ITEMS.indexOf(toID((holder && holder.item) || "")) >= 0 && (mon.turnsActive || 0) > 0) return "";
+
+    var other = side === "you" ? "them" : "you";
+    var aim = aimAt(node, side, slot);
+    var targets = aim !== null && monAt(node, other, aim) ? [aim]
+        : [0, 1].slice(0, slotCount(line)).filter(function(t) {
+            return monAt(node, other, t) && !isFainted(monState(state, other, monAt(node, other, t)));
+        });
+    if (!targets.length) return "";
+
+    var pick = null;
+    for (var i = 0; i < targets.length; i++) {
+        var scored = scoreMovesFor(line, node, state, side, slot, targets[i]);
+        if (!scored || scored.struggle || !scored.certain) return "";
+        var sure = scored.rows.filter(function(r) { return r.chanceLo === 1; })[0];
+        if (pick !== null && pick.id !== sure.id) return "";
+        pick = sure;
+    }
+    return pick.name;
+}
+
+/*
+ * Fills in every AI move the scoring is certain of, and keeps those fills honest
+ * as the plan above them changes. Runs on every render, parents first, like the
+ * predicted switch-ins: one turn's move feeds the state of the turns below it.
+ *
+ * A fill is marked `auto` on the action itself, so it is only ever the planner's
+ * own fills that get updated or withdrawn. Anything you pick replaces the action
+ * wholesale and drops the mark - the player's statement wins. Clearing a fill
+ * leaves it `declined`, which this respects until a move is picked there again.
+ */
+function refreshCertainMoves(line) {
+    var changed = false;
+    nodesParentsFirst(line).forEach(function(id) {
+        var node = line.nodes[id];
+        ["you", "them"].forEach(function(side) {
+            var actions = side === "you" ? node.actions : node.foeActions;
+            if (!actions) return;
+            for (var slot = 0; slot < slotCount(line); slot++) {
+                if (side === "you" && !isPartnerSlot(line, side, slot)) continue;
+                var action = actions[slot] || {type: "move", value: ""};
+                if (action.type !== "move" || action.declined) continue;
+                // A move somebody chose is theirs; only empty or planner-filled slots are ours.
+                if (action.value && !action.auto) continue;
+
+                var pick = "";
+                try {
+                    pick = certainMoveFor(line, node, computeNodeState(line, id), side, slot);
+                } catch (e) {
+                    // One bad set shouldn't stop the rest of the line from filling.
+                    pick = "";
+                }
+                if (pick === action.value) continue;
+
+                actions[slot] = pick ? {type: "move", value: pick, auto: true} : {type: "move", value: ""};
+                invalidateNodeStates();
+                // A certain U-turn leaves certainly, so who comes in is asked at once.
+                if (pick && side === "them") fillSelfSwitchTarget(line, id, slot);
+                changed = true;
+            }
+        });
+    });
+    return changed;
+}
+
+// Whether a slot's move was filled in by the planner rather than chosen.
+function isAutoMove(node, side, slot) {
+    var actions = side === "you" ? node.actions : node.foeActions;
+    var action = actions && actions[slot];
+    return !!(action && action.type === "move" && action.value && action.auto);
 }

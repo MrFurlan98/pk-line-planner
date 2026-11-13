@@ -934,6 +934,48 @@ img.planner-terrain-thumb:not([src]) {
     border-radius: 4px;
 }
 
+/* Holds the bait icon in its corner. */
+.planner-slot.foe {
+    position: relative;
+}
+
+/*
+ * Who a KO here brings in. Small and faded so it reads as a forecast rather
+ * than as a second Pokémon on the field.
+ */
+.planner-bait {
+    position: absolute;
+    top: -2px;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    opacity: 0.75;
+    cursor: help;
+}
+
+.planner-bait:hover {
+    opacity: 1;
+}
+
+.planner-bait img {
+    display: block;
+    max-width: 32px;
+    max-height: 30px;
+    image-rendering: pixelated;
+}
+
+.planner-bait.unsure {
+    font-weight: bold;
+    border: 1px dashed rgba(128, 128, 128, 0.6);
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    top: 2px;
+    right: 2px;
+}
+
 .planner-slot.empty {
     border-style: dashed;
     border-color: rgba(128, 128, 128, 0.35);
@@ -1159,6 +1201,16 @@ img.planner-terrain-thumb:not([src]) {
     background: rgba(200, 60, 50, 0.22);
     box-shadow: inset 2px 0 0 #c0392b;
     font-weight: bold;
+}
+
+/*
+ * A move the planner filled in because the AI is certain to pick it: the same
+ * pick, but dashed, so it never passes for one you stated yourself.
+ */
+.planner-move.selected.auto {
+    outline: 1px dashed currentColor;
+    outline-offset: -1px;
+    font-style: italic;
 }
 
 .planner-move img {
