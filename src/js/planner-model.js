@@ -554,9 +554,17 @@ function copyTurnInto(node, source) {
             var action = actionAt(source, side, i);
             // The move that did the switching goes with it, on the same argument.
             if (selfSwitchTarget(source, side, i)) return {type: "move", value: ""};
-            return action.type === "switch"
-                ? {type: "move", value: ""}
-                : {type: action.type, value: action.value};
+            /*
+             * Marked `carried`: a starting point copied for convenience, not
+             * something said about this turn. Without the mark it read as the
+             * player's pick, which nothing overrides - so a move the AI is
+             * certain to use here never replaced last turn's. Picking a move
+             * on the new turn replaces the action and drops the mark.
+             */
+            if (action.type === "switch") return {type: "move", value: ""};
+            var copied = {type: action.type, value: action.value};
+            if (action.value) copied.carried = true;
+            return copied;
         });
     });
 

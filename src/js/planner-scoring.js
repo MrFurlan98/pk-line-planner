@@ -1313,8 +1313,12 @@ function refreshCertainMoves(line) {
                 if (side === "you" && !isPartnerSlot(line, side, slot)) continue;
                 var action = actions[slot] || {type: "move", value: ""};
                 if (action.type !== "move" || action.declined) continue;
-                // A move somebody chose is theirs; only empty or planner-filled slots are ours.
-                if (action.value && !action.auto) continue;
+                /*
+                 * A move somebody chose is theirs; only empty, planner-filled or
+                 * carried slots are ours. Carried is a move copied over from the
+                 * turn above when this one was made - a guess, not a statement.
+                 */
+                if (action.value && !action.auto && !action.carried) continue;
 
                 var pick = "";
                 try {
@@ -1324,8 +1328,21 @@ function refreshCertainMoves(line) {
                     pick = "";
                 }
                 if (pick === action.value) continue;
+                // Nothing certain, so the copied guess is as good as anything.
+                if (!pick && action.carried) continue;
 
-                actions[slot] = pick ? {type: "move", value: pick, auto: true} : {type: "move", value: ""};
+                /*
+                 * A certainty displaces a carried move rather than discarding it:
+                 * it is kept as `under`, and comes back if the certainty is ever
+                 * withdrawn, so the slot doesn't go blank on you.
+                 */
+                var under = action.carried ? action.value : (action.under || "");
+                if (pick) {
+                    actions[slot] = {type: "move", value: pick, auto: true};
+                    if (under) actions[slot].under = under;
+                } else {
+                    actions[slot] = under ? {type: "move", value: under, carried: true} : {type: "move", value: ""};
+                }
                 invalidateNodeStates();
                 // A certain U-turn leaves certainly, so who comes in is asked at once.
                 if (pick && side === "them") fillSelfSwitchTarget(line, id, slot);
